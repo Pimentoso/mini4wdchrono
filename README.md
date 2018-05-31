@@ -1,4 +1,4 @@
-https://img.shields.io/badge/status-WIP-red.svg
+[![WIP](https://img.shields.io/badge/status-WORK%20IN%20PROGRESS-red.svg)](https://github.com/Pimentoso/mini4wdchrono)
 
 # Mini4wdChrono
 Arduino based 3-lane lap timer for Tamiya Mini4wd
