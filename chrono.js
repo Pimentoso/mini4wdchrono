@@ -1,9 +1,16 @@
 var five = require("johnny-five"),
-  board, photoresistor;
+  board, photoresistor, timeStart, 
+  timeCurr1, timeLast1, t1, v1;
+
+const sensorThreshold = 100;
+const ignoreTimeMillis = 1000;
 
 board = new five.Board();
 
 board.on("ready", function() {
+
+  timeStart = Date.now();
+  timeLast1 = timeStart - ignoreTimeMillis;
 
   // Create a new `photoresistor` hardware instance.
   photoresistor = new five.Sensor({
@@ -20,6 +27,12 @@ board.on("ready", function() {
 
   // "data" get the current reading from the photoresistor
   photoresistor.on("data", function() {
-    console.log(this.value);
+    t1 = Date.now();
+    v1 = this.value;
+    if (v1 >= sensorThreshold && t1 >= timeCurr1+ignoreTimeMillis) {
+      console.log(t1);
+      timeCurr1 = t1;
+    }
+
   });
 });
