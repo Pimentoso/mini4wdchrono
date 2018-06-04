@@ -1,0 +1,24 @@
+{
+  "name": "mini4wdchrono",
+  "version": "1.0.0",
+  "description": "[![WIP](https://img.shields.io/badge/status-WORK%20IN%20PROGRESS-red.svg)](https://github.com/Pimentoso/mini4wdchrono)",
+  "main": "chrono.js",
+  "dependencies": {
+    "johnny-five": "^0.15.0",
+    "keypress": "^0.2.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://Pimentoso@github.com/Pimentoso/mini4wdchrono.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Pimentoso/mini4wdchrono/issues"
+  },
+  "homepage": "https://github.com/Pimentoso/mini4wdchrono#readme"
+}
