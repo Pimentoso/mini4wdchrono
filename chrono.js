@@ -1,5 +1,5 @@
 var five = require("johnny-five"),
-  board, photoresistor, piezo, led,
+  board, photoresistor, piezo, led, rgbled,
   timerState,
   timeStart, 
   timeCurr1, timeLast1, t1, v1;
@@ -24,16 +24,27 @@ board.on("ready", function() {
   });
   piezo = new five.Piezo(3);
   led = new five.Led(13);
+  rgbled = new five.Led.RGB({
+    pins: {
+      red: 6,
+      green: 9,
+      blue: 5
+    }
+  });
 
   // Inject the `sensor` hardware into
   // the Repl instance's context;
   // allows direct command line access
   board.repl.inject({
-    pot: photoresistor,
-    buzz: piezo,
-    led: led
+    s1: photoresistor,
+    p1: piezo,
+    l1: led,
+    l2: rgbled
   });
 
+  rgbled.color("#FF0000");
+
+  // Listen to keypresses
   process.stdin.on("keypress", function(_, key) {
 		if (!key) {
 			return;
@@ -43,7 +54,7 @@ board.on("ready", function() {
 
 		switch (key.name) {
       case "l":
-        led.on();
+        led.toggle();
         break;
       case 's':
         startTimer();
@@ -51,6 +62,8 @@ board.on("ready", function() {
       case 'p':
         playSong();
         break;
+      case 'q':
+        process.exit(0);
     }
   });
 
@@ -65,6 +78,7 @@ board.on("ready", function() {
 
 board.on("exit", function() {
   led.off();
+  rgbled.off();
   piezo.noTone();
 });
 
