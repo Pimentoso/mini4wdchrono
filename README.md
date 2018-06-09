@@ -1,9 +1,13 @@
 [![WIP](https://img.shields.io/badge/status-WORK%20IN%20PROGRESS-red.svg)](https://github.com/Pimentoso/mini4wdchrono)
 
 # Mini4wdChrono
-Arduino based 3-lane lap timer for Tamiya Mini4wd
+Arduino based 3-lane lap timer for Tamiya Mini4wd. Based on arduino + johnny-five + node + websockets.
+THIS PROJECT IS STILL IN DEVELOPMENT. Please check back in the future.
 
-## Develop on OSX
+## Arduino schematics
+Coming soon.
+
+## Usage on OSX
 
 ```
 brew update
@@ -17,8 +21,10 @@ npm install
 // connect the device, then
 npm start
 ```
+Then open chrome on http://localhost:3000/ to access the web interface.
 
-Useful links
-http://johnny-five.io/api/sensor/
-http://johnny-five.io/examples/photoresistor/
-https://github.com/thulioph/arduino-j5
+## Useful links
+
+- http://johnny-five.io/api/sensor/
+- http://johnny-five.io/examples/photoresistor/
+- https://github.com/thulioph/arduino-j5
