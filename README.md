@@ -12,13 +12,13 @@ brew cask install arduino
 
 brew install node
 cd mini4wdchrono
-npm install -g node-gyp
-npm install johnny-five
+npm install
 
 // connect the device, then
-node chrono.js
+npm start
 ```
 
 Useful links
 http://johnny-five.io/api/sensor/
 http://johnny-five.io/examples/photoresistor/
+https://github.com/thulioph/arduino-j5
