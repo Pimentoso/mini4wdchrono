@@ -22,11 +22,12 @@
       }, 3000);
 
       // ==== hardware init
-      sensor1 = new j5.Sensor.Digital(5);
-      led1 = new j5.Led(13);
+      sensor1 = new j5.Sensor.Digital(8);
+      // led1 = new j5.Led(13);
 
       // ==== emit events to client
       sensor1.on('change', (e) => {
+        console.log(e);
         socket.emit('sensor', e);
       });
     });
