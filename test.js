@@ -2,8 +2,6 @@ var temporal = require("temporal");
 var five = require("johnny-five");
 var board, sensor, piezo, led;
 
-const sensorThreshold = 160;
-
 board = new five.Board();
 
 board.on("ready", function() {

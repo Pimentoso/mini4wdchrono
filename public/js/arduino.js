@@ -3,6 +3,7 @@
   'use strict';
 
   const j5 = require('johnny-five');
+  // const temporal = require('temporal');
   var connected = false;
   var led1, sensor1;
   var pingTimer;
@@ -21,15 +22,11 @@
       }, 3000);
 
       // ==== hardware init
-      sensor1 = new j5.Sensor({
-        pin: "A0",
-        freq: 100
-      });
-
+      sensor1 = new j5.Sensor.Digital(5);
       led1 = new j5.Led(13);
 
       // ==== emit events to client
-      sensor1.on('data', (e) => {
+      sensor1.on('change', (e) => {
         socket.emit('sensor', e);
       });
     });
