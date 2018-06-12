@@ -8,11 +8,25 @@
 
   const titleListening = $('#title-listening');
   const titleSuccess = $('#title-success');
-
   const buttonStart = $('#button-start');
   const lapList = $('#laps');
 
   var startTime = 0, lapTime = 0, tempTime = 0;
+
+  const addLap = (lane) => {
+    if (startTime == 0) {
+      startTime = new Date().getTime();
+      lapList.append('<li>Start</li>'); 
+    }
+    else {
+      tempTime = new Date().getTime();
+      if (tempTime > startTime + lapThreshold) {
+        lapTime = tempTime - startTime;
+        startTime = tempTime;
+        lapList.append('<li>' + (lapTime/1000) + '</li>'); 
+      }
+    }
+  };
 
   // ==== handle interface buttons
 
@@ -46,18 +60,7 @@
     // console.log(obj);
     if (obj == 0) {
       // console.log(startTime);
-      if (startTime == 0) {
-        startTime = new Date().getTime();
-        lapList.append('<li>Start</li>'); 
-      }
-      else {
-        tempTime = new Date().getTime();
-        if (tempTime > startTime + lapThreshold) {
-          lapTime = tempTime - startTime;
-          startTime = tempTime;
-          lapList.append('<li>' + (lapTime/1000) + '</li>'); 
-        }
-      }
+      addLap(1);
     }
   });
 })();
