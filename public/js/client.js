@@ -11,9 +11,7 @@
   const buttonStart = $('#button-start');
   const lapList = $('#laps');
 
-  var startTime = 0, lapTime = 0, tempTime = 0;
-  var car0 = {}, car1 = {}, car2 = {}; 
-  var laneOrder = [0,1,2];
+  const playerList = [];
 
   const addLap = (lane) => {
     if (startTime == 0) {
@@ -30,38 +28,8 @@
     }
   };
 
-  const nextLane = (currLane) => {
-    laneOrder[(laneOrder.indexOf(currLane) + 1) % laneOrder.length];
-  };
-
   const init = () => {
-    startTime = 0;
-    lapTime = 0;
-    tempTime = 0;
-    car1 = {
-      playerId = 0,
-      startLane = 0,
-      nextLane = 0,
-      lapCount = 0,
-      startTime = 0,
-      currTime = 0
-    }
-    car2 = {
-      playerId = 0,
-      startLane = 1,
-      nextLane = 0,
-      lapCount = 0,
-      startTime = 0,
-      currTime = 0
-    }
-    car3 = {
-      playerId = 0,
-      startLane = 2,
-      nextLane = 0,
-      lapCount = 0,
-      startTime = 0,
-      currTime = 0
-    }
+    chronoInit([1,2,3]); // TODO pass player ids
   };
 
   // ==== handle interface buttons
