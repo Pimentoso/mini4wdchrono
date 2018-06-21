@@ -12,6 +12,8 @@
   const lapList = $('#laps');
 
   var startTime = 0, lapTime = 0, tempTime = 0;
+  var car0 = {}, car1 = {}, car2 = {}; 
+  var laneOrder = [0,1,2];
 
   const addLap = (lane) => {
     if (startTime == 0) {
@@ -28,12 +30,46 @@
     }
   };
 
+  const nextLane = (currLane) => {
+    laneOrder[(laneOrder.indexOf(currLane) + 1) % laneOrder.length];
+  };
+
+  const init = () => {
+    startTime = 0;
+    lapTime = 0;
+    tempTime = 0;
+    car1 = {
+      playerId = 0,
+      startLane = 0,
+      nextLane = 0,
+      lapCount = 0,
+      startTime = 0,
+      currTime = 0
+    }
+    car2 = {
+      playerId = 0,
+      startLane = 1,
+      nextLane = 0,
+      lapCount = 0,
+      startTime = 0,
+      currTime = 0
+    }
+    car3 = {
+      playerId = 0,
+      startLane = 2,
+      nextLane = 0,
+      lapCount = 0,
+      startTime = 0,
+      currTime = 0
+    }
+  };
+
   // ==== handle interface buttons
 
   buttonStart.on('click', (e) => {
     // socket.emit('start', true);
     lapList.empty();
-    startTime = 0;
+    init();
   });
 
   // ==== listen to arduino events
@@ -56,11 +92,19 @@
     titleSuccess.addClass('is-off');
   });
 
-  socket.on('sensor', (obj) => {
-    // console.log(obj);
+  socket.on('s1', (obj) => {
     if (obj == 0) {
-      // console.log(startTime);
+      addLap(0);
+    }
+  });
+  socket.on('s2', (obj) => {
+    if (obj == 0) {
       addLap(1);
+    }
+  });
+  socket.on('s3', (obj) => {
+    if (obj == 0) {
+      addLap(2);
     }
   });
 })();

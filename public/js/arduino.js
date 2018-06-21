@@ -5,7 +5,7 @@
   const j5 = require('johnny-five');
   // const temporal = require('temporal');
   var connected = false;
-  var led1, sensor1;
+  var led1, led2, led3, sensor1, sensor2, sensor3, piezo;
   var pingTimer;
 
   module.exports = (socket) => {
@@ -23,20 +23,31 @@
 
       // ==== hardware init
       sensor1 = new j5.Sensor.Digital(8);
-      // led1 = new j5.Led(13);
+      sensor2 = new j5.Sensor.Digital(9);
+      sensor3 = new j5.Sensor.Digital(10);
+      led1 = new j5.Led(13);
+      led2 = new j5.Led(14);
+      led3 = new j5.Led(15);
+      piezo = new five.Piezo(3);
 
       // ==== emit events to client
       sensor1.on('change', (e) => {
-        console.log(e);
-        socket.emit('sensor', e);
+        socket.emit('s1', e);
+      });
+      sensor2.on('change', (e) => {
+        socket.emit('s2', e);
+      });
+      sensor3.on('change', (e) => {
+        socket.emit('s3', e);
       });
     });
 
     board.on("exit", () => {
       socket.emit('board_exit', true);
-      if (led1) {
-        led1.stop().off();
-      }
+      led1.stop().off();
+      led2.stop().off();
+      led3.stop().off();
+      piezo.noTone();
       clearInterval(pingTimer);
     });
 
