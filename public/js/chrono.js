@@ -52,7 +52,7 @@ const chronoInit = (playerIds) => {
 const chronoAddLap = (currLane) => {
     var rTempTime = new Date().getTime();
     var rTempCars = _.filter(rCars, (c) => { currLane == c.nextLane });
-    var rTempCar;
+    var rTempCar, rInfo;
     if (_.size(rTempCars) == 1) {
         rTempCar = rTempCars[0];
     }
@@ -62,17 +62,25 @@ const chronoAddLap = (currLane) => {
     }
 
     // handle the car
-    if (rTempCar.lapCount == 0) {
-        rTempCar.startTime = rTempTime;
+    rInfo = {};
+    if (rTempCar.lapCount < 5) {
+        if (rTempCar.lapCount == 0) {
+            // start
+            rTempCar.startTime = rTempTime;
+        }
+        rTempCar.lapCount += 1;
+        rTempCar.nextLane = nextLane(rTempCar.nextLane);
+        rTempCar.currTime = rTempTime;
+        if (rTempCar.lapCount == 4) {
+            // finish
+            rTempCar.endTime = rTempTime;
+            rTempCar.totalTime = rTempCar.endTime - rTempCar.startTime;
+        }
+
+        rInfo.lane = currLane;
+        rInfo.time = rTempCar.currTime - rTempCar.startTime;
     }
-    rTempCar.lapCount += 1;
-    rTempCar.nextLane = nextLane(rTempCar.nextLane);
-    rTempCar.currTime = rTempTime;
-    if (rTempCar.lapCount == 4) {
-        // finish
-        rTempCar.endTime = rTempTime;
-        rTempCar.totalTime = rTempCar.endTime - rTempCar.startTime;
-    }
+    return rInfo;
 };
 
 const nextLane = (currLane) => {
@@ -89,6 +97,7 @@ const markCarsOutOfBounds = (cars, currTime) => {
     _.each(_.filter(cars, (c) => { currTime - c.currTime > rTimeCutoffMax; }), (c) => {
         c.totalTime = 99999;
         c.outOfBounds = true;
+        addLap(c.startLane, 99999);
     });
 };
 
