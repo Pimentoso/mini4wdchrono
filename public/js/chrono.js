@@ -53,23 +53,15 @@ const chronoInit = (playerIds) => {
 // TODO ping function to stop race if no one finishes
 
 const chronoAddLap = (currLane) => {
-    // debugger;
     var rTempTime = new Date().getTime();
     var rTempCars = _.filter(rCars, (c) => { 
         return c.outOfBounds == false && currLane == c.nextLane; 
     });
-    var rTempCar;
-    if (_.size(rTempCars) == 1) {
-        if (rTempCars[0].outOfBounds == false) {
-            rTempCar = rTempCars[0];
-        }
-    }
-    else {
-        // find the right car removing the ones not validating thresholds
-        rTempCar = _.find(rTempCars, (c) => { 
-            return c.outOfBounds == false && (c.startTime == 0 || ((rTempTime - c.currTime < rTimeCutoffMax) && (rTempTime - c.currTime > rTimeCutoffMin)));
-        });
-    }
+
+    // find the right car removing the ones not validating thresholds
+    var rTempCar = _.find(rTempCars, (c) => {
+        return c.outOfBounds == false && (c.startTime == 0 || ((rTempTime - c.currTime < rTimeCutoffMax) && (rTempTime - c.currTime > rTimeCutoffMin)));
+    });
 
     if (rTempCar == null) {
         console.log('Error: no valid car for this signal');
@@ -108,7 +100,7 @@ const checkCars = () => {
     // check cars over max time limit and set them as out
     var rCurrTime = new Date().getTime();
     _.each(_.filter(rCars, (c) => { 
-        return c.startTime > 0 && (rCurrTime - c.currTime) > rTimeCutoffMax; 
+        return c.startTime > 0 && !c.outOfBounds && (rCurrTime - c.currTime) > rTimeCutoffMax; 
     }), (c) => {
         c.totalTime = 99999;
         c.outOfBounds = true;
