@@ -47,7 +47,7 @@ const chronoInit = (playerIds) => {
     };
     rCars = [rCar0, rCar1, rCar2];
 
-    checkTask = setInterval(markCarsOutOfBounds, 1000);
+    checkTask = setInterval(checkCars, 1000);
 };
 
 // TODO ping function to stop race if no one finishes
@@ -65,8 +65,10 @@ const chronoAddLap = (currLane) => {
         }
     }
     else {
-        // markCarsOutOfBounds(rTempCars, rTempTime);
-        rTempCar = filterCarsByThreshold(rTempCars, rTempTime);
+        // find the right car removing the ones not validating thresholds
+        rTempCar = _.find(rTempCars, (c) => { 
+            return c.outOfBounds == false && (c.startTime == 0 || ((rTempTime - c.currTime < rTimeCutoffMax) && (rTempTime - c.currTime > rTimeCutoffMin)));
+        });
     }
 
     if (rTempCar == null) {
@@ -96,18 +98,14 @@ const nextLane = (currLane) => {
     return rLaneOrder[(rLaneOrder.indexOf(currLane) + 1) % rLaneOrder.length];
 };
 
-const filterCarsByThreshold = (cars, currTime) => {
-    return _.find(cars, (c) => { 
-        return c.outOfBounds == false && (c.startTime == 0 || ((currTime - c.currTime < rTimeCutoffMax) && (currTime - c.currTime > rTimeCutoffMin)));
-    });
-};
-
-const markCarsOutOfBounds = () => {
+const checkCars = () => {
     if (_.every(rCars, (c) => { return c.outOfBounds || c.lapCount == 4; })) {
         // race finished, stop task
         clearInterval(checkTask);
         return;
     }
+
+    // check cars over max time limit and set them as out
     var rCurrTime = new Date().getTime();
     _.each(_.filter(rCars, (c) => { 
         return c.startTime > 0 && (rCurrTime - c.currTime) > rTimeCutoffMax; 
