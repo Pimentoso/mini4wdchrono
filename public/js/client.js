@@ -4,6 +4,7 @@
 
   let socket = window.io.connect('localhost:3000');
 
+  const debugMode = true;
   const titleListening = $('#title-listening');
   const titleSuccess = $('#title-success');
   const buttonStart = $('#button-start');
@@ -28,25 +29,22 @@
     chronoInit(mancheList[currManche][currRound]);
   };
 
-  const addLap = (lane, lapTimeMillis) => {
-    // called from chrono.js
-    $('#laps' + lane).append('<li>' + (lapTimeMillis/1000) + '</li>'); 
-  };
-
   // ==========================================================================
   // ==== handle interface buttons
 
   buttonStart.on('click', (e) => {
-    if (!boardConnected) 
+    if (!boardConnected && !debugMode) {
+      console.log('Error: board not connected');
       return;
+    }
 
     // socket.emit('start', true);
     lapList0.empty();
     lapList0.append('<li>' + (playerList[mancheList[currManche][currRound][0]] || '-') + '</li>'); 
     lapList1.empty();
-    lapList0.append('<li>' + (playerList[mancheList[currManche][currRound][1]] || '-') + '</li>'); 
+    lapList1.append('<li>' + (playerList[mancheList[currManche][currRound][1]] || '-') + '</li>'); 
     lapList2.empty();
-    lapList0.append('<li>' + (playerList[mancheList[currManche][currRound][2]] || '-') + '</li>'); 
+    lapList2.append('<li>' + (playerList[mancheList[currManche][currRound][2]] || '-') + '</li>'); 
     init();
   });
 
@@ -54,18 +52,15 @@
   document.onkeydown = (e) => {
     if (e.keyCode == 49 || e.keyCode == 97) {
       // pressed 1
-      currLap = chronoAddLap(0);
-      addLap(currLap.lane, currLap.time);
+      chronoAddLap(0);
     }
     else if (e.keyCode == 50 || e.keyCode == 98) {
       // pressed 2
-      currLap = chronoAddLap(1);
-      addLap(currLap.lane, currLap.time);
+      chronoAddLap(1);
     }
     else if (e.keyCode == 51 || e.keyCode == 99) {
       // pressed 3
-      currLap = chronoAddLap(2);
-      addLap(currLap.lane, currLap.time);
+      chronoAddLap(2);
     }
   };
 
@@ -89,20 +84,34 @@
 
   socket.on('s1', (obj) => {
     if (obj == 0) {
-      currLap = chronoAddLap(0);
-      addLap(currLap.lane, currLap.time);
+      chronoAddLap(0);
     }
   });
   socket.on('s2', (obj) => {
     if (obj == 0) {
-      currLap = chronoAddLap(1);
-      addLap(currLap.lane, currLap.time);
+      chronoAddLap(1);
     }
   });
   socket.on('s3', (obj) => {
     if (obj == 0) {
-      currLap = chronoAddLap(2);
-      addLap(currLap.lane, currLap.time);
+      chronoAddLap(2);
     }
   });
 })();
+
+const addLap = (car) => {
+  var text = '';
+  if (car.lapCount == 1) {
+    text = 'START';
+  }
+  else if (car.outOfBounds) {
+    text = (car.totalTime/1000) + ' OUT';
+  }
+  else if (car.lapCount == 4) {
+    text = (car.totalTime/1000) + ' FINISH';
+  }
+  else {
+    text = (car.currTime - car.startTime)/1000;
+  }
+  $('#laps' + car.startLane).append('<li>' + text + '</li>'); 
+};

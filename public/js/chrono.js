@@ -9,40 +9,40 @@ var rTimeCutoffMin = 0; // min lap cutoff
 var rTimeCutoffMax = 0; // max lap cutoff
 
 const chronoInit = (playerIds) => {
-    rTimeCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1-rTimeThreshold);
-    rTimeCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1+rTimeThreshold);
+    rTimeCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1-rTimeThreshold) * 1000;
+    rTimeCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1+rTimeThreshold) * 1000;
     rCar0 = {
-        playerId = playerIds[0],
-        startLane = 0,
-        nextLane = 0,
-        lapCount = 0,
-        startTime = 0,
-        currTime = 0,
-        endTime = 0,
-        totalTime = 0,
-        outOfBounds = false
+        playerId: playerIds[0],
+        startLane: 0,
+        nextLane: 0,
+        lapCount: 0,
+        startTime: 0,
+        currTime: 0,
+        endTime: 0,
+        totalTime: 0,
+        outOfBounds: false
     };
     rCar1 = {
-        playerId = playerIds[1],
-        startLane = 1,
-        nextLane = 1,
-        lapCount = 0,
-        startTime = 0,
-        currTime = 0,
-        endTime = 0,
-        totalTime = 0,
-        outOfBounds = false
+        playerId: playerIds[1],
+        startLane: 1,
+        nextLane: 1,
+        lapCount: 0,
+        startTime: 0,
+        currTime: 0,
+        endTime: 0,
+        totalTime: 0,
+        outOfBounds: false
     };
     rCar2 = {
-        playerId = playerIds[2],
-        startLane = 2,
-        nextLane = 2,
-        lapCount = 0,
-        startTime = 0,
-        currTime = 0,
-        endTime = 0,
-        totalTime = 0,
-        outOfBounds = false
+        playerId: playerIds[2],
+        startLane: 2,
+        nextLane: 2,
+        lapCount: 0,
+        startTime: 0,
+        currTime: 0,
+        endTime: 0,
+        totalTime: 0,
+        outOfBounds: false
     };
     rCars = [rCar0, rCar1, rCar2];
 };
@@ -50,20 +50,29 @@ const chronoInit = (playerIds) => {
 // TODO ping function to stop race if no one finishes
 
 const chronoAddLap = (currLane) => {
+    // debugger;
     var rTempTime = new Date().getTime();
-    var rTempCars = _.filter(rCars, (c) => { currLane == c.nextLane });
-    var rTempCar, rInfo;
+    var rTempCars = _.filter(rCars, (c) => { 
+        return c.outOfBounds == false && currLane == c.nextLane; 
+    });
+    var rTempCar;
     if (_.size(rTempCars) == 1) {
-        rTempCar = rTempCars[0];
+        if (rTempCars[0].outOfBounds == false) {
+            rTempCar = rTempCars[0];
+        }
     }
     else {
-        markCarsOutOfBounds(rTempCars, rTempTime);
+        // markCarsOutOfBounds(rTempCars, rTempTime);
         rTempCar = filterCarsByThreshold(rTempCars, rTempTime);
     }
 
+    if (rTempCar == null) {
+        console.log('Error: no valid car for this signal');
+        return;
+    }
+
     // handle the car
-    rInfo = {};
-    if (rTempCar.lapCount < 5) {
+    if (rTempCar.lapCount < 4) {
         if (rTempCar.lapCount == 0) {
             // start
             rTempCar.startTime = rTempTime;
@@ -76,28 +85,26 @@ const chronoAddLap = (currLane) => {
             rTempCar.endTime = rTempTime;
             rTempCar.totalTime = rTempCar.endTime - rTempCar.startTime;
         }
-
-        rInfo.lane = currLane;
-        rInfo.time = rTempCar.currTime - rTempCar.startTime;
+        addLap(rTempCar);
     }
-    return rInfo;
 };
 
 const nextLane = (currLane) => {
-    rLaneOrder[(rLaneOrder.indexOf(currLane) + 1) % rLaneOrder.length];
+    return rLaneOrder[(rLaneOrder.indexOf(currLane) + 1) % rLaneOrder.length];
 };
 
 const filterCarsByThreshold = (cars, currTime) => {
     return _.find(cars, (c) => { 
-        (currTime - c.currTime > rTimeCutoffMax) && (currTime - c.currTime < rTimeCutoffMin);
+        return c.outOfBounds == false && (c.startTime == 0 || ((currTime - c.currTime < rTimeCutoffMax) && (currTime - c.currTime > rTimeCutoffMin)));
     });
 };
 
 const markCarsOutOfBounds = (cars, currTime) => {
-    _.each(_.filter(cars, (c) => { currTime - c.currTime > rTimeCutoffMax; }), (c) => {
+    _.each(_.filter(cars, (c) => { 
+        return c.startTime > 0 && (currTime - c.currTime) > rTimeCutoffMax; 
+    }), (c) => {
         c.totalTime = 99999;
         c.outOfBounds = true;
-        addLap(c.startLane, 99999);
+        addLap(c);
     });
 };
-
