@@ -3,7 +3,6 @@
   'use strict';
 
   const j5 = require('johnny-five');
-  // const temporal = require('temporal');
   var connected = false;
   var led1, led2, led3, sensor1, sensor2, sensor3, piezo;
   var pingTimer;

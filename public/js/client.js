@@ -21,7 +21,6 @@
   var boardConnected = false;
   var currManche = 0;
   var currRound = 0;
-  var currLap;
 
   const init = () => {
     currManche = 0;
@@ -49,20 +48,22 @@
   });
 
   // keyboard shortcuts for debug
-  document.onkeydown = (e) => {
-    if (e.keyCode == 49 || e.keyCode == 97) {
-      // pressed 1
-      chronoAddLap(0);
-    }
-    else if (e.keyCode == 50 || e.keyCode == 98) {
-      // pressed 2
-      chronoAddLap(1);
-    }
-    else if (e.keyCode == 51 || e.keyCode == 99) {
-      // pressed 3
-      chronoAddLap(2);
-    }
-  };
+  if (debugMode) {
+    document.onkeydown = (e) => {
+      if (e.keyCode == 49 || e.keyCode == 97) {
+        // pressed 1
+        chronoAddLap(0);
+      }
+      else if (e.keyCode == 50 || e.keyCode == 98) {
+        // pressed 2
+        chronoAddLap(1);
+      }
+      else if (e.keyCode == 51 || e.keyCode == 99) {
+        // pressed 3
+        chronoAddLap(2);
+      }
+    };
+  }
 
   // ==========================================================================
   // ==== listen to arduino events
@@ -98,6 +99,9 @@
     }
   });
 })();
+
+// ==========================================================================
+// ==== write to interface
 
 const addLap = (car) => {
   var text = '';
