@@ -7,6 +7,7 @@ var rTimeThreshold = 0.4; // TODO from interface
 var rSpeedThreshold = 6; // speed in m/s to calculate cutoff
 var rTimeCutoffMin = 0; // min lap cutoff
 var rTimeCutoffMax = 0; // max lap cutoff
+var checkTask;
 
 const chronoInit = (playerIds) => {
     rTimeCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1-rTimeThreshold) * 1000;
@@ -45,6 +46,8 @@ const chronoInit = (playerIds) => {
         outOfBounds: false
     };
     rCars = [rCar0, rCar1, rCar2];
+
+    checkTask = setInterval(markCarsOutOfBounds, 1000);
 };
 
 // TODO ping function to stop race if no one finishes
@@ -99,9 +102,15 @@ const filterCarsByThreshold = (cars, currTime) => {
     });
 };
 
-const markCarsOutOfBounds = (cars, currTime) => {
-    _.each(_.filter(cars, (c) => { 
-        return c.startTime > 0 && (currTime - c.currTime) > rTimeCutoffMax; 
+const markCarsOutOfBounds = () => {
+    if (_.every(rCars, (c) => { return c.outOfBounds || c.lapCount == 4; })) {
+        // race finished, stop task
+        clearInterval(checkTask);
+        return;
+    }
+    var rCurrTime = new Date().getTime();
+    _.each(_.filter(rCars, (c) => { 
+        return c.startTime > 0 && (rCurrTime - c.currTime) > rTimeCutoffMax; 
     }), (c) => {
         c.totalTime = 99999;
         c.outOfBounds = true;

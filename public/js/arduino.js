@@ -5,7 +5,7 @@
   const j5 = require('johnny-five');
   var connected = false;
   var led1, led2, led3, sensor1, sensor2, sensor3, piezo;
-  var pingTimer;
+  var pingTask;
 
   module.exports = (socket) => {
     const board = new j5.Board();
@@ -13,7 +13,7 @@
     board.on('ready', () => {
 
       // ==== ping board_ready event every 3 sec
-      pingTimer = setInterval(function() { 
+      pingTask = setInterval(function() { 
         if (connected) {
           console.log('ping');
           socket.emit('board_ready', true);
@@ -47,7 +47,7 @@
       led2.stop().off();
       led3.stop().off();
       piezo.noTone();
-      clearInterval(pingTimer);
+      clearInterval(pingTask);
     });
 
     socket.sockets.on('connection', (socket) => {

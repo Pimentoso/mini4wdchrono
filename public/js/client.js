@@ -105,11 +105,11 @@
 
 const addLap = (car) => {
   var text = '';
-  if (car.lapCount == 1) {
-    text = 'START';
-  }
-  else if (car.outOfBounds) {
+  if (car.outOfBounds) {
     text = (car.totalTime/1000) + ' OUT';
+  }
+  else if (car.lapCount == 1) {
+    text = 'START';
   }
   else if (car.lapCount == 4) {
     text = (car.totalTime/1000) + ' FINISH';
