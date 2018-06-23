@@ -34,9 +34,35 @@
     </div>
 
     <div class="container">
-      <button class="button is-primary is-medium" id="button-start">
-        <span>restart</span>
-      </button>
+
+      <label class="label">Load track info</label>
+      <div class="field has-addons">
+        <div class="control">
+          <input id="js-track-code" class="input" type="text" placeholder="Insert code">
+        </div>
+        <div class="control">
+          <a id="js-load-track" class="button is-info">
+            Load
+          </a>
+        </div>
+      </div>
+
+      <label class="label">Load tournament</label>
+      <div class="field has-addons">
+        <div class="control">
+          <input id="js-tournament-code" class="input" type="text" placeholder="Insert code">
+        </div>
+        <div class="control">
+          <a id="js-load-tournament" class="button is-info">
+            Load
+          </a>
+        </div>
+      </div>
+
+      <button class="button is-primary is-large" id="button-start">
+          <span>START</span>
+        </button>
+
     </div>
   </section>
 

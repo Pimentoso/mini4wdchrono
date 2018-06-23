@@ -65,6 +65,17 @@
     };
   }
 
+  $('#js-load-track').on('click', (e) => {
+    var code = $('#js-track-code').val();
+    $.getJSON('https://mini4wd-track-editor.pimentoso.com/api/track/' + code)
+    .done(function(obj) {
+      console.log(obj);
+    })
+    .fail(function() {
+      // alert("error");
+    });
+  });
+
   // ==========================================================================
   // ==== listen to arduino events
 
