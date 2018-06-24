@@ -1,10 +1,10 @@
 'use strict';
 
 var rCar0 = {}, rCar1 = {}, rCar2 = {}, rCars = []; 
-var rLaneOrder = [0,1,2]; // TODO from API
-var rTrackLength = 150; // TODO from API
+var rLaneOrder = [0,1,2];
+var rTrackLength = 100;
 var rTimeThreshold = 0.4; // TODO from interface
-var rSpeedThreshold = 6; // speed in m/s to calculate cutoff
+var rSpeedThreshold = 5; // speed in m/s to calculate cutoff
 var rTimeCutoffMin = 0; // min lap cutoff
 var rTimeCutoffMax = 0; // max lap cutoff
 var checkTask;

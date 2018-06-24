@@ -73,12 +73,10 @@
   // load track info from API
   $('#js-load-track').on('click', (e) => {
     var code = $('#js-input-track-code').val();
-    $('#js-input-track-code').removeClass('is-success');
     $('#js-input-track-code').removeClass('is-danger');
     $.getJSON('https://mini4wd-track-editor.pimentoso.com/api/track/' + code)
     .done((obj) => {
       currTrack = obj;
-      $('#js-input-track-code').addClass('is-success');
       $('#tag-track-status').removeClass('is-danger');
       $('#tag-track-status').addClass('is-success');
       $('#tag-track-status').text(obj.code);
@@ -98,12 +96,10 @@
   // load tournament info from API
   $('#js-load-tournament').on('click', (e) => {
     var code = $('#js-input-tournament-code').val();
-    $('#js-input-tournament-code').removeClass('is-success');
     $('#js-input-tournament-code').removeClass('is-danger');
     $.getJSON('https://mini4wd-tournament.pimentoso.com/api/tournament/' + code)
     .done((obj) => {
       currTournament = obj;
-      $('#js-input-tournament-code').addClass('is-success');
       $('#tag-tournament-status').removeClass('is-danger');
       $('#tag-tournament-status').addClass('is-success');
       $('#tag-tournament-status').text(obj.code);
