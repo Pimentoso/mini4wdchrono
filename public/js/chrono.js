@@ -9,8 +9,10 @@ var rTimeCutoffMin = 0; // min lap cutoff
 var rTimeCutoffMax = 0; // max lap cutoff
 var checkTask;
 
-const chronoInit = (playerIds) => {
+const chronoInit = (playerIds, track) => {
     // cutoff time calculation
+    rTrackLength = track.length;
+    rLaneOrder = track.order;
     rTimeCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1-rTimeThreshold) * 1000;
     rTimeCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1+rTimeThreshold) * 1000;
 

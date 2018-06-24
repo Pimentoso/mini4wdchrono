@@ -5,27 +5,22 @@
   let socket = window.io.connect('localhost:3000');
 
   const debugMode = true;
-  const titleListening = $('#title-listening');
-  const titleSuccess = $('#title-success');
   const buttonStart = $('#button-start');
   const lapList0 = $('#laps0');
   const lapList1 = $('#laps1');
   const lapList2 = $('#laps2');
 
-  // FOR DEBUG
-  // import from API at https://mini4wd-tournament.pimentoso.com/
-  var playerList = ["bardotti","frati","guicciardi","landozzi","cardella","gagliardi","dardozzi","vignoli","ferri","menegatti","scopelliti","froli","foresio"];
-  var mancheList = [[[11,2,12],[-1,7,6],[8,0,5],[9,4,3],[10,1,-1]],[[1,3,0],[12,6,8],[2,5,10],[7,-1,4],[-1,9,11]],[[3,8,11],[4,6,5],[0,12,10],[-1,1,2],[7,-1,9]]];
-  // FOR DEBUG
-
   var boardConnected = false;
-  var currManche = 0;
-  var currRound = 0;
+  var currTrack, currTournament, playerList, mancheList;
+  var currManche = 0, currRound = 0;
 
   const init = () => {
+    if (currTrack == null) {
+      return;
+    }
     currManche = 0;
     currRound = 0;
-    chronoInit(mancheList[currManche][currRound]);
+    chronoInit(mancheList[currManche][currRound], currTrack);
   };
 
   // ==========================================================================
@@ -65,14 +60,65 @@
     };
   }
 
+  // tabs
+  $('.tabs a').on('click', (e) => {
+    var $this = $(e.currentTarget);
+    $('.tabs li').removeClass('is-active');
+    $this.closest('li').addClass('is-active');
+    var tab = $this.closest('li').data('tab');
+    $('div[data-tab]').hide();
+    $('div[data-tab=' + tab + ']').show();
+  });
+
+  // load track info from API
   $('#js-load-track').on('click', (e) => {
-    var code = $('#js-track-code').val();
+    var code = $('#js-input-track-code').val();
+    $('#js-input-track-code').removeClass('is-success');
+    $('#js-input-track-code').removeClass('is-danger');
     $.getJSON('https://mini4wd-track-editor.pimentoso.com/api/track/' + code)
-    .done(function(obj) {
-      console.log(obj);
+    .done((obj) => {
+      currTrack = obj;
+      $('#js-input-track-code').addClass('is-success');
+      $('#tag-track-status').removeClass('is-danger');
+      $('#tag-track-status').addClass('is-success');
+      $('#tag-track-status').text(obj.code);
     })
-    .fail(function() {
-      // alert("error");
+    .fail(() => {
+      $('#js-input-track-code').addClass('is-danger');
+      $('#tag-track-status').addClass('is-danger');
+      $('#tag-track-status').removeClass('is-success');
+      $('#tag-track-status').text('not loaded');
+      currTrack = null;
+    })
+    .always(() => {
+      showTrackDetails(currTrack);
+    });
+  });
+
+  // load tournament info from API
+  $('#js-load-tournament').on('click', (e) => {
+    var code = $('#js-input-tournament-code').val();
+    $('#js-input-tournament-code').removeClass('is-success');
+    $('#js-input-tournament-code').removeClass('is-danger');
+    $.getJSON('https://mini4wd-tournament.pimentoso.com/api/tournament/' + code)
+    .done((obj) => {
+      currTournament = obj;
+      $('#js-input-tournament-code').addClass('is-success');
+      $('#tag-tournament-status').removeClass('is-danger');
+      $('#tag-tournament-status').addClass('is-success');
+      $('#tag-tournament-status').text(obj.code);
+      playerList = obj.players;
+      mancheList = obj.manches;
+    })
+    .fail(() => {
+      $('#js-input-tournament-code').addClass('is-danger');
+      $('#tag-tournament-status').addClass('is-danger');
+      $('#tag-tournament-status').removeClass('is-success');
+      $('#tag-tournament-status').text('not loaded');
+      currTournament = null;
+    })
+    .always(() => {
+      showTournamentDetails(currTournament);
     });
   });
 
@@ -82,16 +128,15 @@
   socket.on('board_ready', (msg) => {
     console.log('board_ready');
     boardConnected = true;
-    titleListening.addClass('is-off');
-    titleSuccess.removeClass('is-off');
-    buttonStart.removeClass('is-loading');
+    $('#tag-board-status').removeClass('is-danger');
+    $('#tag-board-status').addClass('is-success');
   });
 
   socket.on('board_exit', (msg) => {
     console.log('board_exit');
     boardConnected = false;
-    titleListening.removeClass('is-off');
-    titleSuccess.addClass('is-off');
+    $('#tag-board-status').removeClass('is-success');
+    $('#tag-board-status').addClass('is-danger');
   });
 
   socket.on('s1', (obj) => {
@@ -129,4 +174,17 @@ const addLap = (car) => {
     text = (car.currTime - car.startTime)/1000;
   }
   $('#laps' + car.startLane).append('<li>' + text + '</li>'); 
+};
+
+const showTrackDetails = (o) => {
+  $('#js-track-code').text(o.code || '-');
+  $('#js-track-length').text(o.length || '-');
+  $('#js-track-changers').text(o.changers || '-');
+  $('#js-track-order').text(o.order || '-');
+};
+
+const showTournamentDetails = (o) => {
+  $('#js-tournament-code').text(o.code || '-');
+  $('#js-tournament-players').text(o.players.length || '-');
+  $('#js-tournament-manches').text(o.manches.length || '-');
 };
