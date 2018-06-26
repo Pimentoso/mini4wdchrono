@@ -7,6 +7,12 @@
 	<title>Mini4wd Chrono</title>
 
 	<link rel="stylesheet" href="css/bulma.css">
+
+	<style>
+		.has-margin-vertical {
+			margin: 10px 0px;
+		}
+	</style>	
 </head>
 
 <body>
@@ -168,15 +174,17 @@
 
 	<!-- RACE TAB -->
 	<div class="container" data-tab="race">
-		<div class="has-text-centered">
-			<p class="title">Manche <span id="curr-manche">-</span> &rarr; Round <span id="curr-round">-</span></p>
+		<div class="level has-text-centered has-text-weight-bold">
+			<span class="level-item tag is-light is-large">Manche&nbsp;<span id="curr-manche"></span></span> 
+			&nbsp;
+			<span class="level-item tag is-light is-large">Round&nbsp;<span id="curr-round"></span></span>
 		</div>
 
-		<div class="has-text-centered">
+		<div class="level has-text-centered">
 			<button class="button is-info" id="button-prev">
 				<span>&lt; Prev round</span>
 			</button>
-			<button class="button is-primary is-large" id="button-start">
+			<button class="button is-primary is-large has-text-weight-bold" id="button-start">
 				<span>START</span>
 			</button>
 			<button class="button is-info" id="button-next">
@@ -192,11 +200,20 @@
 					</header>
 					<div class="card-content">
 						<div class="content">
-							<p id="timer-lane0" class="title">0:00:000</p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
-							<br>
-							<time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
-							<ul id="laps0"></ul>
+
+							<span id="place-lane0" class="tag is-primary">2nd place</span>
+							&nbsp;
+							<span id="delay-lane0" class="tag is-danger">+0.412 sec</span>
+							<span id="timer-lane0" class="is-size-3 is-block has-text-weight-bold has-margin-vertical">0:000</span>
+							<span id="lap-lane0" class="tag is-light">lap 1</span>
+							&nbsp;
+							<span id="speed-lane0" class="tag is-light">4.85 m/s</span>
+
+							<ul id="laps-lane0">
+								<li>0:07:330</li>
+								<li>0:07:330</li>
+								<li>0:07:330</li>
+							</ul>
 						</div>
 					</div>
 				</div>
@@ -208,11 +225,21 @@
 					</header>
 					<div class="card-content">
 						<div class="content">
-							<p id="timer-lane1" class="title">0:00:000</p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
-							<br>
-							<time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
-							<ul id="laps0"></ul>
+
+							<span class="tag is-light">started</span>
+							&nbsp;
+							<span class="tag is-light">+0.000 sec</span>
+							<span id="timer-lane0" class="is-size-3 is-block has-text-weight-bold has-margin-vertical">0:000</span>
+							<span id="lap-lane0" class="tag is-light">lap 1</span>
+							&nbsp;
+							<span id="speed-lane0" class="tag is-light">4.85 m/s</span>
+
+							<ul id="laps-lane0">
+								<li>0:07:330</li>
+								<li>0:07:330</li>
+								<li>0:07:330</li>
+							</ul>
+
 						</div>
 					</div>
 				</div>
@@ -224,11 +251,21 @@
 					</header>
 					<div class="card-content">
 						<div class="content">
-							<p id="timer-lane2" class="title">0:00:000</p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
-							<br>
-							<time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
-							<ul id="laps0"></ul>
+							
+							<span class="tag is-light">started</span>
+							&nbsp;
+							<span class="tag is-light">+0.000 sec</span>
+							<span id="timer-lane0" class="is-size-3 is-block has-text-weight-bold has-margin-vertical">0:000</span>
+							<span id="lap-lane0" class="tag is-light">lap 1</span>
+							&nbsp;
+							<span id="speed-lane0" class="tag is-light">4.85 m/s</span>
+
+							<ul id="laps-lane0">
+								<li>0:07:330</li>
+								<li>0:07:330</li>
+								<li>0:07:330</li>
+							</ul>
+
 						</div>
 					</div>
 				</div>
