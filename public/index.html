@@ -2,202 +2,239 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
+	<meta charset="UTF-8">
 
-  <title>Mini4wd Chrono</title>
+	<title>Mini4wd Chrono</title>
 
-  <link rel="stylesheet" href="css/bulma.css">
+	<link rel="stylesheet" href="css/bulma.css">
 </head>
 
 <body>
 
-  <nav class="navbar is-transparent">
-    <div class="navbar-brand">
-      <a class="navbar-item" href="https://bulma.io">
-        <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
-      </a>
-    </div>
+	<!-- NAVBAR -->
+	<nav class="navbar is-transparent">
+		<div class="navbar-brand">
+			<a class="navbar-item" href="https://bulma.io">
+				<img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+			</a>
+		</div>
 
-    <div class="navbar-menu">
-      <div class="navbar-end">
-        <div class="navbar-item">
-          <div class="field is-grouped is-grouped-multiline">
-            <div class="control">
-              <div class="tags has-addons">
-                <span class="tag">Board status</span>
-                <span id="tag-board-status" class="tag is-danger is-uppercase">not connected</span>
-              </div>
-            </div>
-            <div class="control">
-              <div class="tags has-addons">
-                <span class="tag">Track</span>
-                <span id="tag-track-status" class="tag is-danger is-uppercase">not loaded</span>
-              </div>
-            </div>
-            <div class="control">
-              <div class="tags has-addons">
-                <span class="tag">Tournament</span>
-                <span id="tag-tournament-status" class="tag is-danger is-uppercase">not loaded</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </nav>
+		<div class="navbar-menu">
+			<div class="navbar-end">
+				<div class="navbar-item">
+					<div class="field is-grouped is-grouped-multiline">
+						<div class="control">
+							<div class="tags has-addons">
+								<span class="tag">Board status</span>
+								<span id="tag-board-status" class="tag is-danger is-uppercase">not connected</span>
+							</div>
+						</div>
+						<div class="control">
+							<div class="tags has-addons">
+								<span class="tag">Track</span>
+								<span id="tag-track-status" class="tag is-danger is-uppercase">not loaded</span>
+							</div>
+						</div>
+						<div class="control">
+							<div class="tags has-addons">
+								<span class="tag">Tournament</span>
+								<span id="tag-tournament-status" class="tag is-danger is-uppercase">not loaded</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</nav>
 
-  <section class="section">
-    <div class="tabs is-centered is-boxed">
-      <ul>
-        <li class="is-active" data-tab="race">
-          <a>
-            <span>Race view</span>
-          </a>
-        </li>
-        <li data-tab="setup">
-          <a>
-            <span>Setup</span>
-          </a>
-        </li>
-        <li>
-          <a>
-            <span>Player list</span>
-          </a>
-        </li>
-        <li>
-          <a>
-            <span>Manches list</span>
-          </a>
-        </li>
-      </ul>
-    </div>
-  </section>
+	<!-- TABS -->
+	<section class="section">
+		<div class="tabs is-centered is-boxed">
+			<ul>
+				<li class="is-active" data-tab="race">
+					<a>
+						<span>Race view</span>
+					</a>
+				</li>
+				<li data-tab="setup">
+					<a>
+						<span>Setup</span>
+					</a>
+				</li>
+				<li>
+					<a>
+						<span>Player list</span>
+					</a>
+				</li>
+				<li>
+					<a>
+						<span>Manches list</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</section>
 
-  <div class="container" data-tab="setup" style="display: none;">
+	<!-- SETUP TAB -->
+	<div class="container" data-tab="setup" style="display: none;">
 
-    <div class="columns">
-      <div class="column">
-        <nav class="panel">
-          <p class="panel-heading">
-            Load track
-          </p>
-          <div class="panel-block">
-            <div class="field has-addons">
-              <div class="control">
-                <input id="js-input-track-code" class="input" type="text" placeholder="Insert code" value="2XJAYH">
-              </div>
-              <div class="control">
-                <a id="js-load-track" class="button is-info">
-                  Load
-                </a>
-              </div>
-            </div>
-          </div>
-          <a class="panel-block is-uppercase">
-            <span>Code: </span>
-            <span id="js-track-code" class="is-pulled-right">-</span>
-          </a>
-          <a class="panel-block is-uppercase">
-            Length:
-            <span id="js-track-length">-</span> m
-          </a>
-          <a class="panel-block is-uppercase">
-            Changers:
-            <span id="js-track-changers">-</span>
-          </a>
-          <a class="panel-block is-uppercase">
-            Lane order:
-            <span id="js-track-order">-</span>
-          </a>
-        </nav>
-      </div>
+		<div class="columns">
+			<div class="column">
+				<nav class="panel">
+					<p class="panel-heading">
+						Load track
+					</p>
+					<div class="panel-block">
+						<div class="field has-addons">
+							<div class="control">
+								<input id="js-input-track-code" class="input" type="text" placeholder="Insert code" value="2XJAYH">
+							</div>
+							<div class="control">
+								<a id="js-load-track" class="button is-info">
+									Load
+								</a>
+							</div>
+						</div>
+					</div>
+					<a class="panel-block is-uppercase">
+						<span>Code: </span>
+						<span id="js-track-code" class="is-pulled-right">-</span>
+					</a>
+					<a class="panel-block is-uppercase">
+						Length:
+						<span id="js-track-length">-</span> m
+					</a>
+					<a class="panel-block is-uppercase">
+						Changers:
+						<span id="js-track-changers">-</span>
+					</a>
+					<a class="panel-block is-uppercase">
+						Lane order:
+						<span id="js-track-order">-</span>
+					</a>
+				</nav>
+			</div>
 
-      <div class="column">
-        <nav class="panel">
-          <p class="panel-heading">
-            Load tournament
-          </p>
-          <div class="panel-block">
-            <div class="field has-addons">
-              <div class="control">
-                <input id="js-input-tournament-code" class="input" type="text" placeholder="Insert code" value="DC249J">
-              </div>
-              <div class="control">
-                <a id="js-load-tournament" class="button is-info">
-                  Load
-                </a>
-              </div>
-            </div>
-          </div>
-          <a class="panel-block">
-            Code:
-            <span id="js-tournament-code">-</span>
-          </a>
-          <a class="panel-block">
-            Players:
-            <span id="js-tournament-players">-</span>
-          </a>
-          <a class="panel-block">
-            Manches:
-            <span id="js-tournament-manches">-</span>
-          </a>
-        </nav>
-      </div>
+			<div class="column">
+				<nav class="panel">
+					<p class="panel-heading">
+						Load tournament
+					</p>
+					<div class="panel-block">
+						<div class="field has-addons">
+							<div class="control">
+								<input id="js-input-tournament-code" class="input" type="text" placeholder="Insert code" value="DC249J">
+							</div>
+							<div class="control">
+								<a id="js-load-tournament" class="button is-info">
+									Load
+								</a>
+							</div>
+						</div>
+					</div>
+					<a class="panel-block">
+						Code:
+						<span id="js-tournament-code">-</span>
+					</a>
+					<a class="panel-block">
+						Players:
+						<span id="js-tournament-players">-</span>
+					</a>
+					<a class="panel-block">
+						Manches:
+						<span id="js-tournament-manches">-</span>
+					</a>
+				</nav>
+			</div>
 
-      <div class="column">
-        <nav class="panel">
-          <p class="panel-heading">
-            Settings
-          </p>
-          <a class="panel-block">
-            Speed:
-            <span id="js-settings-speed">5</span> m/s
-          </a>
-          <a class="panel-block">
-            Threshold:
-            <span id="js-settings-threshold">40</span> %
-          </a>
-        </nav>
-      </div>
-    </div>
+			<div class="column">
+				<nav class="panel">
+					<p class="panel-heading">
+						Settings
+					</p>
+					<a class="panel-block">
+						Speed:
+						<span id="js-settings-speed">5</span> m/s
+					</a>
+					<a class="panel-block">
+						Threshold:
+						<span id="js-settings-threshold">40</span> %
+					</a>
+				</nav>
+			</div>
+		</div>
 
-  </div>
+	</div>
 
-  <div class="container" data-tab="race">
+	<!-- RACE TAB -->
+	<div class="container" data-tab="race">
+		<div class="has-text-centered">
+			<p class="title">Manche <span id="curr-manche">-</span> &rarr; Round <span id="curr-round">-</span></p>
+		</div>
 
-    <div class="has-text-centered">
-      <button class="button is-info" id="button-prev">
-        <span>&lt; Prev round</span>
-      </button>
-      <button class="button is-primary is-large" id="button-start">
-        <span>START</span>
-      </button>
-      <button class="button is-info" id="button-next">
-        <span>Next round &gt;</span>
-      </button>
-    </div>
+		<div class="has-text-centered">
+			<button class="button is-info" id="button-prev">
+				<span>&lt; Prev round</span>
+			</button>
+			<button class="button is-primary is-large" id="button-start">
+				<span>START</span>
+			</button>
+			<button class="button is-info" id="button-next">
+				<span>Next round &gt;</span>
+			</button>
+		</div>
 
-    <div class="columns">
-      <div class="column">
-        <div class="box has-text-centered is-uppercase">
-          <h1 class="subtitle is-3">LANE 1</h1>
-          <ul id="laps0"></ul>
-        </div>
-      </div>
-      <div class="column">
-        <div class="box has-text-centered is-uppercase">
-          <h1 class="subtitle is-3">LANE 2</h1>
-          <ul id="laps1"></ul>
-        </div>
-      </div>
-      <div class="column">
-        <div class="box has-text-centered is-uppercase">
-          <h1 class="subtitle is-3">LANE 3</h1>
-          <ul id="laps2"></ul>
-        </div>
-      </div>
-    </div>
-  </div>
+		<div class="columns">
+			<div class="column">
+				<div class="card has-text-centered">
+					<header class="card-header">
+						<p class="card-header-title">Lane 1 -&nbsp;<span id="name-lane0" class="is-uppercase"></span></p>
+					</header>
+					<div class="card-content">
+						<div class="content">
+							<p id="timer-lane0" class="title">0:00:000</p>
+							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
+							<br>
+							<time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+							<ul id="laps0"></ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="column">
+				<div class="card has-text-centered">
+					<header class="card-header">
+						<p class="card-header-title">Lane 2 -&nbsp; <span id="name-lane1" class="is-uppercase"></span></p>
+					</header>
+					<div class="card-content">
+						<div class="content">
+							<p id="timer-lane1" class="title">0:00:000</p>
+							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
+							<br>
+							<time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+							<ul id="laps0"></ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="column">
+				<div class="card has-text-centered">
+					<header class="card-header">
+						<p class="card-header-title">Lane 3 -&nbsp; <span id="name-lane2" class="is-uppercase"></span></p>
+					</header>
+					<div class="card-content">
+						<div class="content">
+							<p id="timer-lane2" class="title">0:00:000</p>
+							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
+							<br>
+							<time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+							<ul id="laps0"></ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 </body>
 

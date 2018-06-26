@@ -19,9 +19,36 @@
       return;
     }
     currManche = 0;
-    currRound = 0;
-    chronoInit(mancheList[currManche][currRound], currTrack);
+		currRound = 0;
+		chronoInit(mancheList[currManche][currRound], currTrack);
+		guiInit();
   };
+
+	const guiInit = () => {
+		$('#curr-manche').text(currManche+1);
+		$('#curr-round').text(currRound+1);
+	
+		$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '-');
+		$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '-');
+		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '-');
+	
+		lapList0.empty();
+		lapList1.empty();
+		lapList2.empty();
+	};
+
+	const showTrackDetails = (o) => {
+		$('#js-track-code').text(o.code || '-');
+		$('#js-track-length').text(o.length || '-');
+		$('#js-track-changers').text(o.changers || '-');
+		$('#js-track-order').text(o.order || '-');
+	};
+	
+	const showTournamentDetails = (o) => {
+		$('#js-tournament-code').text(o.code || '-');
+		$('#js-tournament-players').text(o.players.length || '-');
+		$('#js-tournament-manches').text(o.manches.length || '-');
+	};
 
   // ==========================================================================
   // ==== handle interface buttons
@@ -33,12 +60,6 @@
     }
 
     // socket.emit('start', true);
-    lapList0.empty();
-    lapList0.append('<li>' + (playerList[mancheList[currManche][currRound][0]] || '-') + '</li>'); 
-    lapList1.empty();
-    lapList1.append('<li>' + (playerList[mancheList[currManche][currRound][1]] || '-') + '</li>'); 
-    lapList2.empty();
-    lapList2.append('<li>' + (playerList[mancheList[currManche][currRound][2]] || '-') + '</li>'); 
     init();
   });
 
@@ -170,17 +191,4 @@ const addLap = (car) => {
     text = (car.currTime - car.startTime)/1000;
   }
   $('#laps' + car.startLane).append('<li>' + text + '</li>'); 
-};
-
-const showTrackDetails = (o) => {
-  $('#js-track-code').text(o.code || '-');
-  $('#js-track-length').text(o.length || '-');
-  $('#js-track-changers').text(o.changers || '-');
-  $('#js-track-order').text(o.order || '-');
-};
-
-const showTournamentDetails = (o) => {
-  $('#js-tournament-code').text(o.code || '-');
-  $('#js-tournament-players').text(o.players.length || '-');
-  $('#js-tournament-manches').text(o.manches.length || '-');
 };
