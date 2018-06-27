@@ -200,9 +200,11 @@ const drawRace = (cars) => {
 			$('#lap-lane' + i).text('lap ' + car.lapCount);
 		}
 
-
 		// TODO INTERTEMPI
-		// $('#laps-lane' + i).append('<li>' + i + '</li>');
+		$('#laps-lane' + i).empty();
+		_.each(car.splitTimes, (t) => { 
+			$('#laps-lane' + i).append('<li>' + (t/1000).toFixed(3) + '</li>');
+		});
 		
 		// place
 		if (car.outOfBounds) {
@@ -230,14 +232,10 @@ const drawRace = (cars) => {
 		// timer
 		if (car.outOfBounds) {
 			$('#timer-lane' + i).addClass('is-danger');
-			$('#timer-lane' + i).text(car.totalTime/1000);
 		}
 		else if (car.lapCount == 4) {
 			$('#timer-lane' + i).addClass('is-success');
-			$('#timer-lane' + i).text(car.totalTime/1000);
 		}
-		else {
-			$('#timer-lane' + i).text(car.partialTime/1000);
-		}
+		$('#timer-lane' + i).text((car.currTime/1000).toFixed(3));
 	});
 };

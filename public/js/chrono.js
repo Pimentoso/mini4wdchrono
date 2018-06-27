@@ -27,11 +27,11 @@ const chronoInit = (playerIds, track) => {
 		startLane: 0,
 		nextLane: 0,
 		lapCount: 0,
-		startTime: 0, // start time UNIX TIMESTAMP
-		currTime: 0, // current lap time  UNIX TIMESTAMP
-		endTime: 0, // finish time UNIX TIMESTAMP
-		partialTime: 0, // current lap time millis
-		totalTime: 0, // finish time millis
+		startTimestamp: 0, // start time UNIX TIMESTAMP
+		currTimestamp: 0, // current lap time  UNIX TIMESTAMP
+		endTimestamp: 0, // finish time UNIX TIMESTAMP
+		currTime: 0, // current lap time millis
+		splitTimes: [],
 		position: 0,
 		delayFromFirst: 0,
 		speed: 0,
@@ -42,11 +42,11 @@ const chronoInit = (playerIds, track) => {
 		startLane: 1,
 		nextLane: 1,
 		lapCount: 0,
-		startTime: 0,
+		startTimestamp: 0,
+		currTimestamp: 0,
+		endTimestamp: 0,
 		currTime: 0,
-		endTime: 0,
-		partialTime: 0,
-		totalTime: 0,
+		splitTimes: [],
 		position: 0,
 		delayFromFirst: 0,
 		speed: 0,
@@ -57,11 +57,11 @@ const chronoInit = (playerIds, track) => {
 		startLane: 2,
 		nextLane: 2,
 		lapCount: 0,
-		startTime: 0,
+		startTimestamp: 0,
+		currTimestamp: 0,
+		endTimestamp: 0,
 		currTime: 0,
-		endTime: 0,
-		partialTime: 0,
-		totalTime: 0,
+		splitTimes: [],
 		position: 0,
 		delayFromFirst: 0,
 		speed: 0,
@@ -77,7 +77,7 @@ const chronoInit = (playerIds, track) => {
 // method called when a sensor receives a signal
 const chronoAddLap = (currLane) => {
 	// current time in milliseconds
-	var rTempTime = new Date().getTime();
+	var timestamp = new Date().getTime();
 
 	// find all cars that may have passes under this lane sensor
 	var rTempCars = _.filter(rCars, (c) => {
@@ -86,7 +86,7 @@ const chronoAddLap = (currLane) => {
 
 	// find the correct car removing the ones not validating thresholds
 	var rTempCar = _.find(rTempCars, (c) => {
-		return c.outOfBounds == false && (c.startTime == 0 || ((rTempTime - c.currTime < rTimeCutoffMax) && (rTempTime - c.currTime > rTimeCutoffMin)));
+		return c.outOfBounds == false && (c.startTimestamp == 0 || ((timestamp - c.currTimestamp < rTimeCutoffMax) && (timestamp - c.currTimestamp > rTimeCutoffMin)));
 	});
 
 	// false sensor read
@@ -96,24 +96,24 @@ const chronoAddLap = (currLane) => {
 	}
 
 	// handle the correct car
-	calculateCar(rTempCar, rTempTime);
+	calculateCar(rTempCar, timestamp);
 };
 
 const calculateCar = (car, timestamp) => {
 	if (car.lapCount < 4) {
 		if (car.lapCount == 0) {
 			// start
-			car.startTime = timestamp;
+			car.startTimestamp = timestamp;
 		}
 		car.lapCount += 1;
 		car.nextLane = nextLane(car.nextLane);
-		car.currTime = timestamp;
-		car.partialTime = timestamp - car.startTime;
-		car.speed = (rTrackLength/3)*(car.lapCount-1)/(car.partialTime/1000);
+		car.currTimestamp = timestamp;
+		car.currTime = timestamp - car.startTimestamp;
+		car.speed = (rTrackLength/3)*(car.lapCount-1)/(car.currTime/1000);
+		car.splitTimes.push(car.currTime);
 		if (car.lapCount == 4) {
 			// finish
-			car.endTime = timestamp;
-			car.totalTime = car.partialTime;
+			car.endTimestamp = timestamp;
 		}
 		calculateRace();
 		drawRace(rCars);
@@ -122,14 +122,14 @@ const calculateCar = (car, timestamp) => {
 
 const calculateRace = () => {
 	var bestTime = 0;
-	var filteredCars = _.filter(rCars, (c) => { return c.partialTime > 0; })
-	_.each(_.sortBy(filteredCars, 'partialTime'), (car,i) => {
+	var filteredCars = _.filter(rCars, (c) => { return c.currTime > 0; })
+	_.each(_.sortBy(filteredCars, 'currTime'), (car,i) => {
 		if (i == 0) {
-			bestTime = car.partialTime;
+			bestTime = car.currTime;
 			car.delayFromFirst = 0;
 		}
 		else {
-			car.delayFromFirst = car.partialTime - bestTime;
+			car.delayFromFirst = car.currTime - bestTime;
 		}
 		car.position = i+1;
 	});
@@ -149,13 +149,12 @@ const checkCars = () => {
 	}
 
 	// check cars over max time limit and set them as out
-	var rCurrTime = new Date().getTime();
+	var timestamp = new Date().getTime();
 	var dirty = false;
 	_.each(_.filter(rCars, (c) => {
-		return c.startTime > 0 && !c.outOfBounds && (rCurrTime - c.currTime) > rTimeCutoffMax;
+		return c.startTimestamp > 0 && !c.outOfBounds && (timestamp - c.currTimestamp) > rTimeCutoffMax;
 	}), (c) => {
-		c.partialTime = 99999;
-		c.totalTime = 99999;
+		c.currTime = 99999;
 		c.outOfBounds = true;
 		dirty = true;
 	});
