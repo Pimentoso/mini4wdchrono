@@ -176,19 +176,56 @@
 // ==========================================================================
 // ==== write to interface
 
-const addLap = (car) => {
-  var text = '';
-  if (car.outOfBounds) {
-    text = (car.totalTime/1000) + ' OUT';
-  }
-  else if (car.lapCount == 1) {
-    text = 'START';
-  }
-  else if (car.lapCount == 4) {
-    text = (car.totalTime/1000) + ' FINISH';
-  }
-  else {
-    text = (car.currTime - car.startTime)/1000;
-  }
-  $('#laps' + car.startLane).append('<li>' + text + '</li>'); 
+const drawRace = (cars) => {
+	$('.js-place').removeClass('is-dark is-light is-primary');
+	$('.js-delay').removeClass('is-danger');
+	$('.js-timer').removeClass('is-danger is-success');
+
+	_.each(cars, (car,i) => { 
+		// delay
+		$('#delay-lane' + i).text('+' + (car.delayFromFirst/1000));
+		if (car.delayFromFirst > 0) {
+			$('#delay-lane' + i).addClass('is-danger');
+		}
+		
+		// lap count
+		$('#lap-lane' + i).text('lap ' + car.lapCount);
+
+		// speed
+		$('#speed-lane' + i).text(car.speed.toFixed(2) + ' m/s');
+
+		// TODO INTERTEMPI
+		// $('#laps-lane' + i).append('<li>' + i + '</li>');
+		
+		// place
+		if (car.outOfBounds) {
+			$('#place-lane' + i).text('out');
+			$('#place-lane' + i).addClass('is-dark');
+		}
+		else if (car.lapCount == 0) {
+			$('#place-lane' + i).text('waiting');
+			$('#place-lane' + i).addClass('is-light');
+		}
+		else if (car.lapCount == 1) {
+			$('#place-lane' + i).text('started');
+			$('#place-lane' + i).addClass('is-light');
+		}
+		else {
+			$('#place-lane' + i).text(car.position + ' position');
+			$('#place-lane' + i).addClass('is-primary');
+		}
+
+		// timer
+		if (car.outOfBounds) {
+			$('#timer-lane' + i).addClass('is-danger');
+			$('#timer-lane' + i).text(car.totalTime/1000);
+		}
+		else if (car.lapCount == 4) {
+			$('#timer-lane' + i).addClass('is-success');
+			$('#timer-lane' + i).text(car.totalTime/1000);
+		}
+		else {
+			$('#timer-lane' + i).text(car.partialTime/1000);
+		}
+	});
 };
