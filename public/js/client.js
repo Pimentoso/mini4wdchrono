@@ -6,9 +6,6 @@
 
   const debugMode = true;
   const buttonStart = $('#button-start');
-  const lapList0 = $('#laps0');
-  const lapList1 = $('#laps1');
-  const lapList2 = $('#laps2');
 
   var boardConnected = false;
   var currTrack, currTournament, playerList, mancheList;
@@ -16,7 +13,12 @@
 
   const init = () => {
     if (currTrack == null) {
-      return;
+			if (debugMode) {
+				currTrack = {length: 100, order: [0,2,1], code: 'DEBUG'}
+			}
+			else {
+				return;
+			}
     }
     currManche = 0;
 		currRound = 0;
@@ -31,10 +33,6 @@
 		$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '-');
 		$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '-');
 		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '-');
-	
-		lapList0.empty();
-		lapList1.empty();
-		lapList2.empty();
 	};
 
 	const showTrackDetails = (o) => {
@@ -177,22 +175,31 @@
 // ==== write to interface
 
 const drawRace = (cars) => {
-	$('.js-place').removeClass('is-dark is-light is-primary');
+	$('.js-place').removeClass('is-dark is-light is-primary is-warning');
 	$('.js-delay').removeClass('is-danger');
 	$('.js-timer').removeClass('is-danger is-success');
 
 	_.each(cars, (car,i) => { 
-		// delay
-		$('#delay-lane' + i).text('+' + (car.delayFromFirst/1000));
-		if (car.delayFromFirst > 0) {
-			$('#delay-lane' + i).addClass('is-danger');
+		// delay + speed
+		if (car.outOfBounds) {
+			$('#delay-lane' + i).text('+99.999');
+		}
+		else {
+			$('#delay-lane' + i).text('+' + (car.delayFromFirst/1000));
+			if (car.delayFromFirst > 0) {
+				$('#delay-lane' + i).addClass('is-danger');
+			}
+			$('#speed-lane' + i).text(car.speed.toFixed(2) + ' m/s');
 		}
 		
 		// lap count
-		$('#lap-lane' + i).text('lap ' + car.lapCount);
+		if (car.lapCount == 4) {
+			$('#lap-lane' + i).text('finish');
+		}
+		else {
+			$('#lap-lane' + i).text('lap ' + car.lapCount);
+		}
 
-		// speed
-		$('#speed-lane' + i).text(car.speed.toFixed(2) + ' m/s');
 
 		// TODO INTERTEMPI
 		// $('#laps-lane' + i).append('<li>' + i + '</li>');
@@ -212,7 +219,12 @@ const drawRace = (cars) => {
 		}
 		else {
 			$('#place-lane' + i).text(car.position + ' position');
-			$('#place-lane' + i).addClass('is-primary');
+			if (car.position == 1) {
+				$('#place-lane' + i).addClass('is-warning');
+			}
+			else {
+				$('#place-lane' + i).addClass('is-primary');
+			}
 		}
 
 		// timer

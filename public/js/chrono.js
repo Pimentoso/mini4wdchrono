@@ -16,6 +16,11 @@ const chronoInit = (playerIds, track) => {
 	rTimeCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold) * 1000;
 	rTimeCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold) * 1000;
 
+	console.log('track length ' + rTrackLength);
+	console.log('track order ' + rLaneOrder);
+	console.log('time cutoff min ' + rTimeCutoffMin);
+	console.log('time cutoff max ' + rTimeCutoffMax);
+
 	// init the 3 cars
 	rCar0 = {
 		playerId: playerIds[0],
@@ -66,6 +71,7 @@ const chronoInit = (playerIds, track) => {
 
 	// run checkTask every 1 second
 	rCheckTask = setInterval(checkCars, 1000);
+	drawRace(rCars);
 };
 
 // method called when a sensor receives a signal
@@ -103,7 +109,7 @@ const calculateCar = (car, timestamp) => {
 		car.nextLane = nextLane(car.nextLane);
 		car.currTime = timestamp;
 		car.partialTime = timestamp - car.startTime;
-		car.speed = (rTrackLength/3)*(car.lapCount-1)/car.partialTime;
+		car.speed = (rTrackLength/3)*(car.lapCount-1)/(car.partialTime/1000);
 		if (car.lapCount == 4) {
 			// finish
 			car.endTime = timestamp;
@@ -117,7 +123,7 @@ const calculateCar = (car, timestamp) => {
 const calculateRace = () => {
 	var bestTime = 0;
 	var filteredCars = _.filter(rCars, (c) => { return c.partialTime > 0; })
-	_each(_sort(filteredCars, 'partialTime'), (car,i) => {
+	_.each(_.sortBy(filteredCars, 'partialTime'), (car,i) => {
 		if (i == 0) {
 			bestTime = car.partialTime;
 			car.delayFromFirst = 0;
