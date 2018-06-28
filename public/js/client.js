@@ -47,6 +47,31 @@
 		$('#js-tournament-players').text(o.players.length || '-');
 		$('#js-tournament-manches').text(o.manches.length || '-');
 	};
+	
+	const showPlayerList = () => {
+		$('#tablePlayerList').empty();
+		if (playerList.length > 0) {
+			$('#tablePlayerList').append('<tr class="is-selected"><td colspan="2"><strong>' + playerList.length + ' RACERS</strong></td></tr>');
+		}
+		_.each(playerList, (name,i) => {
+			$('#tablePlayerList').append('<tr><td><strong>' + (i+1) + '</strong></td><td>' + name + '</td></tr>');
+		});
+	};
+
+	const showMancheList = () => {
+		$('#tableMancheList').empty();
+		var mancheText, playerName;
+		_.each(mancheList, (manche, index) => {
+			$('#tableMancheList').append('<tr class="is-selected"><td><strong>MANCHE ' + (index+1) + '</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>');
+			_.each(manche, (group, index) => {
+				mancheText = _.map(group, (id) => {
+					var playerName = playerList[id] || '-';
+					return '<td><strong>' + playerName + '</strong></td>'
+				}).join();
+				$('#tableMancheList').append('<tr><td>Round ' + (index+1) + '</td>' + mancheText + '</tr>');
+			});
+		});
+	};
 
   // ==========================================================================
   // ==== handle interface buttons
@@ -133,7 +158,9 @@
       currTournament = null;
     })
     .always(() => {
-      showTournamentDetails(currTournament);
+			showTournamentDetails(currTournament);
+			showPlayerList();
+			showMancheList();
     });
   });
 

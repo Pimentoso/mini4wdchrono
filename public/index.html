@@ -20,9 +20,10 @@
 	<!-- NAVBAR -->
 	<nav class="navbar is-transparent">
 		<div class="navbar-brand">
-			<a class="navbar-item" href="https://bulma.io">
-				<img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+			<a class="navbar-item" href="https://github.com/Pimentoso/mini4wdchrono" target="_blank">
+				<img src="images/logo.png" width="60" height="60">
 			</a>
+			<p class="navbar-item title">Mini4wd Chrono</p>
 		</div>
 
 		<div class="navbar-menu">
@@ -67,12 +68,12 @@
 						<span>Setup</span>
 					</a>
 				</li>
-				<li>
+				<li data-tab="players">
 					<a>
 						<span>Player list</span>
 					</a>
 				</li>
-				<li>
+				<li data-tab="manches">
 					<a>
 						<span>Manches list</span>
 					</a>
@@ -170,6 +171,18 @@
 			</div>
 		</div>
 
+	</div>
+
+	<!-- PLAYERS TAB -->
+	<div class="container" data-tab="players" style="display: none;">
+		<table id="tablePlayerList" class="table table is-bordered is-striped is-hoverable is-fullwidth">
+		</table>
+	</div>
+
+	<!-- MANCHES TAB -->
+	<div class="container" data-tab="manches" style="display: none;">
+		<table id="tableMancheList" class="table table is-bordered is-striped is-hoverable is-fullwidth">
+		</table>
 	</div>
 
 	<!-- RACE TAB -->
