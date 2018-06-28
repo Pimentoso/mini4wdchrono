@@ -1,6 +1,6 @@
 'use strict';
 
-var rCar0 = {}, rCar1 = {}, rCar2 = {}, rCars = [];
+var rCar0, rCar1, rCar2, rCars;
 var rLaneOrder = [0, 1, 2];
 var rTrackLength = 100;
 var rTimeThreshold = 0.4; // TODO from interface
@@ -8,6 +8,23 @@ var rSpeedThreshold = 5; // speed in m/s to calculate cutoff
 var rTimeCutoffMin = 0; // min lap cutoff
 var rTimeCutoffMax = 0; // max lap cutoff
 var rCheckTask;
+
+// car object template
+const carObj = {
+	playerId: 0,
+	startLane: 0,
+	nextLane: 0,
+	lapCount: 0,
+	startTimestamp: 0, // start time UNIX TIMESTAMP
+	currTimestamp: 0, // current lap time  UNIX TIMESTAMP
+	endTimestamp: 0, // finish time UNIX TIMESTAMP
+	currTime: 0, // current lap time millis
+	splitTimes: [],
+	position: 0,
+	delayFromFirst: 0,
+	speed: 0,
+	outOfBounds: false
+};
 
 const chronoInit = (playerIds, track) => {
 	// cutoff time calculation
@@ -21,52 +38,25 @@ const chronoInit = (playerIds, track) => {
 	console.log('time cutoff min ' + rTimeCutoffMin);
 	console.log('time cutoff max ' + rTimeCutoffMax);
 
-	// init the 3 cars
-	rCar0 = {
-		playerId: playerIds[0],
-		startLane: 0,
-		nextLane: 0,
-		lapCount: 0,
-		startTimestamp: 0, // start time UNIX TIMESTAMP
-		currTimestamp: 0, // current lap time  UNIX TIMESTAMP
-		endTimestamp: 0, // finish time UNIX TIMESTAMP
-		currTime: 0, // current lap time millis
-		splitTimes: [],
-		position: 0,
-		delayFromFirst: 0,
-		speed: 0,
-		outOfBounds: false
-	};
-	rCar1 = {
-		playerId: playerIds[1],
-		startLane: 1,
-		nextLane: 1,
-		lapCount: 0,
-		startTimestamp: 0,
-		currTimestamp: 0,
-		endTimestamp: 0,
-		currTime: 0,
-		splitTimes: [],
-		position: 0,
-		delayFromFirst: 0,
-		speed: 0,
-		outOfBounds: false
-	};
-	rCar2 = {
-		playerId: playerIds[2],
-		startLane: 2,
-		nextLane: 2,
-		lapCount: 0,
-		startTimestamp: 0,
-		currTimestamp: 0,
-		endTimestamp: 0,
-		currTime: 0,
-		splitTimes: [],
-		position: 0,
-		delayFromFirst: 0,
-		speed: 0,
-		outOfBounds: false
-	};
+	// init car 1
+	rCar0 = JSON.parse(JSON.stringify(carObj));
+	rcar0.playerId = playerIds[0];
+	rcar0.startLane = 0;
+	rcar0.nextLane = 0;
+
+	// init car 2
+	rCar1 = JSON.parse(JSON.stringify(carObj));
+	rcar1.playerId = playerIds[1];
+	rcar1.startLane = 1;
+	rcar1.nextLane = 1;
+
+	// init car 3
+	rCar2 = JSON.parse(JSON.stringify(carObj));
+	rcar2.playerId = playerIds[2];
+	rcar2.startLane = 2;
+	rcar2.nextLane = 2;
+
+	// car array
 	rCars = [rCar0, rCar1, rCar2];
 
 	// run checkTask every 1 second
@@ -91,7 +81,7 @@ const chronoAddLap = (currLane) => {
 
 	// false sensor read
 	if (rTempCar == null) {
-		console.log('Error: no valid car for this signal');
+		console.log('Error: no valid car for signal on lane ' + currLane);
 		return;
 	}
 

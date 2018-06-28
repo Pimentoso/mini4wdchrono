@@ -200,7 +200,7 @@ const drawRace = (cars) => {
 			$('#lap-lane' + i).text('lap ' + car.lapCount);
 		}
 
-		// TODO INTERTEMPI
+		// split times
 		$('#laps-lane' + i).empty();
 		_.each(car.splitTimes, (t) => { 
 			$('#laps-lane' + i).append('<li>' + (t/1000).toFixed(3) + '</li>');
