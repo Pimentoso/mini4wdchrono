@@ -65,7 +65,7 @@
 			$('#tableMancheList').append('<tr class="is-selected"><td><strong>MANCHE ' + (index+1) + '</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>');
 			_.each(manche, (group, index) => {
 				mancheText = _.map(group, (id) => {
-					var playerName = playerList[id] || '-';
+					playerName = playerList[id] || '-';
 					return '<td><strong>' + playerName + '</strong></td>'
 				}).join();
 				$('#tableMancheList').append('<tr><td>Round ' + (index+1) + '</td>' + mancheText + '</tr>');
@@ -81,10 +81,50 @@
       console.log('Error: board not connected');
       return;
     }
+		if (currTournament == null || currTrack == null) {
+      console.log('Error: data not loaded');
+			return;
+		}
 
     // socket.emit('start', true);
     init();
-  });
+	});
+
+	$('#button-prev').on('click', (e) => {
+		if (currTournament == null || currTrack == null) {
+      console.log('Error: data not loaded');
+			return;
+		}
+		if (currManche == 0 && currRound == 0) {
+			return;
+		}
+		currRound--;
+    if (currRound < 0) {
+      currManche--;
+      currRound = mancheList[0].length-1;
+		}
+	
+		chronoInit(mancheList[currManche][currRound], currTrack);
+		guiInit();
+	});
+	
+	$('#button-next').on('click', (e) => {
+		if (currTournament == null || currTrack == null) {
+      console.log('Error: data not loaded');
+			return;
+		}
+		if (currManche == (mancheList.length-1) && currRound == (mancheList[0].length-1)) {
+			return;
+		}
+		currRound++;
+    if (currRound == mancheList[0].length) {
+      currManche++;
+      currRound = 0;
+    }
+	
+		chronoInit(mancheList[currManche][currRound], currTrack);
+		guiInit();
+	});
 
   // keyboard shortcuts for debug
   if (debugMode) {
@@ -134,6 +174,10 @@
     })
     .always(() => {
       showTrackDetails(currTrack);
+			if (currTournament != null && currTrack != null) {
+				chronoInit(mancheList[0][0], currTrack);
+				guiInit();
+			}
     });
   });
 
@@ -161,6 +205,10 @@
 			showTournamentDetails(currTournament);
 			showPlayerList();
 			showMancheList();
+			if (currTournament != null && currTrack != null) {
+				chronoInit(mancheList[0][0], currTrack);
+				guiInit();
+			}
     });
   });
 

@@ -40,21 +40,21 @@ const chronoInit = (playerIds, track) => {
 
 	// init car 1
 	rCar0 = JSON.parse(JSON.stringify(carObj));
-	rcar0.playerId = playerIds[0];
-	rcar0.startLane = 0;
-	rcar0.nextLane = 0;
+	rCar0.playerId = playerIds[0];
+	rCar0.startLane = 0;
+	rCar0.nextLane = 0;
 
 	// init car 2
 	rCar1 = JSON.parse(JSON.stringify(carObj));
-	rcar1.playerId = playerIds[1];
-	rcar1.startLane = 1;
-	rcar1.nextLane = 1;
+	rCar1.playerId = playerIds[1];
+	rCar1.startLane = 1;
+	rCar1.nextLane = 1;
 
 	// init car 3
 	rCar2 = JSON.parse(JSON.stringify(carObj));
-	rcar2.playerId = playerIds[2];
-	rcar2.startLane = 2;
-	rcar2.nextLane = 2;
+	rCar2.playerId = playerIds[2];
+	rCar2.startLane = 2;
+	rCar2.nextLane = 2;
 
 	// car array
 	rCars = [rCar0, rCar1, rCar2];
