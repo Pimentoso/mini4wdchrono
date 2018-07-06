@@ -1,0 +1,7 @@
+TODO
+##############################
+
+- salvare roba in localStorage
+- in manches list evidenziare il round a cui si e' in questo momento
+- aggiungere tempi nell'array currTournament
+- in manches list mostrare tempi e dare la possibilita' di modificarli

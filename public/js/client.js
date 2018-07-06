@@ -8,7 +8,7 @@
   const buttonStart = $('#button-start');
 
   var boardConnected = false;
-  var currTrack, currTournament, playerList, mancheList;
+  var currTrack, currTournament, currTimes, playerList, mancheList;
   var currManche = 0, currRound = 0;
 
   const init = () => {
@@ -19,7 +19,8 @@
 			else {
 				return;
 			}
-    }
+		}
+		currTimes = []; // mirror of currTournament but holds the times
     currManche = 0;
 		currRound = 0;
 		chronoInit(mancheList[currManche][currRound], currTrack);
@@ -248,6 +249,16 @@
 
 // ==========================================================================
 // ==== write to interface
+
+const updateRace = (cars) => {
+	if (_.every(rCars, (c) => { return c.outOfBounds || c.lapCount == 4; })) {
+		// race finished
+		if (currTimes[currManche] == null) {
+			currTimes[currManche] = [];
+		}
+		currTimes[currManche][currRound] = []; // TODO tempi in ordine di corsia
+	}
+};
 
 const drawRace = (cars) => {
 	$('.js-place').removeClass('is-dark is-light is-primary is-warning');
