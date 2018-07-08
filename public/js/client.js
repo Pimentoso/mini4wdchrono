@@ -1,15 +1,14 @@
-(function() {
+(function(window) {
 
   'use strict';
 
   let socket = window.io.connect('localhost:3000');
 
   const debugMode = true;
-  const buttonStart = $('#button-start');
 
-  var boardConnected = false;
-  var currTrack, currTournament, currTimes, playerList, mancheList;
-  var currManche = 0, currRound = 0;
+  let boardConnected = false;
+  let currTrack, currTournament, currTimes, playerList, mancheList;
+  let currManche = 0, currRound = 0;
 
   const init = () => {
     if (currTrack == null) {
@@ -61,7 +60,7 @@
 
 	const showMancheList = () => {
 		$('#tableMancheList').empty();
-		var mancheText, playerName;
+		let mancheText, playerName;
 		_.each(mancheList, (manche, index) => {
 			$('#tableMancheList').append('<tr class="is-selected"><td><strong>MANCHE ' + (index+1) + '</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>');
 			_.each(manche, (group, index) => {
@@ -75,9 +74,13 @@
 	};
 
   // ==========================================================================
-  // ==== handle interface buttons
+	// ==== handle interface buttons
+	
+	window.onbeforeunload = () => {
+		return 'Leave Mini4WD Chrono?';
+	};
 
-  buttonStart.on('click', (e) => {
+  $('#button-start').on('click', (e) => {
     if (!boardConnected && !debugMode) {
       console.log('Error: board not connected');
       return;
@@ -147,17 +150,17 @@
 
   // tabs
   $('.tabs a').on('click', (e) => {
-    var $this = $(e.currentTarget);
+    let $this = $(e.currentTarget);
     $('.tabs li').removeClass('is-active');
     $this.closest('li').addClass('is-active');
-    var tab = $this.closest('li').data('tab');
+    let tab = $this.closest('li').data('tab');
     $('div[data-tab]').hide();
     $('div[data-tab=' + tab + ']').show();
   });
 
   // load track info from API
   $('#js-load-track').on('click', (e) => {
-    var code = $('#js-input-track-code').val();
+    let code = $('#js-input-track-code').val();
     $('#js-input-track-code').removeClass('is-danger');
     $.getJSON('https://mini4wd-track-editor.pimentoso.com/api/track/' + code)
     .done((obj) => {
@@ -184,7 +187,7 @@
 
   // load tournament info from API
   $('#js-load-tournament').on('click', (e) => {
-    var code = $('#js-input-tournament-code').val();
+    let code = $('#js-input-tournament-code').val();
     $('#js-input-tournament-code').removeClass('is-danger');
     $.getJSON('https://mini4wd-tournament.pimentoso.com/api/tournament/' + code)
     .done((obj) => {
@@ -211,7 +214,88 @@
 				guiInit();
 			}
     });
-  });
+	});
+	
+	// ==========================================================================
+	// ==== write to interface
+
+	window.updateRace = (cars) => {
+		if (_.every(cars, (c) => { return c.outOfBounds || c.lapCount == 4; })) {
+			// race finished
+			if (currTimes[currManche] == null) {
+				currTimes[currManche] = [];
+			}
+			currTimes[currManche][currRound] = []; // TODO tempi in ordine di corsia
+		}
+	};
+
+	window.drawRace = (cars) => {
+		$('.js-place').removeClass('is-dark is-light is-primary is-warning');
+		$('.js-delay').removeClass('is-danger');
+		$('.js-timer').removeClass('is-danger is-success');
+
+		_.each(cars, (car,i) => { 
+			// delay + speed
+			if (car.outOfBounds) {
+				$('#delay-lane' + i).text('+99.999');
+			}
+			else {
+				$('#delay-lane' + i).text('+' + (car.delayFromFirst/1000));
+				if (car.delayFromFirst > 0) {
+					$('#delay-lane' + i).addClass('is-danger');
+				}
+				if (car.lapCount > 1) {
+					$('#speed-lane' + i).text(car.speed.toFixed(2) + ' m/s');
+				}
+			}
+			
+			// lap count
+			if (car.lapCount == 4) {
+				$('#lap-lane' + i).text('finish');
+			}
+			else {
+				$('#lap-lane' + i).text('lap ' + car.lapCount);
+			}
+
+			// split times
+			$('#laps-lane' + i).empty();
+			_.each(car.splitTimes, (t) => { 
+				$('#laps-lane' + i).append('<li>' + (t/1000).toFixed(3) + '</li>');
+			});
+			
+			// place
+			if (car.outOfBounds) {
+				$('#place-lane' + i).text('out');
+				$('#place-lane' + i).addClass('is-dark');
+			}
+			else if (car.lapCount == 0) {
+				$('#place-lane' + i).text('waiting');
+				$('#place-lane' + i).addClass('is-light');
+			}
+			else if (car.lapCount == 1) {
+				$('#place-lane' + i).text('started');
+				$('#place-lane' + i).addClass('is-light');
+			}
+			else {
+				$('#place-lane' + i).text(car.position + ' position');
+				if (car.position == 1) {
+					$('#place-lane' + i).addClass('is-warning');
+				}
+				else {
+					$('#place-lane' + i).addClass('is-primary');
+				}
+			}
+
+			// timer
+			if (car.outOfBounds) {
+				$('#timer-lane' + i).addClass('is-danger');
+			}
+			else if (car.lapCount == 4) {
+				$('#timer-lane' + i).addClass('is-success');
+			}
+			$('#timer-lane' + i).text((car.currTime/1000).toFixed(3));
+		});
+	};
 
   // ==========================================================================
   // ==== listen to arduino events
@@ -244,84 +328,6 @@
     if (obj == 0) {
       chronoAddLap(2);
     }
-  });
-})();
-
-// ==========================================================================
-// ==== write to interface
-
-const updateRace = (cars) => {
-	if (_.every(rCars, (c) => { return c.outOfBounds || c.lapCount == 4; })) {
-		// race finished
-		if (currTimes[currManche] == null) {
-			currTimes[currManche] = [];
-		}
-		currTimes[currManche][currRound] = []; // TODO tempi in ordine di corsia
-	}
-};
-
-const drawRace = (cars) => {
-	$('.js-place').removeClass('is-dark is-light is-primary is-warning');
-	$('.js-delay').removeClass('is-danger');
-	$('.js-timer').removeClass('is-danger is-success');
-
-	_.each(cars, (car,i) => { 
-		// delay + speed
-		if (car.outOfBounds) {
-			$('#delay-lane' + i).text('+99.999');
-		}
-		else {
-			$('#delay-lane' + i).text('+' + (car.delayFromFirst/1000));
-			if (car.delayFromFirst > 0) {
-				$('#delay-lane' + i).addClass('is-danger');
-			}
-			$('#speed-lane' + i).text(car.speed.toFixed(2) + ' m/s');
-		}
-		
-		// lap count
-		if (car.lapCount == 4) {
-			$('#lap-lane' + i).text('finish');
-		}
-		else {
-			$('#lap-lane' + i).text('lap ' + car.lapCount);
-		}
-
-		// split times
-		$('#laps-lane' + i).empty();
-		_.each(car.splitTimes, (t) => { 
-			$('#laps-lane' + i).append('<li>' + (t/1000).toFixed(3) + '</li>');
-		});
-		
-		// place
-		if (car.outOfBounds) {
-			$('#place-lane' + i).text('out');
-			$('#place-lane' + i).addClass('is-dark');
-		}
-		else if (car.lapCount == 0) {
-			$('#place-lane' + i).text('waiting');
-			$('#place-lane' + i).addClass('is-light');
-		}
-		else if (car.lapCount == 1) {
-			$('#place-lane' + i).text('started');
-			$('#place-lane' + i).addClass('is-light');
-		}
-		else {
-			$('#place-lane' + i).text(car.position + ' position');
-			if (car.position == 1) {
-				$('#place-lane' + i).addClass('is-warning');
-			}
-			else {
-				$('#place-lane' + i).addClass('is-primary');
-			}
-		}
-
-		// timer
-		if (car.outOfBounds) {
-			$('#timer-lane' + i).addClass('is-danger');
-		}
-		else if (car.lapCount == 4) {
-			$('#timer-lane' + i).addClass('is-success');
-		}
-		$('#timer-lane' + i).text((car.currTime/1000).toFixed(3));
 	});
-};
+	
+})(window);

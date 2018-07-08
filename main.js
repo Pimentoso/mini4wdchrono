@@ -23,7 +23,3 @@
   });
 
 })();
-
-window.onbeforeunload = () => {
-  return 'Leave Mini4WD Chrono?';
-};
