@@ -31,7 +31,7 @@
 	window.chronoInit = (playerIds, track) => {
 		// cutoff time calculation
 		rTrackLength = track.length;
-		rLaneOrder = track.order;
+		rLaneOrder = _.map(track.order, (i) => { return i-1; });
 		rTimeCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold) * 1000;
 		rTimeCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold) * 1000;
 
@@ -68,14 +68,19 @@
 	};
 
 	// method called when a sensor receives a signal
-	window.chronoAddLap = (currLane) => {
+	window.chronoAddLap = (lane) => {
 		// current time in milliseconds
 		let timestamp = new Date().getTime();
 
+		console.log("======= got signal " + lane + " time " + timestamp);
+		// console.log(JSON.stringify(rCars, null, 2));
+
 		// find all cars that may have passes under this lane sensor
 		let rTempCars = _.filter(rCars, (c) => {
-			return c.outOfBounds == false && currLane == c.nextLane;
+			return c.outOfBounds == false && lane == c.nextLane;
 		});
+
+		// console.log(JSON.stringify(rTempCars, null, 2));
 
 		// find the correct car removing the ones not validating thresholds
 		let rTempCar = _.find(rTempCars, (c) => {
@@ -84,8 +89,11 @@
 
 		// false sensor read
 		if (rTempCar == null) {
-			console.log('Error: no valid car for signal on lane ' + currLane);
+			console.log('Error: no valid car for signal on lane ' + lane);
 			return;
+		}
+		else {
+			console.log('valid car ' + rTempCar.startLane);
 		}
 
 		// handle the correct car
@@ -131,8 +139,8 @@
 	};
 
 	// find next lane following the right order (1-2-3 or 1-3-2)
-	const nextLane = (currLane) => {
-		return rLaneOrder[(rLaneOrder.indexOf(currLane) + 1) % rLaneOrder.length];
+	const nextLane = (lane) => {
+		return rLaneOrder[(rLaneOrder.indexOf(lane) + 1) % rLaneOrder.length];
 	};
 
 	// timer task to check for cars out of track

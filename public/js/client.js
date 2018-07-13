@@ -8,23 +8,10 @@
 
   let boardConnected = false;
   let currTrack, currTournament, currTimes, playerList, mancheList;
-  let currManche = 0, currRound = 0;
-
-  const init = () => {
-    if (currTrack == null) {
-			if (debugMode) {
-				currTrack = {length: 100, order: [0,2,1], code: 'DEBUG'}
-			}
-			else {
-				return;
-			}
-		}
-		currTimes = []; // mirror of currTournament but holds the times
-    currManche = 0;
-		currRound = 0;
-		chronoInit(mancheList[currManche][currRound], currTrack);
-		guiInit();
-  };
+	let currManche = 0, currRound = 0;
+	
+	let timerIntervals = [], timerSeconds = [];
+	let pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
 
 	const guiInit = () => {
 		$('#curr-manche').text(currManche+1);
@@ -66,7 +53,7 @@
 			_.each(manche, (group, index) => {
 				mancheText = _.map(group, (id) => {
 					playerName = playerList[id] || '-';
-					return '<td><strong>' + playerName + '</strong></td>'
+					return '<td><p class="has-text-centered is-capitalized">' + playerName + '</p><div class="field"><div class="control"><input class="input is-small" type="text" placeholder="0.000"></div></div></td>'
 				}).join();
 				$('#tableMancheList').append('<tr><td>Round ' + (index+1) + '</td>' + mancheText + '</tr>');
 			});
@@ -91,7 +78,7 @@
 		}
 
     // socket.emit('start', true);
-    init();
+		chronoInit(mancheList[currManche][currRound], currTrack);
 	});
 
 	$('#button-prev').on('click', (e) => {
@@ -192,6 +179,7 @@
     $.getJSON('https://mini4wd-tournament.pimentoso.com/api/tournament/' + code)
     .done((obj) => {
       currTournament = obj;
+			currTimes = []; // mirror of currTournament but holds the times
       $('#tag-tournament-status').removeClass('is-danger');
       $('#tag-tournament-status').addClass('is-success');
       $('#tag-tournament-status').text(obj.code);
@@ -225,7 +213,8 @@
 			if (currTimes[currManche] == null) {
 				currTimes[currManche] = [];
 			}
-			currTimes[currManche][currRound] = []; // TODO tempi in ordine di corsia
+			currTimes[currManche][currRound] = [cars[0].currTime, cars[1].currTime, cars[2].currTime];
+			saveRace();
 		}
 	};
 
@@ -288,13 +277,41 @@
 
 			// timer
 			if (car.outOfBounds) {
+				stopTimer(i);
 				$('#timer-lane' + i).addClass('is-danger');
+				$('#timer-lane' + i).text((car.currTime/1000).toFixed(3));
+			}
+			else if (car.lapCount == 1) {
+				startTimer(i);
 			}
 			else if (car.lapCount == 4) {
+				stopTimer(i);
 				$('#timer-lane' + i).addClass('is-success');
+				$('#timer-lane' + i).text((car.currTime/1000).toFixed(3));
 			}
-			$('#timer-lane' + i).text((car.currTime/1000).toFixed(3));
 		});
+	};
+
+	window.saveRace = () => {
+		// TODO SALVARE SU LOCALSTORAGE
+		// TRACK
+		// TOURNAMENT
+		// TIMES
+	};
+
+	const startTimer = (lane) => {
+		if (timerIntervals[lane] == null) {
+			timerSeconds[lane] = 0;
+			timerIntervals[lane] = setInterval(timer, 100, lane);
+		}
+	};
+
+	const stopTimer = (lane) => {
+		clearInterval(timerIntervals[lane]);
+	};
+
+	const timer = (lane) => {
+		pageTimerSeconds[lane].text(`${timerSeconds[lane]++ / 10}00`);
 	};
 
   // ==========================================================================
