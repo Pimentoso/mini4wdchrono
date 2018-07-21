@@ -43,6 +43,7 @@ var blinkLed = () => {
 };
 
 var handleInput = function(data) {
+	console.log(data);
   if (data == 0) {
     led.on();
     // playSound();
