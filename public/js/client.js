@@ -23,16 +23,14 @@
 	};
 
 	const showTrackDetails = (o) => {
-		$('#js-track-code').text(o.code || '-');
-		$('#js-track-length').text(o.length || '-');
-		$('#js-track-changers').text(o.changers || '-');
-		$('#js-track-order').text(o.order || '-');
+		$('#js-track-length').val(o.length || '-');
+		$('#js-track-changers').val(o.changers || '-');
+		$('#js-track-order').val(o.order || '-');
 	};
 	
 	const showTournamentDetails = (o) => {
-		$('#js-tournament-code').text(o.code || '-');
-		$('#js-tournament-players').text(o.players.length || '-');
-		$('#js-tournament-manches').text(o.manches.length || '-');
+		$('#js-tournament-players').val(o.players.length || '-');
+		$('#js-tournament-manches').val(o.manches.length || '-');
 	};
 	
 	const showPlayerList = () => {
@@ -79,6 +77,7 @@
 
     // socket.emit('start', true);
 		chronoInit(mancheList[currManche][currRound], currTrack);
+		chronoStart();
 	});
 
 	$('#button-prev').on('click', (e) => {

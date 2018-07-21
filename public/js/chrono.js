@@ -61,10 +61,12 @@
 		// car array
 		rCars = [rCar0, rCar1, rCar2];
 
+		drawRace(rCars);
+	};
+
+	window.chronoStart = () => {
 		// run checkTask every 1 second
 		rCheckTask = setInterval(checkCars, 1000);
-
-		drawRace(rCars);
 	};
 
 	// method called when a sensor receives a signal
