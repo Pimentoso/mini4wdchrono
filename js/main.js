@@ -1,3 +1,19 @@
+// Johnny-Five uses stdin, which causes Electron to crash
+// this reroutes stdin, so it can be used
+var Readable = require("stream").Readable;  
+var util = require("util");  
+util.inherits(MyStream, Readable);  
+function MyStream(opt) {  
+  Readable.call(this, opt);
+}
+MyStream.prototype._read = function() {};  
+// hook in our stream
+process.__defineGetter__("stdin", function() {  
+  if (process.__stdin) return process.__stdin;
+  process.__stdin = new MyStream();
+  return process.__stdin;
+});
+
 (function() {
 
   'use strict';
@@ -8,7 +24,9 @@
   var pingTask;
 
   module.exports = (socket) => {
-    const board = new j5.Board();
+    const board = new j5.Board({
+			repl: false // does not work with browser console
+		});
 
     board.on('ready', () => {
 
