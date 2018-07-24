@@ -1,3 +1,5 @@
+'use strict';
+
 // Johnny-Five uses stdin, which causes Electron to crash
 // this reroutes stdin, so it can be used
 var Readable = require("stream").Readable;  
@@ -14,69 +16,44 @@ process.__defineGetter__("stdin", function() {
   return process.__stdin;
 });
 
-(function() {
+const j5 = require('johnny-five');
+const client = require('client');
+var led1, led2, led3, sensor1, sensor2, sensor3, piezo;
 
-  'use strict';
+const board = new j5.Board({
+	repl: false // does not work with browser console
+});
 
-  const j5 = require('johnny-five');
-  var connected = false;
-  var led1, led2, led3, sensor1, sensor2, sensor3, piezo;
-  var pingTask;
+board.on('ready', () => {
 
-  module.exports = (socket) => {
-    const board = new j5.Board({
-			repl: false // does not work with browser console
-		});
+	client.boardConnected();
 
-    board.on('ready', () => {
+	// ==== hardware init
+	sensor1 = new j5.Sensor.Digital(8);
+	sensor2 = new j5.Sensor.Digital(9);
+	sensor3 = new j5.Sensor.Digital(10);
+	led1 = new j5.Led(13);
+	led2 = new j5.Led(14);
+	led3 = new j5.Led(15);
+	piezo = new five.Piezo(3);
 
-      // ==== ping board_ready event every 3 sec
-      pingTask = setInterval(function() { 
-        if (connected) {
-          console.log('ping');
-          socket.emit('board_ready', true);
-        }
-      }, 3000);
+	// ==== emit events to client
+	sensor1.on('change', (e) => {
+		client.sensorRead1(e);
+	});
+	sensor2.on('change', (e) => {
+		client.sensorRead2(e);
+	});
+	sensor3.on('change', (e) => {
+		client.sensorRead3(e);
+	});
+});
 
-      // ==== hardware init
-      sensor1 = new j5.Sensor.Digital(8);
-      sensor2 = new j5.Sensor.Digital(9);
-      sensor3 = new j5.Sensor.Digital(10);
-      led1 = new j5.Led(13);
-      led2 = new j5.Led(14);
-      led3 = new j5.Led(15);
-      piezo = new five.Piezo(3);
+board.on("exit", () => {
+	client.boardDisonnected();
 
-      // ==== emit events to client
-      sensor1.on('change', (e) => {
-        socket.emit('s1', e);
-      });
-      sensor2.on('change', (e) => {
-        socket.emit('s2', e);
-      });
-      sensor3.on('change', (e) => {
-        socket.emit('s3', e);
-      });
-    });
-
-    board.on("exit", () => {
-      socket.emit('board_exit', true);
-      led1.stop().off();
-      led2.stop().off();
-      led3.stop().off();
-      piezo.noTone();
-      clearInterval(pingTask);
-    });
-
-    socket.sockets.on('connection', (socket) => {
-      console.log('socket connected');
-      connected = true;
-
-      // ==== listen to client events
-      socket.on('down', () => led1.on());
-      socket.on('up', () => led1.stop().off());
-      socket.on('hold', () => led1.blink(200));
-    });
-  };
-
-})();
+	led1.stop().off();
+	led2.stop().off();
+	led3.stop().off();
+	piezo.noTone();
+});
