@@ -1,9 +1,9 @@
 'use strict';
 
-const chrono = require('chrono');
+const chrono = require('./chrono');
 const debugMode = true;
 
-let boardConnected = false;
+let connected = false;
 let currTrack, currTournament, currTimes, playerList, mancheList;
 let currManche = 0, currRound = 0;
 
@@ -59,7 +59,7 @@ const showMancheList = () => {
 // ==== handle interface buttons
 
 $('#button-start').on('click', (e) => {
-	if (!boardConnected && !debugMode) {
+	if (!connected && !debugMode) {
 		console.log('Error: board not connected');
 		return;
 	}
@@ -311,14 +311,14 @@ const timer = (lane) => {
 
 const boardConnected = (msg) => {
 	console.log('board_ready');
-	boardConnected = true;
+	connected = true;
 	$('#tag-board-status').removeClass('is-danger');
 	$('#tag-board-status').addClass('is-success');
 };
 
 const boardDisconnected = (msg) => {
 	console.log('board_exit');
-	boardConnected = false;
+	connected = false;
 	$('#tag-board-status').removeClass('is-success');
 	$('#tag-board-status').addClass('is-danger');
 };

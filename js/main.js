@@ -17,7 +17,7 @@ process.__defineGetter__("stdin", function() {
 });
 
 const j5 = require('johnny-five');
-const client = require('client');
+const client = require('./js/client');
 var led1, led2, led3, sensor1, sensor2, sensor3, piezo;
 
 const board = new j5.Board({
