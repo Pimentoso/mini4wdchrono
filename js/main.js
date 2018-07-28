@@ -16,9 +16,9 @@ process.__defineGetter__("stdin", function() {
   return process.__stdin;
 });
 
-const j5 = require('johnny-five');
-const client = require('./js/client');
-var led1, led2, led3, sensor1, sensor2, sensor3, piezo;
+var j5 = require('johnny-five');
+var client = require('./js/client');
+let led1, led2, led3, sensor1, sensor2, sensor3, piezo;
 
 const board = new j5.Board({
 	repl: false // does not work with browser console

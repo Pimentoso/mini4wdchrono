@@ -1,6 +1,7 @@
 'use strict';
 
-const chrono = require('./chrono');
+var chrono = require('./chrono');
+var settings = require('./configuration');
 const debugMode = true;
 
 let connected = false;
@@ -10,7 +11,14 @@ let currManche = 0, currRound = 0;
 let timerIntervals = [], timerSeconds = [];
 let pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
 
+const init = () => {
+	// TODO
+	currTrack = configuration.readSettings('track');
+	currTournament = configuration.readSettings('tournament');
+};
+
 const guiInit = () => {
+
 	$('#curr-manche').text(currManche+1);
 	$('#curr-round').text(currRound+1);
 
@@ -147,6 +155,7 @@ $('#js-load-track').on('click', (e) => {
 		$('#tag-track-status').removeClass('is-danger');
 		$('#tag-track-status').addClass('is-success');
 		$('#tag-track-status').text(obj.code);
+		configuration.saveSettings('track', currTrack);
 	})
 	.fail(() => {
 		$('#js-input-track-code').addClass('is-danger');
@@ -171,12 +180,13 @@ $('#js-load-tournament').on('click', (e) => {
 	$.getJSON('https://mini4wd-tournament.pimentoso.com/api/tournament/' + code)
 	.done((obj) => {
 		currTournament = obj;
+		playerList = obj.players;
+		mancheList = obj.manches;
 		currTimes = []; // mirror of currTournament but holds the times
 		$('#tag-tournament-status').removeClass('is-danger');
 		$('#tag-tournament-status').addClass('is-success');
 		$('#tag-tournament-status').text(obj.code);
-		playerList = obj.players;
-		mancheList = obj.manches;
+		configuration.saveSettings('tournament', currTournament);
 	})
 	.fail(() => {
 		$('#js-input-tournament-code').addClass('is-danger');

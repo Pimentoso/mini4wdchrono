@@ -1,6 +1,6 @@
 'use strict';
 
-const client = require('./client');
+var client = require('./client');
 
 let rCar0, rCar1, rCar2, rCars;
 let rLaneOrder = [0, 1, 2];
