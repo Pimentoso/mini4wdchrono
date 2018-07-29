@@ -1,23 +1,46 @@
 'use strict';
 
 var chrono = require('./chrono');
-var settings = require('./configuration');
+var configuration = require('./configuration');
 const debugMode = true;
 
 let connected = false;
 let currTrack, currTournament, currTimes, playerList, mancheList;
-let currManche = 0, currRound = 0;
+let currManche = 0, currRound = 0, raceStarted = false;
 
 let timerIntervals = [], timerSeconds = [];
 let pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
 
 const init = () => {
-	// TODO
-	currTrack = configuration.readSettings('track');
-	currTournament = configuration.readSettings('tournament');
+	let savedTrack = configuration.readSettings('track');
+	if (savedTrack) {
+		trackLoadDone(savedTrack);
+	}
+	else {
+		trackLoadFail();
+	}
+	showTrackDetails();
+
+	let savedTournament = configuration.readSettings('tournament');
+	if (savedTournament) {
+		tournamentLoadDone(savedTournament);
+	}
+	else {
+		tournamentLoadFail();
+	}
+	showTournamentDetails();
+
+	currTimes = configuration.readSettings('times') || [];
+	currManche = configuration.readSettings('currManche') || 0;
+	currRound = configuration.readSettings('currRound') || 0;
+
+	raceStarted = false;
 };
 
 const guiInit = () => {
+	if (currTournament == null) {
+		return;
+	}
 
 	$('#curr-manche').text(currManche+1);
 	$('#curr-round').text(currRound+1);
@@ -27,15 +50,31 @@ const guiInit = () => {
 	$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '-');
 };
 
-const showTrackDetails = (o) => {
-	$('#js-track-length').val(o.length || '-');
-	$('#js-track-changers').val(o.changers || '-');
-	$('#js-track-order').val(o.order || '-');
+const showTrackDetails = () => {
+	if (currTrack) {
+		$('#js-track-length').val(currTrack.length);
+		$('#js-track-changers').val(currTrack.changers);
+		$('#js-track-order').val(currTrack.order);
+	}
+	else {
+		$('#js-track-length').val('-');
+		$('#js-track-changers').val('-');
+		$('#js-track-order').val('-');
+	}
 };
 
-const showTournamentDetails = (o) => {
-	$('#js-tournament-players').val(o.players.length || '-');
-	$('#js-tournament-manches').val(o.manches.length || '-');
+const showTournamentDetails = () => {
+	if (currTournament) {
+		$('#js-tournament-players').val(currTournament.players.length);
+		$('#js-tournament-manches').val(currTournament.manches.length);
+		showPlayerList();
+		showMancheList();
+		guiInit();
+	}
+	else {
+		$('#js-tournament-players').val('-');
+		$('#js-tournament-manches').val('-');
+	}
 };
 
 const showPlayerList = () => {
@@ -77,6 +116,7 @@ $('#button-start').on('click', (e) => {
 	}
 
 	// socket.emit('start', true);
+	raceStarted = true;
 	chrono.init(mancheList[currManche][currRound], currTrack);
 	chrono.start();
 });
@@ -95,7 +135,8 @@ $('#button-prev').on('click', (e) => {
 		currRound = mancheList[0].length-1;
 	}
 
-	chrono.init(mancheList[currManche][currRound], currTrack);
+	configuration.saveSettings('currManche', currManche);
+	configuration.saveSettings('currRound', currRound);
 	guiInit();
 });
 
@@ -113,27 +154,28 @@ $('#button-next').on('click', (e) => {
 		currRound = 0;
 	}
 
-	chrono.init(mancheList[currManche][currRound], currTrack);
+	configuration.saveSettings('currManche', currManche);
+	configuration.saveSettings('currRound', currRound);
 	guiInit();
 });
 
 // keyboard shortcuts for debug
-if (debugMode) {
-	document.onkeydown = (e) => {
+document.onkeydown = (e) => {
+	if (debugMode && raceStarted) {
 		if (e.keyCode == 49 || e.keyCode == 97) {
 			// pressed 1
-			chronoAddLap(0);
+			chrono.addLap(0);
 		}
 		else if (e.keyCode == 50 || e.keyCode == 98) {
 			// pressed 2
-			chronoAddLap(1);
+			chrono.addLap(1);
 		}
 		else if (e.keyCode == 51 || e.keyCode == 99) {
 			// pressed 3
-			chronoAddLap(2);
+			chrono.addLap(2);
 		}
-	};
-}
+	}
+};
 
 // tabs
 $('.tabs a').on('click', (e) => {
@@ -151,25 +193,12 @@ $('#js-load-track').on('click', (e) => {
 	$('#js-input-track-code').removeClass('is-danger');
 	$.getJSON('https://mini4wd-track-editor.pimentoso.com/api/track/' + code)
 	.done((obj) => {
-		currTrack = obj;
-		$('#tag-track-status').removeClass('is-danger');
-		$('#tag-track-status').addClass('is-success');
-		$('#tag-track-status').text(obj.code);
+		trackLoadDone(obj);
 		configuration.saveSettings('track', currTrack);
 	})
-	.fail(() => {
-		$('#js-input-track-code').addClass('is-danger');
-		$('#tag-track-status').addClass('is-danger');
-		$('#tag-track-status').removeClass('is-success');
-		$('#tag-track-status').text('not loaded');
-		currTrack = null;
-	})
+	.fail(trackLoadFail)
 	.always(() => {
-		showTrackDetails(currTrack);
-		if (currTournament != null && currTrack != null) {
-			chrono.init(mancheList[0][0], currTrack);
-			guiInit();
-		}
+		showTrackDetails();
 	});
 });
 
@@ -179,32 +208,49 @@ $('#js-load-tournament').on('click', (e) => {
 	$('#js-input-tournament-code').removeClass('is-danger');
 	$.getJSON('https://mini4wd-tournament.pimentoso.com/api/tournament/' + code)
 	.done((obj) => {
-		currTournament = obj;
-		playerList = obj.players;
-		mancheList = obj.manches;
-		currTimes = []; // mirror of currTournament but holds the times
-		$('#tag-tournament-status').removeClass('is-danger');
-		$('#tag-tournament-status').addClass('is-success');
-		$('#tag-tournament-status').text(obj.code);
+		tournamentLoadDone(obj);
 		configuration.saveSettings('tournament', currTournament);
 	})
-	.fail(() => {
-		$('#js-input-tournament-code').addClass('is-danger');
-		$('#tag-tournament-status').addClass('is-danger');
-		$('#tag-tournament-status').removeClass('is-success');
-		$('#tag-tournament-status').text('not loaded');
-		currTournament = null;
-	})
+	.fail(tournamentLoadFail)
 	.always(() => {
 		showTournamentDetails(currTournament);
-		showPlayerList();
-		showMancheList();
-		if (currTournament != null && currTrack != null) {
-			chrono.init(mancheList[0][0], currTrack);
-			guiInit();
-		}
 	});
 });
+
+const trackLoadDone = (obj) => {
+	currTrack = obj;
+	$('#tag-track-status').removeClass('is-danger');
+	$('#tag-track-status').addClass('is-success');
+	$('#tag-track-status').text(obj.code);
+	showTrackDetails(currTrack);
+};
+
+const trackLoadFail = () => {
+	currTrack = null;
+	$('#js-input-track-code').addClass('is-danger');
+	$('#tag-track-status').addClass('is-danger');
+	$('#tag-track-status').removeClass('is-success');
+	$('#tag-track-status').text('not loaded');
+	showTrackDetails(currTrack);
+};
+
+const tournamentLoadDone = (obj) => {
+	currTournament = obj;
+	playerList = obj.players;
+	mancheList = obj.manches;
+	currTimes = []; // mirror of currTournament but holds the times
+	$('#tag-tournament-status').removeClass('is-danger');
+	$('#tag-tournament-status').addClass('is-success');
+	$('#tag-tournament-status').text(obj.code);
+};
+
+const tournamentLoadFail = () => {
+	currTournament = null;
+	$('#js-input-tournament-code').addClass('is-danger');
+	$('#tag-tournament-status').addClass('is-danger');
+	$('#tag-tournament-status').removeClass('is-success');
+	$('#tag-tournament-status').text('not loaded');
+};
 
 // ==========================================================================
 // ==== write to interface
@@ -324,6 +370,7 @@ const boardConnected = (msg) => {
 	connected = true;
 	$('#tag-board-status').removeClass('is-danger');
 	$('#tag-board-status').addClass('is-success');
+	$('#tag-board-status').text('CONNECTED');
 };
 
 const boardDisconnected = (msg) => {
@@ -331,27 +378,29 @@ const boardDisconnected = (msg) => {
 	connected = false;
 	$('#tag-board-status').removeClass('is-success');
 	$('#tag-board-status').addClass('is-danger');
+	$('#tag-board-status').text('NOT CONNECTED');
 };
 
 const sensorRead1 = (obj) => {
-	if (obj == 0) {
-		chronoAddLap(0);
+	if (raceStarted && obj == 0) {
+		chrono.addLap(0);
 	}
 };
 
 const sensorRead2 = (obj) => {
-	if (obj == 0) {
-		chronoAddLap(1);
+	if (raceStarted && obj == 0) {
+		chrono.addLap(1);
 	}
 };
 
 const sensorRead3 = (obj) => {
-	if (obj == 0) {
-		chronoAddLap(2);
+	if (raceStarted && obj == 0) {
+		chrono.addLap(2);
 	}
 };
 
 module.exports = {
+	init: init,
 	boardConnected: boardConnected,
 	boardDisconnected: boardDisconnected,
 	sensorRead1: sensorRead1,

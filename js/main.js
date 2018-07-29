@@ -2,8 +2,8 @@
 
 // Johnny-Five uses stdin, which causes Electron to crash
 // this reroutes stdin, so it can be used
-var Readable = require("stream").Readable;  
-var util = require("util");  
+var Readable = require('stream').Readable;  
+var util = require('util');  
 util.inherits(MyStream, Readable);  
 function MyStream(opt) {  
   Readable.call(this, opt);
@@ -18,6 +18,7 @@ process.__defineGetter__("stdin", function() {
 
 var j5 = require('johnny-five');
 var client = require('./js/client');
+client.init();
 let led1, led2, led3, sensor1, sensor2, sensor3, piezo;
 
 const board = new j5.Board({
@@ -35,7 +36,7 @@ board.on('ready', () => {
 	led1 = new j5.Led(13);
 	led2 = new j5.Led(14);
 	led3 = new j5.Led(15);
-	piezo = new five.Piezo(3);
+	piezo = new j5.Piezo(3);
 
 	// ==== emit events to client
 	sensor1.on('change', (e) => {
@@ -49,6 +50,7 @@ board.on('ready', () => {
 	});
 });
 
+// TODO does not work
 board.on("exit", () => {
 	client.boardDisonnected();
 
