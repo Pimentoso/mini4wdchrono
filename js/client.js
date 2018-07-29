@@ -262,7 +262,8 @@ const updateRace = (cars) => {
 			currTimes[currManche] = [];
 		}
 		currTimes[currManche][currRound] = [cars[0].currTime, cars[1].currTime, cars[2].currTime];
-		saveRace();
+		configuration.saveSettings('times', currTimes);
+		raceStarted = false;
 	}
 };
 
@@ -340,13 +341,6 @@ const drawRace = (cars) => {
 	});
 };
 
-const saveRace = () => {
-	// TODO SALVARE SU LOCALSTORAGE
-	// TRACK
-	// TOURNAMENT
-	// TIMES
-};
-
 const startTimer = (lane) => {
 	if (timerIntervals[lane] == null) {
 		timerSeconds[lane] = 0;
@@ -407,6 +401,5 @@ module.exports = {
 	sensorRead2: sensorRead2,
 	sensorRead3: sensorRead3,
 	updateRace: updateRace,
-	drawRace: drawRace,
-	saveRace: saveRace
+	drawRace: drawRace
 };

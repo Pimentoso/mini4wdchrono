@@ -2,6 +2,13 @@
 
 var nconf = require('nconf').file({file: getUserHome() + '/mini4wdchrono-settings.json'});
 
+// TODO
+nconf.defaults({
+	'sensorPin1': 8,
+	'sensorPin2': 9,
+	'sensorPin3': 10,
+});
+
 function saveSettings(settingKey, settingValue) {
     nconf.set(settingKey, settingValue);
     nconf.save();

@@ -26,7 +26,6 @@ const board = new j5.Board({
 });
 
 board.on('ready', () => {
-
 	client.boardConnected();
 
 	// ==== hardware init
