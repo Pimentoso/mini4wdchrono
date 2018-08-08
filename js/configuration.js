@@ -7,6 +7,8 @@ nconf.defaults({
 	'sensorPin1': 8,
 	'sensorPin2': 9,
 	'sensorPin3': 10,
+	'timeThreshold': 0.4,
+	'speedThreshold': 5
 });
 
 function saveSettings(settingKey, settingValue) {

@@ -1,12 +1,13 @@
 'use strict';
 
-var client = require('./client');
+var client;
+var configuration = require('./configuration');
 
 let rCar0, rCar1, rCar2, rCars;
 let rLaneOrder = [0, 1, 2];
-let rTrackLength = 100;
-let rTimeThreshold = 0.4; // TODO from interface
-let rSpeedThreshold = 5; // speed in m/s to calculate cutoff
+let rTrackLength = 0;
+let rTimeThreshold = configuration.readSettings('timeThreshold'); // percentage of single lap time to calculate cutoff
+let rSpeedThreshold = configuration.readSettings('speedThreshold'); // speed in m/s to calculate cutoff
 let rTimeCutoffMin = 0; // min lap cutoff
 let rTimeCutoffMax = 0; // max lap cutoff
 let rCheckTask;
@@ -28,7 +29,11 @@ const carObj = {
 	outOfBounds: false
 };
 
-const init = (playerIds, track) => {
+const init = (_client) => {
+	client = _client;
+};
+
+const start = (playerIds, track) => {
 	// cutoff time calculation
 	rTrackLength = track.length;
 	rLaneOrder = _.map(track.order, (i) => { return i-1; });
@@ -62,9 +67,7 @@ const init = (playerIds, track) => {
 	rCars = [rCar0, rCar1, rCar2];
 
 	client.drawRace(rCars);
-};
 
-const start = () => {
 	// run checkTask every 1 second
 	rCheckTask = setInterval(checkCars, 1000);
 };
@@ -119,24 +122,39 @@ const calculateCar = (car, timestamp) => {
 			car.endTimestamp = timestamp;
 		}
 		calculateRace();
-		client.updateRace(rCars);
+		if (checkRaceFinished()) {
+			client.raceFinished(rCars);
+		}
 		client.drawRace(rCars);
 	}
 };
 
 const calculateRace = () => {
 	let bestTime = 0;
-	let filteredCars = _.filter(rCars, (c) => { return c.currTime > 0; })
-	_.each(_.sortBy(filteredCars, 'currTime'), (car,i) => {
-		// TODO NON TIENE CONTO DEI GIRI FATTI
-		if (i == 0) {
-			bestTime = car.currTime;
-			car.delayFromFirst = 0;
-		}
-		else {
-			car.delayFromFirst = car.currTime - bestTime;
-		}
-		car.position = i+1;
+	let bestLap = _.max(rCars, (c) => { return c.lapCount; }).lapCount;
+	let pos = 0;
+	
+	// first are the cars with the highest lap count,
+	// then with same lapCount first is the one with lowest time
+	_.each([4,3,2], (lap) => {
+		let runningCars = _.filter(rCars, (c) => { return c.lapCount == lap; });
+		_.each(_.sortBy(runningCars, 'currTime'), (c,i) => {
+			debugger;
+			if (lap == bestLap) {
+				if (i == 0) {
+					bestTime = c.currTime;
+					c.delayFromFirst = 0;
+				}
+				else {
+					c.delayFromFirst = c.currTime - bestTime;
+				}
+			}
+			else {
+				// azzerare c.delayFromFirst? provare
+			}
+			pos++;
+			c.position = pos;
+		});
 	});
 };
 
@@ -145,10 +163,15 @@ const nextLane = (lane) => {
 	return rLaneOrder[(rLaneOrder.indexOf(lane) + 1) % rLaneOrder.length];
 };
 
+const checkRaceFinished = () => {
+	return _.every(rCars, (c) => { return c.outOfBounds || c.lapCount == 4; });
+}
+
 // timer task to check for cars out of track
 const checkCars = () => {
-	if (_.every(rCars, (c) => { return c.outOfBounds || c.lapCount == 4; })) {
+	if (checkRaceFinished()) {
 		// race finished, kill this task
+		client.raceFinished(rCars);
 		clearInterval(rCheckTask);
 		return;
 	}

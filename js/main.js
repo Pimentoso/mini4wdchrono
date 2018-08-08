@@ -18,7 +18,9 @@ process.__defineGetter__("stdin", function() {
 
 var j5 = require('johnny-five');
 var client = require('./js/client');
-client.init();
+var chrono = require('./js/chrono');
+client.init(chrono);
+chrono.init(client);
 let led1, led2, led3, sensor1, sensor2, sensor3, piezo;
 
 const board = new j5.Board({

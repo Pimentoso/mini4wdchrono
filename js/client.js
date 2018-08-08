@@ -1,17 +1,18 @@
 'use strict';
 
-var chrono = require('./chrono');
 var configuration = require('./configuration');
 const debugMode = true;
 
+var chrono;
 let connected = false;
-let currTrack, currTournament, currTimes, playerList, mancheList;
+let currTrack, currTournament;
+let timesList, playerList, mancheList;
 let currManche = 0, currRound = 0, raceStarted = false;
 
 let timerIntervals = [], timerSeconds = [];
 let pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
 
-const init = () => {
+const init = (_chrono) => {
 	let savedTrack = configuration.readSettings('track');
 	if (savedTrack) {
 		trackLoadDone(savedTrack);
@@ -30,7 +31,8 @@ const init = () => {
 	}
 	showTournamentDetails();
 
-	currTimes = configuration.readSettings('times') || [];
+	chrono = _chrono;
+	timesList = configuration.readSettings('times') || [];
 	currManche = configuration.readSettings('currManche') || 0;
 	currRound = configuration.readSettings('currRound') || 0;
 
@@ -115,10 +117,8 @@ $('#button-start').on('click', (e) => {
 		return;
 	}
 
-	// socket.emit('start', true);
 	raceStarted = true;
-	chrono.init(mancheList[currManche][currRound], currTrack);
-	chrono.start();
+	chrono.start(mancheList[currManche][currRound], currTrack);
 });
 
 $('#button-prev').on('click', (e) => {
@@ -238,7 +238,7 @@ const tournamentLoadDone = (obj) => {
 	currTournament = obj;
 	playerList = obj.players;
 	mancheList = obj.manches;
-	currTimes = []; // mirror of currTournament but holds the times
+	timesList = []; // mirror of currTournament but holds the times
 	$('#tag-tournament-status').removeClass('is-danger');
 	$('#tag-tournament-status').addClass('is-success');
 	$('#tag-tournament-status').text(obj.code);
@@ -255,16 +255,13 @@ const tournamentLoadFail = () => {
 // ==========================================================================
 // ==== write to interface
 
-const updateRace = (cars) => {
-	if (_.every(cars, (c) => { return c.outOfBounds || c.lapCount == 4; })) {
-		// race finished
-		if (currTimes[currManche] == null) {
-			currTimes[currManche] = [];
-		}
-		currTimes[currManche][currRound] = [cars[0].currTime, cars[1].currTime, cars[2].currTime];
-		configuration.saveSettings('times', currTimes);
-		raceStarted = false;
+const raceFinished = (cars) => {
+	if (timesList[currManche] == null) {
+		timesList[currManche] = [];
 	}
+	timesList[currManche][currRound] = [cars[0].currTime, cars[1].currTime, cars[2].currTime];
+	configuration.saveSettings('times', timesList);
+	raceStarted = false;
 };
 
 const drawRace = (cars) => {
@@ -342,6 +339,7 @@ const drawRace = (cars) => {
 };
 
 const startTimer = (lane) => {
+	// TODO non funziona la seconda volta
 	if (timerIntervals[lane] == null) {
 		timerSeconds[lane] = 0;
 		timerIntervals[lane] = setInterval(timer, 100, lane);
@@ -400,6 +398,6 @@ module.exports = {
 	sensorRead1: sensorRead1,
 	sensorRead2: sensorRead2,
 	sensorRead3: sensorRead3,
-	updateRace: updateRace,
+	raceFinished: raceFinished,
 	drawRace: drawRace
 };

@@ -1,11 +1,13 @@
 [![WIP](https://img.shields.io/badge/status-WORK%20IN%20PROGRESS-red.svg)](https://github.com/Pimentoso/mini4wdchrono)
 
 # Mini4wdChrono
+
 Software for Arduino based 3-lane lap timer for Tamiya Mini4wd. Built on johnny-five + electron.
 
 THIS PROJECT IS STILL IN DEVELOPMENT. Please check back in the future.
 
 ## Arduino schematics
+
 Coming soon.
 
 The chronometer uses 3x reflective infrared 3pin obstacle avoidance sensor. Like this one
