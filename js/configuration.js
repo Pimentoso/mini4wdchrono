@@ -1,6 +1,6 @@
 'use strict';
 
-var nconf = require('nconf').file({file: getUserHome() + '/mini4wdchrono-settings.json'});
+const nconf = require('nconf').file({file: getUserHome() + '/mini4wdchrono-settings.json'});
 
 // TODO
 nconf.defaults({

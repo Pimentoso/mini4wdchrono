@@ -1,7 +1,6 @@
 'use strict';
 
-var client;
-var configuration = require('./configuration');
+const configuration = require('./configuration');
 
 let rCar0, rCar1, rCar2, rCars;
 let rLaneOrder = [0, 1, 2];
@@ -10,7 +9,6 @@ let rTimeThreshold = configuration.readSettings('timeThreshold'); // percentage 
 let rSpeedThreshold = configuration.readSettings('speedThreshold'); // speed in m/s to calculate cutoff
 let rTimeCutoffMin = 0; // min lap cutoff
 let rTimeCutoffMax = 0; // max lap cutoff
-let rCheckTask;
 
 // car object template
 const carObj = {
@@ -27,10 +25,6 @@ const carObj = {
 	delayFromFirst: 0,
 	speed: 0,
 	outOfBounds: false
-};
-
-const init = (_client) => {
-	client = _client;
 };
 
 const start = (playerIds, track) => {
@@ -65,11 +59,6 @@ const start = (playerIds, track) => {
 
 	// car array
 	rCars = [rCar0, rCar1, rCar2];
-
-	client.drawRace(rCars);
-
-	// run checkTask every 1 second
-	rCheckTask = setInterval(checkCars, 1000);
 };
 
 // method called when a sensor receives a signal
@@ -122,10 +111,6 @@ const calculateCar = (car, timestamp) => {
 			car.endTimestamp = timestamp;
 		}
 		calculateRace();
-		if (checkRaceFinished()) {
-			client.raceFinished(rCars);
-		}
-		client.drawRace(rCars);
 	}
 };
 
@@ -139,7 +124,6 @@ const calculateRace = () => {
 	_.each([4,3,2], (lap) => {
 		let runningCars = _.filter(rCars, (c) => { return c.lapCount == lap; });
 		_.each(_.sortBy(runningCars, 'currTime'), (c,i) => {
-			debugger;
 			if (lap == bestLap) {
 				if (i == 0) {
 					bestTime = c.currTime;
@@ -163,19 +147,12 @@ const nextLane = (lane) => {
 	return rLaneOrder[(rLaneOrder.indexOf(lane) + 1) % rLaneOrder.length];
 };
 
-const checkRaceFinished = () => {
+const isRaceFinished = () => {
 	return _.every(rCars, (c) => { return c.outOfBounds || c.lapCount == 4; });
 }
 
-// timer task to check for cars out of track
-const checkCars = () => {
-	if (checkRaceFinished()) {
-		// race finished, kill this task
-		client.raceFinished(rCars);
-		clearInterval(rCheckTask);
-		return;
-	}
-
+// called by timer task
+const checkOutCars = () => {
 	// check cars over max time limit and set them as out
 	let timestamp = new Date().getTime();
 	let dirty = false;
@@ -186,14 +163,20 @@ const checkCars = () => {
 		c.outOfBounds = true;
 		dirty = true;
 	});
+
 	if (dirty) {
 		calculateRace();
-		client.drawRace(rCars);
 	}
+
+	return dirty;
 };
 
+const getCars = () => { return rCars; };
+
 module.exports = {
-	init: init,
 	start: start,
-	addLap: addLap
+	addLap: addLap,
+	getCars: getCars,
+	checkOutCars: checkOutCars,
+	isRaceFinished: isRaceFinished
 };

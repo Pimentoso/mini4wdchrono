@@ -1,9 +1,9 @@
 'use strict';
 
-var configuration = require('./configuration');
+const configuration = require('./configuration');
+const chrono = require('./chrono');
 const debugMode = true;
 
-var chrono;
 let connected = false;
 let currTrack, currTournament;
 let timesList, playerList, mancheList;
@@ -11,8 +11,9 @@ let currManche = 0, currRound = 0, raceStarted = false;
 
 let timerIntervals = [], timerSeconds = [];
 let pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
+let checkTask;
 
-const init = (_chrono) => {
+const init = () => {
 	let savedTrack = configuration.readSettings('track');
 	if (savedTrack) {
 		trackLoadDone(savedTrack);
@@ -31,7 +32,6 @@ const init = (_chrono) => {
 	}
 	showTournamentDetails();
 
-	chrono = _chrono;
 	timesList = configuration.readSettings('times') || [];
 	currManche = configuration.readSettings('currManche') || 0;
 	currRound = configuration.readSettings('currRound') || 0;
@@ -117,8 +117,14 @@ $('#button-start').on('click', (e) => {
 		return;
 	}
 
-	raceStarted = true;
+	// start chrono
 	chrono.start(mancheList[currManche][currRound], currTrack);
+
+	// run checkTask every 1 second
+	checkTask = setInterval(checkRace, 1000);
+
+	raceStarted = true;
+	drawRace();
 });
 
 $('#button-prev').on('click', (e) => {
@@ -164,15 +170,15 @@ document.onkeydown = (e) => {
 	if (debugMode && raceStarted) {
 		if (e.keyCode == 49 || e.keyCode == 97) {
 			// pressed 1
-			chrono.addLap(0);
+			addLap(0);
 		}
 		else if (e.keyCode == 50 || e.keyCode == 98) {
 			// pressed 2
-			chrono.addLap(1);
+			addLap(1);
 		}
 		else if (e.keyCode == 51 || e.keyCode == 99) {
 			// pressed 3
-			chrono.addLap(2);
+			addLap(2);
 		}
 	}
 };
@@ -255,7 +261,21 @@ const tournamentLoadFail = () => {
 // ==========================================================================
 // ==== write to interface
 
-const raceFinished = (cars) => {
+// timer task to check for cars out of track
+const checkRace = () => {
+	if (chrono.isRaceFinished()) {
+		// race finished, kill this task
+		raceFinished();
+		clearInterval(checkTask);
+		return;
+	}
+
+	chrono.checkOutCars();
+	drawRace();
+};
+
+const raceFinished = () => {
+	let cars = chrono.getCars();
 	if (timesList[currManche] == null) {
 		timesList[currManche] = [];
 	}
@@ -264,11 +284,12 @@ const raceFinished = (cars) => {
 	raceStarted = false;
 };
 
-const drawRace = (cars) => {
+const drawRace = () => {
 	$('.js-place').removeClass('is-dark is-light is-primary is-warning');
 	$('.js-delay').removeClass('is-danger');
 	$('.js-timer').removeClass('is-danger is-success');
 
+	let cars = chrono.getCars();
 	_.each(cars, (car,i) => { 
 		// delay + speed
 		if (car.outOfBounds) {
@@ -375,21 +396,29 @@ const boardDisconnected = (msg) => {
 
 const sensorRead1 = (obj) => {
 	if (raceStarted && obj == 0) {
-		chrono.addLap(0);
+		addLap(0);
 	}
 };
 
 const sensorRead2 = (obj) => {
 	if (raceStarted && obj == 0) {
-		chrono.addLap(1);
+		addLap(1);
 	}
 };
 
 const sensorRead3 = (obj) => {
 	if (raceStarted && obj == 0) {
-		chrono.addLap(2);
+		addLap(2);
 	}
 };
+
+const addLap = (lane) => {
+	chrono.addLap(lane);
+	if (chrono.isRaceFinished()) {
+		raceFinished();
+	}
+	drawRace();
+}
 
 module.exports = {
 	init: init,
@@ -397,7 +426,5 @@ module.exports = {
 	boardDisconnected: boardDisconnected,
 	sensorRead1: sensorRead1,
 	sensorRead2: sensorRead2,
-	sensorRead3: sensorRead3,
-	raceFinished: raceFinished,
-	drawRace: drawRace
+	sensorRead3: sensorRead3
 };

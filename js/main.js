@@ -2,8 +2,8 @@
 
 // Johnny-Five uses stdin, which causes Electron to crash
 // this reroutes stdin, so it can be used
-var Readable = require('stream').Readable;  
-var util = require('util');  
+const Readable = require('stream').Readable;  
+const util = require('util');  
 util.inherits(MyStream, Readable);  
 function MyStream(opt) {  
   Readable.call(this, opt);
@@ -16,16 +16,14 @@ process.__defineGetter__("stdin", function() {
   return process.__stdin;
 });
 
-var j5 = require('johnny-five');
-var client = require('./js/client');
-var chrono = require('./js/chrono');
-client.init(chrono);
-chrono.init(client);
-let led1, led2, led3, sensor1, sensor2, sensor3, piezo;
+const j5 = require('johnny-five');
+const client = require('./js/client');
+client.init();
 
 const board = new j5.Board({
 	repl: false // does not work with browser console
 });
+let led1, led2, led3, sensor1, sensor2, sensor3, piezo;
 
 board.on('ready', () => {
 	client.boardConnected();
