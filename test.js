@@ -7,7 +7,7 @@ board = new five.Board();
 board.on("ready", function() {
 
   // Create hardware instances.
-  sensor = new five.Sensor.Digital(5);
+  sensor = new five.Sensor.Digital(8);
   piezo = new five.Piezo(3);
   led = new five.Led(13);
 

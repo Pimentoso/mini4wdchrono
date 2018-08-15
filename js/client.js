@@ -2,9 +2,7 @@
 
 const configuration = require('./configuration');
 const chrono = require('./chrono');
-const debugMode = true;
 
-let connected = false;
 let currTrack, currTournament;
 let timesList, playerList, mancheList;
 let currManche = 0, currRound = 0, raceStarted = false;
@@ -107,11 +105,7 @@ const showMancheList = () => {
 // ==========================================================================
 // ==== handle interface buttons
 
-$('#button-start').on('click', (e) => {
-	if (!connected && !debugMode) {
-		console.log('Error: board not connected');
-		return;
-	}
+const startRound = () => {
 	if (currTournament == null || currTrack == null) {
 		console.log('Error: data not loaded');
 		return;
@@ -125,9 +119,9 @@ $('#button-start').on('click', (e) => {
 
 	raceStarted = true;
 	drawRace();
-});
+};
 
-$('#button-prev').on('click', (e) => {
+const prevRound = () => {
 	if (currTournament == null || currTrack == null) {
 		console.log('Error: data not loaded');
 		return;
@@ -144,9 +138,9 @@ $('#button-prev').on('click', (e) => {
 	configuration.saveSettings('currManche', currManche);
 	configuration.saveSettings('currRound', currRound);
 	guiInit();
-});
+};
 
-$('#button-next').on('click', (e) => {
+const nextRound = () => {
 	if (currTournament == null || currTrack == null) {
 		console.log('Error: data not loaded');
 		return;
@@ -163,38 +157,28 @@ $('#button-next').on('click', (e) => {
 	configuration.saveSettings('currManche', currManche);
 	configuration.saveSettings('currRound', currRound);
 	guiInit();
-});
+};
 
 // keyboard shortcuts for debug
-document.onkeydown = (e) => {
-	if (debugMode && raceStarted) {
-		if (e.keyCode == 49 || e.keyCode == 97) {
+const keydown = (keyCode) => {
+	if (raceStarted) {
+		if (keyCode == 49 || keyCode == 97) {
 			// pressed 1
 			addLap(0);
 		}
-		else if (e.keyCode == 50 || e.keyCode == 98) {
+		else if (keyCode == 50 || keyCode == 98) {
 			// pressed 2
 			addLap(1);
 		}
-		else if (e.keyCode == 51 || e.keyCode == 99) {
+		else if (keyCode == 51 || keyCode == 99) {
 			// pressed 3
 			addLap(2);
 		}
 	}
 };
 
-// tabs
-$('.tabs a').on('click', (e) => {
-	let $this = $(e.currentTarget);
-	$('.tabs li').removeClass('is-active');
-	$this.closest('li').addClass('is-active');
-	let tab = $this.closest('li').data('tab');
-	$('div[data-tab]').hide();
-	$('div[data-tab=' + tab + ']').show();
-});
-
 // load track info from API
-$('#js-load-track').on('click', (e) => {
+const loadTrack = () => {
 	let code = $('#js-input-track-code').val();
 	$('#js-input-track-code').removeClass('is-danger');
 	$.getJSON('https://mini4wd-track-editor.pimentoso.com/api/track/' + code)
@@ -206,10 +190,10 @@ $('#js-load-track').on('click', (e) => {
 	.always(() => {
 		showTrackDetails();
 	});
-});
+};
 
 // load tournament info from API
-$('#js-load-tournament').on('click', (e) => {
+const loadTournament = () => {
 	let code = $('#js-input-tournament-code').val();
 	$('#js-input-tournament-code').removeClass('is-danger');
 	$.getJSON('https://mini4wd-tournament.pimentoso.com/api/tournament/' + code)
@@ -221,7 +205,7 @@ $('#js-load-tournament').on('click', (e) => {
 	.always(() => {
 		showTournamentDetails(currTournament);
 	});
-});
+};
 
 const trackLoadDone = (obj) => {
 	currTrack = obj;
@@ -279,6 +263,7 @@ const raceFinished = () => {
 	if (timesList[currManche] == null) {
 		timesList[currManche] = [];
 	}
+	debugger;
 	timesList[currManche][currRound] = [cars[0].currTime, cars[1].currTime, cars[2].currTime];
 	configuration.saveSettings('times', timesList);
 	raceStarted = false;
@@ -379,16 +364,12 @@ const timer = (lane) => {
 // ==== listen to arduino events
 
 const boardConnected = (msg) => {
-	console.log('board_ready');
-	connected = true;
 	$('#tag-board-status').removeClass('is-danger');
 	$('#tag-board-status').addClass('is-success');
 	$('#tag-board-status').text('CONNECTED');
 };
 
 const boardDisconnected = (msg) => {
-	console.log('board_exit');
-	connected = false;
 	$('#tag-board-status').removeClass('is-success');
 	$('#tag-board-status').addClass('is-danger');
 	$('#tag-board-status').text('NOT CONNECTED');
@@ -426,5 +407,11 @@ module.exports = {
 	boardDisconnected: boardDisconnected,
 	sensorRead1: sensorRead1,
 	sensorRead2: sensorRead2,
-	sensorRead3: sensorRead3
+	sensorRead3: sensorRead3,
+	keydown: keydown,
+	loadTrack: loadTrack,
+	loadTournament: loadTournament,
+	startRound: startRound,
+	prevRound: prevRound,
+	nextRound: nextRound
 };
