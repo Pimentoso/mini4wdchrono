@@ -17,6 +17,7 @@ process.__defineGetter__("stdin", function() {
 });
 
 const debugMode = true;
+const configuration = require('./js/configuration');
 const j5 = require('johnny-five');
 const client = require('./js/client');
 client.init();
@@ -32,9 +33,9 @@ board.on('ready', () => {
 	client.boardConnected();
 
 	// ==== hardware init
-	sensor1 = new j5.Sensor.Digital(8);
-	sensor2 = new j5.Sensor.Digital(9);
-	sensor3 = new j5.Sensor.Digital(10);
+	sensor1 = new j5.Sensor.Digital(configuration.readSettings('sensorPin1'));
+	sensor2 = new j5.Sensor.Digital(configuration.readSettings('sensorPin2'));
+	sensor3 = new j5.Sensor.Digital(configuration.readSettings('sensorPin3'));
 	led1 = new j5.Led(13);
 	led2 = new j5.Led(14);
 	led3 = new j5.Led(15);

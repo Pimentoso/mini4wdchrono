@@ -4,7 +4,7 @@ const configuration = require('./configuration');
 const chrono = require('./chrono');
 
 let currTrack, currTournament;
-let timesList, playerList, mancheList;
+let playerList, mancheList, playerTimesList, mancheTimesList;
 let currManche = 0, currRound = 0, raceStarted = false;
 
 let timerIntervals = [], timerSeconds = [];
@@ -30,7 +30,8 @@ const init = () => {
 	}
 	showTournamentDetails();
 
-	timesList = configuration.readSettings('times') || [];
+	mancheTimesList = configuration.readSettings('mancheTimes') || [];
+	playerTimesList = configuration.readSettings('playerTimes') || [];
 	currManche = configuration.readSettings('currManche') || 0;
 	currRound = configuration.readSettings('currRound') || 0;
 
@@ -80,24 +81,26 @@ const showTournamentDetails = () => {
 const showPlayerList = () => {
 	$('#tablePlayerList').empty();
 	if (playerList.length > 0) {
-		$('#tablePlayerList').append('<tr class="is-selected"><td colspan="2"><strong>' + playerList.length + ' RACERS</strong></td></tr>');
+		$('#tablePlayerList').append('<tr class="is-selected"><td colspan="' + (currTournament.manches.length+2) + '"><strong>' + playerList.length + ' RACERS</strong></td></tr>');
 	}
 	_.each(playerList, (name,i) => {
-		$('#tablePlayerList').append('<tr><td><strong>' + (i+1) + '</strong></td><td>' + name + '</td></tr>');
+		let timeCells = _.map(currTournament.manches, (_,i) => { return '<td>' + (playerTimesList[i] || '-') + '</td>'; });
+		$('#tablePlayerList').append('<tr><td>' + (i+1) + '</td><td><p class="has-text-centered is-capitalized">' + name + '</p></td>' + timeCells + '</tr>');
 	});
 };
 
 const showMancheList = () => {
 	$('#tableMancheList').empty();
-	let mancheText, playerName;
-	_.each(mancheList, (manche, index) => {
-		$('#tableMancheList').append('<tr class="is-selected"><td><strong>MANCHE ' + (index+1) + '</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>');
-		_.each(manche, (group, index) => {
+	let mancheText, playerName, playerTime;
+	_.each(mancheList, (manche, mindex) => {
+		$('#tableMancheList').append('<tr class="is-selected"><td><strong>MANCHE ' + (mindex+1) + '</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>');
+		_.each(manche, (group, rindex) => {
 			mancheText = _.map(group, (id) => {
 				playerName = playerList[id] || '-';
-				return '<td><p class="has-text-centered is-capitalized">' + playerName + '</p><div class="field"><div class="control"><input class="input is-small" type="text" placeholder="0.000"></div></div></td>'
+				playerTime = mancheTimesList[mindex] ? (mancheTimesList[mindex][rindex] || 0) : 0
+				return '<td><p class="has-text-centered is-capitalized">' + playerName + '</p><div class="field"><div class="control"><input class="input is-small" type="text" placeholder="0.000" value="' + playerTime.toFixed(3) + '"></div></div></td>'
 			}).join();
-			$('#tableMancheList').append('<tr><td>Round ' + (index+1) + '</td>' + mancheText + '</tr>');
+			$('#tableMancheList').append('<tr><td>Round ' + (rindex+1) + '</td>' + mancheText + '</tr>');
 		});
 	});
 };
@@ -228,7 +231,8 @@ const tournamentLoadDone = (obj) => {
 	currTournament = obj;
 	playerList = obj.players;
 	mancheList = obj.manches;
-	timesList = []; // mirror of currTournament but holds the times
+	mancheTimesList = []; // mirror of mancheList but holds the times
+	playerTimesList = []; // holds the times for each player
 	$('#tag-tournament-status').removeClass('is-danger');
 	$('#tag-tournament-status').addClass('is-success');
 	$('#tag-tournament-status').text(obj.code);
@@ -258,14 +262,24 @@ const checkRace = () => {
 	drawRace();
 };
 
+// called when the current round has completed. Saves times
 const raceFinished = () => {
 	let cars = chrono.getCars();
-	if (timesList[currManche] == null) {
-		timesList[currManche] = [];
-	}
-	debugger;
-	timesList[currManche][currRound] = [cars[0].currTime, cars[1].currTime, cars[2].currTime];
-	configuration.saveSettings('times', timesList);
+
+	mancheTimesList[currManche] = mancheTimesList[currManche] || [];
+	mancheTimesList[currManche][currRound] = [cars[0].currTime, cars[1].currTime, cars[2].currTime];
+	configuration.saveSettings('mancheTimes', mancheTimesList);
+
+	playerTimesList[cars[0].playerId] = playerTimesList[cars[0].playerId] || [];
+	playerTimesList[cars[0].playerId][currManche] = cars[0].currTime;
+	playerTimesList[cars[1].playerId] = playerTimesList[cars[1].playerId] || [];
+	playerTimesList[cars[1].playerId][currManche] = cars[1].currTime;
+	playerTimesList[cars[2].playerId] = playerTimesList[cars[2].playerId] || [];
+	playerTimesList[cars[2].playerId][currManche] = cars[2].currTime;
+	configuration.saveSettings('playerTimes', playerTimesList);
+
+	showPlayerList();
+	showMancheList();
 	raceStarted = false;
 };
 
