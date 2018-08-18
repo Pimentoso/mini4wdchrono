@@ -36,10 +36,10 @@ board.on('ready', () => {
 	sensor1 = new j5.Sensor.Digital(configuration.readSettings('sensorPin1'));
 	sensor2 = new j5.Sensor.Digital(configuration.readSettings('sensorPin2'));
 	sensor3 = new j5.Sensor.Digital(configuration.readSettings('sensorPin3'));
-	led1 = new j5.Led(13);
-	led2 = new j5.Led(14);
-	led3 = new j5.Led(15);
-	piezo = new j5.Piezo(3);
+	led1 = new j5.Led(configuration.readSettings('ledPin1'));
+	led2 = new j5.Led(configuration.readSettings('ledPin2'));
+	led3 = new j5.Led(configuration.readSettings('ledPin3'));
+	piezo = new j5.Piezo(configuration.readSettings('piezoPin'));
 
 	// ==== emit events to client
 	sensor1.on('change', (e) => {

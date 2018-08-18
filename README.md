@@ -8,11 +8,16 @@ THIS PROJECT IS STILL IN DEVELOPMENT. Please check back in the future.
 
 ## Arduino schematics
 
-Coming soon.
+The chronometer uses 3x reflective infrared proximity sensors. 
+I strongly reccomend E18-D80NK sensors for their accuracy, but it will work with any digital proximity sensor.
 
-The chronometer uses 3x reflective infrared 3pin obstacle avoidance sensor. Like this one
+https://www.aliexpress.com/item/sensor/2004492676.html
 
-https://www.aliexpress.com/item/sensor/32591729856.html
+You also need 3 green LEDs and a piezo speaker.
+
+
+
+Pictures coming soon.
 
 ## Usage on OSX
 
