@@ -12,6 +12,11 @@ let pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')]
 let checkTask;
 
 const init = () => {
+	mancheTimesList = configuration.readSettings('mancheTimes') || [];
+	playerTimesList = configuration.readSettings('playerTimes') || [];
+	currManche = configuration.readSettings('currManche') || 0;
+	currRound = configuration.readSettings('currRound') || 0;
+
 	let savedTrack = configuration.readSettings('track');
 	if (savedTrack) {
 		trackLoadDone(savedTrack);
@@ -29,11 +34,6 @@ const init = () => {
 		tournamentLoadFail();
 	}
 	showTournamentDetails();
-
-	mancheTimesList = configuration.readSettings('mancheTimes') || [];
-	playerTimesList = configuration.readSettings('playerTimes') || [];
-	currManche = configuration.readSettings('currManche') || 0;
-	currRound = configuration.readSettings('currRound') || 0;
 
 	raceStarted = false;
 };
@@ -81,11 +81,17 @@ const showTournamentDetails = () => {
 const showPlayerList = () => {
 	$('#tablePlayerList').empty();
 	if (playerList.length > 0) {
-		$('#tablePlayerList').append('<tr class="is-selected"><td colspan="' + (currTournament.manches.length+2) + '"><strong>' + playerList.length + ' RACERS</strong></td></tr>');
+		let titleCells = _.map(currTournament.manches, (_,mindex) => { 
+			return '<td>Manche ' + (mindex+1) + '</td>'; 
+		});
+		$('#tablePlayerList').append('<tr class="is-selected"><td colspan="2"><strong>' + playerList.length + ' RACERS</strong></td>' + titleCells + '</tr>');
 	}
-	_.each(playerList, (name,i) => {
-		let timeCells = _.map(currTournament.manches, (_,i) => { return '<td>' + (playerTimesList[i] || '-') + '</td>'; });
-		$('#tablePlayerList').append('<tr><td>' + (i+1) + '</td><td><p class="has-text-centered is-capitalized">' + name + '</p></td>' + timeCells + '</tr>');
+	_.each(playerList, (name,pindex) => {
+		let timeCells = _.map(currTournament.manches, (_,mindex) => { 
+			let playerTime = playerTimesList[pindex] ? playerTimesList[pindex][mindex] : 0;
+			return '<td>' + ((playerTime || 0)/1000).toFixed(3) + '</td>'; 
+		});
+		$('#tablePlayerList').append('<tr><td>' + (pindex+1) + '</td><td><p class="has-text-centered is-capitalized">' + name + '</p></td>' + timeCells + '</tr>');
 	});
 };
 
@@ -95,10 +101,10 @@ const showMancheList = () => {
 	_.each(mancheList, (manche, mindex) => {
 		$('#tableMancheList').append('<tr class="is-selected"><td><strong>MANCHE ' + (mindex+1) + '</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>');
 		_.each(manche, (group, rindex) => {
-			mancheText = _.map(group, (id) => {
-				playerName = playerList[id] || '-';
-				playerTime = mancheTimesList[mindex] ? (mancheTimesList[mindex][rindex] || 0) : 0
-				return '<td><p class="has-text-centered is-capitalized">' + playerName + '</p><div class="field"><div class="control"><input class="input is-small" type="text" placeholder="0.000" value="' + playerTime.toFixed(3) + '"></div></div></td>'
+			mancheText = _.map(group, (id, pindex) => {
+				let playerName = playerList[id] || '-';
+				let playerTime = (mancheTimesList[mindex] && mancheTimesList[mindex][rindex]) ? mancheTimesList[mindex][rindex][pindex] : 0
+				return '<td><p class="has-text-centered is-capitalized">' + playerName + '</p><div class="field"><div class="control"><input class="input is-small" type="text" placeholder="0.000" value="' + ((playerTime || 0)/1000).toFixed(3) + '"></div></div></td>'
 			}).join();
 			$('#tableMancheList').append('<tr><td>Round ' + (rindex+1) + '</td>' + mancheText + '</tr>');
 		});
@@ -231,8 +237,6 @@ const tournamentLoadDone = (obj) => {
 	currTournament = obj;
 	playerList = obj.players;
 	mancheList = obj.manches;
-	mancheTimesList = []; // mirror of mancheList but holds the times
-	playerTimesList = []; // holds the times for each player
 	$('#tag-tournament-status').removeClass('is-danger');
 	$('#tag-tournament-status').addClass('is-success');
 	$('#tag-tournament-status').text(obj.code);

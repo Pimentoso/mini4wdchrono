@@ -1,0 +1,7 @@
+.navbar-item img {
+	max-height: unset;
+}
+
+.has-margin-vertical {
+	margin: 10px 0px;
+}
