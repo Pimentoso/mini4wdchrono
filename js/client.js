@@ -89,7 +89,7 @@ const showPlayerList = () => {
 	_.each(playerList, (name,pindex) => {
 		let timeCells = _.map(currTournament.manches, (_,mindex) => { 
 			let playerTime = playerTimesList[pindex] ? playerTimesList[pindex][mindex] : 0;
-			return '<td>' + ((playerTime || 0)/1000).toFixed(3) + '</td>'; 
+			return '<td>' + prettyTime(playerTime) + '</td>'; 
 		});
 		$('#tablePlayerList').append('<tr><td>' + (pindex+1) + '</td><td><p class="has-text-centered is-capitalized">' + name + '</p></td>' + timeCells + '</tr>');
 	});
@@ -104,7 +104,7 @@ const showMancheList = () => {
 			mancheText = _.map(group, (id, pindex) => {
 				let playerName = playerList[id] || '-';
 				let playerTime = (mancheTimesList[mindex] && mancheTimesList[mindex][rindex]) ? mancheTimesList[mindex][rindex][pindex] : 0
-				return '<td><p class="has-text-centered is-capitalized">' + playerName + '</p><div class="field"><div class="control"><input class="input is-small" type="text" placeholder="0.000" value="' + ((playerTime || 0)/1000).toFixed(3) + '"></div></div></td>'
+				return '<td><p class="has-text-centered is-capitalized">' + playerName + '</p><div class="field"><div class="control"><input class="input is-small" type="text" placeholder="0.000" value="' + prettyTime(playerTime) + '"></div></div></td>'
 			}).join();
 			$('#tableMancheList').append('<tr><td>Round ' + (rindex+1) + '</td>' + mancheText + '</tr>');
 		});
@@ -122,6 +122,8 @@ const startRound = () => {
 
 	// start chrono
 	chrono.start(mancheList[currManche][currRound], currTrack);
+	timerIntervals = [];
+	timerSeconds = [];
 
 	// run checkTask every 1 second
 	checkTask = setInterval(checkRace, 1000);
@@ -259,10 +261,10 @@ const checkRace = () => {
 		// race finished, kill this task
 		raceFinished();
 		clearInterval(checkTask);
-		return;
 	}
-
-	chrono.checkOutCars();
+	else {
+		chrono.checkOutCars();
+	}
 	drawRace();
 };
 
@@ -319,7 +321,7 @@ const drawRace = () => {
 		// split times
 		$('#laps-lane' + i).empty();
 		_.each(car.splitTimes, (t) => { 
-			$('#laps-lane' + i).append('<li>' + (t/1000).toFixed(3) + '</li>');
+			$('#laps-lane' + i).append('<li>' + prettyTime(t) + '</li>');
 		});
 		
 		// place
@@ -349,7 +351,10 @@ const drawRace = () => {
 		if (car.outOfBounds) {
 			stopTimer(i);
 			$('#timer-lane' + i).addClass('is-danger');
-			$('#timer-lane' + i).text((car.currTime/1000).toFixed(3));
+			$('#timer-lane' + i).text(prettyTime(car.currTime));
+		}
+		else if (car.lapCount == 0) {
+			$('#timer-lane' + i).text(prettyTime(0));
 		}
 		else if (car.lapCount == 1) {
 			startTimer(i);
@@ -357,7 +362,7 @@ const drawRace = () => {
 		else if (car.lapCount == 4) {
 			stopTimer(i);
 			$('#timer-lane' + i).addClass('is-success');
-			$('#timer-lane' + i).text((car.currTime/1000).toFixed(3));
+			$('#timer-lane' + i).text(prettyTime(car.currTime));
 		}
 	});
 };
@@ -376,6 +381,10 @@ const stopTimer = (lane) => {
 
 const timer = (lane) => {
 	pageTimerSeconds[lane].text(`${timerSeconds[lane]++ / 10}00`);
+};
+
+const prettyTime = (millis) => {
+	return ((millis || 0)/1000).toFixed(3);
 };
 
 // ==========================================================================
