@@ -223,6 +223,7 @@ const trackLoadDone = (obj) => {
 	$('#tag-track-status').removeClass('is-danger');
 	$('#tag-track-status').addClass('is-success');
 	$('#tag-track-status').text(obj.code);
+	$('#js-input-track-code').val(obj.code);
 	showTrackDetails(currTrack);
 };
 
@@ -242,6 +243,7 @@ const tournamentLoadDone = (obj) => {
 	$('#tag-tournament-status').removeClass('is-danger');
 	$('#tag-tournament-status').addClass('is-success');
 	$('#tag-tournament-status').text(obj.code);
+	$('#js-input-tournament-code').val(obj.code);
 };
 
 const tournamentLoadFail = () => {
