@@ -9,7 +9,7 @@ let currManche = 0, currRound = 0, raceStarted = false;
 
 let timerIntervals = [], timerSeconds = [];
 let pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
-let checkTask;
+let checkRaceTask;
 
 const init = () => {
 	mancheTimesList = configuration.readSettings('mancheTimes') || [];
@@ -125,8 +125,9 @@ const startRound = () => {
 	timerIntervals = [];
 	timerSeconds = [];
 
-	// run checkTask every 1 second
-	checkTask = setInterval(checkRace, 1000);
+	// run tasks periodically
+	checkRaceTask = setInterval(checkRace, 1000);
+	setTimeout(checkStart, 5000);
 
 	raceStarted = true;
 	drawRace();
@@ -257,15 +258,22 @@ const tournamentLoadFail = () => {
 
 // timer task to check for cars out of track
 const checkRace = () => {
+	let redraw = false;
 	if (chrono.isRaceFinished()) {
 		// race finished, kill this task
 		raceFinished();
-		clearInterval(checkTask);
+		clearInterval(checkRaceTask);
+		redraw = true;
 	}
 	else {
-		chrono.checkOutCars();
+		redraw = chrono.checkOutCars();
 	}
-	drawRace();
+	if (redraw) drawRace();
+};
+
+const checkStart = () => {
+	let redraw = chrono.checkNotStartedCars();
+	if (redraw) drawRace();
 };
 
 // called when the current round has completed. Saves times

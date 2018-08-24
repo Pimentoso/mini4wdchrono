@@ -171,6 +171,22 @@ const checkOutCars = () => {
 	return dirty;
 };
 
+// called once after 5 seconds
+const checkNotStartedCars = () => {
+	// check cars not started and set them as out
+	_.each(_.filter(rCars, (c) => {
+		return c.lapCount == 0;
+	}), (c) => {
+		c.currTime = 99999;
+		c.outOfBounds = true;
+		dirty = true;
+	});
+
+	if (dirty) calculateRace();
+
+	return dirty;
+};
+
 const getCars = () => { return rCars; };
 
 module.exports = {
@@ -178,5 +194,6 @@ module.exports = {
 	addLap: addLap,
 	getCars: getCars,
 	checkOutCars: checkOutCars,
+	checkNotStartedCars: checkNotStartedCars,
 	isRaceFinished: isRaceFinished
 };
