@@ -65,7 +65,7 @@
 				</li>
 				<li data-tab="players">
 					<a>
-						<span>Player list</span>
+						<span>Racers list</span>
 					</a>
 				</li>
 				<li data-tab="manches">
@@ -84,9 +84,11 @@
 
 				<div class="column">
 					<p class="title is-4">Track informations</p>
+
+					<label class="label">Track code</label>
 					<div class="field has-addons">
 						<div class="control" style="width: 100%;">
-							<input id="js-input-track-code" class="input" type="text" placeholder="track code" value="2XJAYH">
+							<input id="js-input-track-code" class="input" type="text" placeholder="track code" value="">
 						</div>
 						<div class="control">
 							<a id="js-load-track" class="button is-info">
@@ -95,47 +97,64 @@
 						</div>
 					</div>
 
-					<div class="field">
-						<label class="label">Length</label>
-						<div class="control">
+					<label class="label">Length</label>
+					<div class="field has-addons">
+						<p class="control" style="width: 100%;">
 							<input id="js-track-length" class="input" type="text" placeholder="Text input">
-						</div>
+						</p>
+						<p class="control">
+							<a class="button is-static">
+								m
+							</a>
+						</p>
 					</div>
 
+					<label class="label">Changers</label>
 					<div class="field">
-						<label class="label">Changers</label>
 						<div class="control">
 							<input id="js-track-changers" class="input" type="text" placeholder="Text input">
 						</div>
 					</div>
 
+					<label class="label">Lane order</label>
 					<div class="field">
-						<label class="label">Lane order</label>
 						<div class="control">
 							<input id="js-track-order" class="input" type="text" placeholder="Text input">
 						</div>
 					</div>
 
-					<div class="field">
-						<label class="label">Average speed</label>
-						<div class="control">
+					<label class="label">Average speed</label>
+					<div class="field has-addons">
+						<p class="control" style="width: 100%;">
 							<input id="js-settings-speed" class="input" type="text" placeholder="Text input" value="5">
-						</div>
+						</p>
+						<p class="control">
+							<a class="button is-static">
+								m/s
+							</a>
+						</p>
 					</div>
 
-					<div class="field">
-						<label class="label">Lap time threshold</label>
-						<div class="control">
+					<label class="label">Lap time threshold</label>
+					<div class="field has-addons">
+						<p class="control" style="width: 100%;">
 							<input id="js-settings-threshold" class="input" type="text" placeholder="Text input" value="40">
-						</div>
+						</p>
+						<p class="control">
+							<a class="button is-static">
+								%
+							</a>
+						</p>
 					</div>
 				</div>
 
 				<div class="column">
 					<p class="title is-4">Tournament informations</p>
+
+					<label class="label">Tournament code</label>
 					<div class="field has-addons">
 						<div class="control" style="width: 100%;">
-							<input id="js-input-tournament-code" class="input" type="text" placeholder="tournament code" value="DC249J">
+							<input id="js-input-tournament-code" class="input" type="text" placeholder="tournament code" value="">
 						</div>
 						<div class="control">
 							<a id="js-load-tournament" class="button is-info">
@@ -144,15 +163,15 @@
 						</div>
 					</div>
 
+					<label class="label">Number of racers</label>
 					<div class="field">
-						<label class="label">Players</label>
 						<div class="control">
 							<input id="js-tournament-players" class="input" type="text" placeholder="Text input">
 						</div>
 					</div>
 
+					<label class="label">Number of manches</label>
 					<div class="field">
-						<label class="label">Manches</label>
 						<div class="control">
 							<input id="js-tournament-manches" class="input" type="text" placeholder="Text input">
 						</div>

@@ -7,18 +7,28 @@ board = new five.Board();
 board.on("ready", function() {
 
   // Create hardware instances.
-  sensor = new five.Sensor.Digital(8);
+  sensor1 = new five.Sensor.Digital(8);
+  sensor2 = new five.Sensor.Digital(9);
+  sensor3 = new five.Sensor.Digital(10);
   piezo = new five.Piezo(3);
   led = new five.Led(13);
 
   board.repl.inject({
-    s1: sensor,
+    s1: sensor1,
+    s2: sensor2,
+    s3: sensor3,
     p1: piezo,
     l1: led,
   });
 
-  sensor.on("change", function() {
-    handleInput(this.value);
+  sensor1.on("change", function() {
+    handleInput(1, this.value);
+  });
+  sensor2.on("change", function() {
+    handleInput(2, this.value);
+  });
+  sensor3.on("change", function() {
+    handleInput(3, this.value);
   });
 });
 
@@ -42,9 +52,9 @@ var blinkLed = () => {
   }]);
 };
 
-var handleInput = function(data) {
-	console.log(data);
+var handleInput = function(lane, data) {
   if (data == 0) {
+		console.log('CORSIA ' + lane);
     led.on();
     // playSound();
   }
