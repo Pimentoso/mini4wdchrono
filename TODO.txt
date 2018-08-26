@@ -1,6 +1,8 @@
 TODO
 ##############################
 
-- in manches list evidenziare il round a cui si e' in questo momento
-- aggiungere tempi nell'array currTournament
-- in manches list mostrare tempi e dare la possibilita' di modificarli
+- in manches list dare la possibilita' di modificare i tempi
+- in players list formattare celle
+-- mostrare il best time per ogni giocatore
+-- mostrare i giocatori che non hanno ancora girato
+-- moatrare i giocatori out

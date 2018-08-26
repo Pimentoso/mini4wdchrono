@@ -49,6 +49,11 @@ const guiInit = () => {
 	$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '-');
 	$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '-');
 	$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '-');
+
+	chrono.init(mancheList[currManche][currRound], currTrack);
+
+	showMancheList();
+	drawRace();
 };
 
 const showTrackDetails = () => {
@@ -91,22 +96,23 @@ const showPlayerList = () => {
 			let playerTime = playerTimesList[pindex] ? playerTimesList[pindex][mindex] : 0;
 			return '<td>' + prettyTime(playerTime) + '</td>'; 
 		});
-		$('#tablePlayerList').append('<tr><td>' + (pindex+1) + '</td><td><p class="has-text-centered is-capitalized">' + name + '</p></td>' + timeCells + '</tr>');
+		$('#tablePlayerList').append('<tr><td>' + (pindex+1) + '</td><td><p class="has-text-centered is-uppercase">' + name + '</p></td>' + timeCells + '</tr>');
 	});
 };
 
 const showMancheList = () => {
 	$('#tableMancheList').empty();
-	let mancheText, playerName, playerTime;
+	let mancheText, playerName, playerTime, highlight;
 	_.each(mancheList, (manche, mindex) => {
 		$('#tableMancheList').append('<tr class="is-selected"><td><strong>MANCHE ' + (mindex+1) + '</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>');
 		_.each(manche, (group, rindex) => {
 			mancheText = _.map(group, (id, pindex) => {
-				let playerName = playerList[id] || '-';
-				let playerTime = (mancheTimesList[mindex] && mancheTimesList[mindex][rindex]) ? mancheTimesList[mindex][rindex][pindex] : 0
-				return '<td><p class="has-text-centered is-capitalized">' + playerName + '</p><div class="field"><div class="control"><input class="input is-small" type="text" placeholder="0.000" value="' + prettyTime(playerTime) + '"></div></div></td>'
+				playerName = playerList[id] || '-';
+				playerTime = (mancheTimesList[mindex] && mancheTimesList[mindex][rindex]) ? mancheTimesList[mindex][rindex][pindex] : 0
+				return '<td><p class="has-text-centered is-uppercase">' + playerName + '</p><div class="field"><div class="control"><input class="input is-small" type="text" placeholder="0.000" value="' + prettyTime(playerTime) + '"></div></div></td>'
 			}).join();
-			$('#tableMancheList').append('<tr><td>Round ' + (rindex+1) + '</td>' + mancheText + '</tr>');
+			highlight = (mindex == currManche && rindex == currRound) ? 'class="is-highlighted"' : '';
+			$('#tableMancheList').append('<tr ' + highlight + '><td>Round ' + (rindex+1) + '</td>' + mancheText + '</tr>');
 		});
 	});
 };
@@ -120,8 +126,6 @@ const startRound = () => {
 		return;
 	}
 
-	// start chrono
-	chrono.start(mancheList[currManche][currRound], currTrack);
 	timerIntervals = [];
 	timerSeconds = [];
 

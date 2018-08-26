@@ -5,3 +5,12 @@
 .has-margin-vertical {
 	margin: 10px 0px;
 }
+
+.container {
+	margin-bottom: 50px;
+}
+
+.table tr.is-highlighted {
+	background-color: hsl(204, 86%, 53%);
+	color: #fff;
+}

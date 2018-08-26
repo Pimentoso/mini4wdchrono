@@ -27,7 +27,7 @@ const carObj = {
 	outOfBounds: false
 };
 
-const start = (playerIds, track) => {
+const init = (playerIds, track) => {
 	// cutoff time calculation
 	rTrackLength = track.length;
 	rLaneOrder = _.map(track.order, (i) => { return i-1; });
@@ -174,6 +174,7 @@ const checkOutCars = () => {
 // called once after 5 seconds
 const checkNotStartedCars = () => {
 	// check cars not started and set them as out
+	let dirty = false;
 	_.each(_.filter(rCars, (c) => {
 		return c.lapCount == 0;
 	}), (c) => {
@@ -190,7 +191,7 @@ const checkNotStartedCars = () => {
 const getCars = () => { return rCars; };
 
 module.exports = {
-	start: start,
+	init: init,
 	addLap: addLap,
 	getCars: getCars,
 	checkOutCars: checkOutCars,
