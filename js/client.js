@@ -83,23 +83,41 @@ const showTournamentDetails = () => {
 	}
 };
 
+// render the player list tab
 const showPlayerList = () => {
 	$('#tablePlayerList').empty();
 	if (playerList.length > 0) {
-		let titleCells = _.map(currTournament.manches, (_,mindex) => { 
-			return '<td>Manche ' + (mindex+1) + '</td>'; 
+
+		// title row
+		let titleCells = _.map(currTournament.manches, (_,mindex) => {
+			return '<td>Manche ' + (mindex+1) + '</td>';
 		});
 		$('#tablePlayerList').append('<tr class="is-selected"><td colspan="2"><strong>' + playerList.length + ' RACERS</strong></td>' + titleCells + '</tr>');
-	}
-	_.each(playerList, (name,pindex) => {
-		let timeCells = _.map(currTournament.manches, (_,mindex) => { 
-			let playerTime = playerTimesList[pindex] ? playerTimesList[pindex][mindex] : 0;
-			return '<td>' + prettyTime(playerTime) + '</td>'; 
+
+		// player rows
+		_.each(playerList, (name, pindex) => {
+			let playerTimes = playerTimesList[pindex] || [];
+			let bestTime =  _.min(_.filter(playerTimes, (t) => { return t > 0 && t < 99999; }));
+			let timeCells = _.map(currTournament.manches, (_,mindex) => {
+				let playerTime = playerTimes[mindex] || 0;
+				let highlight = '';
+				if (playerTime == 0) {
+					highlight = 'has-text-grey-light';
+				}
+				else if (playerTime == bestTime) {
+					highlight = 'has-text-danger';
+				}
+				else if (playerTime < 99999) {
+					highlight = 'has-text-info';
+				}
+				return '<td class="' + highlight + '">' + prettyTime(playerTime) + '</td>';
+			});
+			$('#tablePlayerList').append('<tr><td>' + (pindex+1) + '</td><td><p class="has-text-centered is-uppercase">' + name + '</p></td>' + timeCells + '</tr>');
 		});
-		$('#tablePlayerList').append('<tr><td>' + (pindex+1) + '</td><td><p class="has-text-centered is-uppercase">' + name + '</p></td>' + timeCells + '</tr>');
-	});
+	}
 };
 
+// render the manches list tab
 const showMancheList = () => {
 	$('#tableMancheList').empty();
 	let mancheText, playerName, playerTime, highlight;
@@ -309,7 +327,7 @@ const drawRace = () => {
 	$('.js-timer').removeClass('is-danger is-success');
 
 	let cars = chrono.getCars();
-	_.each(cars, (car,i) => { 
+	_.each(cars, (car,i) => {
 		// delay + speed
 		if (car.outOfBounds) {
 			$('#delay-lane' + i).text('+99.999');
@@ -323,7 +341,7 @@ const drawRace = () => {
 				$('#speed-lane' + i).text(car.speed.toFixed(2) + ' m/s');
 			}
 		}
-		
+
 		// lap count
 		if (car.lapCount == 4) {
 			$('#lap-lane' + i).text('finish');
@@ -334,10 +352,10 @@ const drawRace = () => {
 
 		// split times
 		$('#laps-lane' + i).empty();
-		_.each(car.splitTimes, (t) => { 
+		_.each(car.splitTimes, (t) => {
 			$('#laps-lane' + i).append('<li>' + prettyTime(t) + '</li>');
 		});
-		
+
 		// place
 		if (car.outOfBounds) {
 			$('#place-lane' + i).text('out');

@@ -2,7 +2,3 @@ TODO
 ##############################
 
 - in manches list dare la possibilita' di modificare i tempi
-- in players list formattare celle
--- mostrare il best time per ogni giocatore
--- mostrare i giocatori che non hanno ancora girato
--- moatrare i giocatori out
