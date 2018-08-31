@@ -12,6 +12,7 @@
     "underscore": "^1.9.1"
   },
   "devDependencies": {
+    "electron-packager": "^12.1.1",
     "electron-rebuild": "^1.8.1",
     "electron-reload": "^1.2.5"
   },
