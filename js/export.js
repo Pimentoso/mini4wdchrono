@@ -1,0 +1,34 @@
+'use strict';
+
+const Excel = require('exceljs');
+const Utils = require('./utils');
+
+const geneateXls = (mancheCount, playerData, playerTimes) => {
+
+	var workbook = new Excel.Workbook();
+	workbook.creator = 'Mini4wd Chrono';
+	workbook.created = new Date();
+	workbook.modified = new Date();
+
+	var worksheet = workbook.addWorksheet('My Sheet');
+
+	debugger;
+	_.each(playerTimes, (pdata, pindex) => {
+		let row = [playerData[pindex].toUpperCase()];
+		pdata = pdata || [];
+		_.times(mancheCount, (i) => {
+			row[i+1] = Utils.prettyTime(pdata[i]);
+		});
+		worksheet.addRow(row);
+	});
+
+	let filename = 'asd.xlsx';
+	workbook.xlsx.writeFile(filename)
+			.then(function() {
+					// done
+			});
+};
+
+module.exports = {
+	geneateXls: geneateXls
+};

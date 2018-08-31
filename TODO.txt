@@ -2,3 +2,4 @@ TODO
 ##############################
 
 - in manches list dare la possibilita' di modificare i tempi
+- export xls: FILENAME e callback quando ha salvato

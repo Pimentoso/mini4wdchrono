@@ -1,7 +1,9 @@
 'use strict';
 
+const Utils = require('./utils');
 const configuration = require('./configuration');
 const chrono = require('./chrono');
+const xls = require('./export');
 
 let currTrack, currTournament;
 let playerList, mancheList, playerTimesList, mancheTimesList;
@@ -110,7 +112,7 @@ const showPlayerList = () => {
 				else if (playerTime < 99999) {
 					highlight = 'has-text-info';
 				}
-				return '<td class="' + highlight + '">' + prettyTime(playerTime) + '</td>';
+				return '<td class="' + highlight + '">' + Utils.prettyTime(playerTime) + '</td>';
 			});
 			$('#tablePlayerList').append('<tr><td>' + (pindex+1) + '</td><td><p class="has-text-centered is-uppercase">' + name + '</p></td>' + timeCells + '</tr>');
 		});
@@ -127,12 +129,16 @@ const showMancheList = () => {
 			mancheText = _.map(group, (id, pindex) => {
 				playerName = playerList[id] || '-';
 				playerTime = (mancheTimesList[mindex] && mancheTimesList[mindex][rindex]) ? mancheTimesList[mindex][rindex][pindex] : 0
-				return '<td><p class="has-text-centered is-uppercase">' + playerName + '</p><div class="field"><div class="control"><input class="input is-small" type="text" placeholder="0.000" value="' + prettyTime(playerTime) + '"></div></div></td>'
+				return '<td><p class="has-text-centered is-uppercase">' + playerName + '</p><div class="field"><div class="control"><input class="input is-small" type="text" placeholder="0.000" value="' + Utils.prettyTime(playerTime) + '"></div></div></td>'
 			}).join();
 			highlight = (mindex == currManche && rindex == currRound) ? 'class="is-highlighted"' : '';
 			$('#tableMancheList').append('<tr ' + highlight + '><td>Round ' + (rindex+1) + '</td>' + mancheText + '</tr>');
 		});
 	});
+};
+
+const saveXls = () => {
+	xls.geneateXls(currTournament.manches.length, playerList, playerTimesList);
 };
 
 // ==========================================================================
@@ -353,7 +359,7 @@ const drawRace = () => {
 		// split times
 		$('#laps-lane' + i).empty();
 		_.each(car.splitTimes, (t) => {
-			$('#laps-lane' + i).append('<li>' + prettyTime(t) + '</li>');
+			$('#laps-lane' + i).append('<li>' + Utils.prettyTime(t) + '</li>');
 		});
 
 		// place
@@ -383,10 +389,10 @@ const drawRace = () => {
 		if (car.outOfBounds) {
 			stopTimer(i);
 			$('#timer-lane' + i).addClass('is-danger');
-			$('#timer-lane' + i).text(prettyTime(car.currTime));
+			$('#timer-lane' + i).text(Utils.prettyTime(car.currTime));
 		}
 		else if (car.lapCount == 0) {
-			$('#timer-lane' + i).text(prettyTime(0));
+			$('#timer-lane' + i).text(Utils.prettyTime(0));
 		}
 		else if (car.lapCount == 1) {
 			startTimer(i);
@@ -394,7 +400,7 @@ const drawRace = () => {
 		else if (car.lapCount == 4) {
 			stopTimer(i);
 			$('#timer-lane' + i).addClass('is-success');
-			$('#timer-lane' + i).text(prettyTime(car.currTime));
+			$('#timer-lane' + i).text(Utils.prettyTime(car.currTime));
 		}
 	});
 };
@@ -413,10 +419,6 @@ const stopTimer = (lane) => {
 
 const timer = (lane) => {
 	pageTimerSeconds[lane].text(`${timerSeconds[lane]++ / 10}00`);
-};
-
-const prettyTime = (millis) => {
-	return ((millis || 0)/1000).toFixed(3);
 };
 
 // ==========================================================================
@@ -470,6 +472,7 @@ module.exports = {
 	keydown: keydown,
 	loadTrack: loadTrack,
 	loadTournament: loadTournament,
+	saveXls: saveXls,
 	startRound: startRound,
 	prevRound: prevRound,
 	nextRound: nextRound
