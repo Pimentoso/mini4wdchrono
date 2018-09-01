@@ -188,9 +188,17 @@
 		<table id="tablePlayerList" class="table table is-bordered is-striped is-hoverable is-fullwidth">
 		</table>
 		<div class="level has-text-centered">
-			<button class="button is-info" id="button-xls">
-				<span>Save XLS file</span>
-			</button>
+			<div class="level-left"></div>
+			<div class="level-right">
+				<div class="level-item">
+					<span id="status-xls" class="has-text-grey"></span>
+				</div>
+				<div class="level-item">
+					<button class="button is-info" id="button-xls">
+						<span>Save XLS file</span>
+					</button>
+				</div>
+			</div>
 		</div>
 	</div>
 
@@ -209,15 +217,21 @@
 		</div>
 
 		<div class="level has-text-centered">
-			<button class="button is-info" id="button-prev">
-				<span>&lt; Prev round</span>
-			</button>
-			<button class="button is-primary is-large has-text-weight-bold" id="button-start">
-				<span>START</span>
-			</button>
-			<button class="button is-info" id="button-next">
-				<span>Next round &gt;</span>
-			</button>
+			<div class="level-item">
+				<button class="button is-info" id="button-prev">
+					<span>&lt; Prev round</span>
+				</button>
+			</div>
+			<div class="level-item">
+				<button class="button is-primary is-large has-text-weight-bold" id="button-start">
+					<span>START</span>
+				</button>
+			</div>
+			<div class="level-item">
+				<button class="button is-info" id="button-next">
+					<span>Next round &gt;</span>
+				</button>
+			</div>
 		</div>
 
 		<div class="columns">

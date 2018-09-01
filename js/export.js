@@ -22,11 +22,13 @@ const geneateXls = (mancheCount, playerData, playerTimes) => {
 		worksheet.addRow(row);
 	});
 
-	let filename = 'asd.xlsx';
+	let filename = 'mini4wd_race_' + Utils.strftime('%Y%m%d_%H%M%S', new Date()) + '.xlsx';
 	workbook.xlsx.writeFile(filename)
-			.then(function() {
-					// done
-			});
+		.then(function() {
+			// done
+			$('#button-xls').removeAttr('disabled');
+			$('#status-xls').text('saved ' + filename);
+		});
 };
 
 module.exports = {

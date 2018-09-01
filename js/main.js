@@ -116,6 +116,7 @@ $('#button-next').on('click', (e) => {
 
 $('#button-xls').on('click', (e) => {
 	client.saveXls();
+	$('#button-xls').attr('disabled', true);
 });
 
 // ==========================================================================
