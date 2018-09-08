@@ -16,6 +16,13 @@ process.__defineGetter__("stdin", function() {
   return process.__stdin;
 });
 
+//open links externally by default
+const shell = require('electron').shell;
+$(document).on('click', 'a[href^="http"]', function(event) {
+		event.preventDefault();
+		shell.openExternal(this.href);
+});
+
 const debugMode = true;
 const configuration = require('./js/configuration');
 const j5 = require('johnny-five');
@@ -75,6 +82,9 @@ $('.tabs a').on('click', (e) => {
 	let tab = $this.closest('li').data('tab');
 	$('div[data-tab]').hide();
 	$('div[data-tab=' + tab + ']').show();
+
+	$('#button-manches-cancel').attr('disabled', true);
+	$('#button-manches-save').attr('disabled', true);
 });
 
 document.onkeydown = (e) => {
@@ -117,6 +127,19 @@ $('#button-next').on('click', (e) => {
 $('#button-xls').on('click', (e) => {
 	client.saveXls();
 	$('#button-xls').attr('disabled', true);
+});
+
+$('.js-time-form').on('keyup', (e) => {
+	$('#button-manches-cancel').removeAttr('disabled');
+	$('#button-manches-save').removeAttr('disabled');
+});
+
+$('#button-manches-cancel').on('click', (e) => {
+	client.showMancheList();
+});
+
+$('#button-manches-save').on('click', (e) => {
+	// TODO
 });
 
 // ==========================================================================

@@ -17,6 +17,13 @@ You also need 3 green LEDs and a piezo speaker.
 
 ![diagram](https://cdn.rawgit.com/Pimentoso/mini4wdchrono/6b3901f4/images/schema.png)
 
+## Building the lap timer
+
+The ```3d_models``` folder contains the 3d-printable models for building the main structure. You will need:
+
+- 4x wood/metal/plastic tube, 20mm diameter, 200mm length
+- 2x wood planks, 5x50 mm size, 400mm length
+
 Pictures coming soon.
 
 ## Usage on OSX

@@ -1,5 +1,9 @@
 TODO
 ##############################
 
-- in manches list dare la possibilita' di modificare i tempi
+- in manches list fare funzionare salva e annulla, gestire il disabled e avvertire quando ci sono unsaved changes e si cambia tab
+- in next/prev round chiedere conferma
+
+- ui setup
+
 - export xls: filepath

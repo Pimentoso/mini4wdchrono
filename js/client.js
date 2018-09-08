@@ -60,28 +60,30 @@ const guiInit = () => {
 
 const showTrackDetails = () => {
 	if (currTrack) {
-		$('#js-track-length').val(currTrack.length);
-		$('#js-track-changers').val(currTrack.changers);
-		$('#js-track-order').val(currTrack.order);
+		$('#js-track-length').text('Length: ' + currTrack.length);
+		$('#js-track-order').text('Lane order: ' + currTrack.order);
+		$('#js-link-track').attr('href', currTrack.view_url);
 	}
 	else {
-		$('#js-track-length').val('-');
-		$('#js-track-changers').val('-');
-		$('#js-track-order').val('-');
+		$('#js-track-length').text('-');
+		$('#js-track-order').text('-');
+		$('#js-link-track').attr('href', '#');
 	}
 };
 
 const showTournamentDetails = () => {
 	if (currTournament) {
-		$('#js-tournament-players').val(currTournament.players.length);
-		$('#js-tournament-manches').val(currTournament.manches.length);
+		$('#js-tournament-players').text('Players: ' + currTournament.players.length);
+		$('#js-tournament-manches').text('Manches: ' + currTournament.manches.length);
+		$('#js-link-tournament').attr('href', currTournament.url);
 		showPlayerList();
 		showMancheList();
 		guiInit();
 	}
 	else {
-		$('#js-tournament-players').val('-');
-		$('#js-tournament-manches').val('-');
+		$('#js-tournament-players').text('-');
+		$('#js-tournament-manches').text('-');
+		$('#js-link-tournament').attr('href', '#');
 	}
 };
 
@@ -122,14 +124,20 @@ const showPlayerList = () => {
 // render the manches list tab
 const showMancheList = () => {
 	$('#tableMancheList').empty();
-	let mancheText, playerName, playerTime, highlight;
+	let mancheText, playerName, playerTime, playerForm, highlight;
 	_.each(mancheList, (manche, mindex) => {
 		$('#tableMancheList').append('<tr class="is-selected"><td><strong>MANCHE ' + (mindex+1) + '</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>');
 		_.each(manche, (group, rindex) => {
 			mancheText = _.map(group, (id, pindex) => {
-				playerName = playerList[id] || '-';
-				playerTime = (mancheTimesList[mindex] && mancheTimesList[mindex][rindex]) ? mancheTimesList[mindex][rindex][pindex] : 0
-				return '<td><p class="has-text-centered is-uppercase">' + playerName + '</p><div class="field"><div class="control"><input class="input is-small" type="text" placeholder="0.000" value="' + Utils.prettyTime(playerTime) + '"></div></div></td>'
+				playerName = '<p class="has-text-centered is-uppercase">' + (playerList[id] || '') + '</p>';
+				playerTime = (mancheTimesList[mindex] && mancheTimesList[mindex][rindex]) ? mancheTimesList[mindex][rindex][pindex] : 0;
+				if (playerList[id]) {
+					playerForm = '<div class="field"><div class="control"><input class="input is-small js-time-form" type="text" value="' + Utils.prettyTime(playerTime) + '"></div></div>';
+				}
+				else {
+					playerForm = '';
+				}
+				return '<td>' + playerName + playerForm + '</td>';
 			}).join();
 			highlight = (mindex == currManche && rindex == currRound) ? 'class="is-highlighted"' : '';
 			$('#tableMancheList').append('<tr ' + highlight + '><td>Round ' + (rindex+1) + '</td>' + mancheText + '</tr>');
@@ -475,5 +483,7 @@ module.exports = {
 	saveXls: saveXls,
 	startRound: startRound,
 	prevRound: prevRound,
-	nextRound: nextRound
+	nextRound: nextRound,
+	showMancheList: showMancheList,
+	showPlayerList: showPlayerList
 };

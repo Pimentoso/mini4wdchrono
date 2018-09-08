@@ -51,142 +51,112 @@
 	</nav>
 
 	<!-- TABS -->
-	<section class="section">
-		<div class="tabs is-centered is-boxed">
-			<ul>
-				<li class="is-active" data-tab="setup">
-					<a>
-						<span>Setup</span>
-					</a>
-				</li>
-				<li data-tab="race">
-					<a>
-						<span>Race view</span>
-					</a>
-				</li>
-				<li data-tab="players">
-					<a>
-						<span>Racers list</span>
-					</a>
-				</li>
-				<li data-tab="manches">
-					<a>
-						<span>Manches list</span>
-					</a>
-				</li>
-			</ul>
-		</div>
-	</section>
+	<div class="tabs is-centered is-boxed">
+		<ul>
+			<li class="is-active" data-tab="setup">
+				<a>
+					<span>Setup</span>
+				</a>
+			</li>
+			<li data-tab="race">
+				<a>
+					<span>Race view</span>
+				</a>
+			</li>
+			<li data-tab="players">
+				<a>
+					<span>Racers list</span>
+				</a>
+			</li>
+			<li data-tab="manches">
+				<a>
+					<span>Manches list</span>
+				</a>
+			</li>
+		</ul>
+	</div>
 
 	<!-- SETUP TAB -->
 	<div class="container" data-tab="setup">
 
-		<div class="columns">
+		<p class="title is-4">Track informations</p>
 
-				<div class="column">
-					<p class="title is-4">Track informations</p>
+		<label class="label">Track code</label>
+		<div class="field has-addons">
+			<div class="control" style="width: 100%;">
+				<input id="js-input-track-code" class="input" type="text" placeholder="track code" value="">
+			</div>
+			<div class="control">
+				<a id="js-load-track" class="button is-info">
+					Load
+				</a>
+			</div>
+		</div>
 
-					<label class="label">Track code</label>
-					<div class="field has-addons">
-						<div class="control" style="width: 100%;">
-							<input id="js-input-track-code" class="input" type="text" placeholder="track code" value="">
-						</div>
-						<div class="control">
-							<a id="js-load-track" class="button is-info">
-								Load
-							</a>
-						</div>
-					</div>
+		<p>
+			<a id="js-link-track" href="#" class="button is-info">
+				View
+			</a>
+		</p>
 
-					<label class="label">Length</label>
-					<div class="field has-addons">
-						<p class="control" style="width: 100%;">
-							<input id="js-track-length" class="input" type="text" placeholder="Text input">
-						</p>
-						<p class="control">
-							<a class="button is-static">
-								m
-							</a>
-						</p>
-					</div>
+		<p>
+			<span id="js-track-length" class="tag is-light">Length: 150m</span>
+			<span id="js-track-order" class="tag is-light">Lane order: 1,2,3</span>
+		</p>
 
-					<label class="label">Changers</label>
-					<div class="field">
-						<div class="control">
-							<input id="js-track-changers" class="input" type="text" placeholder="Text input">
-						</div>
-					</div>
+		<p class="title is-4">Tournament informations</p>
 
-					<label class="label">Lane order</label>
-					<div class="field">
-						<div class="control">
-							<input id="js-track-order" class="input" type="text" placeholder="Text input">
-						</div>
-					</div>
+		<label class="label">Tournament code</label>
+		<div class="field has-addons">
+			<div class="control" style="width: 100%;">
+				<input id="js-input-tournament-code" class="input" type="text" placeholder="tournament code" value="">
+			</div>
+			<div class="control">
+				<a id="js-load-tournament" class="button is-info">
+					Load
+				</a>
+			</div>
+		</div>
 
-					<label class="label">Average speed</label>
-					<div class="field has-addons">
-						<p class="control" style="width: 100%;">
-							<input id="js-settings-speed" class="input" type="text" placeholder="Text input" value="5">
-						</p>
-						<p class="control">
-							<a class="button is-static">
-								m/s
-							</a>
-						</p>
-					</div>
+		<p>
+			<a id="js-link-tournament" href="#" class="button is-info">
+				View
+			</a>
+		</p>
 
-					<label class="label">Lap time threshold</label>
-					<div class="field has-addons">
-						<p class="control" style="width: 100%;">
-							<input id="js-settings-threshold" class="input" type="text" placeholder="Text input" value="40">
-						</p>
-						<p class="control">
-							<a class="button is-static">
-								%
-							</a>
-						</p>
-					</div>
-				</div>
+		<p>
+			<span class="tag is-light">Players: 20</span>
+			<span class="tag is-light">Manches: 6</span>
+		</p>
 
-				<div class="column">
-					<p class="title is-4">Tournament informations</p>
+		<label class="label">Average speed</label>
+		<div class="field has-addons">
+			<p class="control" style="width: 100%;">
+				<input id="js-settings-speed" class="input" type="text" placeholder="Text input" value="5">
+			</p>
+			<p class="control">
+				<a class="button is-static">
+					m/s
+				</a>
+			</p>
+		</div>
 
-					<label class="label">Tournament code</label>
-					<div class="field has-addons">
-						<div class="control" style="width: 100%;">
-							<input id="js-input-tournament-code" class="input" type="text" placeholder="tournament code" value="">
-						</div>
-						<div class="control">
-							<a id="js-load-tournament" class="button is-info">
-								Load
-							</a>
-						</div>
-					</div>
-
-					<label class="label">Number of racers</label>
-					<div class="field">
-						<div class="control">
-							<input id="js-tournament-players" class="input" type="text" placeholder="Text input">
-						</div>
-					</div>
-
-					<label class="label">Number of manches</label>
-					<div class="field">
-						<div class="control">
-							<input id="js-tournament-manches" class="input" type="text" placeholder="Text input">
-						</div>
-					</div>
-				</div>
-
+		<label class="label">Lap time threshold</label>
+		<div class="field has-addons">
+			<p class="control" style="width: 100%;">
+				<input id="js-settings-threshold" class="input" type="text" placeholder="Text input" value="40">
+			</p>
+			<p class="control">
+				<a class="button is-static">
+					%
+				</a>
+			</p>
 		</div>
 
 	</div>
 
 	<!-- PLAYERS TAB -->
 	<div class="container" data-tab="players" style="display: none;">
-		<table id="tablePlayerList" class="table table is-bordered is-striped is-hoverable is-fullwidth">
-		</table>
 		<div class="level has-text-centered">
 			<div class="level-left"></div>
 			<div class="level-right">
@@ -200,20 +170,35 @@
 				</div>
 			</div>
 		</div>
+		<table id="tablePlayerList" class="table table is-bordered is-striped is-hoverable is-fullwidth"></table>
 	</div>
 
 	<!-- MANCHES TAB -->
 	<div class="container" data-tab="manches" style="display: none;">
-		<table id="tableMancheList" class="table table is-bordered is-striped is-hoverable is-fullwidth">
-		</table>
+		<div class="level has-text-centered">
+			<div class="level-left"></div>
+			<div class="level-right">
+				<div class="level-item">
+					<button class="button" id="button-manches-cancel">
+						<span>Cancel</span>
+					</button>
+				</div>
+				<div class="level-item">
+					<button class="button is-info" id="button-manches-save">
+						<span>Save changes</span>
+					</button>
+				</div>
+			</div>
+		</div>
+		<table id="tableMancheList" class="table table is-bordered is-striped is-hoverable is-fullwidth"></table>
 	</div>
 
 	<!-- RACE TAB -->
 	<div class="container" data-tab="race" style="display: none;">
 		<div class="level has-text-centered has-text-weight-bold">
-			<span class="level-item tag is-light is-large">Manche&nbsp;<span id="curr-manche"></span></span>
+			<span class="level-item tag is-primary is-large">Manche&nbsp;<span id="curr-manche"></span></span>
 			&nbsp;
-			<span class="level-item tag is-light is-large">Round&nbsp;<span id="curr-round"></span></span>
+			<span class="level-item tag is-primary is-large">Round&nbsp;<span id="curr-round"></span></span>
 		</div>
 
 		<div class="level has-text-centered">
@@ -223,7 +208,7 @@
 				</button>
 			</div>
 			<div class="level-item">
-				<button class="button is-primary is-large has-text-weight-bold" id="button-start">
+				<button class="button is-link is-large has-text-weight-bold" id="button-start">
 					<span>START</span>
 				</button>
 			</div>
@@ -312,7 +297,7 @@
 
 </body>
 
-<script>window.$ = window.jQuery = require('jquery');</script>
+<script>window.$ = require('jquery');</script>
 <script>window._ = require('underscore');</script>
 <script src="js/main.js"></script>
 
