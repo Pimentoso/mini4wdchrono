@@ -78,6 +78,11 @@
 
 	<!-- SETUP TAB -->
 	<div class="container" data-tab="setup">
+		<p>
+			<a id="button-reset" href="#" class="button is-info">
+				New race
+			</a>
+		</p>
 
 		<p class="title is-4">Track informations</p>
 
@@ -99,9 +104,9 @@
 			</a>
 		</p>
 
-		<p>
-			<span id="js-track-length" class="tag is-light">Length: 150m</span>
-			<span id="js-track-order" class="tag is-light">Lane order: 1,2,3</span>
+		<p id="js-track-info">
+			<span id="js-track-length" class="tag is-light">-</span>
+			<span id="js-track-order" class="tag is-light">-</span>
 		</p>
 
 		<p class="title is-4">Tournament informations</p>
@@ -124,9 +129,9 @@
 			</a>
 		</p>
 
-		<p>
-			<span class="tag is-light">Players: 20</span>
-			<span class="tag is-light">Manches: 6</span>
+		<p id="js-tournament-info">
+			<span id="js-tournament-players" class="tag is-light">-</span>
+			<span id="js-tournament-manches" class="tag is-light">-</span>
 		</p>
 
 		<label class="label">Average speed</label>

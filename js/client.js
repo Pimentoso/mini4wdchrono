@@ -40,21 +40,52 @@ const init = () => {
 	raceStarted = false;
 };
 
-const guiInit = () => {
-	if (currTournament == null) {
-		return;
-	}
+const reset = () => {
+	mancheTimesList = [];
+	playerTimesList = [];
+	playerList = [];
+	mancheList = [];
+	currManche = 0;
+	currRound = 0;
+	currTrack = null;
+	currTournament = null;
+	raceStarted = false;
 
+	$('#js-input-track-code').removeClass('is-danger');
+	$('#js-input-track-code').val('');
+	$('#js-input-tournament-code').removeClass('is-danger');
+	$('#js-input-tournament-code').val('');
+	$('#tag-track-status').addClass('is-danger');
+	$('#tag-track-status').removeClass('is-success');
+	$('#tag-track-status').text('not loaded');
+	$('#tag-tournament-status').addClass('is-danger');
+	$('#tag-tournament-status').removeClass('is-success');
+	$('#tag-tournament-status').text('not loaded');
+
+	showTrackDetails();
+	showTournamentDetails();
+	showPlayerList();
+	showMancheList();
+	guiInit();
+};
+
+const guiInit = () => {
 	$('#curr-manche').text(currManche+1);
 	$('#curr-round').text(currRound+1);
 
-	$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '-');
-	$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '-');
-	$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '-');
+	if (currTournament == null) {
+		$('#name-lane0').text('-');
+		$('#name-lane1').text('-');
+		$('#name-lane2').text('-');
+	}
+	else {
+		$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '-');
+		$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '-');
+		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '-');
+		chrono.init(mancheList[currManche][currRound], currTrack);
+		showMancheList();
+	}
 
-	chrono.init(mancheList[currManche][currRound], currTrack);
-
-	showMancheList();
 	drawRace();
 };
 
@@ -146,7 +177,9 @@ const showMancheList = () => {
 };
 
 const saveXls = () => {
-	xls.geneateXls(currTournament.manches.length, playerList, playerTimesList);
+	if (currTournament) {
+		xls.geneateXls(currTournament.manches.length, playerList, playerTimesList);
+	}
 };
 
 // ==========================================================================
@@ -261,7 +294,7 @@ const trackLoadDone = (obj) => {
 	$('#tag-track-status').addClass('is-success');
 	$('#tag-track-status').text(obj.code);
 	$('#js-input-track-code').val(obj.code);
-	showTrackDetails(currTrack);
+	showTrackDetails();
 };
 
 const trackLoadFail = () => {
@@ -270,7 +303,7 @@ const trackLoadFail = () => {
 	$('#tag-track-status').addClass('is-danger');
 	$('#tag-track-status').removeClass('is-success');
 	$('#tag-track-status').text('not loaded');
-	showTrackDetails(currTrack);
+	showTrackDetails();
 };
 
 const tournamentLoadDone = (obj) => {
@@ -444,20 +477,20 @@ const boardDisconnected = (msg) => {
 	$('#tag-board-status').text('NOT CONNECTED');
 };
 
-const sensorRead1 = (obj) => {
-	if (raceStarted && obj == 0) {
+const sensorRead1 = (val) => {
+	if (raceStarted && val == 0) {
 		addLap(0);
 	}
 };
 
-const sensorRead2 = (obj) => {
-	if (raceStarted && obj == 0) {
+const sensorRead2 = (val) => {
+	if (raceStarted && val == 0) {
 		addLap(1);
 	}
 };
 
-const sensorRead3 = (obj) => {
-	if (raceStarted && obj == 0) {
+const sensorRead3 = (val) => {
+	if (raceStarted && val == 0) {
 		addLap(2);
 	}
 };
@@ -472,6 +505,7 @@ const addLap = (lane) => {
 
 module.exports = {
 	init: init,
+	reset: reset,
 	boardConnected: boardConnected,
 	boardDisconnected: boardDisconnected,
 	sensorRead1: sensorRead1,

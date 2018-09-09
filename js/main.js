@@ -102,6 +102,10 @@ $('#js-load-tournament').on('click', (e) => {
 	client.loadTournament();
 });
 
+$('#button-reset').on('click', (e) => {
+	client.reset();
+});
+
 $('#button-start').on('click', (e) => {
 	if (!connected && !debugMode) {
 		console.log('Error: board not connected');

@@ -3,7 +3,8 @@ TODO
 
 - in manches list fare funzionare salva e annulla, gestire il disabled e avvertire quando ci sono unsaved changes e si cambia tab
 - in next/prev round chiedere conferma
-
+- mantenere stato round in next/prev
+- pulsante new/reset
 - ui setup
 
 - export xls: filepath
