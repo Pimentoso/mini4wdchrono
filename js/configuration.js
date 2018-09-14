@@ -25,11 +25,27 @@ function readSettings(settingKey) {
     return nconf.get(settingKey);
 }
 
+function deleteSettings(settingKey) {
+	nconf.clear(settingKey);
+	nconf.save();
+}
+
+function saveRound(manche, round, cars) {
+	return nconf.set('cars:' + manche + '-' + round, cars);
+}
+
+function (manche, round) {
+	return nconf.get('cars:' + manche + '-' + round);
+}
+
 function getUserHome() {
     return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
 }
 
 module.exports = {
     saveSettings: saveSettings,
-    readSettings: readSettings
+		readSettings: readSettings,
+		deleteSettings: deleteSettings,
+		saveRound: saveRound,
+		loadRound: loadRound
 };

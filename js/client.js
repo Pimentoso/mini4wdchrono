@@ -51,6 +51,14 @@ const reset = () => {
 	currTournament = null;
 	raceStarted = false;
 
+	configuration.deleteSettings('mancheTimes');
+	configuration.deleteSettings('playerTimes');
+	configuration.deleteSettings('track');
+	configuration.deleteSettings('tournament');
+	configuration.deleteSettings('race');
+	configuration.saveSettings('currManche', currManche);
+	configuration.saveSettings('currRound', currRound);
+
 	$('#js-input-track-code').removeClass('is-danger');
 	$('#js-input-track-code').val('');
 	$('#js-input-tournament-code').removeClass('is-danger');
@@ -216,6 +224,11 @@ const prevRound = () => {
 		currRound = mancheList[0].length-1;
 	}
 
+	let cars = configuration.loadRound(currManche, currRound);
+	if (cars) {
+		// TODO INIZIALIZZARE GUI
+	}
+
 	configuration.saveSettings('currManche', currManche);
 	configuration.saveSettings('currRound', currRound);
 	guiInit();
@@ -362,6 +375,8 @@ const raceFinished = () => {
 	playerTimesList[cars[2].playerId] = playerTimesList[cars[2].playerId] || [];
 	playerTimesList[cars[2].playerId][currManche] = cars[2].currTime;
 	configuration.saveSettings('playerTimes', playerTimesList);
+
+	configuration.saveRound(currManche, currRound, cars);
 
 	showPlayerList();
 	showMancheList();
