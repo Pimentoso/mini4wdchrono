@@ -12,7 +12,6 @@ const geneateXls = (mancheCount, playerData, playerTimes) => {
 
 	var worksheet = workbook.addWorksheet('My Sheet');
 
-	debugger;
 	_.each(playerTimes, (pdata, pindex) => {
 		let row = [playerData[pindex].toUpperCase()];
 		pdata = pdata || [];

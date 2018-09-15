@@ -6,5 +6,6 @@ TODO
 - mantenere stato round in next/prev
 - pulsante new/reset
 - ui setup
+- fixare label waiting
 
 - export xls: filepath

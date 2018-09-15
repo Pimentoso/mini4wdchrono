@@ -34,7 +34,7 @@ function saveRound(manche, round, cars) {
 	return nconf.set('cars:' + manche + '-' + round, cars);
 }
 
-function (manche, round) {
+function loadRound(manche, round) {
 	return nconf.get('cars:' + manche + '-' + round);
 }
 

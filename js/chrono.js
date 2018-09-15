@@ -27,38 +27,43 @@ const carObj = {
 	outOfBounds: false
 };
 
-const init = (playerIds, track) => {
+const init = (track, playerIds, cars) => {
 	// cutoff time calculation
 	rTrackLength = track.length;
 	rLaneOrder = _.map(track.order, (i) => { return i-1; });
 	rTimeCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold) * 1000;
 	rTimeCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold) * 1000;
 
-	console.log('track length ' + rTrackLength);
-	console.log('track order ' + rLaneOrder);
-	console.log('time cutoff min ' + rTimeCutoffMin);
-	console.log('time cutoff max ' + rTimeCutoffMax);
+	// console.log('track length ' + rTrackLength);
+	// console.log('track order ' + rLaneOrder);
+	// console.log('time cutoff min ' + rTimeCutoffMin);
+	// console.log('time cutoff max ' + rTimeCutoffMax);
 
-	// init car 1
-	rCar0 = JSON.parse(JSON.stringify(carObj));
-	rCar0.playerId = playerIds[0];
-	rCar0.startLane = 0;
-	rCar0.nextLane = 0;
+	if (cars == null) {
+		// init car 1
+		rCar0 = JSON.parse(JSON.stringify(carObj));
+		rCar0.playerId = playerIds[0];
+		rCar0.startLane = 0;
+		rCar0.nextLane = 0;
 
-	// init car 2
-	rCar1 = JSON.parse(JSON.stringify(carObj));
-	rCar1.playerId = playerIds[1];
-	rCar1.startLane = 1;
-	rCar1.nextLane = 1;
+		// init car 2
+		rCar1 = JSON.parse(JSON.stringify(carObj));
+		rCar1.playerId = playerIds[1];
+		rCar1.startLane = 1;
+		rCar1.nextLane = 1;
 
-	// init car 3
-	rCar2 = JSON.parse(JSON.stringify(carObj));
-	rCar2.playerId = playerIds[2];
-	rCar2.startLane = 2;
-	rCar2.nextLane = 2;
+		// init car 3
+		rCar2 = JSON.parse(JSON.stringify(carObj));
+		rCar2.playerId = playerIds[2];
+		rCar2.startLane = 2;
+		rCar2.nextLane = 2;
 
-	// car array
-	rCars = [rCar0, rCar1, rCar2];
+		// car array
+		rCars = [rCar0, rCar1, rCar2];
+	}
+	else {
+		rCars = cars;
+	}
 };
 
 // method called when a sensor receives a signal
@@ -118,7 +123,7 @@ const calculateRace = () => {
 	let bestTime = 0;
 	let bestLap = _.max(rCars, (c) => { return c.lapCount; }).lapCount;
 	let pos = 0;
-	
+
 	// first are the cars with the highest lap count,
 	// then with same lapCount first is the one with lowest time
 	_.each([4,3,2], (lap) => {
@@ -149,7 +154,7 @@ const nextLane = (lane) => {
 
 const isRaceFinished = () => {
 	return _.every(rCars, (c) => { return c.outOfBounds || c.lapCount == 4; });
-}
+};
 
 // called by timer task
 const checkOutCars = () => {
@@ -164,9 +169,7 @@ const checkOutCars = () => {
 		dirty = true;
 	});
 
-	if (dirty) {
-		calculateRace();
-	}
+	if (dirty) calculateRace();
 
 	return dirty;
 };

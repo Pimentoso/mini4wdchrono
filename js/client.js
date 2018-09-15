@@ -90,7 +90,16 @@ const guiInit = () => {
 		$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '-');
 		$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '-');
 		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '-');
-		chrono.init(mancheList[currManche][currRound], currTrack);
+
+		let cars = configuration.loadRound(currManche, currRound);
+		if (cars) {
+			// existing round
+			chrono.init(currTrack, null, cars);
+		}
+		else {
+			// new blank round
+			chrono.init(currTrack, mancheList[currManche][currRound]);
+		}
 		showMancheList();
 	}
 
@@ -224,11 +233,6 @@ const prevRound = () => {
 		currRound = mancheList[0].length-1;
 	}
 
-	let cars = configuration.loadRound(currManche, currRound);
-	if (cars) {
-		// TODO INIZIALIZZARE GUI
-	}
-
 	configuration.saveSettings('currManche', currManche);
 	configuration.saveSettings('currRound', currRound);
 	guiInit();
@@ -357,6 +361,10 @@ const checkRace = () => {
 
 const checkStart = () => {
 	let redraw = chrono.checkNotStartedCars();
+	if (chrono.isRaceFinished()) {
+		raceFinished();
+		redraw = true;
+	}
 	if (redraw) drawRace();
 };
 
