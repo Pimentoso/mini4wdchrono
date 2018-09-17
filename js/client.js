@@ -432,7 +432,12 @@ const drawRace = () => {
 			$('#place-lane' + i).addClass('is-dark');
 		}
 		else if (car.lapCount == 0) {
-			$('#place-lane' + i).text('waiting');
+			if (raceStarted) {
+				$('#place-lane' + i).text('ready');
+			}
+			else {
+				$('#place-lane' + i).text('stopped');
+			}
 			$('#place-lane' + i).addClass('is-light');
 		}
 		else if (car.lapCount == 1) {
