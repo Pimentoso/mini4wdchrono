@@ -1,5 +1,6 @@
 'use strict';
 
+const { dialog } = require('electron').remote
 const Utils = require('./utils');
 const configuration = require('./configuration');
 const chrono = require('./chrono');
@@ -227,15 +228,18 @@ const prevRound = () => {
 	if (currManche == 0 && currRound == 0) {
 		return;
 	}
-	currRound--;
-	if (currRound < 0) {
-		currManche--;
-		currRound = mancheList[0].length-1;
-	}
 
-	configuration.saveSettings('currManche', currManche);
-	configuration.saveSettings('currRound', currRound);
-	guiInit();
+	if (dialog.showMessageBox({ type: 'warning', message: "Change round?", buttons: ['Ok', 'Cancel']}) == 0) {
+		currRound--;
+		if (currRound < 0) {
+			currManche--;
+			currRound = mancheList[0].length-1;
+		}
+
+		configuration.saveSettings('currManche', currManche);
+		configuration.saveSettings('currRound', currRound);
+		guiInit();
+	}
 };
 
 const nextRound = () => {
@@ -246,15 +250,18 @@ const nextRound = () => {
 	if (currManche == (mancheList.length-1) && currRound == (mancheList[0].length-1)) {
 		return;
 	}
-	currRound++;
-	if (currRound == mancheList[0].length) {
-		currManche++;
-		currRound = 0;
-	}
 
-	configuration.saveSettings('currManche', currManche);
-	configuration.saveSettings('currRound', currRound);
-	guiInit();
+	if (dialog.showMessageBox({ type: 'warning', message: "Change round?", buttons: ['Ok', 'Cancel']}) == 0) {
+		currRound++;
+		if (currRound == mancheList[0].length) {
+			currManche++;
+			currRound = 0;
+		}
+
+		configuration.saveSettings('currManche', currManche);
+		configuration.saveSettings('currRound', currRound);
+		guiInit();
+	}
 };
 
 // keyboard shortcuts for debug
