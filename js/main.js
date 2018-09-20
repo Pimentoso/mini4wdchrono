@@ -24,6 +24,7 @@ $(document).on('click', 'a[href^="http"]', function(event) {
 });
 
 const debugMode = true;
+const { dialog } = require('electron').remote
 const configuration = require('./js/configuration');
 const j5 = require('johnny-five');
 const client = require('./js/client');
@@ -103,7 +104,9 @@ $('#js-load-tournament').on('click', (e) => {
 });
 
 $('#button-reset').on('click', (e) => {
-	client.reset();
+	if (dialog.showMessageBox({ type: 'warning', message: "Start new race? All the current data will be lost.", buttons: ['Ok', 'Cancel']}) == 0) {
+		client.reset();
+	}
 });
 
 $('#button-start').on('click', (e) => {

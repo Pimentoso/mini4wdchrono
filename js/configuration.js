@@ -31,11 +31,11 @@ function deleteSettings(settingKey) {
 }
 
 function saveRound(manche, round, cars) {
-	return nconf.set('cars:' + manche + '-' + round, cars);
+	return nconf.set('race:' + manche + '-' + round, cars);
 }
 
 function loadRound(manche, round) {
-	return nconf.get('cars:' + manche + '-' + round);
+	return nconf.get('race:' + manche + '-' + round);
 }
 
 function getUserHome() {
