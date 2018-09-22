@@ -38,7 +38,9 @@ let led1, led2, led3, sensor1, sensor2, sensor3, piezo;
 
 board.on('ready', () => {
 	connected = true;
-	client.boardConnected();
+	$('#tag-board-status').removeClass('is-danger');
+	$('#tag-board-status').addClass('is-success');
+	$('#tag-board-status').text('CONNECTED');
 
 	// ==== hardware init
 	sensor1 = new j5.Sensor.Digital(configuration.readSettings('sensorPin1'));
@@ -64,7 +66,9 @@ board.on('ready', () => {
 // TODO does not work
 board.on("exit", () => {
 	connected = false;
-	client.boardDisonnected();
+	$('#tag-board-status').removeClass('is-success');
+	$('#tag-board-status').addClass('is-danger');
+	$('#tag-board-status').text('NOT CONNECTED');
 
 	led1.stop().off();
 	led2.stop().off();
@@ -134,6 +138,12 @@ $('#button-next').on('click', (e) => {
 $('#button-xls').on('click', (e) => {
 	client.saveXls();
 	$('#button-xls').attr('disabled', true);
+});
+
+$('#button-save-settings').on('click', (e) => {
+	configuration.saveSettings('timeThreshold', parseInt($('#js-settings-time-threshold').val()));
+	configuration.saveSettings('speedThreshold', parseInt($('#js-settings-speed-threshold').val()));
+	e.preventDefault();
 });
 
 $('.js-time-form').on('keyup', (e) => {

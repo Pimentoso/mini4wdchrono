@@ -15,11 +15,17 @@ let pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')]
 let checkRaceTask;
 
 const init = () => {
+	// populate ui fields
+	$('#js-settings-time-threshold').val(configuration.readSettings('timeThreshold'));
+	$('#js-settings-speed-threshold').val(configuration.readSettings('speedThreshold'));
+
+	// read stuff from settings
 	mancheTimesList = configuration.readSettings('mancheTimes') || [];
 	playerTimesList = configuration.readSettings('playerTimes') || [];
 	currManche = configuration.readSettings('currManche') || 0;
 	currRound = configuration.readSettings('currRound') || 0;
 
+	// load track from settings
 	let savedTrack = configuration.readSettings('track');
 	if (savedTrack) {
 		trackLoadDone(savedTrack);
@@ -29,6 +35,7 @@ const init = () => {
 	}
 	showTrackDetails();
 
+	// load tournament from settings
 	let savedTournament = configuration.readSettings('tournament');
 	if (savedTournament) {
 		tournamentLoadDone(savedTournament);
@@ -38,6 +45,7 @@ const init = () => {
 	}
 	showTournamentDetails();
 
+	// other init variables
 	raceStarted = false;
 };
 
@@ -500,18 +508,6 @@ const timer = (lane) => {
 // ==========================================================================
 // ==== listen to arduino events
 
-const boardConnected = (msg) => {
-	$('#tag-board-status').removeClass('is-danger');
-	$('#tag-board-status').addClass('is-success');
-	$('#tag-board-status').text('CONNECTED');
-};
-
-const boardDisconnected = (msg) => {
-	$('#tag-board-status').removeClass('is-success');
-	$('#tag-board-status').addClass('is-danger');
-	$('#tag-board-status').text('NOT CONNECTED');
-};
-
 const sensorRead1 = (val) => {
 	if (raceStarted && val == 0) {
 		addLap(0);
@@ -541,8 +537,6 @@ const addLap = (lane) => {
 module.exports = {
 	init: init,
 	reset: reset,
-	boardConnected: boardConnected,
-	boardDisconnected: boardDisconnected,
 	sensorRead1: sensorRead1,
 	sensorRead2: sensorRead2,
 	sensorRead3: sensorRead3,

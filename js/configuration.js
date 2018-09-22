@@ -2,7 +2,6 @@
 
 const nconf = require('nconf').file({file: getUserHome() + '/mini4wdchrono-settings.json'});
 
-// TODO
 nconf.defaults({
 	'sensorPin1': 8,
 	'sensorPin2': 9,
@@ -11,7 +10,7 @@ nconf.defaults({
 	'ledPin2': 6,
 	'ledPin3': 7,
 	'piezoPin': 3,
-	'timeThreshold': 0.4,
+	'timeThreshold': 40,
 	'speedThreshold': 5
 });
 

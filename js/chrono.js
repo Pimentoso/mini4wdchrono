@@ -5,8 +5,8 @@ const configuration = require('./configuration');
 let rCar0, rCar1, rCar2, rCars;
 let rLaneOrder = [0, 1, 2];
 let rTrackLength = 0;
-let rTimeThreshold = configuration.readSettings('timeThreshold'); // percentage of single lap time to calculate cutoff
-let rSpeedThreshold = configuration.readSettings('speedThreshold'); // speed in m/s to calculate cutoff
+let rTimeThreshold = 40; // percentage of single lap time to calculate cutoff
+let rSpeedThreshold = 5; // speed in m/s to calculate cutoff
 let rTimeCutoffMin = 0; // min lap cutoff
 let rTimeCutoffMax = 0; // max lap cutoff
 
@@ -31,13 +31,15 @@ const init = (track, playerIds, cars) => {
 	// cutoff time calculation
 	rTrackLength = track.length;
 	rLaneOrder = _.map(track.order, (i) => { return i-1; });
+	rTimeThreshold = configuration.readSettings('timeThreshold')/100;
+	rSpeedThreshold = configuration.readSettings('speedThreshold');
 	rTimeCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold) * 1000;
 	rTimeCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold) * 1000;
 
-	// console.log('track length ' + rTrackLength);
-	// console.log('track order ' + rLaneOrder);
-	// console.log('time cutoff min ' + rTimeCutoffMin);
-	// console.log('time cutoff max ' + rTimeCutoffMax);
+	console.log('track length ' + rTrackLength);
+	console.log('track order ' + rLaneOrder);
+	console.log('time cutoff min ' + rTimeCutoffMin);
+	console.log('time cutoff max ' + rTimeCutoffMax);
 
 	if (cars == null) {
 		// init car 1

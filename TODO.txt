@@ -2,6 +2,13 @@ TODO
 ##############################
 
 - in manches list fare funzionare salva e annulla, gestire il disabled e avvertire quando ci sono unsaved changes e si cambia tab
-- ui setup
 
 - export xls: filepath
+
+- refattorizzare client.init e client.guiInit
+-- chrono.init non deve essere chiamato in guiInit
+-- bug per cui se si clicca saveSettings non viene refreshato il round
+
+### MODELLO 3d
+
+- supporto sottopista: la pista ha una fessura di 92mm x 5mm
