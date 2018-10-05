@@ -15,13 +15,13 @@ nconf.defaults({
 });
 
 function saveSettings(settingKey, settingValue) {
-    nconf.set(settingKey, settingValue);
-    nconf.save();
+  nconf.set(settingKey, settingValue);
+  nconf.save();
 }
 
 function readSettings(settingKey) {
-    nconf.load();
-    return nconf.get(settingKey);
+  nconf.load();
+  return nconf.get(settingKey);
 }
 
 function deleteSettings(settingKey) {
@@ -30,11 +30,17 @@ function deleteSettings(settingKey) {
 }
 
 function saveRound(manche, round, cars) {
-	return nconf.set('race:' + manche + '-' + round, cars);
+	nconf.set('race:' + manche + '-' + round, cars);
+	nconf.save();
 }
 
 function loadRound(manche, round) {
 	return nconf.get('race:' + manche + '-' + round);
+}
+
+function deleteRound(manche, round) {
+	nconf.clear('race:' + manche + '-' + round);
+	nconf.save();
 }
 
 function getUserHome() {
@@ -46,5 +52,6 @@ module.exports = {
 		readSettings: readSettings,
 		deleteSettings: deleteSettings,
 		saveRound: saveRound,
-		loadRound: loadRound
+		loadRound: loadRound,
+		deleteRound: deleteRound
 };

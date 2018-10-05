@@ -99,20 +99,29 @@ const guiInit = () => {
 		$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '-');
 		$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '-');
 		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '-');
-
-		let cars = configuration.loadRound(currManche, currRound);
-		if (cars) {
-			// existing round
-			chrono.init(currTrack, null, cars);
-		}
-		else {
-			// new blank round
-			chrono.init(currTrack, mancheList[currManche][currRound]);
-		}
 		showMancheList();
 	}
 
 	drawRace();
+};
+
+const chronoInit = (reset) => {
+	let cars = nil;
+	if (reset == null) {
+		cars = configuration.loadRound(currManche, currRound);
+	}
+	else {
+		configuration.deleteRound(currManche, currRound);
+	}
+	
+	if (cars) {
+		// existing round
+		chrono.init(currTrack, null, cars);
+	}
+	else {
+		// new blank round
+		chrono.init(currTrack, mancheList[currManche][currRound]);
+	}
 };
 
 const showTrackDetails = () => {
@@ -225,7 +234,7 @@ const startRound = () => {
 	setTimeout(checkStart, 5000);
 
 	raceStarted = true;
-	drawRace();
+	guiInit();
 };
 
 const prevRound = () => {
