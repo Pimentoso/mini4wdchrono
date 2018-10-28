@@ -6,9 +6,9 @@ nconf.defaults({
 	'sensorPin1': 8,
 	'sensorPin2': 9,
 	'sensorPin3': 10,
-	'ledPin1': 5,
-	'ledPin2': 6,
-	'ledPin3': 7,
+	'ledPin1': 11,
+	'ledPin2': 12,
+	'ledPin3': 13,
 	'piezoPin': 3,
 	'timeThreshold': 40,
 	'speedThreshold': 5

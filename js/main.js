@@ -54,12 +54,15 @@ board.on('ready', () => {
 	// ==== emit events to client
 	sensor1.on('change', (e) => {
 		client.sensorRead1(e);
+		(e == 0) ? led1.on() : led1.off();
 	});
 	sensor2.on('change', (e) => {
 		client.sensorRead2(e);
+		(e == 0) ? led2.on() : led2.off();
 	});
 	sensor3.on('change', (e) => {
 		client.sensorRead3(e);
+		(e == 0) ? led3.on() : led3.off();
 	});
 });
 
