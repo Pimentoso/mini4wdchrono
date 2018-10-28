@@ -23,8 +23,9 @@ $(document).on('click', 'a[href^="http"]', function(event) {
 		shell.openExternal(this.href);
 });
 
-const debugMode = true;
-const { dialog } = require('electron').remote
+const debugMode = false;
+const { dialog } = require('electron').remote;
+const temporal = require('temporal');
 const configuration = require('./js/configuration');
 const j5 = require('johnny-five');
 const client = require('./js/client');
@@ -166,7 +167,7 @@ $('#button-manches-save').on('click', (e) => {
 // ==== send commands to hardware
 
 const playStart = () => {
-	$('#button-start').text('music');
+	$('#button-start').text('READY');
 	piezo.play({
 		song: 'A - A - A - A - A',
     // song: "C D F D A - A A A A G G G G - - C D F D G - G G G G F F F F - -",
@@ -178,7 +179,7 @@ const playStart = () => {
 		{
 			delay: 2500,
 			task: () => {
-				$('#button-start').text('1');
+				$('#button-start').text('3');
 				piezo.frequency(400, 750);
 				led1.on();
 			}
@@ -194,7 +195,7 @@ const playStart = () => {
 		{
 			delay: 1000,
 			task: () => {
-				$('#button-start').text('3');
+				$('#button-start').text('1');
 				piezo.frequency(400, 750);
 				led3.on();
 			}
