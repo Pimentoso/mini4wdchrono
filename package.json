@@ -9,6 +9,7 @@
     "johnny-five": "^0.15.0",
     "jquery": "^3.3.1",
     "nconf": "^0.10.0",
+    "npm": "^6.4.1",
     "temporal": "^0.7.1",
     "underscore": "^1.9.1"
   },
