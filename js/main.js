@@ -119,7 +119,7 @@ $('#button-reset').on('click', (e) => {
 
 $('#button-start').on('click', (e) => {
 	if (!connected && !debugMode) {
-		console.log('Error: board not connected');
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: "Lap timer not connected. Check USB cable."});
 		return;
 	}
 	if (debugMode) {

@@ -108,18 +108,13 @@ const guiInit = () => {
 const chronoInit = (reset) => {
 	let cars = nil;
 	if (reset == null) {
-		cars = configuration.loadRound(currManche, currRound);
-	}
-	else {
-		configuration.deleteRound(currManche, currRound);
-	}
-	
-	if (cars) {
 		// existing round
+		cars = configuration.loadRound(currManche, currRound);
 		chrono.init(currTrack, null, cars);
 	}
 	else {
 		// new blank round
+		configuration.deleteRound(currManche, currRound);
 		chrono.init(currTrack, mancheList[currManche][currRound]);
 	}
 };
@@ -235,6 +230,7 @@ const startRound = () => {
 
 	raceStarted = true;
 	guiInit();
+	chronoInit(true);
 };
 
 const prevRound = () => {
@@ -256,6 +252,7 @@ const prevRound = () => {
 		configuration.saveSettings('currManche', currManche);
 		configuration.saveSettings('currRound', currRound);
 		guiInit();
+		chronoInit();
 	}
 };
 
@@ -278,6 +275,7 @@ const nextRound = () => {
 		configuration.saveSettings('currManche', currManche);
 		configuration.saveSettings('currRound', currRound);
 		guiInit();
+		chronoInit();
 	}
 };
 
