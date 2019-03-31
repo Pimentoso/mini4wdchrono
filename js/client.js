@@ -516,19 +516,19 @@ const timer = (lane) => {
 // ==== listen to arduino events
 
 const sensorRead1 = (val) => {
-	if (raceStarted && val == 0) {
+	if (raceStarted && val) {
 		addLap(0);
 	}
 };
 
 const sensorRead2 = (val) => {
-	if (raceStarted && val == 0) {
+	if (raceStarted && val) {
 		addLap(1);
 	}
 };
 
 const sensorRead3 = (val) => {
-	if (raceStarted && val == 0) {
+	if (raceStarted && val) {
 		addLap(2);
 	}
 };

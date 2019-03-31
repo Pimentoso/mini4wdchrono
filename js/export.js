@@ -23,7 +23,7 @@ const geneateXls = (mancheCount, playerData, playerTimes) => {
 
 	let filename = 'mini4wd_race_' + Utils.strftime('%Y%m%d_%H%M%S', new Date()) + '.xlsx';
 	workbook.xlsx.writeFile(filename)
-		.then(function() {
+		.then(() =>  {
 			// done
 			$('#button-xls').removeAttr('disabled');
 			$('#status-xls').text('saved ' + filename);

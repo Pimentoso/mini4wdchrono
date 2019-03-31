@@ -3,49 +3,50 @@
 const nconf = require('nconf').file({file: getUserHome() + '/mini4wdchrono-settings.json'});
 
 nconf.defaults({
-	'sensorPin1': 8,
-	'sensorPin2': 9,
-	'sensorPin3': 10,
-	'ledPin1': 11,
-	'ledPin2': 12,
-	'ledPin3': 13,
-	'piezoPin': 3,
+	'sensorPin1': 'A2',
+	'sensorPin2': 'A3',
+	'sensorPin3': 'A4',
+	'ledPin1': 5,
+	'ledPin2': 4,
+	'ledPin3': 3,
+	'piezoPin': 7,
+	'sensorThreshold': 10,
 	'timeThreshold': 40,
 	'speedThreshold': 5
 });
 
-function saveSettings(settingKey, settingValue) {
+const saveSettings = (settingKey, settingValue) => {
   nconf.set(settingKey, settingValue);
   nconf.save();
-}
+};
 
-function readSettings(settingKey) {
+const readSettings = (settingKey) => {
   nconf.load();
   return nconf.get(settingKey);
-}
+};
 
-function deleteSettings(settingKey) {
+const deleteSettings = (settingKey) => {
 	nconf.clear(settingKey);
 	nconf.save();
-}
+};
 
-function saveRound(manche, round, cars) {
+const saveRound = (manche, round, cars) => {
 	nconf.set('race:' + manche + '-' + round, cars);
 	nconf.save();
-}
+};
 
-function loadRound(manche, round) {
+const loadRound = (manche, round) => {
 	return nconf.get('race:' + manche + '-' + round);
-}
+};
 
-function deleteRound(manche, round) {
+const deleteRound = (manche, round) => {
 	nconf.clear('race:' + manche + '-' + round);
 	nconf.save();
-}
+};
 
-function getUserHome() {
+const getUserHome = () => {
     return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
-}
+};
 
 module.exports = {
     saveSettings: saveSettings,

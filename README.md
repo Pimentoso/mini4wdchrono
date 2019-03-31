@@ -8,10 +8,13 @@ THIS PROJECT IS STILL IN DEVELOPMENT. Please check back in the future.
 
 ## Arduino diagram
 
-The chronometer uses 3x reflective infrared proximity sensors.
-I strongly reccomend E18-D80NK sensors for their accuracy, but it will work with any digital proximity sensor.
+The chronometer uses a LED strip and 3x photoresistor sensors.
 
-https://www.aliexpress.com/item/sensor/2004492676.html
+For the LED strip, use a 50cm 5V cold light strip, like this one.
+https://www.aliexpress.com/item/5V-USB-Cable-LED-Strip/32977470062.html
+
+For the sensors I'm using TEMT6000 for their slim form factor, but it will work with any photoresistor.
+https://www.aliexpress.com/item/TEMT6000-Sensor/32583469115.html
 
 You also need 3 green LEDs and a piezo speaker.
 
@@ -19,12 +22,14 @@ You also need 3 green LEDs and a piezo speaker.
 
 ## Building the lap timer
 
-The ```3d_models``` folder contains the 3d-printable models for building the main structure. You will need:
+The ```3d_models``` folder contains the 3d-printable models for building the main structure. Print 2 joints.
+You will also need 3 wood planks, a couple 10mm self-threading wood screws, and zip ties.
 
-- 4x wood/metal/plastic tube, 20mm diameter, 200mm length
-- 2x wood planks, 5x50 mm size, 400mm length
+[PICTURES COMING SOON]
 
-Pictures coming soon.
+Drill 3 holes in the middle of the 3 lanes of a mini4wd track piece. Put the photoresistors under the holes and fix them with tape.
+Put the lap timer over the 3 holes, and stick the LED strip underside the lap tiper, so that it casts light on the sensors.
+The mini4wd car passing over the photoresistor will trigger a lap.
 
 ## Usage on OSX
 

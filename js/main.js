@@ -35,6 +35,7 @@ const board = new j5.Board({
 	repl: false // does not work with browser console
 });
 let connected = false;
+let sensorThreshold = configuration.readSettings('sensorThreshold');
 let led1, led2, led3, sensor1, sensor2, sensor3, piezo;
 
 board.on('ready', () => {
@@ -44,26 +45,41 @@ board.on('ready', () => {
 	$('#tag-board-status').text('CONNECTED');
 
 	// ==== hardware init
-	sensor1 = new j5.Sensor.Digital(configuration.readSettings('sensorPin1'));
-	sensor2 = new j5.Sensor.Digital(configuration.readSettings('sensorPin2'));
-	sensor3 = new j5.Sensor.Digital(configuration.readSettings('sensorPin3'));
+	sensor1 = new j5.Sensor({
+        pin: configuration.readSettings('sensorPin1'), 
+        freq: 1, 
+        threshold: 5
+    });
+	sensor2 = new j5.Sensor({
+        pin: configuration.readSettings('sensorPin2'), 
+        freq: 1, 
+        threshold: 5
+    });
+	sensor3 = new j5.Sensor({
+        pin: configuration.readSettings('sensorPin3'), 
+        freq: 1, 
+        threshold: 5
+    });
 	led1 = new j5.Led(configuration.readSettings('ledPin1'));
 	led2 = new j5.Led(configuration.readSettings('ledPin2'));
 	led3 = new j5.Led(configuration.readSettings('ledPin3'));
 	piezo = new j5.Piezo(configuration.readSettings('piezoPin'));
 
 	// ==== emit events to client
-	sensor1.on('change', (e) => {
-		client.sensorRead1(e);
-		(e == 0) ? led1.on() : led1.off();
+	sensor1.on('change', () => {
+		let ok = sensor1.scaleTo(0, 100) <= sensorThreshold;
+		client.sensorRead1(ok);
+		ok ? led1.on() : led1.off();
 	});
-	sensor2.on('change', (e) => {
-		client.sensorRead2(e);
-		(e == 0) ? led2.on() : led2.off();
+	sensor2.on('change', () => {
+		let ok = sensor2.scaleTo(0, 100) <= sensorThreshold;
+		client.sensorRead2(ok);
+		ok ? led2.on() : led2.off();
 	});
-	sensor3.on('change', (e) => {
-		client.sensorRead3(e);
-		(e == 0) ? led3.on() : led3.off();
+	sensor3.on('change', () => {
+		let ok = sensor3.scaleTo(0, 100) <= sensorThreshold;
+		client.sensorRead3(ok);
+		ok ? led3.on() : led3.off();
 	});
 });
 
@@ -168,19 +184,14 @@ $('#button-manches-save').on('click', (e) => {
 
 const playStart = () => {
 	$('#button-start').text('READY');
-	piezo.play({
-		song: 'A - A - A - A - A',
-    // song: "C D F D A - A A A A G G G G - - C D F D G - G G G G F F F F - -",
-    beats: 1 / 4,
-    tempo: 300
-  });
+	piezo.frequency(3900, 1000);
 
 	temporal.queue([
 		{
 			delay: 2500,
 			task: () => {
 				$('#button-start').text('3');
-				piezo.frequency(400, 750);
+				piezo.frequency(3900, 500);
 				led1.on();
 			}
 		},
@@ -188,7 +199,7 @@ const playStart = () => {
 			delay: 1000,
 			task: () => {
 				$('#button-start').text('2');
-				piezo.frequency(400, 750);
+				piezo.frequency(3900, 500);
 				led2.on();
 			}
 		},
@@ -196,7 +207,7 @@ const playStart = () => {
 			delay: 1000,
 			task: () => {
 				$('#button-start').text('1');
-				piezo.frequency(400, 750);
+				piezo.frequency(3900, 500);
 				led3.on();
 			}
 		},
@@ -205,7 +216,7 @@ const playStart = () => {
 			task: () => {
 				$('#button-start').text('START');
 				$('#button-start').removeAttr('disabled');
-				piezo.frequency(400, 2000);
+				piezo.frequency(3900, 750);
 				led1.off();
 				led2.off();
 				led3.off();
@@ -214,4 +225,3 @@ const playStart = () => {
 		}
 	]);
 };
-
