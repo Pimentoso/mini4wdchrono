@@ -25,7 +25,6 @@ $(document).on('click', 'a[href^="http"]', function(event) {
 
 const debugMode = false;
 const { dialog } = require('electron').remote;
-const temporal = require('temporal');
 const configuration = require('./js/configuration');
 const j5 = require('johnny-five');
 const client = require('./js/client');
@@ -180,79 +179,83 @@ $('#button-manches-save').on('click', (e) => {
 
 const playStart = () => {
 	$('#button-start').text('READY');
-	piezo.frequency(3900, 1000);
+	// piezo.frequency(3900, 1000);
 
-	temporal.queue([
-		{
-			delay: 2500,
-			task: () => {
-				$('#button-start').text('3');
-				piezo.frequency(3900, 500);
-				led1.on();
-			}
-		},
-		{
-			delay: 1000,
-			task: () => {
-				$('#button-start').text('2');
-				piezo.frequency(3900, 500);
-				led2.on();
-			}
-		},
-		{
-			delay: 1000,
-			task: () => {
-				$('#button-start').text('1');
-				piezo.frequency(3900, 500);
-				led3.on();
-			}
-		},
-		{
-			delay: 2500,
-			task: () => {
-				$('#button-start').text('START');
-				$('#button-start').removeAttr('disabled');
-				piezo.frequency(3900, 750);
-				led1.off();
-				led2.off();
-				led3.off();
-				client.startRound();
-			}
-		}
-	]);
+	// temporal.queue([
+	// 	{
+	// 		delay: 2500,
+	// 		task: () => {
+	// 			$('#button-start').text('3');
+	// 			piezo.frequency(3900, 500);
+	// 			led1.on();
+	// 		}
+	// 	},
+	// 	{
+	// 		delay: 1000,
+	// 		task: () => {
+	// 			$('#button-start').text('2');
+	// 			piezo.frequency(3900, 500);
+	// 			led2.on();
+	// 		}
+	// 	},
+	// 	{
+	// 		delay: 1000,
+	// 		task: () => {
+	// 			$('#button-start').text('1');
+	// 			piezo.frequency(3900, 500);
+	// 			led3.on();
+	// 		}
+	// 	},
+	// 	{
+	// 		delay: 2500,
+	// 		task: () => {
+	// 			$('#button-start').text('START');
+	// 			$('#button-start').removeAttr('disabled');
+	// 			piezo.frequency(3900, 750);
+	// 			led1.off();
+	// 			led2.off();
+	// 			led3.off();
+	// 			client.startRound();
+	// 		}
+	// 	}
+	// ]);
 };
 
 const playConnect = () => {
-	temporal.queue([
-		{ delay: 0, task: () => { led1.on(); }},
-		{ delay: 250, task: () => { led1.off(); led2.on(); }},
-		{ delay: 250, task: () => { led2.off(); led3.on(); }},
-		{ delay: 250, task: () => { led3.off(); led1.on(); }},
-		{ delay: 250, task: () => { led1.off(); led2.on(); }},
-		{ delay: 250, task: () => { led2.off(); led3.on(); }},
-		{ delay: 250, task: () => { led3.off(); led1.on(); }},
-		{ delay: 250, task: () => { led1.off(); led2.on(); }},
-		{ delay: 250, task: () => { led2.off(); led3.on(); }},
-		{ delay: 250, task: () => { led3.off(); led1.on(); }},
-		{ delay: 250, task: () => { led1.off(); led2.on(); }},
-		{ delay: 250, task: () => { led2.off(); led3.on(); }},
-		{ delay: 250, task: () => { led3.off(); led1.on(); }},
-		{ delay: 250, task: () => { led1.off(); led2.on(); }},
-		{ delay: 250, task: () => { led2.off(); led3.on(); }},
-		{ delay: 250, task: () => { led3.off(); }},
-	]);
+	// temporal.queue([
+	// 	{ delay: 0, task: () => { led1.on(); }},
+	// 	{ delay: 250, task: () => { led1.off(); led2.on(); }},
+	// 	{ delay: 250, task: () => { led2.off(); led3.on(); }},
+	// 	{ delay: 250, task: () => { led3.off(); led1.on(); }},
+	// 	{ delay: 250, task: () => { led1.off(); led2.on(); }},
+	// 	{ delay: 250, task: () => { led2.off(); led3.on(); }},
+	// 	{ delay: 250, task: () => { led3.off(); led1.on(); }},
+	// 	{ delay: 250, task: () => { led1.off(); led2.on(); }},
+	// 	{ delay: 250, task: () => { led2.off(); led3.on(); }},
+	// 	{ delay: 250, task: () => { led3.off(); led1.on(); }},
+	// 	{ delay: 250, task: () => { led1.off(); led2.on(); }},
+	// 	{ delay: 250, task: () => { led2.off(); led3.on(); }},
+	// 	{ delay: 250, task: () => { led3.off(); led1.on(); }},
+	// 	{ delay: 250, task: () => { led1.off(); led2.on(); }},
+	// 	{ delay: 250, task: () => { led2.off(); led3.on(); }},
+	// 	{ delay: 250, task: () => { led3.off(); }},
+	// ]);
+	flashLed(led1, 1500);
+	flashLed(led2, 1500);
+	flashLed(led3, 1500);
+	playPiezo(1000);
 };
 
-const flashLed = (time) => {
-	temporal.queue([
-		{ delay: 0, task: () => { led.on(); }},
-		{ delay: time || 500, task: () => { led.off(); }}
-	]);
+const flashLed = (led, time) => {
+	led.on();
+	setTimeout(() => {
+		led.off();
+	}, time || 300);
 };
 
 const playPiezo = (time) => {
-	temporal.queue([
-		{ delay: 0, task: () => { piezo.frequency(3900, time || 500); }},
-		{ delay: time || 500, task: () => { piezo.noTone(); }}
-	]);
+	piezo.tone(3900, time || 300);
+	setTimeout(() => {
+		piezo.noTone();
+	}, time || 300);
 };
