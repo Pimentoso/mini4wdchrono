@@ -45,21 +45,9 @@ board.on('ready', () => {
 	$('#tag-board-status').text('CONNECTED');
 
 	// ==== hardware init
-	sensor1 = new j5.Sensor({
-        pin: configuration.readSettings('sensorPin1'), 
-        freq: 1, 
-        threshold: 5
-    });
-	sensor2 = new j5.Sensor({
-        pin: configuration.readSettings('sensorPin2'), 
-        freq: 1, 
-        threshold: 5
-    });
-	sensor3 = new j5.Sensor({
-        pin: configuration.readSettings('sensorPin3'), 
-        freq: 1, 
-        threshold: 5
-    });
+	sensor1 = new j5.Sensor({ pin: configuration.readSettings('sensorPin1'), freq: 1, threshold: 5 });
+	sensor2 = new j5.Sensor({ pin: configuration.readSettings('sensorPin2'), freq: 1, threshold: 5 });
+	sensor3 = new j5.Sensor({ pin: configuration.readSettings('sensorPin3'), freq: 1, threshold: 5 });
 	led1 = new j5.Led(configuration.readSettings('ledPin1'));
 	led2 = new j5.Led(configuration.readSettings('ledPin2'));
 	led3 = new j5.Led(configuration.readSettings('ledPin3'));
@@ -68,19 +56,27 @@ board.on('ready', () => {
 	// ==== emit events to client
 	sensor1.on('change', () => {
 		let ok = sensor1.scaleTo(0, 100) <= sensorThreshold;
-		client.sensorRead1(ok);
-		ok ? led1.on() : led1.off();
+		if (ok) {
+			client.sensorRead1();
+			flashLed(led1);
+		}
 	});
 	sensor2.on('change', () => {
 		let ok = sensor2.scaleTo(0, 100) <= sensorThreshold;
-		client.sensorRead2(ok);
-		ok ? led2.on() : led2.off();
+		if (ok) {
+			client.sensorRead2();
+			flashLed(led2);
+		}
 	});
 	sensor3.on('change', () => {
 		let ok = sensor3.scaleTo(0, 100) <= sensorThreshold;
-		client.sensorRead3(ok);
-		ok ? led3.on() : led3.off();
+		if (ok) {
+			client.sensorRead3();
+			flashLed(led3);
+		}
 	});
+
+	playConnect();
 });
 
 // TODO does not work
@@ -223,5 +219,40 @@ const playStart = () => {
 				client.startRound();
 			}
 		}
+	]);
+};
+
+const playConnect = () => {
+	temporal.queue([
+		{ delay: 0, task: () => { led1.on(); }},
+		{ delay: 250, task: () => { led1.off(); led2.on(); }},
+		{ delay: 250, task: () => { led2.off(); led3.on(); }},
+		{ delay: 250, task: () => { led3.off(); led1.on(); }},
+		{ delay: 250, task: () => { led1.off(); led2.on(); }},
+		{ delay: 250, task: () => { led2.off(); led3.on(); }},
+		{ delay: 250, task: () => { led3.off(); led1.on(); }},
+		{ delay: 250, task: () => { led1.off(); led2.on(); }},
+		{ delay: 250, task: () => { led2.off(); led3.on(); }},
+		{ delay: 250, task: () => { led3.off(); led1.on(); }},
+		{ delay: 250, task: () => { led1.off(); led2.on(); }},
+		{ delay: 250, task: () => { led2.off(); led3.on(); }},
+		{ delay: 250, task: () => { led3.off(); led1.on(); }},
+		{ delay: 250, task: () => { led1.off(); led2.on(); }},
+		{ delay: 250, task: () => { led2.off(); led3.on(); }},
+		{ delay: 250, task: () => { led3.off(); }},
+	]);
+};
+
+const flashLed = (time) => {
+	temporal.queue([
+		{ delay: 0, task: () => { led.on(); }},
+		{ delay: time || 500, task: () => { led.off(); }}
+	]);
+};
+
+const playPiezo = (time) => {
+	temporal.queue([
+		{ delay: 0, task: () => { piezo.frequency(3900, time || 500); }},
+		{ delay: time || 500, task: () => { piezo.noTone(); }}
 	]);
 };

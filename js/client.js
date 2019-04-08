@@ -515,22 +515,19 @@ const timer = (lane) => {
 // ==========================================================================
 // ==== listen to arduino events
 
-const sensorRead1 = (val) => {
-	if (raceStarted && val) {
+const sensorRead1 = () => {
+	if (raceStarted)
 		addLap(0);
-	}
 };
 
-const sensorRead2 = (val) => {
-	if (raceStarted && val) {
+const sensorRead2 = () => {
+	if (raceStarted) 
 		addLap(1);
-	}
 };
 
-const sensorRead3 = (val) => {
-	if (raceStarted && val) {
+const sensorRead3 = () => {
+	if (raceStarted) 
 		addLap(2);
-	}
 };
 
 const addLap = (lane) => {

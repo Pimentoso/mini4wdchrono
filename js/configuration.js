@@ -1,15 +1,16 @@
 'use strict';
 
-const nconf = require('nconf').file({file: getUserHome() + '/mini4wdchrono-settings.json'});
+const userHome = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+const nconf = require('nconf').file({file: userHome + '/mini4wdchrono-settings.json'});
 
 nconf.defaults({
 	'sensorPin1': 'A2',
 	'sensorPin2': 'A3',
 	'sensorPin3': 'A4',
-	'ledPin1': 5,
-	'ledPin2': 4,
-	'ledPin3': 3,
-	'piezoPin': 7,
+	'ledPin1': 4,
+	'ledPin2': 7,
+	'ledPin3': 8,
+	'piezoPin': 9,
 	'sensorThreshold': 10,
 	'timeThreshold': 40,
 	'speedThreshold': 5
@@ -42,10 +43,6 @@ const loadRound = (manche, round) => {
 const deleteRound = (manche, round) => {
 	nconf.clear('race:' + manche + '-' + round);
 	nconf.save();
-};
-
-const getUserHome = () => {
-    return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
 };
 
 module.exports = {
