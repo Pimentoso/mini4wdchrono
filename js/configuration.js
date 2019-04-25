@@ -4,12 +4,12 @@ const userHome = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HO
 const nconf = require('nconf').file({file: userHome + '/mini4wdchrono-settings.json'});
 
 nconf.defaults({
-	'sensorPin1': 'A2',
-	'sensorPin2': 'A3',
-	'sensorPin3': 'A4',
-	'ledPin1': 3,
-	'ledPin2': 4,
-	'ledPin3': 5,
+	'sensorPin1': 'A0',
+	'sensorPin2': 'A1',
+	'sensorPin3': 'A2',
+	'ledPin1': 11,
+	'ledPin2': 12,
+	'ledPin3': 13,
 	'piezoPin': 2,
 	'sensorThreshold': 10,
 	'timeThreshold': 40,

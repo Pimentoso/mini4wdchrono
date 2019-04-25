@@ -28,6 +28,7 @@ const { dialog } = require('electron').remote;
 const configuration = require('./js/configuration');
 const j5 = require('johnny-five');
 const client = require('./js/client');
+const utils = require('./js/utils');
 client.init();
 
 const board = new j5.Board({
@@ -179,83 +180,18 @@ $('#button-manches-save').on('click', (e) => {
 
 const playStart = () => {
 	$('#button-start').text('READY');
-	// piezo.frequency(3900, 1000);
-
-	// temporal.queue([
-	// 	{
-	// 		delay: 2500,
-	// 		task: () => {
-	// 			$('#button-start').text('3');
-	// 			piezo.frequency(3900, 500);
-	// 			led1.on();
-	// 		}
-	// 	},
-	// 	{
-	// 		delay: 1000,
-	// 		task: () => {
-	// 			$('#button-start').text('2');
-	// 			piezo.frequency(3900, 500);
-	// 			led2.on();
-	// 		}
-	// 	},
-	// 	{
-	// 		delay: 1000,
-	// 		task: () => {
-	// 			$('#button-start').text('1');
-	// 			piezo.frequency(3900, 500);
-	// 			led3.on();
-	// 		}
-	// 	},
-	// 	{
-	// 		delay: 2500,
-	// 		task: () => {
-	// 			$('#button-start').text('START');
-	// 			$('#button-start').removeAttr('disabled');
-	// 			piezo.frequency(3900, 750);
-	// 			led1.off();
-	// 			led2.off();
-	// 			led3.off();
-	// 			client.startRound();
-	// 		}
-	// 	}
-	// ]);
+	utils
+	.delay(() => { led1.on(); led2.on(); led3.on(); piezo.tone(3900, 1000); }, 200)
+	.delay(() => { led1.off(); led2.off(); led3.off(); piezo.noTone(); }, 1000)
+	.delay(() => { led1.on(); }, 1000)
+	.delay(() => { led2.on(); }, 1000)
+	.delay(() => { led3.on(); }, 1000)
+	.delay(() => { led1.off(); led2.off(); led3.off(); piezo.tone(3900, 1000); }, 3000)
+	.delay(() => { piezo.noTone(); }, 1000);
 };
 
 const playConnect = () => {
-	// temporal.queue([
-	// 	{ delay: 0, task: () => { led1.on(); }},
-	// 	{ delay: 250, task: () => { led1.off(); led2.on(); }},
-	// 	{ delay: 250, task: () => { led2.off(); led3.on(); }},
-	// 	{ delay: 250, task: () => { led3.off(); led1.on(); }},
-	// 	{ delay: 250, task: () => { led1.off(); led2.on(); }},
-	// 	{ delay: 250, task: () => { led2.off(); led3.on(); }},
-	// 	{ delay: 250, task: () => { led3.off(); led1.on(); }},
-	// 	{ delay: 250, task: () => { led1.off(); led2.on(); }},
-	// 	{ delay: 250, task: () => { led2.off(); led3.on(); }},
-	// 	{ delay: 250, task: () => { led3.off(); led1.on(); }},
-	// 	{ delay: 250, task: () => { led1.off(); led2.on(); }},
-	// 	{ delay: 250, task: () => { led2.off(); led3.on(); }},
-	// 	{ delay: 250, task: () => { led3.off(); led1.on(); }},
-	// 	{ delay: 250, task: () => { led1.off(); led2.on(); }},
-	// 	{ delay: 250, task: () => { led2.off(); led3.on(); }},
-	// 	{ delay: 250, task: () => { led3.off(); }},
-	// ]);
-	flashLed(led1, 1500);
-	flashLed(led2, 1500);
-	flashLed(led3, 1500);
-	playPiezo(1000);
-};
-
-const flashLed = (led, time) => {
-	led.on();
-	setTimeout(() => {
-		led.off();
-	}, time || 300);
-};
-
-const playPiezo = (time) => {
-	piezo.tone(3900, time || 300);
-	setTimeout(() => {
-		piezo.noTone();
-	}, time || 300);
+	utils
+	.delay(() => { led1.blink(125); led2.blink(125); led3.blink(125); }, 125)
+	.delay(() => { led1.stop().off(); led2.stop().off(); led3.stop().off(); }, 2000);
 };
