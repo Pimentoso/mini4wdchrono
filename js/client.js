@@ -110,7 +110,7 @@ const chronoInit = (reset) => {
 	if (reset == null) {
 		// existing round
 		cars = configuration.loadRound(currManche, currRound);
-		chrono.init(currTrack, null, cars);
+		chrono.init(currTrack, mancheList[currManche][currRound], cars);
 	}
 	else {
 		// new blank round
@@ -444,8 +444,8 @@ const drawRace = () => {
 
 		// split times
 		$('#laps-lane' + i).empty();
-		_.each(car.splitTimes, (t) => {
-			$('#laps-lane' + i).append('<li>' + Utils.prettyTime(t) + '</li>');
+		_.each(car.splitTimes, (t,ii) => {
+			$('#laps-lane' + i).append('<li>partial ' + (ii+1) + ': ' + Utils.prettyTime(t) + ' sec</li>');
 		});
 
 		// place

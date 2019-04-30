@@ -107,12 +107,15 @@ const calculateCar = (car, timestamp) => {
 			// start
 			car.startTimestamp = timestamp;
 		}
+		if (car.lapCount > 0) {
+			// add split times after 2nd pass
+			car.splitTimes.push(timestamp - car.currTimestamp);
+		}
 		car.lapCount += 1;
 		car.nextLane = nextLane(car.nextLane);
 		car.currTimestamp = timestamp;
 		car.currTime = timestamp - car.startTimestamp;
 		car.speed = (rTrackLength/3)*(car.lapCount-1)/(car.currTime/1000);
-		car.splitTimes.push(car.currTime);
 		if (car.lapCount == 4) {
 			// finish
 			car.endTimestamp = timestamp;
