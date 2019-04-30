@@ -178,6 +178,11 @@ $('#button-manches-save').on('click', (e) => {
 // ==========================================================================
 // ==== send commands to hardware
 
+const flashLed = (led) => {
+	led.on();
+	utils.delay(() => { led.off(); }, 1000);
+};
+
 const playStart = () => {
 	$('#button-start').text('READY');
 	utils
@@ -186,8 +191,8 @@ const playStart = () => {
 	.delay(() => { led1.on(); }, 1000)
 	.delay(() => { led2.on(); }, 1000)
 	.delay(() => { led3.on(); }, 1000)
-	.delay(() => { led1.off(); led2.off(); led3.off(); piezo.tone(3900, 1000); }, 3000)
-	.delay(() => { piezo.noTone(); }, 1000);
+	.delay(() => { led1.off(); led2.off(); led3.off(); piezo.tone(3900, 1000); }, 1000)
+	.delay(() => { piezo.noTone(); client.startRound(); }, 1000);
 };
 
 const playConnect = () => {

@@ -106,7 +106,7 @@ const guiInit = () => {
 };
 
 const chronoInit = (reset) => {
-	let cars = nil;
+	let cars = null;
 	if (reset == null) {
 		// existing round
 		cars = configuration.loadRound(currManche, currRound);

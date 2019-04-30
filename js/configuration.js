@@ -11,7 +11,7 @@ nconf.defaults({
 	'ledPin2': 12,
 	'ledPin3': 13,
 	'piezoPin': 2,
-	'sensorThreshold': 10,
+	'sensorThreshold': 20,
 	'timeThreshold': 40,
 	'speedThreshold': 5
 });
