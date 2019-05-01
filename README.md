@@ -14,11 +14,11 @@ You also need a white LED strip and 3x photoresistor sensors.
 
 For the LED strip, use a 50cm 5V cold light strip, like this one.
 
-https://www.aliexpress.com/item/5V-USB-Cable-LED-Strip/32977470062.html
+https://www.aliexpress.com/item/33000619572.html
 
 For the sensors I'm using TEMT6000 for their slim form factor, but it will work with any photoresistor + 10kΩ resistor.
 
-https://www.aliexpress.com/item/TEMT6000-Sensor/32583469115.html
+https://www.aliexpress.com/item/32583469115.html
 
 You also need 3 green LEDs + 220Ω resistors (or a lilypad), and a 5v magnetic buzzer
 
