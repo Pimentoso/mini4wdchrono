@@ -55,7 +55,7 @@
 		<ul>
 			<li class="is-active" data-tab="setup">
 				<a>
-					<span>Setup</span>
+					<span>Race setup</span>
 				</a>
 			</li>
 			<li data-tab="race">
@@ -71,6 +71,11 @@
 			<li data-tab="manches">
 				<a>
 					<span>Manches list</span>
+				</a>
+			</li>
+			<li data-tab="config">
+				<a>
+					<span>Configuration</span>
 				</a>
 			</li>
 		</ul>
@@ -145,6 +150,21 @@
 		</div>
 
 		<div class="container">
+			<label class="label">Max start delay</label>
+			<div class="field has-addons">
+				<p class="control" style="width: 100%;">
+					<input id="js-settings-start-delay" class="input" type="text" placeholder="Text input" value="3">
+				</p>
+				<p class="control">
+					<a class="button is-static">
+						sec
+					</a>
+				</p>
+			</div>
+			<p class="has-text-grey is-size-7">Time limit for a car to pass on the sensor after race start. Default is 3 sec.</p>
+		</div>
+
+		<div class="container">
 			<label class="label">Average speed</label>
 			<div class="field has-addons">
 				<p class="control" style="width: 100%;">
@@ -177,10 +197,10 @@
 		</div>
 
 		<p class="has-text-centered">
-				<a id="button-save-settings" href="#" class="button is-info">
-					Save settings
-				</a>
-			</p>
+			<a id="button-save-settings" href="#" class="button is-info">
+				Save settings
+			</a>
+		</p>
 	</div>
 
 	<!-- PLAYERS TAB -->
@@ -231,7 +251,7 @@
 
 		<div class="level has-text-centered">
 			<div class="level-item">
-				<button class="button is-info" id="button-prev">
+				<button class="button" id="button-prev">
 					<span>&lt; Prev round</span>
 				</button>
 			</div>
@@ -241,17 +261,18 @@
 				</button>
 			</div>
 			<div class="level-item">
-				<button class="button is-info" id="button-next">
+				<button class="button" id="button-next">
 					<span>Next round &gt;</span>
 				</button>
 			</div>
 		</div>
 
 		<div class="columns">
-			<div class="column">
+			<div class="column box-lane0">
+				<p class="has-background-primary has-text-white is-block is-size-3 has-text-centered has-text-weight-bold has-margin-vertical">LANE 1</p>
 				<div class="card has-text-centered">
 					<header class="card-header">
-						<p class="card-header-title is-size-2 is-block has-text-grey-dark">Lane 1 -&nbsp;<span id="name-lane0" class="is-uppercase"></span></p>
+						<p id="name-lane0" class="card-header-title is-size-2 is-block has-text-grey-dark is-uppercase"></p>
 					</header>
 					<div class="card-content">
 						<div class="content">
@@ -268,10 +289,11 @@
 					</div>
 				</div>
 			</div>
-			<div class="column">
+			<div class="column box-lane1">
+				<p class="has-background-warning has-text-white is-block is-size-3 has-text-centered has-text-weight-bold has-margin-vertical">LANE 2</p>
 				<div class="card has-text-centered">
 					<header class="card-header">
-						<p class="card-header-title is-size-2 is-block has-text-grey-dark">Lane 2 -&nbsp; <span id="name-lane1" class="is-uppercase"></span></p>
+						<p id="name-lane1" class="card-header-title is-size-2 is-block has-text-grey-dark is-uppercase"></p>
 					</header>
 					<div class="card-content">
 						<div class="content">
@@ -288,10 +310,11 @@
 					</div>
 				</div>
 			</div>
-			<div class="column">
+			<div class="column box-lane2">
+				<p class="has-background-danger has-text-white is-block is-size-3 has-text-centered has-text-weight-bold has-margin-vertical">LANE 3</p>
 				<div class="card has-text-centered">
 					<header class="card-header">
-						<p class="card-header-title is-size-2 is-block has-text-grey-dark">Lane 3 -&nbsp; <span id="name-lane2" class="is-uppercase"></span></p>
+						<p id="name-lane2" class="card-header-title is-size-2 is-block has-text-grey-dark is-uppercase"></p>
 					</header>
 					<div class="card-content">
 						<div class="content">
@@ -309,6 +332,80 @@
 				</div>
 			</div>
 		</div>
+	</div>
+
+	<!-- CONFIG TAB -->
+	<div class="container" data-tab="config" style="display: none;">
+		<div class="container">
+			<p class="title is-4">Configuration</p>
+
+			<label class="label">Sensitivity</label>
+			<div class="field has-addons">
+				<p class="control" style="width: 100%;">
+					<input id="js-config-sensitivity" class="input" type="text" placeholder="default: 20" value="">
+				</p>
+				<p class="control">
+					<a class="button is-static">
+						%
+					</a>
+				</p>
+			</div>
+
+			<div class="field">
+				<label class="label">Sensor 1 pin (analog)</label>
+				<div class="control" style="width: 100%;">
+					<input id="js-config-sensor1-pin" class="input" type="text" placeholder="example: A0" value="">
+				</div>
+			</div>
+
+			<div class="field">
+				<label class="label">Sensor 2 pin (analog)</label>
+				<div class="control" style="width: 100%;">
+					<input id="js-config-sensor2-pin" class="input" type="text" placeholder="example: A1" value="">
+				</div>
+			</div>
+
+			<div class="field">
+				<label class="label">Sensor 3 pin (analog)</label>
+				<div class="control" style="width: 100%;">
+					<input id="js-config-sensor3-pin" class="input" type="text" placeholder="example: A2" value="">
+				</div>
+			</div>
+			
+			<div class="field">
+				<label class="label">LED 1 pin (digital)</label>
+				<div class="control" style="width: 100%;">
+					<input id="js-config-led1-pin" class="input" type="text" placeholder="example: 0" value="">
+				</div>
+			</div>
+
+			<div class="field">
+				<label class="label">LED 2 pin (digital)</label>
+				<div class="control" style="width: 100%;">
+					<input id="js-config-led2-pin" class="input" type="text" placeholder="example: 1" value="">
+				</div>
+			</div>
+
+			<div class="field">
+				<label class="label">LED 3 pin (digital)</label>
+				<div class="control" style="width: 100%;">
+					<input id="js-config-led3-pin" class="input" type="text" placeholder="example: 2" value="">
+				</div>
+			</div>
+
+			<div class="field">
+				<label class="label">Speaker pin (digital)</label>
+				<div class="control" style="width: 100%;">
+					<input id="js-config-piezo-pin" class="input" type="text" placeholder="example: 4" value="">
+				</div>
+			</div>
+		</div>
+
+		<p class="has-text-centered">
+			<a id="button-save-config" href="#" class="button is-info">
+				Save settings
+			</a>
+		</p>
 	</div>
 
 </body>

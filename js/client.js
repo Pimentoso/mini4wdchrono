@@ -18,6 +18,16 @@ const init = () => {
 	// populate ui fields
 	$('#js-settings-time-threshold').val(configuration.readSettings('timeThreshold'));
 	$('#js-settings-speed-threshold').val(configuration.readSettings('speedThreshold'));
+	$('#js-settings-start-delay').val(configuration.readSettings('startDelay'));
+
+	$('#js-config-sensor1-pin').val(configuration.readSettings('sensorPin1'));
+	$('#js-config-sensor2-pin').val(configuration.readSettings('sensorPin2'));
+	$('#js-config-sensor3-pin').val(configuration.readSettings('sensorPin3'));
+	$('#js-config-led1-pin').val(configuration.readSettings('ledPin1'));
+	$('#js-config-led2-pin').val(configuration.readSettings('ledPin2'));
+	$('#js-config-led3-pin').val(configuration.readSettings('ledPin3'));
+	$('#js-config-piezo-pin').val(configuration.readSettings('piezoPin'));
+	$('#js-config-sensitivity').val(configuration.readSettings('sensorThreshold'));
 
 	// read stuff from settings
 	mancheTimesList = configuration.readSettings('mancheTimes') || [];
@@ -91,14 +101,14 @@ const guiInit = () => {
 	$('#curr-round').text(currRound+1);
 
 	if (currTournament == null) {
-		$('#name-lane0').text('-');
-		$('#name-lane1').text('-');
-		$('#name-lane2').text('-');
+		$('#name-lane0').text('_');
+		$('#name-lane1').text('_');
+		$('#name-lane2').text('_');
 	}
 	else {
-		$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '-');
-		$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '-');
-		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '-');
+		$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '_');
+		$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '_');
+		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '_');
 		showMancheList();
 	}
 
@@ -246,7 +256,7 @@ const startRound = () => {
 
 	// run tasks periodically
 	checkRaceTask = setInterval(checkRace, 1000);
-	setTimeout(checkStart, 5000);
+	setTimeout(checkStart, configuration.readSettings('startDelay') * 1000);
 
 	raceStarted = true;
 	guiInit();
@@ -469,7 +479,7 @@ const drawRace = () => {
 		// split times
 		$('#laps-lane' + i).empty();
 		_.each(car.splitTimes, (t,ii) => {
-			$('#laps-lane' + i).append('<li class="is-size-4">partial ' + (ii+1) + ' - <strong>' + Utils.prettyTime(t) + ' s</strong></li>');
+			$('#laps-lane' + i).append('<li class="is-size-3">partial ' + (ii+1) + ' - <strong>' + Utils.prettyTime(t) + ' s</strong></li>');
 		});
 
 		// place

@@ -159,7 +159,21 @@ $('#button-xls').on('click', (e) => {
 $('#button-save-settings').on('click', (e) => {
 	configuration.saveSettings('timeThreshold', parseFloat($('#js-settings-time-threshold').val().replace(',', '.')));
 	configuration.saveSettings('speedThreshold', parseFloat($('#js-settings-speed-threshold').val().replace(',', '.')));
+	configuration.saveSettings('startDelay', parseFloat($('#js-settings-start-delay').val().replace(',', '.')));
 	client.showThresholds();
+	e.preventDefault();
+});
+
+$('#button-save-config').on('click', (e) => {
+	configuration.saveSettings('sensorPin1', $('#js-config-sensor1-pin').val());
+	configuration.saveSettings('sensorPin2', $('#js-config-sensor2-pin').val());
+	configuration.saveSettings('sensorPin3', $('#js-config-sensor3-pin').val());
+	configuration.saveSettings('ledPin1', parseInt($('#js-config-led1-pin').val()));
+	configuration.saveSettings('ledPin2', parseInt($('#js-config-led2-pin').val()));
+	configuration.saveSettings('ledPin3', parseInt($('#js-config-led3-pin').val()));
+	configuration.saveSettings('piezoPin', parseInt($('#js-config-piezo-pin').val()));
+	configuration.saveSettings('sensorThreshold', parseInt($('#js-config-sensitivity').val()));
+	dialog.showMessageBox({ type: 'warning', message: "Please restart the program for the changes to take effect." });
 	e.preventDefault();
 });
 

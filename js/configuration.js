@@ -13,7 +13,8 @@ nconf.defaults({
 	'piezoPin': 2,
 	'sensorThreshold': 20,
 	'timeThreshold': 40,
-	'speedThreshold': 5
+	'speedThreshold': 5,
+	'startDelay': 3
 });
 
 const saveSettings = (settingKey, settingValue) => {
