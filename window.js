@@ -33,6 +33,10 @@ function createWindow() {
     slashes: true
   }));
 
+  // Maximize.
+  mainWindow.maximize();
+  mainWindow.setResizable(false);
+
   // Open the DevTools.
   // mainWindow.webContents.openDevTools();
 

@@ -157,8 +157,9 @@ $('#button-xls').on('click', (e) => {
 });
 
 $('#button-save-settings').on('click', (e) => {
-	configuration.saveSettings('timeThreshold', parseInt($('#js-settings-time-threshold').val()));
-	configuration.saveSettings('speedThreshold', parseInt($('#js-settings-speed-threshold').val()));
+	configuration.saveSettings('timeThreshold', parseFloat($('#js-settings-time-threshold').val().replace(',', '.')));
+	configuration.saveSettings('speedThreshold', parseFloat($('#js-settings-speed-threshold').val().replace(',', '.')));
+	client.showThresholds();
 	e.preventDefault();
 });
 

@@ -122,7 +122,7 @@ const chronoInit = (reset) => {
 const showTrackDetails = () => {
 	if (currTrack) {
 		$('#js-track-length').text('Length: ' + currTrack.length);
-		$('#js-track-order').text('Lane order: ' + currTrack.order);
+		$('#js-track-order').text('Lane order: ' + currTrack.order + ',1');
 		$('#js-link-track').attr('href', currTrack.view_url);
 	}
 	else {
@@ -130,6 +130,7 @@ const showTrackDetails = () => {
 		$('#js-track-order').text('-');
 		$('#js-link-track').attr('href', '#');
 	}
+	showThresholds();
 };
 
 const showTournamentDetails = () => {
@@ -145,6 +146,25 @@ const showTournamentDetails = () => {
 		$('#js-tournament-players').text('-');
 		$('#js-tournament-manches').text('-');
 		$('#js-link-tournament').attr('href', '#');
+	}
+};
+
+const showThresholds = () => {
+	if (currTrack) {
+		let rTrackLength = currTrack.length;
+		let rSpeedThreshold = configuration.readSettings('speedThreshold');
+		let rTimeThreshold = configuration.readSettings('timeThreshold')/100;
+		let estimatedTime = rTrackLength / rSpeedThreshold;
+		let estimatedCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold);
+		let estimatedCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold);
+		$('#js-settings-estimated-time').show();
+		$('#js-settings-estimated-time').text('ESTIMATED ROUND TIME: ' + estimatedTime.toFixed(3) + ' sec');
+		$('#js-settings-estimated-cutoff').show();
+		$('#js-settings-estimated-cutoff').text('ESTIMATED CUTOFF TIME: min ' + estimatedCutoffMin.toFixed(3) + ' sec, max ' + estimatedCutoffMax.toFixed(3) + ' sec');
+	}
+	else {
+		$('#js-settings-estimated-time').hide();
+		$('#js-settings-estimated-cutoff').hide();
 	}
 };
 
@@ -423,6 +443,7 @@ const drawRace = () => {
 		// delay + speed
 		if (car.outOfBounds) {
 			$('#delay-lane' + i).text('+99.999');
+			$('#speed-lane' + i).text('0.00 m/s');
 		}
 		else {
 			$('#delay-lane' + i).text('+' + (car.delayFromFirst/1000));
@@ -431,6 +452,9 @@ const drawRace = () => {
 			}
 			if (car.lapCount > 1) {
 				$('#speed-lane' + i).text(car.speed.toFixed(2) + ' m/s');
+			}
+			else {
+				$('#speed-lane' + i).text('0.00 m/s');
 			}
 		}
 
@@ -445,7 +469,7 @@ const drawRace = () => {
 		// split times
 		$('#laps-lane' + i).empty();
 		_.each(car.splitTimes, (t,ii) => {
-			$('#laps-lane' + i).append('<li>partial ' + (ii+1) + ': ' + Utils.prettyTime(t) + ' sec</li>');
+			$('#laps-lane' + i).append('<li class="is-size-4">partial ' + (ii+1) + ' - <strong>' + Utils.prettyTime(t) + ' s</strong></li>');
 		});
 
 		// place
@@ -552,5 +576,6 @@ module.exports = {
 	prevRound: prevRound,
 	nextRound: nextRound,
 	showMancheList: showMancheList,
-	showPlayerList: showPlayerList
+	showPlayerList: showPlayerList,
+	showThresholds: showThresholds
 };

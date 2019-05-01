@@ -79,7 +79,7 @@
 	<!-- SETUP TAB -->
 	<div class="container" data-tab="setup">
 		<p class="has-text-centered">
-			<a id="button-reset" href="#" class="button is-info">
+			<a id="button-reset" href="#" class="button is-info" style="width: 200px;">
 				New race
 			</a>
 		</p>
@@ -107,8 +107,8 @@
 					</p>
 				</div>
 				<div class="level-right">
-					<a id="js-link-track" href="#" class="button is-info">
-						View &gt;
+					<a id="js-link-track" href="#" class="button">
+						Open Mini4WD Track Editor &gt;
 					</a>
 				</div>
 			</div>
@@ -137,8 +137,8 @@
 					</p>
 				</div>
 				<div class="level-right">
-					<a id="js-link-tournament" href="#" class="button is-info">
-						View &gt;
+					<a id="js-link-tournament" href="#" class="button">
+						Open Mini4WD Tournament Editor &gt;
 					</a>
 				</div>
 			</div>
@@ -157,6 +157,7 @@
 				</p>
 			</div>
 			<p class="has-text-grey is-size-7">Estimated speed for this race. Jump race: 5, Italian expert: 7.5, Speed race: 10</p>
+			<p id="js-settings-estimated-time" class="has-text-grey is-size-7">ESTIMATED ROUND TIME</p>
 		</div>
 
 		<div class="container">
@@ -172,6 +173,7 @@
 				</p>
 			</div>
 			<p class="has-text-grey is-size-7">If a car does not complete a lap within this %, it's considered out. Default is 40.</p>
+			<p id="js-settings-estimated-cutoff" class="has-text-grey is-size-7">ESTIMATED CUTOFF</p>
 		</div>
 
 		<p class="has-text-centered">
@@ -222,9 +224,9 @@
 	<!-- RACE TAB -->
 	<div class="container" data-tab="race" style="display: none;">
 		<div class="level has-text-centered has-text-weight-bold">
-			<span class="level-item tag is-primary is-large">Manche&nbsp;<span id="curr-manche"></span></span>
+			<span class="level-item tag is-primary is-size-3">Manche&nbsp;<span id="curr-manche"></span></span>
 			&nbsp;
-			<span class="level-item tag is-primary is-large">Round&nbsp;<span id="curr-round"></span></span>
+			<span class="level-item tag is-primary is-size-3">Round&nbsp;<span id="curr-round"></span></span>
 		</div>
 
 		<div class="level has-text-centered">
@@ -249,17 +251,17 @@
 			<div class="column">
 				<div class="card has-text-centered">
 					<header class="card-header">
-						<p class="card-header-title">Lane 1 -&nbsp;<span id="name-lane0" class="is-uppercase"></span></p>
+						<p class="card-header-title is-size-2 is-block has-text-grey-dark">Lane 1 -&nbsp;<span id="name-lane0" class="is-uppercase"></span></p>
 					</header>
 					<div class="card-content">
 						<div class="content">
-							<span id="place-lane0" class="tag is-uppercase is-light js-place">stopped</span>
+							<span id="place-lane0" class="tag is-size-5 is-uppercase is-light js-place">stopped</span>
 							&nbsp;
-							<span id="delay-lane0" class="tag is-light js-delay">+0.000 sec</span>
-							<span id="timer-lane0" class="is-size-3 is-block has-text-weight-bold has-margin-vertical js-timer">0.000</span>
-							<span id="lap-lane0" class="tag is-uppercase is-light js-lap">lap 0</span>
+							<span id="delay-lane0" class="tag is-size-5 is-light js-delay">+0.000 sec</span>
+							<span id="timer-lane0" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
+							<span id="lap-lane0" class="tag is-size-5 is-uppercase is-light js-lap">lap 0</span>
 							&nbsp;
-							<span id="speed-lane0" class="tag is-light js-speed">0.00 m/s</span>
+							<span id="speed-lane0" class="tag is-size-5 is-light js-speed">0.00 m/s</span>
 
 							<ul id="laps-lane0"></ul>
 						</div>
@@ -269,17 +271,17 @@
 			<div class="column">
 				<div class="card has-text-centered">
 					<header class="card-header">
-						<p class="card-header-title">Lane 2 -&nbsp; <span id="name-lane1" class="is-uppercase"></span></p>
+						<p class="card-header-title is-size-2 is-block has-text-grey-dark">Lane 2 -&nbsp; <span id="name-lane1" class="is-uppercase"></span></p>
 					</header>
 					<div class="card-content">
 						<div class="content">
-							<span id="place-lane1" class="tag is-uppercase is-light js-place">stopped</span>
+							<span id="place-lane1" class="tag is-size-5 is-uppercase is-light js-place">stopped</span>
 							&nbsp;
-							<span id="delay-lane1" class="tag is-light js-delay">+0.000 sec</span>
-							<span id="timer-lane1" class="is-size-3 is-block has-text-weight-bold has-margin-vertical js-timer">0.000</span>
-							<span id="lap-lane1" class="tag is-uppercase is-light js-lap">lap 0</span>
+							<span id="delay-lane1" class="tag is-size-5 is-light js-delay">+0.000 sec</span>
+							<span id="timer-lane1" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
+							<span id="lap-lane1" class="tag is-size-5 is-uppercase is-light js-lap">lap 0</span>
 							&nbsp;
-							<span id="speed-lane1" class="tag is-light js-speed">0.00 m/s</span>
+							<span id="speed-lane1" class="tag is-size-5 is-light js-speed">0.00 m/s</span>
 
 							<ul id="laps-lane1"></ul>
 						</div>
@@ -289,17 +291,17 @@
 			<div class="column">
 				<div class="card has-text-centered">
 					<header class="card-header">
-						<p class="card-header-title">Lane 3 -&nbsp; <span id="name-lane2" class="is-uppercase"></span></p>
+						<p class="card-header-title is-size-2 is-block has-text-grey-dark">Lane 3 -&nbsp; <span id="name-lane2" class="is-uppercase"></span></p>
 					</header>
 					<div class="card-content">
 						<div class="content">
-							<span id="place-lane2" class="tag is-uppercase is-light js-place">stopped</span>
+							<span id="place-lane2" class="tag is-size-5 is-uppercase is-light js-place">stopped</span>
 							&nbsp;
-							<span id="delay-lane2" class="tag is-light js-delay">+0.000 sec</span>
-							<span id="timer-lane2" class="is-size-3 is-block has-text-weight-bold has-margin-vertical js-timer">0.000</span>
-							<span id="lap-lane2" class="tag is-uppercase is-light js-lap">lap 0</span>
+							<span id="delay-lane2" class="tag is-size-5 is-light js-delay">+0.000 sec</span>
+							<span id="timer-lane2" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
+							<span id="lap-lane2" class="tag is-size-5 is-uppercase is-light js-lap">lap 0</span>
 							&nbsp;
-							<span id="speed-lane2" class="tag is-light js-speed">0.00 m/s</span>
+							<span id="speed-lane2" class="tag is-size-5 is-light js-speed">0.00 m/s</span>
 
 							<ul id="laps-lane2"></ul>
 						</div>
