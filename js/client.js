@@ -29,6 +29,8 @@ const init = () => {
 	$('#js-config-piezo-pin').val(configuration.readSettings('piezoPin'));
 	$('#js-config-sensitivity').val(configuration.readSettings('sensorThreshold'));
 
+	$('#js-about-version').text('Version ' + process.env.npm_package_version);
+
 	// read stuff from settings
 	mancheTimesList = configuration.readSettings('mancheTimes') || [];
 	playerTimesList = configuration.readSettings('playerTimes') || [];
