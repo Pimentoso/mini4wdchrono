@@ -138,7 +138,6 @@ $('#button-start').on('click', (e) => {
 		client.startRound();
 	}
 	else {
-		$('#button-start').attr('disabled', true);
 		playStart();
 	}
 });

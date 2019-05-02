@@ -247,8 +247,14 @@ const saveXls = () => {
 
 const startRound = () => {
 	if (currTournament == null || currTrack == null) {
-		console.log('Error: data not loaded');
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: "Track/tournament not loaded."});
 		return;
+	}
+
+	if (configuration.loadRound(currManche, currRound)) {
+		if (dialog.showMessageBox({ type: 'warning', message: "Play this round again? The current data will be lost.", buttons: ['Ok', 'Cancel']}) == 1) {
+			return;
+		}
 	}
 
 	timerIntervals = [];
@@ -259,13 +265,14 @@ const startRound = () => {
 	setTimeout(checkStart, configuration.readSettings('startDelay') * 1000);
 
 	raceStarted = true;
-	guiInit();
 	chronoInit(true);
+	guiInit();
+	$('#button-start').attr('disabled', true);
 };
 
 const prevRound = () => {
 	if (currTournament == null || currTrack == null) {
-		console.log('Error: data not loaded');
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: "Track/tournament not loaded."});
 		return;
 	}
 	if (currManche == 0 && currRound == 0) {
@@ -281,14 +288,14 @@ const prevRound = () => {
 
 		configuration.saveSettings('currManche', currManche);
 		configuration.saveSettings('currRound', currRound);
-		guiInit();
 		chronoInit();
+		guiInit();
 	}
 };
 
 const nextRound = () => {
 	if (currTournament == null || currTrack == null) {
-		console.log('Error: data not loaded');
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: "Track/tournament not loaded."});
 		return;
 	}
 	if (currManche == (mancheList.length-1) && currRound == (mancheList[0].length-1)) {
@@ -304,8 +311,8 @@ const nextRound = () => {
 
 		configuration.saveSettings('currManche', currManche);
 		configuration.saveSettings('currRound', currRound);
-		guiInit();
 		chronoInit();
+		guiInit();
 	}
 };
 
@@ -441,6 +448,7 @@ const raceFinished = () => {
 	showPlayerList();
 	showMancheList();
 	raceStarted = false;
+	$('#button-start').removeAttr('disabled');
 };
 
 const drawRace = () => {
