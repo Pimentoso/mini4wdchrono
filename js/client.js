@@ -225,7 +225,7 @@ const showMancheList = () => {
 				playerName = '<p class="has-text-centered is-uppercase">' + (playerList[id] || '') + '</p>';
 				playerTime = (mancheTimesList[mindex] && mancheTimesList[mindex][rindex]) ? mancheTimesList[mindex][rindex][pindex] : 0;
 				if (playerList[id]) {
-					playerForm = '<div class="field"><div class="control"><input class="input is-small js-time-form" type="text" value="' + Utils.prettyTime(playerTime) + '"></div></div>';
+					playerForm = '<div class="field"><div class="control"><input class="input is-small js-time-form" type="text" data-manche="' + mindex + '" data-round="' + rindex + '" data-player="' + pindex + '" value="' + Utils.prettyTime(playerTime) + '"></div></div>';
 				}
 				else {
 					playerForm = '';
