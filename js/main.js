@@ -138,6 +138,17 @@ $('#button-start').on('click', (e) => {
 		client.startRound();
 	}
 	else {
+		// production mode
+		if (configuration.readSettings('tournament') == null || configuration.readSettings('track') == null) {
+			dialog.showMessageBox({ type: 'error', title: 'Error', message: "Track/tournament not loaded."});
+			return;
+		}
+		if (configuration.loadRound()) {
+			if (dialog.showMessageBox({ type: 'warning', message: "Play this round again? The current data will be lost.", buttons: ['Ok', 'Cancel']}) == 1) {
+				return;
+			}
+		}
+
 		playStart();
 	}
 });
@@ -164,14 +175,15 @@ $('#button-save-settings').on('click', (e) => {
 });
 
 $('#button-save-config').on('click', (e) => {
-	configuration.saveSettings('sensorPin1', $('#js-config-sensor1-pin').val());
-	configuration.saveSettings('sensorPin2', $('#js-config-sensor2-pin').val());
-	configuration.saveSettings('sensorPin3', $('#js-config-sensor3-pin').val());
-	configuration.saveSettings('ledPin1', parseInt($('#js-config-led1-pin').val()));
-	configuration.saveSettings('ledPin2', parseInt($('#js-config-led2-pin').val()));
-	configuration.saveSettings('ledPin3', parseInt($('#js-config-led3-pin').val()));
+	configuration.saveSettings('sensorPin1', $('#js-config-sensor-pin-1').val());
+	configuration.saveSettings('sensorPin2', $('#js-config-sensor-pin-2').val());
+	configuration.saveSettings('sensorPin3', $('#js-config-sensor-pin-3').val());
+	configuration.saveSettings('ledPin1', parseInt($('#js-config-led-pin-1').val()));
+	configuration.saveSettings('ledPin2', parseInt($('#js-config-led-pin-2').val()));
+	configuration.saveSettings('ledPin3', parseInt($('#js-config-led-pin-3').val()));
 	configuration.saveSettings('piezoPin', parseInt($('#js-config-piezo-pin').val()));
-	configuration.saveSettings('sensorThreshold', parseInt($('#js-config-sensitivity').val()));
+	configuration.saveSettings('sensorThreshold', parseInt($('#js-config-sensor-threshold').val()));
+	configuration.saveSettings('title', $('#js-config-title').val());
 	dialog.showMessageBox({ type: 'warning', message: "Please restart the program for the changes to take effect." });
 	e.preventDefault();
 });

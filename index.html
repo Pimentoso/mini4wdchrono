@@ -18,7 +18,7 @@
 			<a class="navbar-item" href="https://github.com/Pimentoso/mini4wdchrono" target="_blank">
 				<img src="images/pimentoso.png" width="60" height="60">
 			</a>
-			<p class="navbar-item title is-2">MINI4WD CHRONO</p>
+			<p id="js-title" class="navbar-item title is-2 is-uppercase"></p>
 		</div>
 
 		<div class="navbar-menu">
@@ -346,10 +346,17 @@
 	<div class="container" data-tab="config" style="display: none;">
 		<div class="container">
 
+			<div class="field">
+				<label class="label">Custom title</label>
+				<div class="control" style="width: 100%;">
+					<input id="js-config-title" class="input" type="text" placeholder="default: MINI4WD CHRONO" value="">
+				</div>
+			</div>
+
 			<label class="label">Sensitivity</label>
 			<div class="field has-addons">
 				<p class="control" style="width: 100%;">
-					<input id="js-config-sensitivity" class="input" type="text" placeholder="default: 20" value="">
+					<input id="js-config-sensor-threshold" class="input" type="text" placeholder="default: 20" value="">
 				</p>
 				<p class="control">
 					<a class="button is-static">
@@ -361,42 +368,42 @@
 			<div class="field">
 				<label class="label">Sensor 1 pin (analog)</label>
 				<div class="control" style="width: 100%;">
-					<input id="js-config-sensor1-pin" class="input" type="text" placeholder="example: A0" value="">
+					<input id="js-config-sensor-pin-1" class="input" type="text" placeholder="example: A0" value="">
 				</div>
 			</div>
 
 			<div class="field">
 				<label class="label">Sensor 2 pin (analog)</label>
 				<div class="control" style="width: 100%;">
-					<input id="js-config-sensor2-pin" class="input" type="text" placeholder="example: A1" value="">
+					<input id="js-config-sensor-pin-2" class="input" type="text" placeholder="example: A1" value="">
 				</div>
 			</div>
 
 			<div class="field">
 				<label class="label">Sensor 3 pin (analog)</label>
 				<div class="control" style="width: 100%;">
-					<input id="js-config-sensor3-pin" class="input" type="text" placeholder="example: A2" value="">
+					<input id="js-config-sensor-pin-3" class="input" type="text" placeholder="example: A2" value="">
 				</div>
 			</div>
 			
 			<div class="field">
 				<label class="label">LED 1 pin (digital)</label>
 				<div class="control" style="width: 100%;">
-					<input id="js-config-led1-pin" class="input" type="text" placeholder="example: 0" value="">
+					<input id="js-config-led-pin-1" class="input" type="text" placeholder="example: 0" value="">
 				</div>
 			</div>
 
 			<div class="field">
 				<label class="label">LED 2 pin (digital)</label>
 				<div class="control" style="width: 100%;">
-					<input id="js-config-led2-pin" class="input" type="text" placeholder="example: 1" value="">
+					<input id="js-config-led-pin-2" class="input" type="text" placeholder="example: 1" value="">
 				</div>
 			</div>
 
 			<div class="field">
 				<label class="label">LED 3 pin (digital)</label>
 				<div class="control" style="width: 100%;">
-					<input id="js-config-led3-pin" class="input" type="text" placeholder="example: 2" value="">
+					<input id="js-config-led-pin-3" class="input" type="text" placeholder="example: 2" value="">
 				</div>
 			</div>
 

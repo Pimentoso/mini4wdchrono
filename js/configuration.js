@@ -11,10 +11,11 @@ nconf.defaults({
 	'ledPin2': 12,
 	'ledPin3': 13,
 	'piezoPin': 2,
-	'sensorThreshold': 20,
+	'sensorThreshold': 10,
 	'timeThreshold': 40,
 	'speedThreshold': 5,
-	'startDelay': 3
+	'startDelay': 3,
+	'title': 'MINI4WD CHRONO'
 });
 
 const saveSettings = (settingKey, settingValue) => {
@@ -38,7 +39,11 @@ const saveRound = (manche, round, cars) => {
 };
 
 const loadRound = (manche, round) => {
-	return nconf.get('race:' + manche + '-' + round);
+	if (manche == null)
+		manche = readSettings('currManche');
+	if (round == null)
+		round = readSettings('currRound');
+	return readSettings('race:' + manche + '-' + round);
 };
 
 const deleteRound = (manche, round) => {

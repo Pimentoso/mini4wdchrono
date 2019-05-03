@@ -1,14 +1,22 @@
 TODO
 ##############################
 
-- in manches list fare funzionare salva e annulla, gestire il disabled e avvertire quando ci sono unsaved changes e si cambia tab
+## MANCHE LIST TAB
+- make the time forms work, using the 'save changes' button
+- export xls: fix filepath
+- 'disqualify' button next to each form
 
-- export xls: filepath
+## PLAYERS LIST TAB
+- add one column to the right showing sum of 2 best times
+- add sorting to columns
 
-- refattorizzare client.init e client.guiInit
--- chrono.init non deve essere chiamato in guiInit
--- bug per cui se si clicca saveSettings non viene refreshato il round
+## RACE TAB
+- 'start free round' button
+- 'final mode' button (time will not be calculated for each player, but timer for all players start at the same time when the chrono beeps)
 
-### MODELLO 3d
+## MAIN UI
+- add option to use custom title and custom logo
 
-- supporto sottopista: la pista ha una fessura di 92mm x 5mm
+TEST VALUES
+- track: 8GPF9C
+- tournament: VTSNY3

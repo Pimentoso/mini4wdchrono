@@ -16,18 +16,20 @@ let checkRaceTask;
 
 const init = () => {
 	// populate ui fields
+	$('#js-title').text(configuration.readSettings('title'));
 	$('#js-settings-time-threshold').val(configuration.readSettings('timeThreshold'));
 	$('#js-settings-speed-threshold').val(configuration.readSettings('speedThreshold'));
 	$('#js-settings-start-delay').val(configuration.readSettings('startDelay'));
 
-	$('#js-config-sensor1-pin').val(configuration.readSettings('sensorPin1'));
-	$('#js-config-sensor2-pin').val(configuration.readSettings('sensorPin2'));
-	$('#js-config-sensor3-pin').val(configuration.readSettings('sensorPin3'));
-	$('#js-config-led1-pin').val(configuration.readSettings('ledPin1'));
-	$('#js-config-led2-pin').val(configuration.readSettings('ledPin2'));
-	$('#js-config-led3-pin').val(configuration.readSettings('ledPin3'));
+	$('#js-config-sensor-pin-1').val(configuration.readSettings('sensorPin1'));
+	$('#js-config-sensor-pin-2').val(configuration.readSettings('sensorPin2'));
+	$('#js-config-sensor-pin-3').val(configuration.readSettings('sensorPin3'));
+	$('#js-config-led-pin-1').val(configuration.readSettings('ledPin1'));
+	$('#js-config-led-pin-2').val(configuration.readSettings('ledPin2'));
+	$('#js-config-led-pin-3').val(configuration.readSettings('ledPin3'));
 	$('#js-config-piezo-pin').val(configuration.readSettings('piezoPin'));
-	$('#js-config-sensitivity').val(configuration.readSettings('sensorThreshold'));
+	$('#js-config-sensor-threshold').val(configuration.readSettings('sensorThreshold'));
+	$('#js-config-title').val(configuration.readSettings('title'));
 
 	$('#js-about-version').text('Version ' + process.env.npm_package_version);
 
@@ -248,17 +250,6 @@ const saveXls = () => {
 // ==== handle interface buttons
 
 const startRound = () => {
-	if (currTournament == null || currTrack == null) {
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: "Track/tournament not loaded."});
-		return;
-	}
-
-	if (configuration.loadRound(currManche, currRound)) {
-		if (dialog.showMessageBox({ type: 'warning', message: "Play this round again? The current data will be lost.", buttons: ['Ok', 'Cancel']}) == 1) {
-			return;
-		}
-	}
-
 	timerIntervals = [];
 	timerSeconds = [];
 
