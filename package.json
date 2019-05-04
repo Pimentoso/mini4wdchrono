@@ -4,19 +4,19 @@
   "description": "[![WIP](https://img.shields.io/badge/status-WORK%20IN%20PROGRESS-red.svg)](https://github.com/Pimentoso/mini4wdchrono)",
   "main": "window.js",
   "dependencies": {
-    "exceljs": "^1.6.2",
+    "exceljs": "^1.10.0",
     "johnny-five": "^0.15.1",
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.1",
     "nconf": "^0.10.0",
-    "serialport": "^7.0.2",
+    "serialport": "^7.1.5",
     "underscore": "^1.9.1"
   },
   "devDependencies": {
-    "npm": "^6.4.1",
-    "electron": "^2.0.12",
+    "electron": "^2.0.18",
     "electron-packager": "^12.2.0",
-    "electron-rebuild": "^1.8.2",
-    "electron-reload": "^1.2.5"
+    "electron-rebuild": "^1.8.4",
+    "electron-reload": "^1.4.0",
+    "npm": "^6.9.0"
   },
   "scripts": {
     "postinstall": "./node_modules/.bin/electron-rebuild -v $(./node_modules/.bin/electron -v)",
