@@ -37,10 +37,11 @@ Drill 3 holes in the middle of the 3 lanes of a mini4wd track piece. Put the pho
 Put the lap timer over the 3 holes, and stick the LED strip underside the lap timer, so that it casts light on the sensors.
 The mini4wd car passing over the photoresistor will trigger a lap.
 
-## Usage on OSX
+## Build on OSX
 
 ```
 brew update
+brew install node
 brew cask install arduino
 // now open the arduino IDE, and use it to upload the StandardFirmataPlus firmware on the board
 
@@ -54,10 +55,31 @@ npm start
 To package the project:
 
 ```
-npm install electron-packager -g
-electron-packager --out=dist .
+electron-packager . --overwrite --platform=darwin --arch=x64 --icon=images/ic_launcher_web.icns --prune=true --out=release-builds
 ```
 
-## Usage on Windows
+## Build on Windows
 
-Coming soon.
+Make sure you are running a Powershell with administrator permissions, and Chocolatey is installed.
+
+```
+choco install node
+choco install python2
+```
+
+Now open a Node.js Command Prompt with administrator access
+
+```
+npm install -g windows-build-tools
+cd mini4wdchrono
+npm install
+
+// make sure the arduino board is connected via USB, then
+npm start
+```
+
+To package the project:
+
+```
+electron-packager . electron-tutorial-app --overwrite --asar=true --platform=win32 --arch=ia32 --icon=images/ic_launcher_web.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName="Mini4WD Chrono"
+```
