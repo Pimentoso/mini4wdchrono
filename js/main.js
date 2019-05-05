@@ -32,6 +32,8 @@ const utils = require('./js/utils');
 client.init();
 
 const board = new j5.Board({
+	port: configuration.readSettings('usbPort'),
+	timeout: 600,
 	repl: false // does not work with browser console
 });
 let connected = false;
@@ -184,6 +186,7 @@ $('#button-save-config').on('click', (e) => {
 	configuration.saveSettings('piezoPin', parseInt($('#js-config-piezo-pin').val()));
 	configuration.saveSettings('sensorThreshold', parseInt($('#js-config-sensor-threshold').val()));
 	configuration.saveSettings('title', $('#js-config-title').val());
+	configuration.saveSettings('usbPort', $('#js-config-usb-port').val());
 	dialog.showMessageBox({ type: 'warning', message: "Please restart the program for the changes to take effect." });
 	e.preventDefault();
 });

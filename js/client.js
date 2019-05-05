@@ -30,6 +30,7 @@ const init = () => {
 	$('#js-config-piezo-pin').val(configuration.readSettings('piezoPin'));
 	$('#js-config-sensor-threshold').val(configuration.readSettings('sensorThreshold'));
 	$('#js-config-title').val(configuration.readSettings('title'));
+	$('#js-config-usb-port').val(configuration.readSettings('usbPort'));
 
 	$('#js-about-version').text('Version ' + process.env.npm_package_version);
 
