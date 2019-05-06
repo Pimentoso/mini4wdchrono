@@ -18,7 +18,7 @@
     "electron-reload": "^1.4.0"
   },
   "scripts": {
-    "postinstall": "./node_modules/.bin/electron-rebuild -v 3.1.9",
+    "postinstall": "node ./scripts/postinstall.js",
     "start": "./node_modules/.bin/electron .",
     "watch": "./node_modules/.bin/electron . --watch"
   },
