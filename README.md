@@ -81,5 +81,5 @@ npm start
 To package the project:
 
 ```
-electron-packager . electron-tutorial-app --overwrite --asar=true --platform=win32 --arch=ia32 --icon=images/ic_launcher_web.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName="Mini4WD Chrono"
+electron-packager . Mini4wdChrono --overwrite --asar=true --platform=win32 --arch=ia32 --icon=images/ic_launcher_web.ico --prune=true --out=release-builds
 ```

@@ -201,7 +201,7 @@ $('#button-manches-cancel').on('click', (e) => {
 });
 
 $('#button-manches-save').on('click', (e) => {
-	// TODO
+	client.overrideTimes();
 });
 
 // ==========================================================================

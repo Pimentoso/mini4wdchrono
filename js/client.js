@@ -247,6 +247,30 @@ const saveXls = () => {
 	}
 };
 
+const overrideTimes = () => {
+	var time;
+	_.each(mancheList, (manche, mindex) => {
+		_.each(manche, (round, rindex) => {
+			_.each(round, (player, pindex) => {
+				time = $("input[data-manche='" + mindex + "'][data-round='" + rindex + "'][data-player='" + pindex + "']").val();
+				if (time) {
+					time = parseInt(time.replace('.',''));
+					if (time > 0) {
+						debugger;
+						mancheTimesList[mindex] = mancheTimesList[mindex] || [];
+						mancheTimesList[mindex][rindex] = mancheTimesList[mindex][rindex] || [];
+						mancheTimesList[mindex][rindex][pindex] = time;
+						playerTimesList[player] = playerTimesList[player] || [];
+						playerTimesList[player][mindex] = time;
+					}
+				}
+			});
+		});
+	});
+	configuration.saveSettings('mancheTimes', mancheTimesList);
+	configuration.saveSettings('playerTimes', playerTimesList);
+};
+
 // ==========================================================================
 // ==== handle interface buttons
 
@@ -584,6 +608,7 @@ module.exports = {
 	loadTrack: loadTrack,
 	loadTournament: loadTournament,
 	saveXls: saveXls,
+	overrideTimes: overrideTimes,
 	startRound: startRound,
 	prevRound: prevRound,
 	nextRound: nextRound,
