@@ -257,7 +257,6 @@ const overrideTimes = () => {
 				if (time) {
 					time = parseInt(time.replace('.',''));
 					if (time > 0) {
-						debugger;
 						mancheTimesList[mindex] = mancheTimesList[mindex] || [];
 						mancheTimesList[mindex][rindex] = mancheTimesList[mindex][rindex] || [];
 						mancheTimesList[mindex][rindex][pindex] = time;

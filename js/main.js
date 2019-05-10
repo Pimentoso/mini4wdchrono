@@ -29,7 +29,6 @@ const configuration = require('./js/configuration');
 const j5 = require('johnny-five');
 const client = require('./js/client');
 const utils = require('./js/utils');
-client.init();
 
 const board = new j5.Board({
 	port: configuration.readSettings('usbPort'),
@@ -205,18 +204,20 @@ $('#button-manches-save').on('click', (e) => {
 });
 
 $('.js-race-mode').on('click', (e) => {
+	let $this = $(e.currentTarget);
+	if ($this.attr('disabled')) return;
 	$('.js-race-mode').removeClass('is-primary');
-	$(this).addClass('is-primary');
-	var mode = $(this).data('race-mode');
+	$this.addClass('is-primary');
+	var mode = $this.data('race-mode');
 	configuration.saveSettings('raceMode', mode);
 	switch(mode) {
-		case '0':
+		case 0:
 			$('#js-race-mode-description').text('In this mode, each car time is calculated separately. Each car time starts when it passes under the lap timer.');
 			break;
-		case '1':
+		case 1:
 			$('#js-race-mode-description').text('In this mode, time for all cars start at the same time, when the green lights go off.');
 			break;
-		case '2':
+		case 2:
 			$('#js-race-mode-description').text('In this mode, cars must run on the same lane forever. Laps are counted ');
 			break;
 	}
@@ -247,3 +248,8 @@ const playConnect = () => {
 	.delay(() => { led1.blink(125); led2.blink(125); led3.blink(125); }, 125)
 	.delay(() => { led1.stop().off(); led2.stop().off(); led3.stop().off(); }, 2000);
 };
+
+// ==========================================================================
+// ==== init client
+
+client.init();
