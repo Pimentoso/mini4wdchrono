@@ -157,6 +157,14 @@
 
 		<p class="title is-4">Setup</p>
 
+		<label class="label">Race mode</label>
+		<div class="buttons has-addons">
+			<span id="js-race-mode-0" class="button js-race-mode" data-race-mode="0">Time attack mode</span>
+			<span id="js-race-mode-1" class="button js-race-mode" data-race-mode="1">Final mode</span>
+			<span id="js-race-mode-2" class="button js-race-mode" data-race-mode="2" disabled>Endurance mode</span>
+		</div>
+		<p id="js-race-mode-description" class="has-text-grey is-size-7">RACE MODE DESC</p>
+
 		<div class="container">
 			<label class="label">Max start delay</label>
 			<div class="field has-addons">
@@ -169,7 +177,7 @@
 					</a>
 				</p>
 			</div>
-			<p class="has-text-grey is-size-7">Time limit for a car to pass on the sensor after race start. Default is 3 sec.</p>
+			<p class="has-text-dark is-size-7">Time limit for a car to pass on the sensor after race start. Default is 3 sec.</p>
 		</div>
 
 		<div class="container">
@@ -184,8 +192,8 @@
 					</a>
 				</p>
 			</div>
-			<p class="has-text-grey is-size-7">Estimated speed for this race. Jump race: 5, Italian expert: 7.5, Speed race: 10</p>
-			<p id="js-settings-estimated-time" class="has-text-grey is-size-7">ESTIMATED ROUND TIME</p>
+			<p class="has-text-dark is-size-7">Estimated speed for this race (in m/s). Jump race: 5, Italian classic: 7.5, Speed race: 10</p>
+			<p id="js-settings-estimated-time" class="has-text-dark is-size-7">ESTIMATED ROUND TIME</p>
 		</div>
 
 		<div class="container">
@@ -200,8 +208,8 @@
 					</a>
 				</p>
 			</div>
-			<p class="has-text-grey is-size-7">If a car does not complete a lap within this %, it's considered out. Default is 40.</p>
-			<p id="js-settings-estimated-cutoff" class="has-text-grey is-size-7">ESTIMATED CUTOFF</p>
+			<p class="has-text-dark is-size-7">If a car does not complete a lap within this %, it's considered out. Default is 40.</p>
+			<p id="js-settings-estimated-cutoff" class="has-text-dark is-size-7">ESTIMATED CUTOFF</p>
 		</div>
 
 		<p class="has-text-centered">
@@ -293,6 +301,8 @@
 							<span id="speed-lane0" class="tag is-size-5 is-light js-speed">0.00 m/s</span>
 
 							<ul id="laps-lane0"></ul>
+
+							<a id="button-invalidate-lane0" href="#" class="button is-danger">invalidate</a>
 						</div>
 					</div>
 				</div>
@@ -314,6 +324,8 @@
 							<span id="speed-lane1" class="tag is-size-5 is-light js-speed">0.00 m/s</span>
 
 							<ul id="laps-lane1"></ul>
+
+							<a id="button-invalidate-lane1" href="#" class="button is-danger">invalidate</a>
 						</div>
 					</div>
 				</div>
@@ -335,6 +347,8 @@
 							<span id="speed-lane2" class="tag is-size-5 is-light js-speed">0.00 m/s</span>
 
 							<ul id="laps-lane2"></ul>
+
+							<a id="button-invalidate-lane2" href="#" class="button is-danger">invalidate</a>
 						</div>
 					</div>
 				</div>

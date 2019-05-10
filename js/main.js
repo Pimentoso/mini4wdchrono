@@ -106,7 +106,6 @@ $('.tabs a').on('click', (e) => {
 	$('div[data-tab]').hide();
 	$('div[data-tab=' + tab + ']').show();
 
-	$('#button-manches-cancel').attr('disabled', true);
 	$('#button-manches-save').attr('disabled', true);
 });
 
@@ -192,16 +191,35 @@ $('#button-save-config').on('click', (e) => {
 });
 
 $('.js-time-form').on('keyup', (e) => {
-	$('#button-manches-cancel').removeAttr('disabled');
 	$('#button-manches-save').removeAttr('disabled');
 });
 
 $('#button-manches-cancel').on('click', (e) => {
 	client.showMancheList();
+	$('#button-manches-save').attr('disabled', true);
 });
 
 $('#button-manches-save').on('click', (e) => {
 	client.overrideTimes();
+	$('#button-manches-save').attr('disabled', true);
+});
+
+$('.js-race-mode').on('click', (e) => {
+	$('.js-race-mode').removeClass('is-primary');
+	$(this).addClass('is-primary');
+	var mode = $(this).data('race-mode');
+	configuration.saveSettings('raceMode', mode);
+	switch(mode) {
+		case '0':
+			$('#js-race-mode-description').text('In this mode, each car time is calculated separately. Each car time starts when it passes under the lap timer.');
+			break;
+		case '1':
+			$('#js-race-mode-description').text('In this mode, time for all cars start at the same time, when the green lights go off.');
+			break;
+		case '2':
+			$('#js-race-mode-description').text('In this mode, cars must run on the same lane forever. Laps are counted ');
+			break;
+	}
 });
 
 // ==========================================================================

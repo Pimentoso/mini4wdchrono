@@ -17,6 +17,7 @@ let checkRaceTask;
 const init = () => {
 	// populate ui fields
 	$('#js-title').text(configuration.readSettings('title'));
+	$('#js-race-mode-' + configuration.readSettings('raceMode')).click();
 	$('#js-settings-time-threshold').val(configuration.readSettings('timeThreshold'));
 	$('#js-settings-speed-threshold').val(configuration.readSettings('speedThreshold'));
 	$('#js-settings-start-delay').val(configuration.readSettings('startDelay'));
@@ -286,6 +287,12 @@ const startRound = () => {
 	chronoInit(true);
 	guiInit();
 	$('#button-start').attr('disabled', true);
+
+	if (configuration.readSettings('raceMode') == 1) {
+		startTimer(0);
+		startTimer(1);
+		startTimer(2);
+	}
 };
 
 const prevRound = () => {
@@ -436,6 +443,7 @@ const checkRace = () => {
 	if (redraw) drawRace();
 };
 
+// timer task to invalidate cars not passed in 3 seconds
 const checkStart = () => {
 	let redraw = chrono.checkNotStartedCars();
 	if (chrono.isRaceFinished()) {
@@ -557,7 +565,6 @@ const drawRace = () => {
 };
 
 const startTimer = (lane) => {
-	// TODO non funziona la seconda volta
 	if (timerIntervals[lane] == null) {
 		timerSeconds[lane] = 0;
 		timerIntervals[lane] = setInterval(timer, 100, lane);

@@ -2,9 +2,7 @@ TODO
 ##############################
 
 ## MANCHE LIST TAB
-- make the time forms work, using the 'save changes' button
 - export xls: fix filepath
-- 'disqualify' button next to each form
 
 ## PLAYERS LIST TAB
 - add one column to the right showing sum of 2 best times
@@ -12,10 +10,13 @@ TODO
 
 ## RACE TAB
 - 'start free round' button
-- 'final mode' button (time will not be calculated for each player, but timer for all players start at the same time when the chrono beeps)
+- 'start free round' button if a tournament has not been loaded
+- after a round has finished, the 'start button' becomes 'start rematch round' button, program asks which players of this round need to rematch, other players will keep the time they already have
+- 'disqualify' button 
 
-## MAIN UI
-- add option to use custom title and custom logo
+## RACE SETUP TAB
+- different race mode options (final mode, endurance mode) IN PROGRESS
+- form to enter track length and lane order
 
 TEST VALUES
 - track: 8GPF9C

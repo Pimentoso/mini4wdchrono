@@ -16,7 +16,8 @@ nconf.defaults({
 	'timeThreshold': 40,
 	'speedThreshold': 5,
 	'startDelay': 3,
-	'title': 'MINI4WD CHRONO'
+	'title': 'MINI4WD CHRONO',
+	'raceMode': 0
 });
 
 const saveSettings = (settingKey, settingValue) => {
