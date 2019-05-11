@@ -16,7 +16,7 @@ TODO
 
 ## RACE SETUP TAB
 - different race mode options (final mode, endurance mode) IN PROGRESS
-- form to enter track length and lane order
+- some validations
 
 TEST VALUES
 - track: 8GPF9C

@@ -137,9 +137,22 @@ const chronoInit = (reset) => {
 
 const showTrackDetails = () => {
 	if (currTrack) {
-		$('#js-track-length').text('Length: ' + currTrack.length);
-		$('#js-track-order').text('Lane order: ' + currTrack.order + ',1');
-		$('#js-link-track').attr('href', currTrack.view_url);
+		if (currTrack.manual) {
+			$('#js-input-track-code').val('');
+			$('#js-track-length').text('-');
+			$('#js-track-order').text('-');
+			$('#js-link-track').attr('href', '#');
+			$('#js-track-length-manual').val(currTrack.length);
+			$('#js-track-order-manual').val(currTrack.order.join('-'));
+		}
+		else {
+			$('#js-input-track-code').val(currTrack.code);
+			$('#js-track-length').text('Length: ' + currTrack.length + ' m');
+			$('#js-track-order').text('Lane order: ' + currTrack.order + ',1');
+			$('#js-link-track').attr('href', currTrack.view_url);
+			$('#js-track-length-manual').val('');
+			$('#js-track-order-manual').val('');
+		}
 	}
 	else {
 		$('#js-track-length').text('-');
@@ -373,6 +386,12 @@ const loadTrack = () => {
 	});
 };
 
+const setTrackManual = (length, order) => {
+	let obj = { 'code': 'MANUAL', 'length': length, 'order': order, 'manual': true };
+	configuration.saveSettings('track', obj);
+	trackLoadDone(obj);
+};
+
 // load tournament info from API
 const loadTournament = () => {
 	let code = $('#js-input-tournament-code').val();
@@ -393,7 +412,6 @@ const trackLoadDone = (obj) => {
 	$('#tag-track-status').removeClass('is-danger');
 	$('#tag-track-status').addClass('is-success');
 	$('#tag-track-status').text(obj.code);
-	$('#js-input-track-code').val(obj.code);
 	showTrackDetails();
 };
 
@@ -612,6 +630,7 @@ module.exports = {
 	sensorRead3: sensorRead3,
 	keydown: keydown,
 	loadTrack: loadTrack,
+	setTrackManual: setTrackManual,
 	loadTournament: loadTournament,
 	saveXls: saveXls,
 	overrideTimes: overrideTimes,

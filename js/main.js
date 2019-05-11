@@ -119,6 +119,14 @@ $('#js-load-track').on('click', (e) => {
 	client.loadTrack();
 });
 
+$('#js-track-save-manual').on('click', (e) => {
+	if (dialog.showMessageBox({ type: 'warning', message: "Save track values?", buttons: ['Ok', 'Cancel']}) == 0) {
+		let length = parseFloat($('#js-track-length-manual').val().replace(',', '.'));
+		let order = _.map($('#js-track-order-manual').val().split('-'), (i) => { return parseInt(i); });
+		client.setTrackManual(length, order);
+	}
+});
+
 $('#js-load-tournament').on('click', (e) => {
 	client.loadTournament();
 });

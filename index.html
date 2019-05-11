@@ -93,10 +93,12 @@
 			</a>
 		</p>
 
+		<hr />
+
 		<p class="title is-4">Track informations</p>
 
 		<div class="container">
-			<label class="label">Track code</label>
+			<label class="label">Load track using code</label>
 			<div class="field has-addons">
 				<div class="control" style="width: 100%;">
 					<input id="js-input-track-code" class="input" type="text" placeholder="example: 4QT8GM" value="">
@@ -121,7 +123,47 @@
 					</a>
 				</div>
 			</div>
+
+			<label class="label">Or manual input</label>
+			<div class="field is-horizontal">
+				<div class="field-body">
+					<div class="field has-addons">
+						<p class="control is-expanded">
+							<input id="js-track-length-manual" class="input" type="text" placeholder="Track length">
+						</p>
+						<p class="control">
+							<a class="button is-static">
+								m
+							</a>
+						</p>
+					</div>
+					<div class="field">
+						<p class="control">
+							<div class="select is-fullwidth">
+								<select id="js-track-order-manual">
+								<option>Lane order</option>
+								<option value="1-2-3">1-2-3-1</option>
+								<option value="1-3-2">1-3-2-1</option>
+								</select>
+							</div>
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="level">
+
+					<div class="level-left">
+					</div>
+				<div class="level-right">
+					<a id="js-track-save-manual" href="#" class="button">
+						Save
+					</a>
+				</div>
+			</div>
 		</div>
+
+		<hr />
 
 		<p class="title is-4">Tournament informations</p>
 
