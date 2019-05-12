@@ -206,6 +206,7 @@ const showPlayerList = () => {
 		let titleCells = _.map(currTournament.manches, (_,mindex) => {
 			return '<td>Manche ' + (mindex+1) + '</td>';
 		});
+		titleCells.push('<td>Best 2 times</td>');
 		$('#tablePlayerList').append('<tr class="is-selected"><td colspan="2"><strong>' + playerList.length + ' RACERS</strong></td>' + titleCells + '</tr>');
 
 		// player rows
@@ -226,6 +227,9 @@ const showPlayerList = () => {
 				}
 				return '<td class="' + highlight + '">' + Utils.prettyTime(playerTime) + '</td>';
 			});
+			let bestTimes = playerTimes.sort().slice(0,2);
+			let bestSum = (bestTimes[0] || 99999) + (bestTimes[1] || 99999);
+			timeCells.push('<td>' + Utils.prettyTime(bestSum) + '</td>');
 			$('#tablePlayerList').append('<tr><td>' + (pindex+1) + '</td><td><p class="has-text-centered is-uppercase">' + name + '</p></td>' + timeCells + '</tr>');
 		});
 	}

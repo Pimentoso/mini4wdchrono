@@ -5,7 +5,6 @@ TODO
 - export xls: fix filepath
 
 ## PLAYERS LIST TAB
-- add one column to the right showing sum of 2 best times
 - add sorting to columns
 
 ## RACE TAB

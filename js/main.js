@@ -121,6 +121,16 @@ $('#js-load-track').on('click', (e) => {
 
 $('#js-track-save-manual').on('click', (e) => {
 	if (dialog.showMessageBox({ type: 'warning', message: "Save track values?", buttons: ['Ok', 'Cancel']}) == 0) {
+		$('#js-track-length-manual').removeClass('is-danger');
+		$('#js-track-order-manual').removeClass('is-danger');
+		if (!$('#js-track-length-manual').val()) {
+			$('#js-track-length-manual').addClass('is-danger');
+			return;
+		}
+		if (!$('#js-track-order-manual').val()) {
+			$('#js-track-order-manual').addClass('is-danger');
+			return;
+		}
 		let length = parseFloat($('#js-track-length-manual').val().replace(',', '.'));
 		let order = _.map($('#js-track-order-manual').val().split('-'), (i) => { return parseInt(i); });
 		client.setTrackManual(length, order);
