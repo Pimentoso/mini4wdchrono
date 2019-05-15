@@ -157,7 +157,7 @@ const showTrackDetails = () => {
 			$('#js-track-order-manual').val(currTrack.order.join('-'));
 		}
 		else {
-			$('#js-input-track-code').val(currTrack.code);
+			$('#js-input-track-code').val(currTrack.url);
 			$('#js-track-length').text('Length: ' + currTrack.length + ' m');
 			$('#js-track-order').text('Lane order: ' + currTrack.order + ',1');
 			$('#js-link-track').attr('href', currTrack.view_url);
@@ -175,6 +175,7 @@ const showTrackDetails = () => {
 
 const showTournamentDetails = () => {
 	if (currTournament) {
+		$('#js-input-tournament-code').val(currTournament.url);
 		$('#js-tournament-players').text('Players: ' + currTournament.players.length);
 		$('#js-tournament-manches').text('Manches: ' + currTournament.manches.length);
 		$('#js-link-tournament').attr('href', currTournament.url);
@@ -388,7 +389,7 @@ const keydown = (keyCode) => {
 
 // load track info from API
 const loadTrack = () => {
-	let code = $('#js-input-track-code').val();
+	let code = $('#js-input-track-code').val().slice(-6);
 	$('#js-input-track-code').removeClass('is-danger');
 	$.getJSON('https://mini4wd-track-editor.pimentoso.com/api/track/' + code)
 	.done((obj) => {
@@ -409,7 +410,7 @@ const setTrackManual = (length, order) => {
 
 // load tournament info from API
 const loadTournament = () => {
-	let code = $('#js-input-tournament-code').val();
+	let code = $('#js-input-tournament-code').val().slice(-6);
 	$('#js-input-tournament-code').removeClass('is-danger');
 	$.getJSON('https://mini4wd-tournament.pimentoso.com/api/tournament/' + code)
 	.done((obj) => {

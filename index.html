@@ -98,10 +98,10 @@
 		<p class="title is-4">Track informations</p>
 
 		<div class="container">
-			<label class="label">Load track using code</label>
+			<label class="label">Load track from Track Editor link</label>
 			<div class="field has-addons">
 				<div class="control" style="width: 100%;">
-					<input id="js-input-track-code" class="input" type="text" placeholder="example: 4QT8GM" value="">
+					<input id="js-input-track-code" class="input" type="text" placeholder="example: https://mini4wd-track-editor.pimentoso.com/4QT8GM" value="">
 				</div>
 				<div class="control">
 					<a id="js-load-track" class="button is-info">
@@ -141,7 +141,7 @@
 						<p class="control">
 							<div class="select is-fullwidth">
 								<select id="js-track-order-manual">
-								<option>Lane order</option>
+								<option value="" disabled selected>Select lane order</option>
 								<option value="1-2-3">1-2-3-1</option>
 								<option value="1-3-2">1-3-2-1</option>
 								</select>
@@ -168,10 +168,10 @@
 		<p class="title is-4">Tournament informations</p>
 
 		<div class="container">
-			<label class="label">Tournament code</label>
+			<label class="label">Load tournament from Tournament Generator link</label>
 			<div class="field has-addons">
 				<div class="control" style="width: 100%;">
-					<input id="js-input-tournament-code" class="input" type="text" placeholder="example: 49PMRU" value="">
+					<input id="js-input-tournament-code" class="input" type="text" placeholder="example: https://mini4wd-tournament.pimentoso.com/49PMRU" value="">
 				</div>
 				<div class="control">
 					<a id="js-load-tournament" class="button is-info">
