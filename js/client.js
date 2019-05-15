@@ -1,6 +1,7 @@
 'use strict';
 
 const { dialog } = require('electron').remote
+const serialport = require('serialport');
 const Utils = require('./utils');
 const configuration = require('./configuration');
 const chrono = require('./chrono');
@@ -31,7 +32,17 @@ const init = () => {
 	$('#js-config-piezo-pin').val(configuration.readSettings('piezoPin'));
 	$('#js-config-sensor-threshold').val(configuration.readSettings('sensorThreshold'));
 	$('#js-config-title').val(configuration.readSettings('title'));
-	$('#js-config-usb-port').val(configuration.readSettings('usbPort'));
+
+	serialport.list(function (err, ports) {
+		ports.forEach(function(port) {
+			$('#js-config-usb-port').append($('<option>', {
+				value: port.comName,
+				text: port.comName
+			}));
+			console.log(port.comName);
+		});
+		$('#js-config-usb-port').val(configuration.readSettings('usbPort'));
+	});
 
 	$('#js-about-version').text('Version ' + process.env.npm_package_version);
 
