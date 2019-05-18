@@ -23,7 +23,11 @@ $(document).on('click', 'a[href^="http"]', function(event) {
 		shell.openExternal(this.href);
 });
 
-const debugMode = false;
+const debugMode = true;
+const log = require('electron-log');
+log.transports.file.level = 'info';
+log.transports.file.file = __dirname + '/logs/log.log';
+log.catchErrors();
 const { dialog } = require('electron').remote;
 const configuration = require('./js/configuration');
 const j5 = require('johnny-five');
