@@ -2,7 +2,8 @@
 
 const { dialog } = require('electron').remote
 const serialport = require('serialport');
-const Utils = require('./utils');
+const clone = require('clone');
+const utils = require('./utils');
 const configuration = require('./configuration');
 const chrono = require('./chrono');
 const xls = require('./export');
@@ -214,19 +215,37 @@ const showPlayerList = () => {
 	$('#tablePlayerList').empty();
 	if (playerList.length > 0) {
 
-		// title row
+		// calculate best time sums
+		let sums = [];
+		_.each(playerList, (_,pindex) => {
+			let playerTimes = playerTimesList[pindex] || [];
+			let bestTimes = playerTimes.sort().slice(0,2);
+			let bestSum = (bestTimes[0] || 99999) + (bestTimes[1] || 99999);
+			sums[pindex] = bestSum;
+		});
+
+		// sort list by sum desc
+		let times = _.map(playerTimesList, (times, index) => {
+			return {
+				id: index,
+				times: times || [],
+				best: sums[index]
+			};
+		});
+		times = _.sortBy(times, 'best');
+
+		// draw title row
 		let titleCells = _.map(currTournament.manches, (_,mindex) => {
 			return '<td>Manche ' + (mindex+1) + '</td>';
 		});
 		titleCells.push('<td>Best 2 times</td>');
 		$('#tablePlayerList').append('<tr class="is-selected"><td colspan="2"><strong>' + playerList.length + ' RACERS</strong></td>' + titleCells + '</tr>');
 
-		// player rows
-		_.each(playerList, (name, pindex) => {
-			let playerTimes = playerTimesList[pindex] || [];
-			let bestTime =  _.min(_.filter(playerTimes, (t) => { return t > 0 && t < 99999; }));
+		// draw player rows
+		_.each(times, (info) => {
+			let bestTime =  _.min(_.filter(info.times, (t) => { return t > 0 && t < 99999; }));
 			let timeCells = _.map(currTournament.manches, (_,mindex) => {
-				let playerTime = playerTimes[mindex] || 0;
+				let playerTime = info.times[mindex] || 0;
 				let highlight = '';
 				if (playerTime == 0) {
 					highlight = 'has-text-grey-light';
@@ -237,12 +256,10 @@ const showPlayerList = () => {
 				else if (playerTime < 99999) {
 					highlight = 'has-text-info';
 				}
-				return '<td class="' + highlight + '">' + Utils.prettyTime(playerTime) + '</td>';
+				return '<td class="' + highlight + '">' + utils.prettyTime(playerTime) + '</td>';
 			});
-			let bestTimes = playerTimes.sort().slice(0,2);
-			let bestSum = (bestTimes[0] || 99999) + (bestTimes[1] || 99999);
-			timeCells.push('<td>' + Utils.prettyTime(bestSum) + '</td>');
-			$('#tablePlayerList').append('<tr><td>' + (pindex+1) + '</td><td><p class="has-text-centered is-uppercase">' + name + '</p></td>' + timeCells + '</tr>');
+			timeCells.push('<td>' + utils.prettyTime(info.best) + '</td>');
+			$('#tablePlayerList').append('<tr><td>' + (info.id+1) + '</td><td><p class="has-text-centered is-uppercase">' + playerList[info.id] + '</p></td>' + timeCells + '</tr>');
 		});
 	}
 };
@@ -258,7 +275,7 @@ const showMancheList = () => {
 				playerName = '<p class="has-text-centered is-uppercase">' + (playerList[id] || '') + '</p>';
 				playerTime = (mancheTimesList[mindex] && mancheTimesList[mindex][rindex]) ? mancheTimesList[mindex][rindex][pindex] : 0;
 				if (playerList[id]) {
-					playerForm = '<div class="field"><div class="control"><input class="input is-small js-time-form" type="text" data-manche="' + mindex + '" data-round="' + rindex + '" data-player="' + pindex + '" value="' + Utils.prettyTime(playerTime) + '"></div></div>';
+					playerForm = '<div class="field"><div class="control"><input class="input is-small js-time-form" type="text" data-manche="' + mindex + '" data-round="' + rindex + '" data-player="' + pindex + '" value="' + utils.prettyTime(playerTime) + '"></div></div>';
 				}
 				else {
 					playerForm = '';
@@ -546,7 +563,7 @@ const drawRace = () => {
 		// split times
 		$('#laps-lane' + i).empty();
 		_.each(car.splitTimes, (t,ii) => {
-			$('#laps-lane' + i).append('<li class="is-size-3">partial ' + (ii+1) + ' - <strong>' + Utils.prettyTime(t) + ' s</strong></li>');
+			$('#laps-lane' + i).append('<li class="is-size-3">partial ' + (ii+1) + ' - <strong>' + utils.prettyTime(t) + ' s</strong></li>');
 		});
 
 		// place
@@ -581,10 +598,10 @@ const drawRace = () => {
 		if (car.outOfBounds) {
 			stopTimer(i);
 			$('#timer-lane' + i).addClass('is-danger');
-			$('#timer-lane' + i).text(Utils.prettyTime(car.currTime));
+			$('#timer-lane' + i).text(utils.prettyTime(car.currTime));
 		}
 		else if (car.lapCount == 0) {
-			$('#timer-lane' + i).text(Utils.prettyTime(0));
+			$('#timer-lane' + i).text(utils.prettyTime(0));
 		}
 		else if (car.lapCount == 1) {
 			startTimer(i);
@@ -592,7 +609,7 @@ const drawRace = () => {
 		else if (car.lapCount == 4) {
 			stopTimer(i);
 			$('#timer-lane' + i).addClass('is-success');
-			$('#timer-lane' + i).text(Utils.prettyTime(car.currTime));
+			$('#timer-lane' + i).text(utils.prettyTime(car.currTime));
 		}
 	});
 };
