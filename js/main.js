@@ -221,6 +221,8 @@ $('#button-manches-cancel').on('click', (e) => {
 });
 
 $('#button-manches-save').on('click', (e) => {
+	let $this = $(e.currentTarget);
+	if ($this.attr('disabled')) return;
 	client.overrideTimes();
 	$('#button-manches-save').attr('disabled', true);
 });
@@ -243,6 +245,12 @@ $('.js-race-mode').on('click', (e) => {
 			$('#js-race-mode-description').text('In this mode, cars must run on the same lane forever. Laps are counted ');
 			break;
 	}
+});
+
+$('.js-invalidate').on('click', (e) => {
+	let $this = $(e.currentTarget);
+	if ($this.attr('disabled')) return;
+	client.disqualify(null, null, parseInt($this.data('lane')));
 });
 
 // ==========================================================================

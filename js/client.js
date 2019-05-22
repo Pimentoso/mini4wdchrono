@@ -109,8 +109,6 @@ const reset = () => {
 
 	showTrackDetails();
 	showTournamentDetails();
-	showPlayerList();
-	showMancheList();
 	guiInit();
 };
 
@@ -127,10 +125,9 @@ const guiInit = () => {
 		$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '_');
 		$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '_');
 		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '_');
+		showPlayerList();
 		showMancheList();
 	}
-
-	drawRace();
 };
 
 const chronoInit = (reset) => {
@@ -180,8 +177,6 @@ const showTournamentDetails = () => {
 		$('#js-tournament-players').text('Players: ' + currTournament.players.length);
 		$('#js-tournament-manches').text('Manches: ' + currTournament.manches.length);
 		$('#js-link-tournament').attr('href', currTournament.url);
-		showPlayerList();
-		showMancheList();
 		guiInit();
 	}
 	else {
@@ -294,8 +289,26 @@ const saveXls = () => {
 	}
 };
 
+const disqualify = (mindex, rindex, pindex) => {
+	mindex = mindex || currManche;
+	rindex = rindex || currRound;
+	mancheTimesList[mindex] = mancheTimesList[mindex] || [];
+	mancheTimesList[mindex][rindex] = mancheTimesList[mindex][rindex] || [];
+	mancheTimesList[mindex][rindex][pindex] = 99999;
+	playerTimesList[player] = playerTimesList[player] || [];
+	playerTimesList[player][mindex] = 99999;
+	var cars = configuration.loadRound(currManche, currRound);
+	cars[pindex].currTime = 99999;
+
+	configuration.saveSettings('mancheTimes', mancheTimesList);
+	configuration.saveSettings('playerTimes', playerTimesList);
+	configuration.saveRound(currManche, currRound, cars);
+
+	guiInit();
+}
+
 const overrideTimes = () => {
-	var time;
+	var time, cars;
 	_.each(mancheList, (manche, mindex) => {
 		_.each(manche, (round, rindex) => {
 			_.each(round, (player, pindex) => {
@@ -308,6 +321,10 @@ const overrideTimes = () => {
 						mancheTimesList[mindex][rindex][pindex] = time;
 						playerTimesList[player] = playerTimesList[player] || [];
 						playerTimesList[player][mindex] = time;
+
+						cars = configuration.loadRound(currManche, currRound);
+						cars[pindex].currTime = 99999;
+
 					}
 				}
 			});
@@ -315,6 +332,8 @@ const overrideTimes = () => {
 	});
 	configuration.saveSettings('mancheTimes', mancheTimesList);
 	configuration.saveSettings('playerTimes', playerTimesList);
+
+	// TODO refresh ui
 };
 
 // ==========================================================================
@@ -330,7 +349,7 @@ const startRound = () => {
 
 	raceStarted = true;
 	chronoInit(true);
-	guiInit();
+	drawRace();
 	$('#button-start').attr('disabled', true);
 
 	if (configuration.readSettings('raceMode') == 1) {
@@ -666,6 +685,7 @@ module.exports = {
 	setTrackManual: setTrackManual,
 	loadTournament: loadTournament,
 	saveXls: saveXls,
+	disqualify: disqualify,
 	overrideTimes: overrideTimes,
 	startRound: startRound,
 	prevRound: prevRound,

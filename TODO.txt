@@ -1,6 +1,8 @@
 TODO
 ##############################
 
+- metodo che rigenera mancheTimes e playerTimes a partire da race (e usarlo dentro disqualify)
+
 ## MANCHE LIST TAB
 - export xls: fix filepath
 
@@ -11,7 +13,6 @@ TODO
 - 'start free round' button
 - 'start free round' button if a tournament has not been loaded
 - after a round has finished, the 'start button' becomes 'start rematch round' button, program asks which players of this round need to rematch, other players will keep the time they already have
-- 'disqualify' button 
 
 ## RACE SETUP TAB
 - different race mode options (final mode, endurance mode) IN PROGRESS
