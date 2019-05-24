@@ -1,8 +1,6 @@
 TODO
 ##############################
 
-- metodo che rigenera mancheTimes e playerTimes a partire da race (e usarlo dentro disqualify)
-
 ## MANCHE LIST TAB
 - export xls: fix filepath
 

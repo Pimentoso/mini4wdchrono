@@ -250,7 +250,9 @@ $('.js-race-mode').on('click', (e) => {
 $('.js-invalidate').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
-	client.disqualify(null, null, parseInt($this.data('lane')));
+	if (dialog.showMessageBox({ type: 'warning', message: "Play this round again? The current data will be lost.", buttons: ['Ok', 'Cancel']}) == 1) {
+		client.disqualify(null, null, parseInt($this.data('lane')));
+	}
 });
 
 // ==========================================================================

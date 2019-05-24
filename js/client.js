@@ -292,48 +292,54 @@ const saveXls = () => {
 const disqualify = (mindex, rindex, pindex) => {
 	mindex = mindex || currManche;
 	rindex = rindex || currRound;
-	mancheTimesList[mindex] = mancheTimesList[mindex] || [];
-	mancheTimesList[mindex][rindex] = mancheTimesList[mindex][rindex] || [];
-	mancheTimesList[mindex][rindex][pindex] = 99999;
-	playerTimesList[player] = playerTimesList[player] || [];
-	playerTimesList[player][mindex] = 99999;
-	var cars = configuration.loadRound(currManche, currRound);
+	var cars = configuration.loadRound(mindex, rindex);
 	cars[pindex].currTime = 99999;
+	configuration.saveRound(mindex, rindex, cars);
 
-	configuration.saveSettings('mancheTimes', mancheTimesList);
-	configuration.saveSettings('playerTimes', playerTimesList);
-	configuration.saveRound(currManche, currRound, cars);
-
+	rebuildTimeList();
 	guiInit();
-}
+};
 
+// Reads all input fields in the manches tab and rebuilds time list
 const overrideTimes = () => {
 	var time, cars;
 	_.each(mancheList, (manche, mindex) => {
 		_.each(manche, (round, rindex) => {
-			_.each(round, (player, pindex) => {
-				time = $("input[data-manche='" + mindex + "'][data-round='" + rindex + "'][data-player='" + pindex + "']").val();
-				if (time) {
-					time = parseInt(time.replace('.',''));
-					if (time > 0) {
-						mancheTimesList[mindex] = mancheTimesList[mindex] || [];
-						mancheTimesList[mindex][rindex] = mancheTimesList[mindex][rindex] || [];
-						mancheTimesList[mindex][rindex][pindex] = time;
-						playerTimesList[player] = playerTimesList[player] || [];
-						playerTimesList[player][mindex] = time;
+			cars = configuration.loadRound(mindex, rindex);
+			if (cars) {
+				_.each(round, (player, pindex) => {
+					time = $("input[data-manche='" + mindex + "'][data-round='" + rindex + "'][data-player='" + pindex + "']").val();
+					cars[pindex].currTime = time;
+				});
+			}
+			configuration.saveRound(mindex, rindex, cars);
+		});
+	});
 
-						cars = configuration.loadRound(currManche, currRound);
-						cars[pindex].currTime = 99999;
+	rebuildTimeList();
+	guiInit();
+};
 
-					}
-				}
-			});
+// Rebuilds mancheTimes and playerTimes starting from saved race results
+const rebuildTimeList = () => {
+	var time, cars;
+	_.each(mancheList, (manche, mindex) => {
+		_.each(manche, (round, rindex) => {
+			cars = configuration.loadRound(currManche, currRound);
+			if (cars) {
+				_.each(round, (player, pindex) => {
+					time = cars[pindex].currTime;
+					mancheTimesList[mindex] = mancheTimesList[mindex] || [];
+					mancheTimesList[mindex][rindex] = mancheTimesList[mindex][rindex] || [];
+					mancheTimesList[mindex][rindex][pindex] = time;
+					playerTimesList[player] = playerTimesList[player] || [];
+					playerTimesList[player][mindex] = time;
+				});
+			}
 		});
 	});
 	configuration.saveSettings('mancheTimes', mancheTimesList);
 	configuration.saveSettings('playerTimes', playerTimesList);
-
-	// TODO refresh ui
 };
 
 // ==========================================================================
@@ -423,7 +429,9 @@ const keydown = (keyCode) => {
 	}
 };
 
-// load track info from API
+// ==========================================================================
+// ==== API calls
+
 const loadTrack = () => {
 	let code = $('#js-input-track-code').val().slice(-6);
 	$('#js-input-track-code').removeClass('is-danger');
@@ -444,7 +452,6 @@ const setTrackManual = (length, order) => {
 	trackLoadDone(obj);
 };
 
-// load tournament info from API
 const loadTournament = () => {
 	let code = $('#js-input-tournament-code').val().slice(-6);
 	$('#js-input-tournament-code').removeClass('is-danger');
