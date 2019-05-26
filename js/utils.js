@@ -98,6 +98,10 @@ const strftime = (sFormat, date) => {
   });
 }
 
+const safeTime = (timeStr) => {
+  return parseInt(timeStr.replace(/\D/g,''));
+};
+
 const delay = (fn, t) => {
   // private instance variables
   var queue = [], self, timer;
@@ -136,5 +140,6 @@ const delay = (fn, t) => {
 module.exports = {
   prettyTime: prettyTime,
   delay: delay,
-	strftime: strftime
+  strftime: strftime,
+  safeTime: safeTime
 };

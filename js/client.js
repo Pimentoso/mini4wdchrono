@@ -347,7 +347,9 @@ const overrideTimes = () => {
 			if (cars) {
 				_.each(round, (playerId, pindex) => {
 					time = $("input[data-manche='" + mindex + "'][data-round='" + rindex + "'][data-player='" + pindex + "']").val();
-					cars[pindex].currTime = time;
+					if (time) {
+						cars[pindex].currTime = utils.safeTime(time);
+					}
 				});
 			}
 			configuration.saveRound(mindex, rindex, cars);
@@ -378,7 +380,7 @@ const rebuildTimeList = () => {
 	var time, cars;
 	_.each(mancheList, (manche, mindex) => {
 		_.each(manche, (round, rindex) => {
-			cars = configuration.loadRound(currManche, currRound);
+			cars = configuration.loadRound(mindex, rindex);
 			if (cars) {
 				_.each(round, (playerId, pindex) => {
 					time = cars[pindex].currTime;
