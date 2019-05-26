@@ -3,6 +3,7 @@ TODO
 
 ## MANCHE LIST TAB
 - export xls: fix filepath
+- save changes does not work
 
 ## RACE TAB
 - 'start free round' button in the middle of a race

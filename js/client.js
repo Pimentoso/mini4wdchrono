@@ -102,6 +102,8 @@ const reset = () => {
 
 	$('#js-input-track-code').removeClass('is-danger');
 	$('#js-input-track-code').val('');
+	$('#js-track-order-manual').val('');
+	$('#js-track-length-manual').val('');
 	$('#js-input-tournament-code').removeClass('is-danger');
 	$('#js-input-tournament-code').val('');
 	$('#tag-track-status').addClass('is-danger');
@@ -242,9 +244,9 @@ const showPlayerList = () => {
 
 		// calculate best time sums
 		let sums = [];
-		_.each(playerList, (_,pindex) => {
+		_.each(playerList, (_player,pindex) => {
 			let playerTimes = playerTimesList[pindex] || [];
-			let bestTimes = playerTimes.sort().slice(0,2);
+			let bestTimes = _.filter(playerTimes, (t) => { return t > 0; }).sort().slice(0,2);
 			let bestSum = (bestTimes[0] || 99999) + (bestTimes[1] || 99999);
 			sums[pindex] = bestSum;
 		});
@@ -260,7 +262,7 @@ const showPlayerList = () => {
 		times = _.sortBy(times, 'best');
 
 		// draw title row
-		let titleCells = _.map(currTournament.manches, (_,mindex) => {
+		let titleCells = _.map(currTournament.manches, (_manche,mindex) => {
 			return '<td>Manche ' + (mindex+1) + '</td>';
 		});
 		titleCells.push('<td>Best 2 times</td>');
@@ -269,7 +271,7 @@ const showPlayerList = () => {
 		// draw player rows
 		_.each(times, (info) => {
 			let bestTime =  _.min(_.filter(info.times, (t) => { return t > 0 && t < 99999; }));
-			let timeCells = _.map(currTournament.manches, (_,mindex) => {
+			let timeCells = _.map(currTournament.manches, (_manche,mindex) => {
 				let playerTime = info.times[mindex] || 0;
 				let highlight = '';
 				if (playerTime == 0) {
@@ -493,7 +495,6 @@ const loadTrack = () => {
 	console.log('client.loadTrack called');
 
 	let code = $('#js-input-track-code').val().slice(-6);
-	$('#js-input-track-code').removeClass('is-danger');
 	$.getJSON('https://mini4wd-track-editor.pimentoso.com/api/track/' + code)
 	.done((obj) => {
 		trackLoadDone(obj);
@@ -533,6 +534,7 @@ const trackLoadDone = (obj) => {
 	console.log('client.trackLoadDone called');
 
 	currTrack = obj;
+	$('#js-input-track-code').removeClass('is-danger');
 	$('#tag-track-status').removeClass('is-danger');
 	$('#tag-track-status').addClass('is-success');
 	$('#tag-track-status').text(obj.code);
@@ -616,12 +618,18 @@ const raceFinished = () => {
 		mancheTimesList[currManche][currRound] = [cars[0].currTime, cars[1].currTime, cars[2].currTime];
 		configuration.saveSettings('mancheTimes', mancheTimesList);
 
-		playerTimesList[cars[0].playerId] = playerTimesList[cars[0].playerId] || [];
-		playerTimesList[cars[0].playerId][currManche] = cars[0].currTime;
-		playerTimesList[cars[1].playerId] = playerTimesList[cars[1].playerId] || [];
-		playerTimesList[cars[1].playerId][currManche] = cars[1].currTime;
-		playerTimesList[cars[2].playerId] = playerTimesList[cars[2].playerId] || [];
-		playerTimesList[cars[2].playerId][currManche] = cars[2].currTime;
+		if (cars[0].playerId > -1) {
+			playerTimesList[cars[0].playerId] = playerTimesList[cars[0].playerId] || [];
+			playerTimesList[cars[0].playerId][currManche] = cars[0].currTime;
+		}
+		if (cars[1].playerId > -1) {
+			playerTimesList[cars[1].playerId] = playerTimesList[cars[1].playerId] || [];
+			playerTimesList[cars[1].playerId][currManche] = cars[1].currTime;
+		}
+		if (cars[2].playerId > -1) {
+			playerTimesList[cars[2].playerId] = playerTimesList[cars[2].playerId] || [];
+			playerTimesList[cars[2].playerId][currManche] = cars[2].currTime;
+		}
 		configuration.saveSettings('playerTimes', playerTimesList);
 
 		configuration.saveRound(currManche, currRound, cars);

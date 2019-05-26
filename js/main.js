@@ -214,7 +214,7 @@ $('#button-save-config').on('click', (e) => {
 	e.preventDefault();
 });
 
-$('.js-time-form').on('keyup', (e) => {
+$(document).on('keyup', '.js-time-form', (e) => {
 	$('#button-manches-save').removeAttr('disabled');
 });
 
