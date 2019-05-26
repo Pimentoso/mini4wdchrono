@@ -265,7 +265,7 @@
 
 	<!-- PLAYERS TAB -->
 	<div class="container" data-tab="players" style="display: none;">
-		<div class="js-tournament-loaded level has-text-centered">
+		<div class="js-show-on-tournament-loaded level has-text-centered">
 			<div class="level-left"></div>
 			<div class="level-right">
 				<div class="level-item">
@@ -278,13 +278,13 @@
 				</div>
 			</div>
 		</div>
-		<table id="tablePlayerList" class="js-tournament-loaded table table is-bordered is-striped is-hoverable is-fullwidth"></table>
-		<p class="js-no-tournament has-text-grey has-text-centered">Tournament not loaded</p>
+		<table id="tablePlayerList" class="js-show-on-tournament-loaded table table is-bordered is-striped is-hoverable is-fullwidth"></table>
+		<p class="js-show-on-no-tournament has-text-grey has-text-centered">Tournament not loaded</p>
 	</div>
 
 	<!-- MANCHES TAB -->
 	<div class="container" data-tab="manches" style="display: none;">
-		<div class="js-tournament-loaded level has-text-centered">
+		<div class="js-show-on-tournament-loaded level has-text-centered">
 			<div class="level-left"></div>
 			<div class="level-right">
 				<div class="level-item">
@@ -299,13 +299,13 @@
 				</div>
 			</div>
 		</div>
-		<table id="tableMancheList" class="js-tournament-loaded table table is-bordered is-striped is-hoverable is-fullwidth"></table>
-		<p class="js-no-tournament has-text-grey has-text-centered">Tournament not loaded</p>
+		<table id="tableMancheList" class="js-show-on-tournament-loaded table table is-bordered is-striped is-hoverable is-fullwidth"></table>
+		<p class="js-show-on-no-tournament has-text-grey has-text-centered">Tournament not loaded</p>
 	</div>
 
 	<!-- RACE TAB -->
 	<div class="container" data-tab="race" style="display: none;">
-		<div class="level has-text-centered has-text-weight-bold">
+		<div class="js-show-on-tournament-loaded level has-text-centered has-text-weight-bold">
 			<span class="level-item tag is-primary is-size-3">Manche&nbsp;<span id="curr-manche"></span></span>
 			&nbsp;
 			<span class="level-item tag is-primary is-size-3">Round&nbsp;<span id="curr-round"></span></span>
@@ -313,7 +313,7 @@
 
 		<div class="level has-text-centered">
 			<div class="level-item">
-				<button class="button" id="button-prev">
+				<button class="js-show-on-tournament-loaded button" id="button-prev">
 					<span>&lt; Prev round</span>
 				</button>
 			</div>
@@ -323,7 +323,7 @@
 				</button>
 			</div>
 			<div class="level-item">
-				<button class="button" id="button-next">
+				<button class="js-show-on-tournament-loaded button" id="button-next">
 					<span>Next round &gt;</span>
 				</button>
 			</div>

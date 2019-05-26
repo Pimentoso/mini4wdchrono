@@ -17,6 +17,8 @@ let pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')]
 let checkRaceTask;
 
 const init = () => {
+	console.log('client.init called');
+
 	// populate ui fields
 	$('#js-title').text(configuration.readSettings('title'));
 	$('#js-race-mode-' + configuration.readSettings('raceMode')).click();
@@ -78,6 +80,8 @@ const init = () => {
 };
 
 const reset = () => {
+	console.log('client.reset called');
+
 	mancheTimesList = [];
 	playerTimesList = [];
 	playerList = [];
@@ -113,35 +117,36 @@ const reset = () => {
 };
 
 const guiInit = () => {
+	console.log('client.guiInit called');
+
 	if (currTournament == null) {
-		$('.js-no-tournament').show();
-		$('.js-tournament-loaded').hide();
+		$('.js-show-on-no-tournament').show();
+		$('.js-show-on-tournament-loaded').hide();
 		$('#name-lane0').text(' ');
 		$('#name-lane1').text(' ');
 		$('#name-lane2').text(' ');
 		$('#curr-manche').text('0');
 		$('#curr-round').text('0');
-		$('#button-prev').hide();
-		$('#button-next').hide();
 		$('#button-start').text('START FREE ROUND');
 	}
 	else {
-		$('.js-no-tournament').hide();
-		$('.js-tournament-loaded').show();
+		$('.js-show-on-no-tournament').hide();
+		$('.js-show-on-tournament-loaded').show();
 		$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '//');
 		$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '//');
 		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '//');
 		$('#curr-manche').text(currManche+1);
 		$('#curr-round').text(currRound+1);
-		$('#button-prev').show();
-		$('#button-next').show();
 		$('#button-start').text('START');
 		showPlayerList();
 		showMancheList();
+		drawRace(true);
 	}
 };
 
 const chronoInit = (reset) => {
+	console.log('client.chronoInit called');
+
 	let cars = null;
 	if (reset == null) {
 		// existing round
@@ -162,6 +167,8 @@ const chronoInit = (reset) => {
 };
 
 const showTrackDetails = () => {
+	console.log('client.showTrackDetails called');
+
 	if (currTrack) {
 		if (currTrack.manual) {
 			$('#js-input-track-code').val('');
@@ -189,6 +196,8 @@ const showTrackDetails = () => {
 };
 
 const showTournamentDetails = () => {
+	console.log('client.showTournamentDetails called');
+
 	if (currTournament) {
 		$('#js-input-tournament-code').val(currTournament.url);
 		$('#js-tournament-players').text('Players: ' + currTournament.players.length);
@@ -204,6 +213,8 @@ const showTournamentDetails = () => {
 };
 
 const showThresholds = () => {
+	console.log('client.showThresholds called');
+
 	if (currTrack) {
 		let rTrackLength = currTrack.length;
 		let rSpeedThreshold = configuration.readSettings('speedThreshold');
@@ -224,6 +235,8 @@ const showThresholds = () => {
 
 // render the player list tab
 const showPlayerList = () => {
+	console.log('client.showPlayerList called');
+
 	$('#tablePlayerList').empty();
 	if (playerList.length > 0) {
 
@@ -278,6 +291,8 @@ const showPlayerList = () => {
 
 // render the manches list tab
 const showMancheList = () => {
+	console.log('client.showManchesList called');
+
 	$('#tableMancheList').empty();
 	let mancheText, playerName, playerTime, playerForm, highlight;
 	_.each(mancheList, (manche, mindex) => {
@@ -307,6 +322,8 @@ const saveXls = () => {
 };
 
 const disqualify = (mindex, rindex, pindex) => {
+	console.log('client.disqualify called');
+
 	mindex = mindex || currManche;
 	rindex = rindex || currRound;
 	var cars = configuration.loadRound(mindex, rindex);
@@ -319,6 +336,8 @@ const disqualify = (mindex, rindex, pindex) => {
 
 // Reads all input fields in the manches tab and rebuilds time list
 const overrideTimes = () => {
+	console.log('client.overrideTimes called');
+
 	var time, cars;
 	_.each(mancheList, (manche, mindex) => {
 		_.each(manche, (round, rindex) => {
@@ -339,6 +358,8 @@ const overrideTimes = () => {
 
 // Initializes playerTimes
 const initTimeList = () => {
+	console.log('client.initTimeList called');
+
 	_.each(mancheList, (_manche, mindex) => {
 		_.each(playerList, (_playerId, pindex) => {
 			playerTimesList[pindex] = playerTimesList[pindex] || [];
@@ -350,6 +371,8 @@ const initTimeList = () => {
 
 // Rebuilds mancheTimes and playerTimes starting from saved race results
 const rebuildTimeList = () => {
+	console.log('client.rebuildTimeList called');
+
 	var time, cars;
 	_.each(mancheList, (manche, mindex) => {
 		_.each(manche, (round, rindex) => {
@@ -374,6 +397,8 @@ const rebuildTimeList = () => {
 // ==== handle interface buttons
 
 const startRound = () => {
+	console.log('client.startRound called');
+
 	timerIntervals = [];
 	timerSeconds = [];
 
@@ -394,6 +419,8 @@ const startRound = () => {
 };
 
 const prevRound = () => {
+	console.log('client.prevRound called');
+
 	if (currTournament == null || currTrack == null) {
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: "Track/tournament not loaded."});
 		return;
@@ -417,6 +444,8 @@ const prevRound = () => {
 };
 
 const nextRound = () => {
+	console.log('client.nextRound called');
+
 	if (currTournament == null || currTrack == null) {
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: "Track/tournament not loaded."});
 		return;
@@ -461,6 +490,8 @@ const keydown = (keyCode) => {
 // ==== API calls
 
 const loadTrack = () => {
+	console.log('client.loadTrack called');
+
 	let code = $('#js-input-track-code').val().slice(-6);
 	$('#js-input-track-code').removeClass('is-danger');
 	$.getJSON('https://mini4wd-track-editor.pimentoso.com/api/track/' + code)
@@ -475,12 +506,16 @@ const loadTrack = () => {
 };
 
 const setTrackManual = (length, order) => {
+	console.log('client.setTrackManual called');
+
 	let obj = { 'code': 'MANUAL', 'length': length, 'order': order, 'manual': true };
 	configuration.saveSettings('track', obj);
 	trackLoadDone(obj);
 };
 
 const loadTournament = () => {
+	console.log('client.loadTournament called');
+
 	let code = $('#js-input-tournament-code').val().slice(-6);
 	$('#js-input-tournament-code').removeClass('is-danger');
 	$.getJSON('https://mini4wd-tournament.pimentoso.com/api/tournament/' + code)
@@ -495,6 +530,8 @@ const loadTournament = () => {
 };
 
 const trackLoadDone = (obj) => {
+	console.log('client.trackLoadDone called');
+
 	currTrack = obj;
 	$('#tag-track-status').removeClass('is-danger');
 	$('#tag-track-status').addClass('is-success');
@@ -503,6 +540,8 @@ const trackLoadDone = (obj) => {
 };
 
 const trackLoadFail = () => {
+	console.log('client.trackLoadFail called');
+
 	currTrack = null;
 	$('#js-input-track-code').addClass('is-danger');
 	$('#tag-track-status').addClass('is-danger');
@@ -512,6 +551,8 @@ const trackLoadFail = () => {
 };
 
 const tournamentLoadDone = (obj) => {
+	console.log('client.tournamentLoadDone called');
+
 	currTournament = obj;
 	playerList = obj.players;
 	mancheList = obj.manches;
@@ -523,6 +564,8 @@ const tournamentLoadDone = (obj) => {
 };
 
 const tournamentLoadFail = () => {
+	console.log('client.tournamentLoadFail called');
+
 	currTournament = null;
 	$('#js-input-tournament-code').addClass('is-danger');
 	$('#tag-tournament-status').addClass('is-danger');
@@ -535,6 +578,8 @@ const tournamentLoadFail = () => {
 
 // timer task to check for cars out of track
 const checkRace = () => {
+	console.log('client.checkRace called');
+
 	let redraw = false;
 	if (chrono.isRaceFinished()) {
 		// race finished, kill this task
@@ -550,6 +595,8 @@ const checkRace = () => {
 
 // timer task to invalidate cars not passed in 3 seconds
 const checkStart = () => {
+	console.log('client.checkStart called');
+
 	let redraw = chrono.checkNotStartedCars();
 	if (chrono.isRaceFinished()) {
 		raceFinished();
@@ -560,6 +607,8 @@ const checkStart = () => {
 
 // called when the current round has completed. Saves times
 const raceFinished = () => {
+	console.log('client.raceFinished called');
+
 	if (currTournament) {
 		let cars = chrono.getCars();
 
@@ -585,12 +634,20 @@ const raceFinished = () => {
 	$('#button-start').removeAttr('disabled');
 };
 
-const drawRace = () => {
+// @param [bool] fromSaved: pass true if you want to render a past round. It will be loaded from configuration.
+// else it will be loaded from the chrono instance
+const drawRace = (fromSaved) => {
+	console.log('client.drawRace called');
+
 	$('.js-place').removeClass('is-dark is-light is-primary is-warning');
 	$('.js-delay').removeClass('is-danger');
 	$('.js-timer').removeClass('is-danger is-success');
 
-	let cars = chrono.getCars();
+	let cars;
+	if (fromSaved) {
+		cars = configuration.loadRound(currManche, currRound);
+	}
+	cars = cars || chrono.getCars();
 	_.each(cars, (car,i) => {
 		// delay + speed
 		if (car.outOfBounds) {
@@ -706,6 +763,8 @@ const sensorRead3 = () => {
 };
 
 const addLap = (lane) => {
+	console.log('client.addLap called');
+
 	chrono.addLap(lane);
 	if (chrono.isRaceFinished()) {
 		raceFinished();
