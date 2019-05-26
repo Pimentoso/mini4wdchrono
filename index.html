@@ -265,7 +265,7 @@
 
 	<!-- PLAYERS TAB -->
 	<div class="container" data-tab="players" style="display: none;">
-		<div class="level has-text-centered">
+		<div class="js-tournament-loaded level has-text-centered">
 			<div class="level-left"></div>
 			<div class="level-right">
 				<div class="level-item">
@@ -278,12 +278,13 @@
 				</div>
 			</div>
 		</div>
-		<table id="tablePlayerList" class="table table is-bordered is-striped is-hoverable is-fullwidth"></table>
+		<table id="tablePlayerList" class="js-tournament-loaded table table is-bordered is-striped is-hoverable is-fullwidth"></table>
+		<p class="js-no-tournament has-text-grey has-text-centered">Tournament not loaded</p>
 	</div>
 
 	<!-- MANCHES TAB -->
 	<div class="container" data-tab="manches" style="display: none;">
-		<div class="level has-text-centered">
+		<div class="js-tournament-loaded level has-text-centered">
 			<div class="level-left"></div>
 			<div class="level-right">
 				<div class="level-item">
@@ -298,7 +299,8 @@
 				</div>
 			</div>
 		</div>
-		<table id="tableMancheList" class="table table is-bordered is-striped is-hoverable is-fullwidth"></table>
+		<table id="tableMancheList" class="js-tournament-loaded table table is-bordered is-striped is-hoverable is-fullwidth"></table>
+		<p class="js-no-tournament has-text-grey has-text-centered">Tournament not loaded</p>
 	</div>
 
 	<!-- RACE TAB -->
@@ -316,7 +318,7 @@
 				</button>
 			</div>
 			<div class="level-item">
-				<button class="button is-link is-large has-text-weight-bold" id="button-start" style="width: 200px;">
+				<button class="button is-link is-large has-text-weight-bold" id="button-start" style="min-width: 200px;">
 					<span>START</span>
 				</button>
 			</div>

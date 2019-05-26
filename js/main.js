@@ -153,24 +153,27 @@ $('#button-reset').on('click', (e) => {
 
 $('#button-start').on('click', (e) => {
 	if (!connected && !debugMode) {
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: "Lap timer not connected. Check USB cable."});
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: "Lap timer not connected! Check USB cable."});
 		return;
 	}
+	if (configuration.readSettings('track') == null) {
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: "Track not loaded!"});
+		return;
+	}
+
 	if (debugMode) {
+		// debug mode
 		client.startRound();
 	}
 	else {
 		// production mode
-		if (configuration.readSettings('tournament') == null || configuration.readSettings('track') == null) {
-			dialog.showMessageBox({ type: 'error', title: 'Error', message: "Track/tournament not loaded."});
-			return;
-		}
-		if (configuration.loadRound()) {
+		if (configuration.readSettings('tournament') && configuration.loadRound()) {
+			// TODO MODAL SPAREGGIO
+			
 			if (dialog.showMessageBox({ type: 'warning', message: "Play this round again? The current data will be lost.", buttons: ['Ok', 'Cancel']}) == 1) {
 				return;
 			}
 		}
-
 		playStart();
 	}
 });
@@ -250,7 +253,7 @@ $('.js-race-mode').on('click', (e) => {
 $('.js-invalidate').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
-	if (dialog.showMessageBox({ type: 'warning', message: "Play this round again? The current data will be lost.", buttons: ['Ok', 'Cancel']}) == 1) {
+	if (dialog.showMessageBox({ type: 'warning', message: "Disqualify this player time?", buttons: ['Ok', 'Cancel']}) == 0) {
 		client.disqualify(null, null, parseInt($this.data('lane')));
 	}
 });

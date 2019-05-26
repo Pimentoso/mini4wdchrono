@@ -107,24 +107,35 @@ const reset = () => {
 	$('#tag-tournament-status').removeClass('is-success');
 	$('#tag-tournament-status').text('not loaded');
 
+	initTimeList();
 	showTrackDetails();
 	showTournamentDetails();
-	guiInit();
 };
 
 const guiInit = () => {
-	$('#curr-manche').text(currManche+1);
-	$('#curr-round').text(currRound+1);
-
 	if (currTournament == null) {
-		$('#name-lane0').text('_');
-		$('#name-lane1').text('_');
-		$('#name-lane2').text('_');
+		$('.js-no-tournament').show();
+		$('.js-tournament-loaded').hide();
+		$('#name-lane0').text(' ');
+		$('#name-lane1').text(' ');
+		$('#name-lane2').text(' ');
+		$('#curr-manche').text('0');
+		$('#curr-round').text('0');
+		$('#button-prev').hide();
+		$('#button-next').hide();
+		$('#button-start').text('START FREE ROUND');
 	}
 	else {
-		$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '_');
-		$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '_');
-		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '_');
+		$('.js-no-tournament').hide();
+		$('.js-tournament-loaded').show();
+		$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '//');
+		$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '//');
+		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '//');
+		$('#curr-manche').text(currManche+1);
+		$('#curr-round').text(currRound+1);
+		$('#button-prev').show();
+		$('#button-next').show();
+		$('#button-start').text('START');
 		showPlayerList();
 		showMancheList();
 	}
@@ -138,9 +149,15 @@ const chronoInit = (reset) => {
 		chrono.init(currTrack, mancheList[currManche][currRound], cars);
 	}
 	else {
-		// new blank round
-		configuration.deleteRound(currManche, currRound);
-		chrono.init(currTrack, mancheList[currManche][currRound]);
+		if (currTournament == null) {
+			// free round
+			chrono.init(currTrack);
+		}
+		else {
+			// new blank round
+			configuration.deleteRound(currManche, currRound);
+			chrono.init(currTrack, mancheList[currManche][currRound]);
+		}
 	}
 };
 
@@ -177,13 +194,13 @@ const showTournamentDetails = () => {
 		$('#js-tournament-players').text('Players: ' + currTournament.players.length);
 		$('#js-tournament-manches').text('Manches: ' + currTournament.manches.length);
 		$('#js-link-tournament').attr('href', currTournament.url);
-		guiInit();
 	}
 	else {
 		$('#js-tournament-players').text('-');
 		$('#js-tournament-manches').text('-');
 		$('#js-link-tournament').attr('href', '#');
 	}
+	guiInit();
 };
 
 const showThresholds = () => {
@@ -307,7 +324,7 @@ const overrideTimes = () => {
 		_.each(manche, (round, rindex) => {
 			cars = configuration.loadRound(mindex, rindex);
 			if (cars) {
-				_.each(round, (player, pindex) => {
+				_.each(round, (playerId, pindex) => {
 					time = $("input[data-manche='" + mindex + "'][data-round='" + rindex + "'][data-player='" + pindex + "']").val();
 					cars[pindex].currTime = time;
 				});
@@ -320,6 +337,17 @@ const overrideTimes = () => {
 	guiInit();
 };
 
+// Initializes playerTimes
+const initTimeList = () => {
+	_.each(mancheList, (_manche, mindex) => {
+		_.each(playerList, (_playerId, pindex) => {
+			playerTimesList[pindex] = playerTimesList[pindex] || [];
+			playerTimesList[pindex][mindex] = playerTimesList[pindex][mindex] || 0;
+		});
+	});
+	configuration.saveSettings('playerTimes', playerTimesList);
+};
+
 // Rebuilds mancheTimes and playerTimes starting from saved race results
 const rebuildTimeList = () => {
 	var time, cars;
@@ -327,13 +355,13 @@ const rebuildTimeList = () => {
 		_.each(manche, (round, rindex) => {
 			cars = configuration.loadRound(currManche, currRound);
 			if (cars) {
-				_.each(round, (player, pindex) => {
+				_.each(round, (playerId, pindex) => {
 					time = cars[pindex].currTime;
 					mancheTimesList[mindex] = mancheTimesList[mindex] || [];
 					mancheTimesList[mindex][rindex] = mancheTimesList[mindex][rindex] || [];
 					mancheTimesList[mindex][rindex][pindex] = time;
-					playerTimesList[player] = playerTimesList[player] || [];
-					playerTimesList[player][mindex] = time;
+					playerTimesList[playerId] = playerTimesList[playerId] || [];
+					playerTimesList[playerId][mindex] = time;
 				});
 			}
 		});
@@ -487,6 +515,7 @@ const tournamentLoadDone = (obj) => {
 	currTournament = obj;
 	playerList = obj.players;
 	mancheList = obj.manches;
+	initTimeList();
 	$('#tag-tournament-status').removeClass('is-danger');
 	$('#tag-tournament-status').addClass('is-success');
 	$('#tag-tournament-status').text(obj.code);
@@ -531,24 +560,27 @@ const checkStart = () => {
 
 // called when the current round has completed. Saves times
 const raceFinished = () => {
-	let cars = chrono.getCars();
+	if (currTournament) {
+		let cars = chrono.getCars();
 
-	mancheTimesList[currManche] = mancheTimesList[currManche] || [];
-	mancheTimesList[currManche][currRound] = [cars[0].currTime, cars[1].currTime, cars[2].currTime];
-	configuration.saveSettings('mancheTimes', mancheTimesList);
+		mancheTimesList[currManche] = mancheTimesList[currManche] || [];
+		mancheTimesList[currManche][currRound] = [cars[0].currTime, cars[1].currTime, cars[2].currTime];
+		configuration.saveSettings('mancheTimes', mancheTimesList);
 
-	playerTimesList[cars[0].playerId] = playerTimesList[cars[0].playerId] || [];
-	playerTimesList[cars[0].playerId][currManche] = cars[0].currTime;
-	playerTimesList[cars[1].playerId] = playerTimesList[cars[1].playerId] || [];
-	playerTimesList[cars[1].playerId][currManche] = cars[1].currTime;
-	playerTimesList[cars[2].playerId] = playerTimesList[cars[2].playerId] || [];
-	playerTimesList[cars[2].playerId][currManche] = cars[2].currTime;
-	configuration.saveSettings('playerTimes', playerTimesList);
+		playerTimesList[cars[0].playerId] = playerTimesList[cars[0].playerId] || [];
+		playerTimesList[cars[0].playerId][currManche] = cars[0].currTime;
+		playerTimesList[cars[1].playerId] = playerTimesList[cars[1].playerId] || [];
+		playerTimesList[cars[1].playerId][currManche] = cars[1].currTime;
+		playerTimesList[cars[2].playerId] = playerTimesList[cars[2].playerId] || [];
+		playerTimesList[cars[2].playerId][currManche] = cars[2].currTime;
+		configuration.saveSettings('playerTimes', playerTimesList);
 
-	configuration.saveRound(currManche, currRound, cars);
+		configuration.saveRound(currManche, currRound, cars);
 
-	showPlayerList();
-	showMancheList();
+		showPlayerList();
+		showMancheList();
+	}
+
 	raceStarted = false;
 	$('#button-start').removeAttr('disabled');
 };

@@ -44,21 +44,25 @@ const init = (track, playerIds, cars) => {
 	if (cars == null) {
 		// init car 1
 		rCar0 = JSON.parse(JSON.stringify(carObj));
-		rCar0.playerId = playerIds[0];
 		rCar0.startLane = 0;
 		rCar0.nextLane = 0;
 
 		// init car 2
 		rCar1 = JSON.parse(JSON.stringify(carObj));
-		rCar1.playerId = playerIds[1];
 		rCar1.startLane = 1;
 		rCar1.nextLane = 1;
 
 		// init car 3
 		rCar2 = JSON.parse(JSON.stringify(carObj));
-		rCar2.playerId = playerIds[2];
 		rCar2.startLane = 2;
 		rCar2.nextLane = 2;
+
+		// playerIds is null if it's a free round
+		if (playerIds) {
+			rCar0.playerId = playerIds[0];
+			rCar1.playerId = playerIds[1];
+			rCar2.playerId = playerIds[2];
+		}
 
 		// car array
 		rCars = [rCar0, rCar1, rCar2];
