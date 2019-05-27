@@ -27,20 +27,20 @@
 					<div class="field is-grouped is-grouped-multiline">
 						<div class="control">
 							<div class="tags has-addons">
-								<span class="tag">Board status</span>
-								<span id="tag-board-status" class="tag is-danger is-uppercase">not connected</span>
+								<span class="tag tn">Board status</span>
+								<span id="tag-board-status" class="tag is-danger is-uppercase tn">not connected</span>
 							</div>
 						</div>
 						<div class="control">
 							<div class="tags has-addons">
-								<span class="tag">Track</span>
-								<span id="tag-track-status" class="tag is-danger is-uppercase">not loaded</span>
+								<span class="tag tn">Track</span>
+								<span id="tag-track-status" class="tag is-danger is-uppercase tn">not loaded</span>
 							</div>
 						</div>
 						<div class="control">
 							<div class="tags has-addons">
-								<span class="tag">Tournament</span>
-								<span id="tag-tournament-status" class="tag is-danger is-uppercase">not loaded</span>
+								<span class="tag tn">Tournament</span>
+								<span id="tag-tournament-status" class="tag is-danger is-uppercase tn">not loaded</span>
 							</div>
 						</div>
 					</div>
@@ -54,32 +54,32 @@
 		<ul>
 			<li class="is-active" data-tab="setup">
 				<a>
-					<span>Race setup</span>
+					<span class="tn">Race setup</span>
 				</a>
 			</li>
 			<li data-tab="race">
 				<a>
-					<span>Race view</span>
+					<span class="tn">Race view</span>
 				</a>
 			</li>
 			<li data-tab="players">
 				<a>
-					<span>Racers list</span>
+					<span class="tn">Racers list</span>
 				</a>
 			</li>
 			<li data-tab="manches">
 				<a>
-					<span>Manches list</span>
+					<span class="tn">Manches list</span>
 				</a>
 			</li>
 			<li data-tab="config">
 				<a>
-					<span>Configuration</span>
+					<span class="tn">Configuration</span>
 				</a>
 			</li>
 			<li data-tab="about">
 				<a>
-					<span>About</span>
+					<span class="tn">About</span>
 				</a>
 			</li>
 		</ul>
@@ -88,23 +88,23 @@
 	<!-- SETUP TAB -->
 	<div class="container" data-tab="setup">
 		<p class="has-text-centered">
-			<a id="button-reset" href="#" class="button is-info" style="width: 200px;">
+			<a id="button-reset" href="#" class="button is-info tn" style="width: 200px;">
 				New race
 			</a>
 		</p>
 
 		<hr />
 
-		<p class="title is-4">Track informations</p>
+		<p class="title is-4 tn">Track informations</p>
 
 		<div class="container">
-			<label class="label">Load track from Track Editor link</label>
+			<label class="label tn">Load track from Track Editor link</label>
 			<div class="field has-addons">
 				<div class="control" style="width: 100%;">
 					<input id="js-input-track-code" class="input" type="text" placeholder="example: https://mini4wd-track-editor.pimentoso.com/4QT8GM" value="">
 				</div>
 				<div class="control">
-					<a id="js-load-track" class="button is-info">
+					<a id="js-load-track" class="button is-info tn">
 						Load
 					</a>
 				</div>
@@ -118,13 +118,13 @@
 					</p>
 				</div>
 				<div class="level-right">
-					<a id="js-link-track" href="#" class="button">
+					<a id="js-link-track" href="#" class="button tn">
 						See in Mini4WD Track Editor &gt;
 					</a>
 				</div>
 			</div>
 
-			<label class="label">Or manual input</label>
+			<label class="label tn">Or manual input</label>
 			<div class="field is-horizontal">
 				<div class="field-body">
 					<div class="field has-addons">
@@ -152,11 +152,9 @@
 			</div>
 
 			<div class="level">
-
-					<div class="level-left">
-					</div>
+				<div class="level-left"></div>
 				<div class="level-right">
-					<a id="js-track-save-manual" href="#" class="button">
+					<a id="js-track-save-manual" href="#" class="button tn">
 						Save
 					</a>
 				</div>
@@ -165,16 +163,16 @@
 
 		<hr />
 
-		<p class="title is-4">Tournament informations</p>
+		<p class="title is-4 tn">Tournament informations</p>
 
 		<div class="container">
-			<label class="label">Load tournament from Tournament Generator link</label>
+			<label class="label tn">Load tournament from Tournament Generator link</label>
 			<div class="field has-addons">
 				<div class="control" style="width: 100%;">
 					<input id="js-input-tournament-code" class="input" type="text" placeholder="example: https://mini4wd-tournament.pimentoso.com/49PMRU" value="">
 				</div>
 				<div class="control">
-					<a id="js-load-tournament" class="button is-info">
+					<a id="js-load-tournament" class="button is-info tn">
 						Load
 					</a>
 				</div>
@@ -188,7 +186,7 @@
 					</p>
 				</div>
 				<div class="level-right">
-					<a id="js-link-tournament" href="#" class="button">
+					<a id="js-link-tournament" href="#" class="button tn">
 						See in Mini4WD Tournament Generator &gt;
 					</a>
 				</div>
@@ -197,20 +195,20 @@
 
 		<hr />
 
-		<p class="title is-4">Setup</p>
+		<p class="title is-4 tn">Setup</p>
 
 		<div class="container">
-			<label class="label">Race mode</label>
+			<label class="label tn">Race mode</label>
 			<div class="buttons has-addons">
-				<span id="js-race-mode-0" class="button js-race-mode" data-race-mode="0">Time attack mode</span>
-				<span id="js-race-mode-1" class="button js-race-mode" data-race-mode="1">Final mode</span>
-				<span id="js-race-mode-2" class="button js-race-mode" data-race-mode="2" disabled>Endurance mode</span>
+				<span id="js-race-mode-0" class="button js-race-mode tn" data-race-mode="0">Time attack mode</span>
+				<span id="js-race-mode-1" class="button js-race-mode tn" data-race-mode="1">Final mode</span>
+				<span id="js-race-mode-2" class="button js-race-mode tn" data-race-mode="2" disabled>Endurance mode</span>
 			</div>
-			<p id="js-race-mode-description" class="has-text-grey is-size-7">RACE MODE DESC</p>	
+			<p id="js-race-mode-description" class="has-text-grey is-size-7 tn">RACE MODE DESC</p>	
 		</div>
 
 		<div class="container">
-			<label class="label">Max start delay</label>
+			<label class="label tn">Max start delay</label>
 			<div class="field has-addons">
 				<p class="control" style="width: 100%;">
 					<input id="js-settings-start-delay" class="input" type="text" placeholder="Text input" value="3">
@@ -225,7 +223,7 @@
 		</div>
 
 		<div class="container">
-			<label class="label">Average speed</label>
+			<label class="label tn">Average speed</label>
 			<div class="field has-addons">
 				<p class="control" style="width: 100%;">
 					<input id="js-settings-speed-threshold" class="input" type="text" placeholder="Text input" value="5">
@@ -236,12 +234,12 @@
 					</a>
 				</p>
 			</div>
-			<p class="has-text-dark is-size-7">Estimated speed for this race (in m/s). Jump race: 5, Italian classic: 7.5, Speed race: 10</p>
-			<p id="js-settings-estimated-time" class="has-text-dark is-size-7">ESTIMATED ROUND TIME</p>
+			<p class="has-text-dark is-size-7 tn">Estimated speed for this race (in m/s). Jump race: 5, Italian classic: 7.5, Speed race: 10</p>
+			<p id="js-settings-estimated-time" class="has-text-dark is-size-7 tn">ESTIMATED ROUND TIME</p>
 		</div>
 
 		<div class="container">
-			<label class="label">Lap time threshold</label>
+			<label class="label tn">Lap time threshold</label>
 			<div class="field has-addons">
 				<p class="control" style="width: 100%;">
 					<input id="js-settings-time-threshold" class="input" type="text" placeholder="Text input" value="40">
@@ -252,12 +250,12 @@
 					</a>
 				</p>
 			</div>
-			<p class="has-text-dark is-size-7">If a car does not complete a lap within this %, it's considered out. Default is 40.</p>
-			<p id="js-settings-estimated-cutoff" class="has-text-dark is-size-7">ESTIMATED CUTOFF</p>
+			<p class="has-text-dark is-size-7 tn">If a car does not complete a lap within this %, it's considered out. Default is 40.</p>
+			<p id="js-settings-estimated-cutoff" class="has-text-dark is-size-7 tn">ESTIMATED CUTOFF</p>
 		</div>
 
 		<p class="has-text-centered">
-			<a id="button-save-settings" href="#" class="button is-info">
+			<a id="button-save-settings" href="#" class="button is-info tn">
 				Save settings
 			</a>
 		</p>
@@ -273,13 +271,13 @@
 				</div>
 				<div class="level-item">
 					<button class="button is-info" id="button-xls">
-						<span>Save XLS file</span>
+						<span class="tn">Save XLS file</span>
 					</button>
 				</div>
 			</div>
 		</div>
 		<table id="tablePlayerList" class="js-show-on-tournament-loaded table table is-bordered is-striped is-hoverable is-fullwidth"></table>
-		<p class="js-show-on-no-tournament has-text-grey has-text-centered">Tournament not loaded</p>
+		<p class="js-show-on-no-tournament has-text-grey has-text-centered tn">Tournament not loaded</p>
 	</div>
 
 	<!-- MANCHES TAB -->
@@ -289,18 +287,18 @@
 			<div class="level-right">
 				<div class="level-item">
 					<button class="button" id="button-manches-cancel">
-						<span>Cancel</span>
+						<span class="tn">Cancel</span>
 					</button>
 				</div>
 				<div class="level-item">
 					<button class="button is-info" id="button-manches-save">
-						<span>Save changes</span>
+						<span class="tn">Save changes</span>
 					</button>
 				</div>
 			</div>
 		</div>
 		<table id="tableMancheList" class="js-show-on-tournament-loaded table table is-bordered is-striped is-hoverable is-fullwidth"></table>
-		<p class="js-show-on-no-tournament has-text-grey has-text-centered">Tournament not loaded</p>
+		<p class="js-show-on-no-tournament has-text-grey has-text-centered tn">Tournament not loaded</p>
 	</div>
 
 	<!-- RACE TAB -->
@@ -314,17 +312,17 @@
 		<div class="level has-text-centered">
 			<div class="level-item">
 				<button class="js-show-on-tournament-loaded button" id="button-prev">
-					<span>&lt; Prev round</span>
+					<span class="tn">&lt; Prev round</span>
 				</button>
 			</div>
 			<div class="level-item">
 				<button class="button is-link is-large has-text-weight-bold" id="button-start" style="min-width: 200px;">
-					<span>START</span>
+					<span class="tn">START</span>
 				</button>
 			</div>
 			<div class="level-item">
 				<button class="js-show-on-tournament-loaded button" id="button-next">
-					<span>Next round &gt;</span>
+					<span class="tn">Next round &gt;</span>
 				</button>
 			</div>
 		</div>
@@ -338,7 +336,7 @@
 					</header>
 					<div class="card-content">
 						<div class="content">
-							<span id="place-lane0" class="tag is-size-5 is-uppercase is-light js-place">stopped</span>
+							<span id="place-lane0" class="tag is-size-5 is-uppercase is-light js-place tn">stopped</span>
 							&nbsp;
 							<span id="delay-lane0" class="tag is-size-5 is-light js-delay">+0.000 sec</span>
 							<span id="timer-lane0" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
@@ -348,7 +346,7 @@
 
 							<ul id="laps-lane0"></ul>
 
-							<a href="#" class="button is-small is-danger js-invalidate" data-lane="0">invalidate</a>
+							<a href="#" class="button is-small is-danger js-invalidate tn" data-lane="0">invalidate</a>
 						</div>
 					</div>
 				</div>
@@ -361,7 +359,7 @@
 					</header>
 					<div class="card-content">
 						<div class="content">
-							<span id="place-lane1" class="tag is-size-5 is-uppercase is-light js-place">stopped</span>
+							<span id="place-lane1" class="tag is-size-5 is-uppercase is-light js-place tn">stopped</span>
 							&nbsp;
 							<span id="delay-lane1" class="tag is-size-5 is-light js-delay">+0.000 sec</span>
 							<span id="timer-lane1" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
@@ -371,7 +369,7 @@
 
 							<ul id="laps-lane1"></ul>
 
-							<a href="#" class="button is-small is-danger js-invalidate" data-lane="1">invalidate</a>
+							<a href="#" class="button is-small is-danger js-invalidate tn" data-lane="1">invalidate</a>
 						</div>
 					</div>
 				</div>
@@ -384,7 +382,7 @@
 					</header>
 					<div class="card-content">
 						<div class="content">
-							<span id="place-lane2" class="tag is-size-5 is-uppercase is-light js-place">stopped</span>
+							<span id="place-lane2" class="tag is-size-5 is-uppercase is-light js-place tn">stopped</span>
 							&nbsp;
 							<span id="delay-lane2" class="tag is-size-5 is-light js-delay">+0.000 sec</span>
 							<span id="timer-lane2" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
@@ -394,7 +392,7 @@
 
 							<ul id="laps-lane2"></ul>
 
-							<a href="#" class="button is-small is-danger js-invalidate" data-lane="2">invalidate</a>
+							<a href="#" class="button is-small is-danger js-invalidate tn" data-lane="2">invalidate</a>
 						</div>
 					</div>
 				</div>
@@ -407,14 +405,14 @@
 		<div class="container">
 
 			<div class="field">
-				<label class="label">Custom title</label>
+				<label class="label tn">Custom title</label>
 				<div class="control" style="width: 100%;">
 					<input id="js-config-title" class="input" type="text" placeholder="default: MINI4WD CHRONO" value="">
 				</div>
 			</div>
 
 			<div class="field">
-				<label class="label">USB Port</label>
+				<label class="label tn">USB Port</label>
 				<p class="control">
 					<div class="select is-fullwidth">
 						<select id="js-config-usb-port">
@@ -424,7 +422,7 @@
 				</p>
 			</div>
 
-			<label class="label">Sensitivity</label>
+			<label class="label tn">Sensitivity</label>
 			<div class="field has-addons">
 				<p class="control" style="width: 100%;">
 					<input id="js-config-sensor-threshold" class="input" type="text" placeholder="default: 20" value="">
@@ -437,49 +435,49 @@
 			</div>
 
 			<div class="field">
-				<label class="label">Sensor 1 pin (analog)</label>
+				<label class="label tn">Sensor 1 pin (analog)</label>
 				<div class="control" style="width: 100%;">
 					<input id="js-config-sensor-pin-1" class="input" type="text" placeholder="example: A0" value="">
 				</div>
 			</div>
 
 			<div class="field">
-				<label class="label">Sensor 2 pin (analog)</label>
+				<label class="label tn">Sensor 2 pin (analog)</label>
 				<div class="control" style="width: 100%;">
 					<input id="js-config-sensor-pin-2" class="input" type="text" placeholder="example: A1" value="">
 				</div>
 			</div>
 
 			<div class="field">
-				<label class="label">Sensor 3 pin (analog)</label>
+				<label class="label tn">Sensor 3 pin (analog)</label>
 				<div class="control" style="width: 100%;">
 					<input id="js-config-sensor-pin-3" class="input" type="text" placeholder="example: A2" value="">
 				</div>
 			</div>
 			
 			<div class="field">
-				<label class="label">LED 1 pin (digital)</label>
+				<label class="label tn">LED 1 pin (digital)</label>
 				<div class="control" style="width: 100%;">
 					<input id="js-config-led-pin-1" class="input" type="text" placeholder="example: 0" value="">
 				</div>
 			</div>
 
 			<div class="field">
-				<label class="label">LED 2 pin (digital)</label>
+				<label class="label tn">LED 2 pin (digital)</label>
 				<div class="control" style="width: 100%;">
 					<input id="js-config-led-pin-2" class="input" type="text" placeholder="example: 1" value="">
 				</div>
 			</div>
 
 			<div class="field">
-				<label class="label">LED 3 pin (digital)</label>
+				<label class="label tn">LED 3 pin (digital)</label>
 				<div class="control" style="width: 100%;">
 					<input id="js-config-led-pin-3" class="input" type="text" placeholder="example: 2" value="">
 				</div>
 			</div>
 
 			<div class="field">
-				<label class="label">Speaker pin (digital)</label>
+				<label class="label tn">Speaker pin (digital)</label>
 				<div class="control" style="width: 100%;">
 					<input id="js-config-piezo-pin" class="input" type="text" placeholder="example: 4" value="">
 				</div>
@@ -487,7 +485,7 @@
 		</div>
 
 		<p class="has-text-centered">
-			<a id="button-save-config" href="#" class="button is-info">
+			<a id="button-save-config tn" href="#" class="button is-info">
 				Save settings
 			</a>
 		</p>
@@ -500,7 +498,7 @@
 			<p id="js-about-version"></p>
 			<p>by Pimentoso - 2019</p>
 			<hr />
-			<p class="title is-4">External tools</p>
+			<p class="title is-4 tn">External tools</p>
 			<p><a href="https://mini4wd-track-editor.pimentoso.com/" class="button is-success is-outlined">Mini4WD Track Editor</a></p>
 			<p><a href="https://mini4wd-tournament.pimentoso.com/" class="button is-link is-outlined">Mini4WD Tournament Generator</a></p>
 			<p><a href="https://github.com/Pimentoso/mini4wdchrono" class="button is-outlined">Project page on Github</a></p>

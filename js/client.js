@@ -7,10 +7,11 @@ const utils = require('./utils');
 const configuration = require('./configuration');
 const chrono = require('./chrono');
 const xls = require('./export');
+const i18n = new(require('../i18n/i18n'));
 
 let currTrack, currTournament;
 let playerList, mancheList, playerTimesList, mancheTimesList;
-let currManche = 0, currRound = 0, raceStarted = false;
+let currManche = 0, currRound = 0, raceStarted = false, freeRound = false;
 
 let timerIntervals = [], timerSeconds = [];
 let pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
@@ -48,6 +49,11 @@ const init = () => {
 	});
 
 	$('#js-about-version').text('Version ' + process.env.npm_package_version);
+
+	// translate ui
+	$('.tn').each(function(index) {
+		$(this).text(i18n.__($(this).data('tn')));
+	});
 
 	// read stuff from settings
 	mancheTimesList = configuration.readSettings('mancheTimes') || [];
@@ -149,10 +155,9 @@ const guiInit = () => {
 const chronoInit = (reset) => {
 	console.log('client.chronoInit called');
 
-	let cars = null;
 	if (reset == null) {
 		// existing round
-		cars = configuration.loadRound(currManche, currRound);
+		let cars = configuration.loadRound(currManche, currRound);
 		chrono.init(currTrack, mancheList[currManche][currRound], cars);
 	}
 	else {
