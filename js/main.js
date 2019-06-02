@@ -33,6 +33,7 @@ const configuration = require('./js/configuration');
 const j5 = require('johnny-five');
 const client = require('./js/client');
 const utils = require('./js/utils');
+const i18n = new(require('./i18n/i18n'));
 
 const board = new j5.Board({
 	port: configuration.readSettings('usbPort'),
@@ -47,7 +48,7 @@ board.on('ready', () => {
 	connected = true;
 	$('#tag-board-status').removeClass('is-danger');
 	$('#tag-board-status').addClass('is-success');
-	$('#tag-board-status').text('CONNECTED');
+	$('#tag-board-status').text(i18n.__('tag-connected'));
 
 	// ==== hardware init
 	sensor1 = new j5.Sensor({ pin: configuration.readSettings('sensorPin1'), freq: 1, threshold: 5 });
@@ -89,7 +90,7 @@ board.on("exit", () => {
 	connected = false;
 	$('#tag-board-status').removeClass('is-success');
 	$('#tag-board-status').addClass('is-danger');
-	$('#tag-board-status').text('NOT CONNECTED');
+	$('#tag-board-status').text(i18n.__('tag-disconnected'));
 
 	led1.stop().off();
 	led2.stop().off();
@@ -124,7 +125,7 @@ $('#js-load-track').on('click', (e) => {
 });
 
 $('#js-track-save-manual').on('click', (e) => {
-	if (dialog.showMessageBox({ type: 'warning', message: "Save track values?", buttons: ['Ok', 'Cancel']}) == 0) {
+	if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-save-track'), buttons: ['Ok', 'Cancel']}) == 0) {
 		$('#js-track-length-manual').removeClass('is-danger');
 		$('#js-track-order-manual').removeClass('is-danger');
 		if (!$('#js-track-length-manual').val()) {
@@ -146,18 +147,18 @@ $('#js-load-tournament').on('click', (e) => {
 });
 
 $('#button-reset').on('click', (e) => {
-	if (dialog.showMessageBox({ type: 'warning', message: "Start new race? All the current data will be lost.", buttons: ['Ok', 'Cancel']}) == 0) {
+	if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-new-race'), buttons: ['Ok', 'Cancel']}) == 0) {
 		client.reset();
 	}
 });
 
 $('#button-start').on('click', (e) => {
 	if (!connected && !debugMode) {
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: "Lap timer not connected! Check USB cable."});
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-disconnected')});
 		return;
 	}
 	if (configuration.readSettings('track') == null) {
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: "Track not loaded!"});
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-track-not-loaded')});
 		return;
 	}
 
@@ -210,7 +211,7 @@ $('#button-save-config').on('click', (e) => {
 	configuration.saveSettings('sensorThreshold', parseInt($('#js-config-sensor-threshold').val()));
 	configuration.saveSettings('title', $('#js-config-title').val());
 	configuration.saveSettings('usbPort', $('#js-config-usb-port').val());
-	dialog.showMessageBox({ type: 'warning', message: "Please restart the program for the changes to take effect." });
+	dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-restart') });
 	e.preventDefault();
 });
 
@@ -239,13 +240,13 @@ $('.js-race-mode').on('click', (e) => {
 	configuration.saveSettings('raceMode', mode);
 	switch(mode) {
 		case 0:
-			$('#js-race-mode-description').text('In this mode, each car time is calculated separately. Each car time starts when it passes under the lap timer.');
+			$('#js-race-mode-description').text(i18n.__('button-race-mode-time-attack-description'));
 			break;
 		case 1:
-			$('#js-race-mode-description').text('In this mode, time for all cars start at the same time, when the green lights go off.');
+			$('#js-race-mode-description').text(i18n.__('button-race-mode-final-description'));
 			break;
 		case 2:
-			$('#js-race-mode-description').text('In this mode, cars must run on the same lane forever. Laps are counted ');
+			$('#js-race-mode-description').text(i18n.__('button-race-mode-endurance-description'));
 			break;
 	}
 });
@@ -253,7 +254,7 @@ $('.js-race-mode').on('click', (e) => {
 $('.js-invalidate').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
-	if (dialog.showMessageBox({ type: 'warning', message: "Disqualify this player time?", buttons: ['Ok', 'Cancel']}) == 0) {
+	if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-disqualify'), buttons: ['Ok', 'Cancel']}) == 0) {
 		client.disqualify(null, null, parseInt($this.data('lane')));
 	}
 });
@@ -267,7 +268,7 @@ const flashLed = (led) => {
 };
 
 const playStart = () => {
-	$('#button-start').text('READY');
+	$('#button-start').text(i18n.__('button-start-ready'));
 	utils
 	.delay(() => { led1.on(); led2.on(); led3.on(); piezo.tone(3900, 1000); }, 200)
 	.delay(() => { led1.off(); led2.off(); led3.off(); piezo.noTone(); }, 1000)

@@ -2,7 +2,6 @@
 
 const { dialog } = require('electron').remote
 const serialport = require('serialport');
-const clone = require('clone');
 const utils = require('./utils');
 const configuration = require('./configuration');
 const chrono = require('./chrono');
@@ -114,10 +113,10 @@ const reset = () => {
 	$('#js-input-tournament-code').val('');
 	$('#tag-track-status').addClass('is-danger');
 	$('#tag-track-status').removeClass('is-success');
-	$('#tag-track-status').text('not loaded');
+	$('#tag-track-status').text(i18n.__('tag-not-loaded'));
 	$('#tag-tournament-status').addClass('is-danger');
 	$('#tag-tournament-status').removeClass('is-success');
-	$('#tag-tournament-status').text('not loaded');
+	$('#tag-tournament-status').text(i18n.__('tag-not-loaded'));
 
 	initTimeList();
 	showTrackDetails();
@@ -135,7 +134,7 @@ const guiInit = () => {
 		$('#name-lane2').text(' ');
 		$('#curr-manche').text('0');
 		$('#curr-round').text('0');
-		$('#button-start').text('START FREE ROUND');
+		$('#button-start').text(i18n.__('button-start-free'));
 	}
 	else {
 		$('.js-show-on-no-tournament').hide();
@@ -145,7 +144,7 @@ const guiInit = () => {
 		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '//');
 		$('#curr-manche').text(currManche+1);
 		$('#curr-round').text(currRound+1);
-		$('#button-start').text('START');
+		$('#button-start').text(i18n.__('button-start'));
 		showPlayerList();
 		showMancheList();
 		drawRace(true);
@@ -181,14 +180,14 @@ const showTrackDetails = () => {
 			$('#js-input-track-code').val('');
 			$('#js-track-length').text('-');
 			$('#js-track-order').text('-');
-			$('#js-link-track').attr('href', '#');
+			$('#js-link-track').attr('href', 'https://mini4wd-track-editor.pimentoso.com/');
 			$('#js-track-length-manual').val(currTrack.length);
 			$('#js-track-order-manual').val(currTrack.order.join('-'));
 		}
 		else {
 			$('#js-input-track-code').val(currTrack.url);
-			$('#js-track-length').text('Length: ' + currTrack.length + ' m');
-			$('#js-track-order').text('Lane order: ' + currTrack.order + ',1');
+			$('#js-track-length').text(i18n.__('label-track-length') + ': ' + currTrack.length + ' m');
+			$('#js-track-order').text(i18n.__('label-track-lane-order') + ': ' + currTrack.order + ',1');
 			$('#js-link-track').attr('href', currTrack.view_url);
 			$('#js-track-length-manual').val('');
 			$('#js-track-order-manual').val('');
@@ -197,7 +196,7 @@ const showTrackDetails = () => {
 	else {
 		$('#js-track-length').text('-');
 		$('#js-track-order').text('-');
-		$('#js-link-track').attr('href', '#');
+		$('#js-link-track').attr('href', 'https://mini4wd-track-editor.pimentoso.com/');
 	}
 	showThresholds();
 };
@@ -207,14 +206,14 @@ const showTournamentDetails = () => {
 
 	if (currTournament) {
 		$('#js-input-tournament-code').val(currTournament.url);
-		$('#js-tournament-players').text('Players: ' + currTournament.players.length);
-		$('#js-tournament-manches').text('Manches: ' + currTournament.manches.length);
+		$('#js-tournament-players').text(i18n.__('label-tournament-players') + ': ' + currTournament.players.length);
+		$('#js-tournament-manches').text(i18n.__('label-tournament-manches') + ': ' + currTournament.manches.length);
 		$('#js-link-tournament').attr('href', currTournament.url);
 	}
 	else {
 		$('#js-tournament-players').text('-');
 		$('#js-tournament-manches').text('-');
-		$('#js-link-tournament').attr('href', '#');
+		$('#js-link-tournament').attr('href', 'https://mini4wd-tournament.pimentoso.com/');
 	}
 	guiInit();
 };
@@ -230,9 +229,9 @@ const showThresholds = () => {
 		let estimatedCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold);
 		let estimatedCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold);
 		$('#js-settings-estimated-time').show();
-		$('#js-settings-estimated-time').text('ESTIMATED ROUND TIME: ' + estimatedTime.toFixed(3) + ' sec');
+		$('#js-settings-estimated-time').text(i18n.__('label-time-estimated') + ': ' + estimatedTime.toFixed(3) + ' sec');
 		$('#js-settings-estimated-cutoff').show();
-		$('#js-settings-estimated-cutoff').text('ESTIMATED CUTOFF TIME: min ' + estimatedCutoffMin.toFixed(3) + ' sec, max ' + estimatedCutoffMax.toFixed(3) + ' sec');
+		$('#js-settings-estimated-cutoff').text(i18n.__('label-time-estimated-cutoff') + ': min ' + estimatedCutoffMin.toFixed(3) + ' sec, max ' + estimatedCutoffMax.toFixed(3) + ' sec');
 	}
 	else {
 		$('#js-settings-estimated-time').hide();
@@ -270,7 +269,7 @@ const showPlayerList = () => {
 		let titleCells = _.map(currTournament.manches, (_manche,mindex) => {
 			return '<td>Manche ' + (mindex+1) + '</td>';
 		});
-		titleCells.push('<td>Best 2 times</td>');
+		titleCells.push('<td>' + i18n.__('label-best-2-times') + '</td>');
 		$('#tablePlayerList').append('<tr class="is-selected"><td colspan="2"><strong>' + playerList.length + ' RACERS</strong></td>' + titleCells + '</tr>');
 
 		// draw player rows
@@ -431,14 +430,14 @@ const prevRound = () => {
 	console.log('client.prevRound called');
 
 	if (currTournament == null || currTrack == null) {
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: "Track/tournament not loaded."});
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded')});
 		return;
 	}
 	if (currManche == 0 && currRound == 0) {
 		return;
 	}
 
-	if (dialog.showMessageBox({ type: 'warning', message: "Change round?", buttons: ['Ok', 'Cancel']}) == 0) {
+	if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel']}) == 0) {
 		currRound--;
 		if (currRound < 0) {
 			currManche--;
@@ -456,14 +455,14 @@ const nextRound = () => {
 	console.log('client.nextRound called');
 
 	if (currTournament == null || currTrack == null) {
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: "Track/tournament not loaded."});
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded')});
 		return;
 	}
 	if (currManche == (mancheList.length-1) && currRound == (mancheList[0].length-1)) {
 		return;
 	}
 
-	if (dialog.showMessageBox({ type: 'warning', message: "Change round?", buttons: ['Ok', 'Cancel']}) == 0) {
+	if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel']}) == 0) {
 		currRound++;
 		if (currRound == mancheList[0].length) {
 			currManche++;
@@ -516,7 +515,7 @@ const loadTrack = () => {
 const setTrackManual = (length, order) => {
 	console.log('client.setTrackManual called');
 
-	let obj = { 'code': 'MANUAL', 'length': length, 'order': order, 'manual': true };
+	let obj = { 'code': i18n.__('tag-track-manual'), 'length': length, 'order': order, 'manual': true };
 	configuration.saveSettings('track', obj);
 	trackLoadDone(obj);
 };
@@ -555,7 +554,7 @@ const trackLoadFail = () => {
 	$('#js-input-track-code').addClass('is-danger');
 	$('#tag-track-status').addClass('is-danger');
 	$('#tag-track-status').removeClass('is-success');
-	$('#tag-track-status').text('not loaded');
+	$('#tag-track-status').text(i18n.__('tag-not-loaded'));
 	showTrackDetails();
 };
 
@@ -579,7 +578,7 @@ const tournamentLoadFail = () => {
 	$('#js-input-tournament-code').addClass('is-danger');
 	$('#tag-tournament-status').addClass('is-danger');
 	$('#tag-tournament-status').removeClass('is-success');
-	$('#tag-tournament-status').text('not loaded');
+	$('#tag-tournament-status').text(i18n.__('tag-not-loaded'));
 };
 
 // ==========================================================================
@@ -684,38 +683,38 @@ const drawRace = (fromSaved) => {
 
 		// lap count
 		if (car.lapCount == 4) {
-			$('#lap-lane' + i).text('finish');
+			$('#lap-lane' + i).text(i18n.__('label-car-finish'));
 		}
 		else {
-			$('#lap-lane' + i).text('lap ' + car.lapCount);
+			$('#lap-lane' + i).text(i18n.__('label-car-lap') + ' ' + car.lapCount);
 		}
 
 		// split times
 		$('#laps-lane' + i).empty();
 		_.each(car.splitTimes, (t,ii) => {
-			$('#laps-lane' + i).append('<li class="is-size-3">partial ' + (ii+1) + ' - <strong>' + utils.prettyTime(t) + ' s</strong></li>');
+			$('#laps-lane' + i).append('<li class="is-size-4">' + i18n.__('label-car-partial') + ' ' + (ii+1) + ' - <strong>' + utils.prettyTime(t) + ' s</strong></li>');
 		});
 
 		// place
 		if (car.outOfBounds) {
-			$('#place-lane' + i).text('out');
+			$('#place-lane' + i).text(i18n.__('label-car-out'));
 			$('#place-lane' + i).addClass('is-dark');
 		}
 		else if (car.lapCount == 0) {
 			if (raceStarted) {
-				$('#place-lane' + i).text('ready');
+				$('#place-lane' + i).text(i18n.__('label-car-ready'));
 			}
 			else {
-				$('#place-lane' + i).text('stopped');
+				$('#place-lane' + i).text(i18n.__('label-car-stopped'));
 			}
 			$('#place-lane' + i).addClass('is-light');
 		}
 		else if (car.lapCount == 1) {
-			$('#place-lane' + i).text('started');
+			$('#place-lane' + i).text(i18n.__('label-car-started'));
 			$('#place-lane' + i).addClass('is-light');
 		}
 		else {
-			$('#place-lane' + i).text(car.position + ' position');
+			$('#place-lane' + i).text(car.position + ' ' + i18n.__('label-car-position'));
 			if (car.position == 1) {
 				$('#place-lane' + i).addClass('is-warning');
 			}
