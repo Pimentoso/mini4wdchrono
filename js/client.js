@@ -126,7 +126,7 @@ const reset = () => {
 const guiInit = () => {
 	console.log('client.guiInit called');
 
-	if (currTournament == null) {
+	if (currTournament == null || freeRound) {
 		$('.js-show-on-no-tournament').show();
 		$('.js-show-on-tournament-loaded').hide();
 		$('#name-lane0').text(' ');
@@ -134,7 +134,6 @@ const guiInit = () => {
 		$('#name-lane2').text(' ');
 		$('#curr-manche').text('0');
 		$('#curr-round').text('0');
-		$('#button-start').text(i18n.__('button-start-free'));
 	}
 	else {
 		$('.js-show-on-no-tournament').hide();
@@ -144,7 +143,6 @@ const guiInit = () => {
 		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '//');
 		$('#curr-manche').text(currManche+1);
 		$('#curr-round').text(currRound+1);
-		$('#button-start').text(i18n.__('button-start'));
 		showPlayerList();
 		showMancheList();
 		drawRace(true);
@@ -160,7 +158,7 @@ const chronoInit = (reset) => {
 		chrono.init(currTrack, mancheList[currManche][currRound], cars);
 	}
 	else {
-		if (currTournament == null) {
+		if (currTournament == null || freeRound) {
 			// free round
 			chrono.init(currTrack);
 		}
@@ -476,6 +474,25 @@ const nextRound = () => {
 	}
 };
 
+const toggleFreeRound = () => {
+	if (freeRound) {
+		freeRound = false;
+		$('#button-toggle-free-round').text(i18n.__('button-goto-free'));
+		$('#button-prev').show();
+		$('#button-next').show();
+		chronoInit();
+	}
+	else {
+		freeRound = true;
+		$('#button-toggle-free-round').text(i18n.__('button-goto-race'));
+		$('#button-prev').hide();
+		$('#button-next').hide();
+		chronoInit(true);
+	}
+	guiInit();
+	drawRace();
+};
+
 // keyboard shortcuts for debug
 const keydown = (keyCode) => {
 	if (raceStarted) {
@@ -617,7 +634,7 @@ const checkStart = () => {
 const raceFinished = () => {
 	console.log('client.raceFinished called');
 
-	if (currTournament) {
+	if (currTournament && !freeRound) {
 		let cars = chrono.getCars();
 
 		mancheTimesList[currManche] = mancheTimesList[currManche] || [];
@@ -802,6 +819,7 @@ module.exports = {
 	startRound: startRound,
 	prevRound: prevRound,
 	nextRound: nextRound,
+	toggleFreeRound: toggleFreeRound,
 	showMancheList: showMancheList,
 	showPlayerList: showPlayerList,
 	showThresholds: showThresholds

@@ -23,7 +23,7 @@ $(document).on('click', 'a[href^="http"]', function(event) {
 		shell.openExternal(this.href);
 });
 
-const debugMode = true;
+const debugMode = false;
 const log = require('electron-log');
 log.transports.file.level = 'info';
 log.transports.file.file = __dirname + '/logs/log.log';
@@ -185,6 +185,10 @@ $('#button-prev').on('click', (e) => {
 
 $('#button-next').on('click', (e) => {
 	client.nextRound();
+});
+
+$('#button-toggle-free-round').on('click', (e) => {
+	client.toggleFreeRound();
 });
 
 $('#button-xls').on('click', (e) => {
