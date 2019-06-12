@@ -55,7 +55,7 @@ npm start
 To package the project:
 
 ```
-electron-packager . --overwrite --platform=darwin --arch=x64 --icon=images/ic_launcher_web.icns --prune=true --out=release-builds
+electron-packager . Mini4wdChrono --overwrite --icon=images/ic_launcher_web.icns --prune=true --out=release-builds
 ```
 
 ## Build on Windows
@@ -81,5 +81,5 @@ npm start
 To package the project:
 
 ```
-electron-packager . Mini4wdChrono --overwrite --asar=true --platform=win32 --arch=ia32 --icon=images/ic_launcher_web.ico --prune=true --out=release-builds
+electron-packager . Mini4wdChrono --overwrite --asar --icon=images/ic_launcher_web.ico --prune=true --out=release-builds
 ```
