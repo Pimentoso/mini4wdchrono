@@ -23,7 +23,7 @@ $(document).on('click', 'a[href^="http"]', function(event) {
 		shell.openExternal(this.href);
 });
 
-const debugMode = true;
+const debugMode = false;
 const log = require('electron-log');
 log.catchErrors();
 const { dialog } = require('electron').remote;
