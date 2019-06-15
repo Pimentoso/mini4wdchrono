@@ -1,7 +1,17 @@
 'use strict';
 
-const userHome = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
-const nconf = require('nconf').file({file: userHome + '/mini4wdchrono-settings.json'});
+const app = require('electron').remote.app;
+const filename = 'settings.json';
+
+const getConfigFilePath = () => {
+	// %APPDATA% on Windows
+	// $XDG_CONFIG_HOME or ~/.config on Linux
+	// ~/Library/Application Support on macOS
+	var dir = app.getPath('userData');
+	return dir + '/' + filename;
+};
+
+const nconf = require('nconf').file({file: getConfigFilePath()});
 
 nconf.defaults({
 	'sensorPin1': 'A0',
