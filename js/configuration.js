@@ -1,6 +1,12 @@
 'use strict';
 
-const userHome = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+const electron = require('electron');
+const path     = require('path');
+
+
+
+
+
 const nconf = require('nconf').file({file: userHome + '/mini4wdchrono-settings.json'});
 
 nconf.defaults({
@@ -19,6 +25,38 @@ nconf.defaults({
 	'title': 'MINI4WD CHRONO',
 	'raceMode': 0
 });
+
+const getConfigFilePath = () => {
+
+	var app = electron.app;
+	// const userHome = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+	
+	var fileName = 'settings.json';
+	var appName = app.getName();
+	var homeDir = os.homedir ? os.homedir() : process.env.HOME;
+	
+	var dir;
+	switch (process.platform) {
+		case 'darwin': {
+			dir = [homeDir, 'Library', 'Application Support', appName];
+			break;
+		}
+	
+		case 'win32': {
+			dir = [homeDir, 'AppData', 'Roaming/', appName];
+			break;
+		}
+	
+		default: {
+			dir = [homeDir, '.config', appName];
+			break;
+		}
+	}
+	
+	if (dir) {
+		return path.join(dir.join('/'), fileName);
+	}
+};
 
 const saveSettings = (settingKey, settingValue) => {
   nconf.set(settingKey, settingValue);
