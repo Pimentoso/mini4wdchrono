@@ -11,6 +11,14 @@ https://mini4wd-track-editor.pimentoso.com/
 
 https://mini4wd-tournament.pimentoso.com/
 
+## Screenshots
+
+![race view](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/images/screen-race.png)
+
+![players view](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/images/screen-players.png)
+
+![manches view](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/images/screen-manches.png)
+
 ## Hardware
 
 - An arduino board. The project has been tested with both Arduino UNO and NANO.
@@ -47,6 +55,12 @@ The mini4wd car passing over the photoresistor will trigger a lap.
 Put the 3 green leds on the front of the lap timer, one over each lane.
 
 (PICS COMING SOON)
+
+Connection pins: every pin used is configurable inside the program, but the default are:
+
+- Light sensors: A0, A1, A2
+- LEDs: 11, 12, 13
+- Buzzer: 2
 
 # Building the software
 
