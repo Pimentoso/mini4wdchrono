@@ -5,8 +5,8 @@ TODO
 - export xls: fix filepath
 
 ## RACE TAB
-- 'start free round' button in the middle of a race
 - after a round has finished, the 'start button' becomes 'start rematch round' button, program asks which players of this round need to rematch, other players will keep the time they already have
+- disqualify buttons disabled if time is 99999
 
 ## RACE SETUP TAB
 - different race mode options (final mode, endurance mode) IN PROGRESS

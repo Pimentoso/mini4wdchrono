@@ -263,7 +263,7 @@
 
 	<!-- PLAYERS TAB -->
 	<div class="container" data-tab="players" style="display: none;">
-		<div class="js-show-on-tournament-loaded level has-text-centered">
+		<div class="js-hide-on-no-tournament level has-text-centered">
 			<div class="level-left"></div>
 			<div class="level-right">
 				<div class="level-item">
@@ -276,13 +276,13 @@
 				</div>
 			</div>
 		</div>
-		<table id="tablePlayerList" class="js-show-on-tournament-loaded table table is-bordered is-striped is-hoverable is-fullwidth is-size-5"></table>
+		<table id="tablePlayerList" class="js-hide-on-no-tournament table table is-bordered is-striped is-hoverable is-fullwidth is-size-5"></table>
 		<p class="js-show-on-no-tournament has-text-grey has-text-centered tn" data-tn="label-tournament-not-loaded">Tournament not loaded</p>
 	</div>
 
 	<!-- MANCHES TAB -->
 	<div class="container" data-tab="manches" style="display: none;">
-		<div class="js-show-on-tournament-loaded level has-text-centered">
+		<div class="js-hide-on-no-tournament level has-text-centered">
 			<div class="level-left"></div>
 			<div class="level-right">
 				<div class="level-item">
@@ -297,21 +297,21 @@
 				</div>
 			</div>
 		</div>
-		<table id="tableMancheList" class="js-show-on-tournament-loaded table table is-bordered is-striped is-hoverable is-fullwidth is-size-5"></table>
+		<table id="tableMancheList" class="js-hide-on-no-tournament table table is-bordered is-striped is-hoverable is-fullwidth is-size-5"></table>
 		<p class="js-show-on-no-tournament has-text-grey has-text-centered tn" data-tn="label-tournament-not-loaded">Tournament not loaded</p>
 	</div>
 
 	<!-- RACE TAB -->
 	<div class="container" data-tab="race" style="display: none;">
-		<div class="js-show-on-tournament-loaded level has-text-centered has-text-weight-bold">
+		<div class="js-hide-on-no-tournament js-hide-on-no-track level has-text-centered has-text-weight-bold">
 			<span class="level-item tag is-primary is-size-4">Manche&nbsp;<span id="curr-manche"></span></span>
 			&nbsp;
 			<span class="level-item tag is-primary is-size-4">Round&nbsp;<span id="curr-round"></span></span>
 		</div>
 
-		<div class="level has-text-centered">
+		<div class="level has-text-centered js-hide-on-no-track">
 			<div class="level-item">
-				<button class="js-show-on-tournament-loaded button" id="button-prev">
+				<button class="js-hide-on-no-tournament button" id="button-prev">
 					<span class="tn" data-tn="button-prev-round">&lt; Prev round</span>
 				</button>
 			</div>
@@ -325,13 +325,13 @@
 				</button>
 			</div>
 			<div class="level-item">
-				<button class="js-show-on-tournament-loaded button" id="button-next">
+				<button class="js-hide-on-no-tournament button" id="button-next">
 					<span class="tn" data-tn="button-next-round">Next round &gt;</span>
 				</button>
 			</div>
 		</div>
 
-		<div class="columns">
+		<div class="columns js-hide-on-no-track">
 			<div class="column box-lane0">
 				<p class="has-background-primary has-text-white is-block is-size-4 has-text-centered has-text-weight-bold has-margin-vertical">LANE 1</p>
 				<div class="card has-text-centered">
@@ -350,7 +350,7 @@
 
 							<ul id="laps-lane0"></ul>
 
-							<a href="#" class="button is-small is-danger js-invalidate" data-lane="0">invalidate</a>
+							<a id="invalidate-0" href="#" class="button is-small is-danger js-invalidate" data-lane="0">invalidate</a>
 						</div>
 					</div>
 				</div>
@@ -373,7 +373,7 @@
 
 							<ul id="laps-lane1"></ul>
 
-							<a href="#" class="button is-small is-danger js-invalidate" data-lane="1">invalidate</a>
+							<a id="invalidate-1" href="#" class="button is-small is-danger js-invalidate" data-lane="1">invalidate</a>
 						</div>
 					</div>
 				</div>
@@ -396,12 +396,13 @@
 
 							<ul id="laps-lane2"></ul>
 
-							<a href="#" class="button is-small is-danger js-invalidate" data-lane="2">invalidate</a>
+							<a id="invalidate-2" href="#" class="button is-small is-danger js-invalidate" data-lane="2">invalidate</a>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+		<p class="js-show-on-no-track has-text-grey has-text-centered tn" data-tn="label-track-not-loaded">Track not loaded</p>
 	</div>
 
 	<!-- CONFIG TAB -->

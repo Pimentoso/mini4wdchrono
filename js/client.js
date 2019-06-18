@@ -126,18 +126,28 @@ const reset = () => {
 const guiInit = () => {
 	console.log('client.guiInit called');
 
+	if (currTrack == null) {
+		$('.js-show-on-no-track').show();
+		$('.js-hide-on-no-track').hide();
+	}
+	else {
+		$('.js-show-on-no-track').hide();
+		$('.js-hide-on-no-track').show();
+	}
+
 	if (currTournament == null || freeRound) {
 		$('.js-show-on-no-tournament').show();
-		$('.js-show-on-tournament-loaded').hide();
+		$('.js-hide-on-no-tournament').hide();
 		$('#name-lane0').text(' ');
 		$('#name-lane1').text(' ');
 		$('#name-lane2').text(' ');
 		$('#curr-manche').text('0');
 		$('#curr-round').text('0');
+		// $('.js-invalidate').attr('disabled', true); TODO
 	}
 	else {
 		$('.js-show-on-no-tournament').hide();
-		$('.js-show-on-tournament-loaded').show();
+		$('.js-hide-on-no-tournament').show();
 		$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '//');
 		$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '//');
 		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '//');
@@ -197,6 +207,7 @@ const showTrackDetails = () => {
 		$('#js-link-track').attr('href', 'https://mini4wd-track-editor.pimentoso.com/');
 	}
 	showThresholds();
+	guiInit();
 };
 
 const showTournamentDetails = () => {
@@ -333,6 +344,7 @@ const disqualify = (mindex, rindex, pindex) => {
 	var cars = configuration.loadRound(mindex, rindex);
 	cars[pindex].currTime = 99999;
 	configuration.saveRound(mindex, rindex, cars);
+	// $('#invalidate-' + pindex).attr('disabled', true); TODO
 
 	rebuildTimeList();
 	guiInit();
