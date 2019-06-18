@@ -4,23 +4,36 @@
 
 Software for Arduino based 3-lane lap timer for Tamiya Mini4wd. Built on johnny-five + electron.
 
-THIS PROJECT IS STILL IN DEVELOPMENT. Please check back in the future.
+The program reads data from the "Mini4WD Track Editor" and "Mini4WD Tournament Generator" websites to access track and players data,
+so you are required to create your track and player list using those websites.
 
-## Arduino diagram
+https://mini4wd-track-editor.pimentoso.com/
 
-First you need an arduino board. The project has been tested with both Arduino UNO and NANO.
+https://mini4wd-tournament.pimentoso.com/
 
-You also need a white LED strip and 3x photoresistor sensors.
+## Hardware
 
-For the LED strip, use a 50cm 5V cold light strip, like this one.
+- An arduino board. The project has been tested with both Arduino UNO and NANO.
+
+https://www.aliexpress.com/item/32341832857.html
+
+- A white LED strip, 50cm is enough. You can get a 5v USB-powered one, but any strip is ok, more light = better.
 
 https://www.aliexpress.com/item/33000619572.html
 
-For the sensors I'm using TEMT6000 for their slim form factor, but it will work with any photoresistor + 10kΩ resistor.
+- 3x photoresistor sensors. I'm using TEMT6000 for their slim form factor, but it will work with any photoresistor + 10kΩ resistor.
 
 https://www.aliexpress.com/item/32583469115.html
 
-You also need 3 green LEDs + 220Ω resistors (or a lilypad), and a 5v magnetic buzzer
+- 3x green 5v LEDs, or lilypad boards
+
+https://www.aliexpress.com/item/32962136265.html
+
+- A magnetic buzzer.
+
+https://www.aliexpress.com/item/32666789405.html
+
+- A straight piece of 3 lane Japan Cup Mini4wd track.
 
 Diagram link: https://www.tinkercad.com/things/jGPGsdLMKwj
 
@@ -28,14 +41,14 @@ Diagram link: https://www.tinkercad.com/things/jGPGsdLMKwj
 
 ## Building the lap timer
 
-The ```3d_models``` folder contains the 3d-printable models for building the main structure. Print 2 joints.
-You will also need 3 wood planks, a couple 10mm self-threading wood screws, and zip ties.
-
-[PICTURES COMING SOON]
-
 Drill 3 holes in the middle of the 3 lanes of a mini4wd track piece. Put the photoresistors under the holes and fix them with tape.
 Put the lap timer over the 3 holes, and stick the LED strip underside the lap timer, so that it casts light on the sensors.
 The mini4wd car passing over the photoresistor will trigger a lap.
+Put the 3 green leds on the front of the lap timer, one over each lane.
+
+(PICS COMING SOON)
+
+# Building the software
 
 ## Build on OSX
 

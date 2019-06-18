@@ -44,18 +44,15 @@ const init = (track, playerIds, cars) => {
 	if (cars == null) {
 		// init car 1
 		rCar0 = JSON.parse(JSON.stringify(carObj));
-		rCar0.startLane = 0;
-		rCar0.nextLane = 0;
+		rCar0.startLane = rCar0.nextLane = 0;
 
 		// init car 2
 		rCar1 = JSON.parse(JSON.stringify(carObj));
-		rCar1.startLane = 1;
-		rCar1.nextLane = 1;
+		rCar1.startLane = rCar1.nextLane = 1;
 
 		// init car 3
 		rCar2 = JSON.parse(JSON.stringify(carObj));
-		rCar2.startLane = 2;
-		rCar2.nextLane = 2;
+		rCar2.startLane = rCar2.nextLane = 2;
 
 		// playerIds is null if it's a free round
 		if (playerIds) {
@@ -161,6 +158,7 @@ const nextLane = (lane) => {
 	return rLaneOrder[(rLaneOrder.indexOf(lane) + 1) % rLaneOrder.length];
 };
 
+// check if round is finished (all cars out or did 3 laps)
 const isRaceFinished = () => {
 	return _.every(rCars, (c) => { return c.outOfBounds || c.lapCount == 4; });
 };
