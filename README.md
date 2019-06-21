@@ -11,7 +11,7 @@ https://mini4wd-track-editor.pimentoso.com/
 
 https://mini4wd-tournament.pimentoso.com/
 
-## Screenshots
+# Screenshots
 
 ![race view](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/images/screen-race.png)
 
@@ -19,7 +19,7 @@ https://mini4wd-tournament.pimentoso.com/
 
 ![manches view](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/images/screen-manches.png)
 
-## Hardware
+# Hardware
 
 - An arduino board. The project has been tested with both Arduino UNO and NANO.
 
@@ -47,7 +47,7 @@ Diagram link: https://www.tinkercad.com/things/jGPGsdLMKwj
 
 ![diagram](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/images/schema.png)
 
-## Building the lap timer
+# Building the lap timer
 
 Drill 3 holes in the middle of the 3 lanes of a mini4wd track piece. Put the photoresistors under the holes and fix them with tape.
 Put the lap timer over the 3 holes, and stick the LED strip underside the lap timer, so that it casts light on the sensors.
@@ -62,7 +62,19 @@ Connection pins: every pin used is configurable inside the program, but the defa
 - LEDs: 11, 12, 13
 - Buzzer: 2
 
-# Building the software
+Now you need to flash the StandardFirmataPlus firmware on your arduino board. This will allow the arduino to comunicate with the computer via USB.
+
+Instructions:
+
+- Install Arduino IDE from https://www.arduino.cc/en/Main/Software
+- Open Arduino IDE
+- Verify correct port and board
+- Navigate to File > Examples > Firmata > StandardFirmataPlus
+- Upload sketch onto board.
+
+When you launch Mini4WD Chrono, the small badge on the top right will be green and say "board connected". If you have problems, go to the configuration tab, change the USB port, save and reload the program.
+
+# Contributing
 
 ## Build on OSX
 
@@ -92,6 +104,8 @@ Make sure you are running a Powershell with administrator permissions, and Choco
 ```
 choco install node
 choco install python2
+choco install arduino
+// now open the arduino IDE, and use it to upload the StandardFirmataPlus firmware on the board
 ```
 
 Now open a Node.js Command Prompt with administrator access
