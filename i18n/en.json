@@ -54,6 +54,9 @@
     "button-start-ready": "READY",
     "button-goto-free": "Free round >",
     "button-goto-race": "Return to race >",
+    "label-lane-1": "LANE 1",
+    "label-lane-2": "LANE 2",
+    "label-lane-3": "LANE 3",
     "label-best-2-times": "Sum of 2 best",
     "label-custom-title": "Custom title",
     "label-usb-port": "USB Port",
@@ -81,5 +84,7 @@
     "dialog-tournament-not-loaded": "Tournament not loaded!",
     "dialog-change-round": "Change round?",
     "dialog-restart": "Please restart the program for the changes to take effect.",
-    "dialog-disqualify": "Disqualify this time? It will be set to 99.999."
+    "dialog-disqualify": "Disqualify this time? It will be set to 99.999.",
+    "label-check-updates": "Check for updates",
+    "option-lane-order": "Select lane order"
 }

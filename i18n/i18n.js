@@ -7,8 +7,8 @@ let app = electron.app ? electron.app : electron.remote.app
 module.exports = i18n;
 
 function i18n() {
-     // let tnpath = path.join(__dirname, 'it.json');
-     let tnpath = path.join(__dirname, app.getLocale().substring(0, 2) + '.json');
+     let tnpath = path.join(__dirname, 'it.json');
+     // let tnpath = path.join(__dirname, app.getLocale().substring(0, 2) + '.json');
      if (fs.existsSync(tnpath)) {
           loadedLanguage = JSON.parse(fs.readFileSync(tnpath), 'utf8');
      }

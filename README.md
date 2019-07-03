@@ -19,7 +19,11 @@ https://mini4wd-tournament.pimentoso.com/
 
 ![manches view](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/images/screen-manches.png)
 
-# Hardware
+# Download the software
+
+You can download the latest releases for Windows 10 (64-bit) or Mac OS (64-bit) from [the releases page](https://github.com/Pimentoso/mini4wdchrono/releases).
+
+# Hardware needed
 
 - An arduino board. The project has been tested with both Arduino UNO and NANO.
 
@@ -58,9 +62,9 @@ Put the 3 green leds on the front of the lap timer, one over each lane.
 
 Connection pins: every pin used is configurable inside the program, but the default are:
 
-- Light sensors: A0, A1, A2
-- LEDs: 11, 12, 13
-- Buzzer: 2
+- Light sensors: A5, A6, A7
+- LEDs: D3, D4, D5
+- Buzzer: D2
 
 Now you need to flash the StandardFirmataPlus firmware on your arduino board. This will allow the arduino to comunicate with the computer via USB.
 
@@ -71,8 +75,11 @@ Instructions:
 - Verify correct port and board
 - Navigate to File > Examples > Firmata > StandardFirmataPlus
 - Upload sketch onto board.
+- Done!
 
 When you launch Mini4WD Chrono, the small badge on the top right will be green and say "board connected". If you have problems, go to the configuration tab, change the USB port, save and reload the program.
+
+Some Arduino Nano clones may need the CH340 USB driver to be recognized. [You can download it here](https://sparks.gogo.co.nz/ch340.html).
 
 # Contributing
 

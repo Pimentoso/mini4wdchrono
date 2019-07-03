@@ -14,12 +14,12 @@ const getConfigFilePath = () => {
 const nconf = require('nconf').file({file: getConfigFilePath()});
 
 nconf.defaults({
-	'sensorPin1': 'A0',
-	'sensorPin2': 'A1',
-	'sensorPin3': 'A2',
-	'ledPin1': 11,
-	'ledPin2': 12,
-	'ledPin3': 13,
+	'sensorPin1': 'A5',
+	'sensorPin2': 'A6',
+	'sensorPin3': 'A7',
+	'ledPin1': 3,
+	'ledPin2': 4,
+	'ledPin3': 5,
 	'piezoPin': 2,
 	// 'usbPort': 'COM3',
 	'sensorThreshold': 10,
