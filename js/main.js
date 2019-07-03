@@ -272,13 +272,14 @@ const flashLed = (led) => {
 const playStart = () => {
 	$('#button-start').text(i18n.__('button-start-ready'));
 	utils
-	.delay(() => { led1.on(); led2.on(); led3.on(); piezo.tone(3900, 1000); }, 200)
-	.delay(() => { led1.off(); led2.off(); led3.off(); piezo.noTone(); }, 1000)
-	.delay(() => { led1.on(); }, 1000)
-	.delay(() => { led2.on(); }, 1000)
-	.delay(() => { led3.on(); }, 1000)
-	.delay(() => { led1.off(); led2.off(); led3.off(); piezo.tone(3900, 1000); }, 1000)
-	.delay(() => { piezo.noTone(); client.startRound(); }, 1000);
+	.delay(() => { led1.on(); led2.on(); led3.on(); piezo.tone(3900, 1500); }, 200)
+	.delay(() => { led1.off(); led2.off(); led3.off(); piezo.noTone(); }, 1500)
+	.delay(() => { led1.on(); piezo.tone(3900, 500); }, 1000)
+	.delay(() => { piezo.noTone(); }, 500)
+	.delay(() => { led2.on(); piezo.tone(3900, 500); }, 500)
+	.delay(() => { piezo.noTone(); }, 500)
+	.delay(() => { led3.on(); piezo.tone(3900, 1500); client.startRound(); }, 500)
+	.delay(() => { led1.off(); led2.off(); led3.off(); piezo.noTone(); }, 1500)
 };
 
 const playConnect = () => {
