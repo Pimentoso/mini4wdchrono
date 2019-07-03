@@ -10,7 +10,7 @@ const i18n = new(require('../i18n/i18n'));
 
 let currTrack, currTournament;
 let playerList, mancheList, playerTimesList, mancheTimesList;
-let currManche = 0, currRound = 0, raceStarted = false, freeRound = false;
+let currManche = 0, currRound = 0, raceStarted = false, freeRound = true;
 
 let timerIntervals = [], timerSeconds = [];
 let pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
@@ -36,6 +36,8 @@ const init = () => {
 	$('#js-config-sensor-threshold').val(configuration.readSettings('sensorThreshold'));
 	$('#js-config-title').val(configuration.readSettings('title'));
 
+	$('#button-toggle-free-round').hide();
+
 	serialport.list(function (err, ports) {
 		ports.forEach(function(port) {
 			$('#js-config-usb-port').append($('<option>', {
@@ -60,7 +62,7 @@ const init = () => {
 	currManche = configuration.readSettings('currManche') || 0;
 	currRound = configuration.readSettings('currRound') || 0;
 
-	// load track from settings
+	// load track from settings (do this before tournament)
 	let savedTrack = configuration.readSettings('track');
 	if (savedTrack) {
 		trackLoadDone(savedTrack);
@@ -207,7 +209,9 @@ const showTrackDetails = () => {
 		$('#js-link-track').attr('href', 'https://mini4wd-track-editor.pimentoso.com/');
 	}
 	showThresholds();
+	chronoInit(true);
 	guiInit();
+	drawRace();
 };
 
 const showTournamentDetails = () => {
@@ -593,6 +597,8 @@ const tournamentLoadDone = (obj) => {
 	currTournament = obj;
 	playerList = obj.players;
 	mancheList = obj.manches;
+	freeRound = false;
+	$('#button-toggle-free-round').show();
 	initTimeList();
 	$('#tag-tournament-status').removeClass('is-danger');
 	$('#tag-tournament-status').addClass('is-success');

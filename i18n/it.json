@@ -85,6 +85,7 @@
     "dialog-change-round": "Cambiare round?",
     "dialog-restart": "Si prega di riavviare il programma perche' le modifiche abbiano effetto.",
     "dialog-disqualify": "Squalificare questo tempo? Sara' cambiato in 99.999.",
+    "dialog-replay-round": "Giocare di nuovo questo round? I dati attuali saranno persi.",
     "label-check-updates": "Controlla aggiornamenti",
     "option-lane-order": "Seleziona ordine corsie"
 }

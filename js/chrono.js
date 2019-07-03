@@ -28,18 +28,20 @@ const carObj = {
 };
 
 const init = (track, playerIds, cars) => {
-	// cutoff time calculation
-	rTrackLength = track.length;
-	rLaneOrder = _.map(track.order, (i) => { return i-1; });
-	rTimeThreshold = configuration.readSettings('timeThreshold')/100;
-	rSpeedThreshold = configuration.readSettings('speedThreshold');
-	rTimeCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold) * 1000;
-	rTimeCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold) * 1000;
+	if (track) {
+		// cutoff time calculation
+		rTrackLength = track.length;
+		rLaneOrder = _.map(track.order, (i) => { return i-1; });
+		rTimeThreshold = configuration.readSettings('timeThreshold')/100;
+		rSpeedThreshold = configuration.readSettings('speedThreshold');
+		rTimeCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold) * 1000;
+		rTimeCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold) * 1000;
 
-	// console.log('track length ' + rTrackLength);
-	// console.log('track order ' + rLaneOrder);
-	// console.log('time cutoff min ' + rTimeCutoffMin);
-	// console.log('time cutoff max ' + rTimeCutoffMax);
+		// console.log('track length ' + rTrackLength);
+		// console.log('track order ' + rLaneOrder);
+		// console.log('time cutoff min ' + rTimeCutoffMin);
+		// console.log('time cutoff max ' + rTimeCutoffMax);
+	}
 
 	if (cars == null) {
 		// init car 1

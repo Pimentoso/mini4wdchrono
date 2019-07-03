@@ -169,7 +169,7 @@ $('#button-start').on('click', (e) => {
 		if (configuration.readSettings('tournament') && configuration.loadRound()) {
 			// TODO MODAL SPAREGGIO
 			
-			if (dialog.showMessageBox({ type: 'warning', message: "Play this round again? The current data will be lost.", buttons: ['Ok', 'Cancel']}) == 1) {
+			if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-replay-round'), buttons: ['Ok', 'Cancel']}) == 1) {
 				return;
 			}
 		}
