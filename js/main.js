@@ -36,7 +36,7 @@ $(document).on('click', 'a[href^="http"]', function(event) {
 // Johnny-Five initialize
 const board = new j5.Board({
 	port: configuration.readSettings('usbPort'),
-	timeout: 600,
+	timeout: 1e5,
 	repl: false // does not work with browser console
 });
 let connected = false;

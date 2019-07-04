@@ -1,20 +1,20 @@
 {
   "name": "Mini4wdChrono",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "[![WIP](https://img.shields.io/badge/status-WORK%20IN%20PROGRESS-red.svg)](https://github.com/Pimentoso/mini4wdchrono)",
   "main": "window.js",
   "dependencies": {
+    "electron-log": "^3.0.5",
     "exceljs": "^1.10.0",
-    "johnny-five": "^0.15.1",
+    "johnny-five": "^1.1.0",
     "jquery": "^3.4.1",
     "nconf": "^0.10.0",
     "serialport": "^7.1.5",
-    "underscore": "^1.9.1",
-    "electron-log": "^3.0.5"
+    "underscore": "^1.9.1"
   },
   "devDependencies": {
-    "electron": "^3.1.9",
-    "electron-packager": "^12.2.0",
+    "electron": "^5.0.6",
+    "electron-packager": "^14.0.1",
     "electron-rebuild": "^1.8.4",
     "electron-reload": "^1.4.0"
   },
