@@ -1,6 +1,6 @@
-const path = require('path')
 const electron = require('electron')
 const fs = require('fs');
+const path = require('path')
 let loadedLanguage;
 let app = electron.app ? electron.app : electron.remote.app
 

@@ -1,27 +1,44 @@
 'use strict';
 
-const Excel = require('exceljs');
-const Utils = require('./utils');
+const xls = require('exceljs');
+const utils = require('./utils');
+const app = require('electron').remote.app;
+const fs = require('fs');
+const path = require('path');
+
+const getXlsFilePath = () => {
+	// {user home dir}/Mini4wdChrono
+	let dir = app.getPath('home');
+	return path.join(dir, 'Mini4wdChrono');
+};
+
+const createDir = () => {
+	let dir = getXlsFilePath();
+	if (!fs.existsSync(dir)) {
+		fs.mkdirSync(dir);
+	}
+	return dir;
+};
 
 const geneateXls = (mancheCount, playerData, playerTimes) => {
-
-	var workbook = new Excel.Workbook();
+	var workbook = new xls.Workbook();
 	workbook.creator = 'Mini4wd Chrono';
 	workbook.created = new Date();
 	workbook.modified = new Date();
 
-	var worksheet = workbook.addWorksheet('My Sheet');
+	var worksheet = workbook.addWorksheet('Racers data');
 
 	_.each(playerTimes, (pdata, pindex) => {
 		let row = [playerData[pindex].toUpperCase()];
 		pdata = pdata || [];
 		_.times(mancheCount, (i) => {
-			row[i+1] = Utils.prettyTime(pdata[i]);
+			row[i+1] = utils.prettyTime(pdata[i]);
 		});
 		worksheet.addRow(row);
 	});
 
-	let filename = 'mini4wd_race_' + Utils.strftime('%Y%m%d_%H%M%S', new Date()) + '.xlsx';
+	let dir = createDir();
+	let filename = path.join(dir, 'mini4wd_race_' + utils.strftime('%Y-%m-%d_%H-%M-%S', new Date()) + '.xlsx');
 	workbook.xlsx.writeFile(filename)
 		.then(() =>  {
 			// done
@@ -31,5 +48,6 @@ const geneateXls = (mancheCount, playerData, playerTimes) => {
 };
 
 module.exports = {
-	geneateXls: geneateXls
+	geneateXls: geneateXls,
+	createDir: createDir
 };

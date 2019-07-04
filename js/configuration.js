@@ -1,6 +1,7 @@
 'use strict';
 
 const app = require('electron').remote.app;
+const path = require('path')
 const filename = 'settings.json';
 
 const getConfigFilePath = () => {
@@ -8,7 +9,7 @@ const getConfigFilePath = () => {
 	// $XDG_CONFIG_HOME or ~/.config on Linux
 	// ~/Library/Application Support on macOS
 	var dir = app.getPath('userData');
-	return dir + '/' + filename;
+	return path.join(dir, filename);
 };
 
 const nconf = require('nconf').file({file: getConfigFilePath()});

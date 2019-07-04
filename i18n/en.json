@@ -44,6 +44,7 @@
     "label-time-estimated-cutoff": "ESTIMATED CUTOFF TIME",
     "button-save-settings": "Save settings",
     "button-save-xls": "Save XLS file",
+    "button-open-folder": "Open folder >",
     "label-tournament-not-loaded": "Tournament not loaded",
     "label-track-not-loaded": "Track not loaded",
     "button-cancel": "Cancel",

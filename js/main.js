@@ -16,23 +16,24 @@ process.__defineGetter__("stdin", function() {
   return process.__stdin;
 });
 
-//open links externally by default
-const shell = require('electron').shell;
-$(document).on('click', 'a[href^="http"]', function(event) {
-		event.preventDefault();
-		shell.openExternal(this.href);
-});
-
-const debugMode = false;
+const debugMode = true;
 const log = require('electron-log');
 log.catchErrors();
-const { dialog } = require('electron').remote;
+const { dialog, shell } = require('electron').remote;
+const xls = require('./js/export');
 const configuration = require('./js/configuration');
 const j5 = require('johnny-five');
 const client = require('./js/client');
 const utils = require('./js/utils');
 const i18n = new(require('./i18n/i18n'));
 
+// open links externally by default
+$(document).on('click', 'a[href^="http"]', function(event) {
+		event.preventDefault();
+		shell.openExternal(this.href);
+});
+
+// Johnny-Five initialize
 const board = new j5.Board({
 	port: configuration.readSettings('usbPort'),
 	timeout: 600,
@@ -192,6 +193,11 @@ $('#button-toggle-free-round').on('click', (e) => {
 $('#button-xls').on('click', (e) => {
 	client.saveXls();
 	$('#button-xls').attr('disabled', true);
+});
+
+$('#button-xls-folder').on('click', (e) => {
+	let dir = xls.createDir();
+	shell.openItem(dir);
 });
 
 $('#button-save-settings').on('click', (e) => {
