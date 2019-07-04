@@ -60,22 +60,26 @@ board.on('ready', () => {
 
 	// ==== emit events to client
 	sensor1.on('change', () => {
-		let ok = sensor1.scaleTo(0, 100) <= sensorThreshold;
-		if (ok) {
+		let val = sensor1.scaleTo(0, 100);
+		$('#sensor-reading-1').text(val);
+		if (val <= sensorThreshold) {
 			client.sensorRead1();
 			flashLed(led1);
 		}
 	});
 	sensor2.on('change', () => {
-		let ok = sensor2.scaleTo(0, 100) <= sensorThreshold;
-		if (ok) {
+		let val = sensor2.scaleTo(0, 100);
+		$('#sensor-reading-2').text(val);
+		if (val <= sensorThreshold) {
 			client.sensorRead2();
 			flashLed(led2);
 		}
 	});
 	sensor3.on('change', () => {
-		let ok = sensor3.scaleTo(0, 100) <= sensorThreshold;
-		if (ok) {
+		let val = sensor3.scaleTo(0, 100);
+		$('#sensor-reading-3').text(val);
+
+		if (val <= sensorThreshold) {
 			client.sensorRead3();
 			flashLed(led3);
 		}
