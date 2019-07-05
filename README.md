@@ -1,4 +1,4 @@
-[![WIP](https://img.shields.io/badge/status-WORK%20IN%20PROGRESS-red.svg)](https://github.com/Pimentoso/mini4wdchrono)
+[![WIP](https://img.shields.io/badge/version-0.9.5-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
 
 # Mini4wdChrono
 
@@ -24,6 +24,8 @@ https://mini4wd-tournament.pimentoso.com/
 You can download the latest releases for Windows 10 (64-bit) or Mac OS (64-bit) from [the releases page](https://github.com/Pimentoso/mini4wdchrono/releases).
 
 # Hardware needed
+
+- A computer.
 
 - An arduino board. The project has been tested with both Arduino UNO and NANO.
 
