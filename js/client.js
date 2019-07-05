@@ -283,11 +283,13 @@ const showPlayerList = () => {
 			return '<td>Manche ' + (mindex+1) + '</td>';
 		});
 		titleCells.push('<td>' + i18n.__('label-best-2-times') + '</td>');
+		titleCells.push('<td>' + i18n.__('label-best-speed') + '</td>');
 		$('#tablePlayerList').append('<tr class="is-selected"><td colspan="2"><strong>' + playerList.length + ' RACERS</strong></td>' + titleCells + '</tr>');
 
 		// draw player rows
 		_.each(times, (info) => {
 			let bestTime =  _.min(_.filter(info.times, (t) => { return t > 0 && t < 99999; }));
+			let bestSpeed = currTrack.length / bestTime / 1000;
 			let timeCells = _.map(currTournament.manches, (_manche,mindex) => {
 				let playerTime = info.times[mindex] || 0;
 				let highlight = '';
@@ -303,6 +305,7 @@ const showPlayerList = () => {
 				return '<td class="' + highlight + '">' + utils.prettyTime(playerTime) + '</td>';
 			});
 			timeCells.push('<td>' + utils.prettyTime(info.best) + '</td>');
+			timeCells.push('<td>' + bestSpeed.toFixed(2) + ' m/s</td>');
 			$('#tablePlayerList').append('<tr><td>' + (info.id+1) + '</td><td><p class="has-text-centered is-uppercase">' + playerList[info.id] + '</p></td>' + timeCells + '</tr>');
 		});
 	}
