@@ -1,5 +1,6 @@
 {
     "tag-board-status": "Semaforo",
+    "tag-connecting": "connessione...",
     "tag-connected": "connesso",
     "tag-disconnected": "disconnesso",
     "tag-track": "Pista",
@@ -80,6 +81,7 @@
     "label-car-out": "fuori",
     "label-car-partial": "parziale",
     "label-car-lap": "giro",
+    "dialog-connection-error": "Errore di connessione",
     "dialog-save-track": "Salvare queste informazioni della pista?",
     "dialog-new-race": "Iniziare una nuova gara? Tutti i dati attuali saranno persi.",
     "dialog-disconnected": "Semaforo non connesso! Controlla il cavo USB.",

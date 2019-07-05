@@ -45,7 +45,6 @@ let led1, led2, led3, sensor1, sensor2, sensor3, piezo;
 
 board.on('ready', () => {
 	connected = true;
-	$('#tag-board-status').removeClass('is-danger');
 	$('#tag-board-status').addClass('is-success');
 	$('#tag-board-status').text(i18n.__('tag-connected'));
 
@@ -86,6 +85,20 @@ board.on('ready', () => {
 	});
 
 	playConnect();
+});
+
+board.on("fail", function(event) {
+	connected = false;
+	$('#tag-board-status').addClass('is-danger');
+	$('#tag-board-status').text(i18n.__('tag-disconnected'));
+	dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message});
+});
+
+board.on("error", function(event) {
+	connected = false;
+	$('#tag-board-status').addClass('is-danger');
+	$('#tag-board-status').text(i18n.__('tag-disconnected'));
+	dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message});
 });
 
 // TODO does not work

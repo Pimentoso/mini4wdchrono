@@ -1,5 +1,6 @@
 {
     "tag-board-status": "Lap timer",
+    "tag-connecting": "connecting...",
     "tag-connected": "connected",
     "tag-disconnected": "disconnected",
     "tag-track": "Track",
@@ -80,6 +81,7 @@
     "label-car-out": "out",
     "label-car-partial": "partial",
     "label-car-lap": "lap",
+    "dialog-connection-error": "Connection error",
     "dialog-save-track": "Save track values?",
     "dialog-new-race": "Start new race? All the current data will be lost.",
     "dialog-disconnected": "Lap timer not connected! Check USB cable.",
