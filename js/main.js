@@ -184,7 +184,7 @@ $('#button-start').on('click', (e) => {
 	}
 	else {
 		// production mode
-		if (configuration.readSettings('tournament') && configuration.loadRound()) {
+		if (!client.isFreeRound() && configuration.readSettings('tournament') && configuration.loadRound()) {
 			// TODO MODAL SPAREGGIO
 			
 			if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-replay-round'), buttons: ['Ok', 'Cancel']}) == 1) {
@@ -293,18 +293,20 @@ const flashLed = (led) => {
 };
 
 const playStart = () => {
-	$('#button-start').text(i18n.__('button-start-ready'));
+	$('#button-start').attr('disabled', true);
 	utils
 	.delay(() => { led1.on(); led2.on(); led3.on(); piezo.tone(3900, 1500); }, 200)
 	.delay(() => { led1.off(); led2.off(); led3.off(); piezo.noTone(); }, 1500)
 	.delay(() => { led1.on(); piezo.tone(3900, 500); }, 1000)
 	.delay(() => { piezo.noTone(); }, 500)
-	.delay(() => { led2.on(); piezo.tone(3900, 500); }, 500)
+	.delay(() => { led1.off(); led2.on(); piezo.tone(3900, 500); }, 500)
 	.delay(() => { piezo.noTone(); }, 500)
-	.delay(() => { led3.on(); piezo.tone(3900, 500); }, 500)
+	.delay(() => { led2.off(); led3.on(); piezo.tone(3900, 500); }, 500)
 	.delay(() => { piezo.noTone(); }, 500)
-	.delay(() => { led1.off(); led2.off(); led3.off(); piezo.tone(3900, 1000); client.startRound(); }, 1000)
-	.delay(() => { piezo.noTone() }, 1000);
+	.delay(() => { led3.off(); }, 500)
+	.delay(() => { led1.on(); led2.on(); led3.on(); piezo.tone(3900, 1000); client.startRound(); }, 1500)
+	.delay(() => { piezo.noTone() }, 1000)
+	.delay(() => { led1.off(); led2.off(); led3.off(); }, 1500);
 };
 
 const playConnect = () => {

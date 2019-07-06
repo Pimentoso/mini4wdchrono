@@ -434,7 +434,6 @@ const startRound = () => {
 	raceStarted = true;
 	chronoInit(true);
 	drawRace();
-	$('#button-start').attr('disabled', true);
 
 	if (configuration.readSettings('raceMode') == 1) {
 		startTimer(0);
@@ -492,6 +491,8 @@ const nextRound = () => {
 		guiInit();
 	}
 };
+
+const isFreeRound = () => freeRound;
 
 const toggleFreeRound = () => {
 	if (freeRound) {
@@ -840,6 +841,7 @@ module.exports = {
 	startRound: startRound,
 	prevRound: prevRound,
 	nextRound: nextRound,
+	isFreeRound: isFreeRound,
 	toggleFreeRound: toggleFreeRound,
 	showMancheList: showMancheList,
 	showPlayerList: showPlayerList,
