@@ -61,7 +61,7 @@ Real life assembled electronics:
 
 Drill 3 holes in the middle of the 3 lanes of a mini4wd track piece. Put the photoresistors under the holes and fix them with tape.
 
-![sensors mounted](hhttps://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/sensors.jpg)
+![sensors mounted](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/sensors.jpg)
 
 Put the lap timer over the 3 holes, and stick the LED strip underside the lap timer, so that it casts light on the sensors.
 The mini4wd car passing over the photoresistor will trigger a lap.
