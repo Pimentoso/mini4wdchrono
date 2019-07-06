@@ -55,7 +55,7 @@ Diagram link: https://www.tinkercad.com/things/jGPGsdLMKwj
 
 Real life assembled electronics:
 
-![assembled electronics](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/images/electronics.jpg)
+![assembled electronics](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/tree/master/images/electronics.jpg)
 
 # Building the lap timer
 
