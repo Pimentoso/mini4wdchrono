@@ -180,6 +180,8 @@ $('#button-start').on('click', (e) => {
 
 	if (debugMode) {
 		// debug mode
+		$('#button-start').attr('disabled', true);
+		client.initRound();
 		client.startRound();
 	}
 	else {
@@ -191,6 +193,7 @@ $('#button-start').on('click', (e) => {
 				return;
 			}
 		}
+		$('#button-start').attr('disabled', true);
 		playStart();
 	}
 });
@@ -293,7 +296,7 @@ const flashLed = (led) => {
 };
 
 const playStart = () => {
-	$('#button-start').attr('disabled', true);
+	client.initRound();
 	utils
 	.delay(() => { led1.on(); led2.on(); led3.on(); piezo.tone(3900, 1500); }, 200)
 	.delay(() => { led1.off(); led2.off(); led3.off(); piezo.noTone(); }, 1500)

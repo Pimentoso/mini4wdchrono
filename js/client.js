@@ -421,6 +421,14 @@ const rebuildTimeList = () => {
 // ==========================================================================
 // ==== handle interface buttons
 
+// called before the starting sequence
+const initRound = () => {
+	console.log('client.initRound called');
+	chronoInit(true);
+	drawRace();
+};
+
+// called when the starting sequence has finished
 const startRound = () => {
 	console.log('client.startRound called');
 
@@ -432,8 +440,6 @@ const startRound = () => {
 	setTimeout(checkStart, configuration.readSettings('startDelay') * 1000);
 
 	raceStarted = true;
-	chronoInit(true);
-	drawRace();
 
 	if (configuration.readSettings('raceMode') == 1) {
 		startTimer(0);
@@ -838,6 +844,7 @@ module.exports = {
 	saveXls: saveXls,
 	disqualify: disqualify,
 	overrideTimes: overrideTimes,
+	initRound: initRound,
 	startRound: startRound,
 	prevRound: prevRound,
 	nextRound: nextRound,
