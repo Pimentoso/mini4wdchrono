@@ -289,7 +289,7 @@ const showPlayerList = () => {
 		// draw player rows
 		_.each(times, (info) => {
 			let bestTime =  _.min(_.filter(info.times, (t) => { return t > 0 && t < 99999; }));
-			let bestSpeed = currTrack.length / bestTime / 1000;
+			let bestSpeed = currTrack.length / (bestTime/1000);
 			let timeCells = _.map(currTournament.manches, (_manche,mindex) => {
 				let playerTime = info.times[mindex] || 0;
 				let highlight = '';
