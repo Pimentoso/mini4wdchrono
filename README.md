@@ -13,11 +13,11 @@ https://mini4wd-tournament.pimentoso.com/
 
 # Screenshots
 
-![race view](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/images/screen-race.png)
+![race view](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/screen-race.png)
 
-![players view](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/images/screen-players.png)
+![players view](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/screen-players.png)
 
-![manches view](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/images/screen-manches.png)
+![manches view](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/screen-manches.png)
 
 # Download the software
 
@@ -51,17 +51,17 @@ https://www.aliexpress.com/item/32666789405.html
 
 Diagram link: https://www.tinkercad.com/things/jGPGsdLMKwj
 
-![diagram](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/images/schema.png)
+![diagram](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/schema.png)
 
 Real life assembled electronics:
 
-![assembled electronics](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/tree/master/images/electronics.jpg)
+![assembled electronics](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/electronics.jpg)
 
 # Building the lap timer
 
 Drill 3 holes in the middle of the 3 lanes of a mini4wd track piece. Put the photoresistors under the holes and fix them with tape.
 
-![sensors mounted](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/images/sensors.jpg)
+![sensors mounted](hhttps://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/sensors.jpg)
 
 Put the lap timer over the 3 holes, and stick the LED strip underside the lap timer, so that it casts light on the sensors.
 The mini4wd car passing over the photoresistor will trigger a lap.
@@ -69,7 +69,7 @@ Put the 3 green leds on the front of the lap timer, one over each lane.
 
 Example lap timer made using cable ducts:
 
-![lap timer](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/images/semaforo.jpg)
+![lap timer](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/semaforo.jpg)
 
 Connection pins: every pin used is configurable inside the program, but the default are:
 
