@@ -55,13 +55,13 @@ Diagram link: https://www.tinkercad.com/things/jGPGsdLMKwj
 
 Real life assembled electronics:
 
-![diagram](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/images/electronics.png)
+![assembled electronics](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/images/electronics.jpg)
 
 # Building the lap timer
 
 Drill 3 holes in the middle of the 3 lanes of a mini4wd track piece. Put the photoresistors under the holes and fix them with tape.
 
-![diagram](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/images/sensors.png)
+![sensors mounted](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/images/sensors.jpg)
 
 Put the lap timer over the 3 holes, and stick the LED strip underside the lap timer, so that it casts light on the sensors.
 The mini4wd car passing over the photoresistor will trigger a lap.
@@ -69,7 +69,7 @@ Put the 3 green leds on the front of the lap timer, one over each lane.
 
 Example lap timer made using cable ducts:
 
-![diagram](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/images/semaforo.png)
+![lap timer](https://cdn.jsdelivr.net/gh/Pimentoso/mini4wdchrono/images/semaforo.jpg)
 
 Connection pins: every pin used is configurable inside the program, but the default are:
 
