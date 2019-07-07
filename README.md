@@ -49,7 +49,7 @@ https://www.aliexpress.com/item/32666789405.html
 
 - A straight piece of 3 lane Japan Cup Mini4wd track.
 
-Diagram link: https://www.tinkercad.com/things/jGPGsdLMKwj
+Diagram link: https://www.tinkercad.com/things/jGPGsdLMKwj-mini4wd-chrono
 
 ![diagram](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/schema.png)
 
@@ -63,23 +63,27 @@ Drill 3 holes in the middle of the 3 lanes of a mini4wd track piece. Put the pho
 
 ![sensors mounted](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/sensors.jpg)
 
-Put the lap timer over the 3 holes, and stick the LED strip underside the lap timer, so that it casts light on the sensors.
+Build some sort of bridge-like structure to hold the electronics. Stick the LED strip underside it, so that it casts light on the sensors. Put the structure over the 3 holes on the track with the sensors.
+
 The mini4wd car passing over the photoresistor will trigger a lap.
 Put the 3 green leds on the front of the lap timer, one over each lane.
 
+Prototype lap timer made of wood and 3d printed joints:
+
+![lap timer](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/semaforo2.jpg)
+
 Example lap timer made using cable ducts:
 
-![lap timer](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/semaforo.jpg)
+![lap timer](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/semaforo1.jpg)
 
 Connection pins: every pin used is configurable inside the program, but the default are:
 
 - Light sensors: A5, A6, A7
 - LEDs: D3, D4, D5
 - Buzzer: D2
+The sensor pins are not the same of the above diagram, because the Arduino UNO in the diagram only has 6 analog pins.
 
-Now you need to flash the StandardFirmataPlus firmware on your arduino board. This will allow the arduino to comunicate with the computer via USB.
-
-Instructions:
+Now you need to flash the StandardFirmataPlus firmware on your arduino board. This will allow the arduino to comunicate with the computer via USB. Instructions:
 
 - Install Arduino IDE from https://www.arduino.cc/en/Main/Software
 - Open Arduino IDE
@@ -88,7 +92,9 @@ Instructions:
 - Upload sketch onto board.
 - Done!
 
-When you launch Mini4WD Chrono, the small badge on the top right will be green and say "board connected". If you have problems, go to the configuration tab, change the USB port, save and reload the program.
+When you launch Mini4WD Chrono, the small badge on the top right will be green and say "board connected". 
+If you have problems, go to the configuration tab, change the USB port, and save settings. Disconnect and reconnect the arduino board to USB, and reload the program.
+**NOTE: the arduino board must be connected to the computer USB BEFORE launching the program.**
 
 Some Arduino Nano clones may need the CH340 USB driver to be recognized. [You can download it here](https://sparks.gogo.co.nz/ch340.html).
 
