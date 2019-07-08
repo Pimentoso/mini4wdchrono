@@ -4,7 +4,7 @@
 
 Software for Arduino based 3-lane lap timer for Tamiya Mini4wd. Built on johnny-five + electron.
 
-The program reads data from the "Mini4WD Track Editor" and "Mini4WD Tournament Generator" websites to access track and players data,
+The program reads data from the "Mini4WD Track Editor" and "Mini4WD Tournament Generator" websites to access track length and player names,
 so you are required to create your track and player list using those websites.
 
 https://mini4wd-track-editor.pimentoso.com/

@@ -137,7 +137,7 @@ const guiInit = () => {
 		$('.js-hide-on-no-track').show();
 	}
 
-	if (currTournament == null || freeRound) {
+	if (currTournament == null) {
 		$('.js-show-on-no-tournament').show();
 		$('.js-hide-on-no-tournament').hide();
 		$('#name-lane0').text(' ');
@@ -145,7 +145,15 @@ const guiInit = () => {
 		$('#name-lane2').text(' ');
 		$('#curr-manche').text('0');
 		$('#curr-round').text('0');
-		// $('.js-invalidate').attr('disabled', true); TODO
+	}
+	else if (freeRound) {
+		$('.js-show-on-free-round').show();
+		$('.js-hide-on-free-round').hide();
+		$('#name-lane0').text(' ');
+		$('#name-lane1').text(' ');
+		$('#name-lane2').text(' ');
+		$('#curr-manche').text('0');
+		$('#curr-round').text('0');
 	}
 	else {
 		$('.js-show-on-no-tournament').hide();
