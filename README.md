@@ -1,17 +1,25 @@
 [![Version](https://img.shields.io/badge/version-0.9.6-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
 
-# Mini4wdChrono
+Mini4wdChrono is a fully free and open source project to make a functional 3-lane lap timer for Mini4WD Japan Cup tracks.
+The hardware has been chosen to be as simple and cheap as possible, while still maintain accuracy.
+The software has been built to ease the work of race organizers, while still having a clean interface that can be shown on a big TV screen during the race.
 
-Software for Arduino based 3-lane lap timer for Tamiya Mini4wd. Built on johnny-five + electron.
+# The software
 
 The program reads data from the "Mini4WD Track Editor" and "Mini4WD Tournament Generator" websites to access track length and player names,
 so you are required to create your track and player list using those websites.
 
-https://mini4wd-track-editor.pimentoso.com/
+**Quick start guide:**
 
-https://mini4wd-tournament.pimentoso.com/
+- draw the track in the https://mini4wd-track-editor.pimentoso.com/ website, and save it. Copy the 6-letter code or just copy the link.
+- import the track in the "race setup" screen. This is important because the program needs to know the length of the track and the lane changes.
+- you can now already go to the "race view" screen and start a race.
+- insert the player names in the https://mini4wd-tournament.pimentoso.com/ website, generate the tournament, and save it. Copy the 6-letter code or just copy the link.
+- import the tournament in the "race setup" screen.
+- now in the "race view" screen you can start the actual rounds of the race. The times will be recorded and assigned to the correct players.
+- now you can go to the "racers list" and "manches list" screens to check the current race rankings.
 
-# Screenshots
+## Screenshots
 
 ![race view](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/screen-race.png)
 
@@ -19,13 +27,17 @@ https://mini4wd-tournament.pimentoso.com/
 
 ![manches view](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/screen-manches.png)
 
-# Download the software
+## Download the software
 
 You can download the latest releases for Windows 10 (64-bit) or Mac OS (64-bit) from [the releases page](https://github.com/Pimentoso/mini4wdchrono/releases).
 
-# Hardware needed
+Unzip the program anywhere on your computer, connect the lap timer to the computer via USB, and then launch the program.
 
-- A computer.
+# The hardware 
+
+## Hardware needed
+
+- A computer with the Mini4WDChrono software installed.
 
 - An arduino board. The project has been tested with both Arduino UNO and NANO.
 
@@ -57,7 +69,7 @@ Real life assembled electronics:
 
 ![assembled electronics](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/electronics.jpg)
 
-# Building the lap timer
+## Building the lap timer
 
 Drill 3 holes in the middle of the 3 lanes of a mini4wd track piece. Put the photoresistors under the holes and fix them with tape.
 
