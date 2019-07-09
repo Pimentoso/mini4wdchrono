@@ -1,4 +1,4 @@
-[![WIP](https://img.shields.io/badge/version-0.9.5-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
+[![Version](https://img.shields.io/badge/version-0.9.6-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
 
 # Mini4wdChrono
 
