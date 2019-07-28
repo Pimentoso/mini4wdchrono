@@ -316,21 +316,21 @@
 
 		<div class="level has-text-centered js-hide-on-no-track">
 			<div class="level-item">
-				<button class="js-hide-on-no-tournament js-hide-on-free-round button" id="button-prev">
+				<button class="button js-hide-on-no-tournament js-hide-on-free-round js-disable-on-race-started" id="button-prev">
 					<span class="tn" data-tn="button-prev-round">&lt; Prev round</span>
 				</button>
 			</div>
 			<div class="level-item">
-				<button class="button is-link is-large has-text-weight-bold" id="button-start" style="min-width: 200px;">
+				<button class="button is-link is-large has-text-weight-bold js-disable-on-race-started" id="button-start" style="min-width: 200px;">
 					<span class="tn" data-tn="button-start">START</span>
 				</button>
 
-				<button class="button is-link is-outlined" id="button-toggle-free-round" style="min-width: 150px; margin-left: 20px;">
+				<button class="button is-link is-outlined js-disable-on-race-started" id="button-toggle-free-round" style="min-width: 150px; margin-left: 20px;">
 					<span class="tn" data-tn="button-goto-free">Free round ></span>
 				</button>
 			</div>
 			<div class="level-item">
-				<button class="js-hide-on-no-tournament js-hide-on-free-round button" id="button-next">
+				<button class="button js-hide-on-no-tournament js-hide-on-free-round js-disable-on-race-started" id="button-next">
 					<span class="tn" data-tn="button-next-round">Next round &gt;</span>
 				</button>
 			</div>
@@ -355,7 +355,7 @@
 
 							<ul id="laps-lane0"></ul>
 
-							<a id="invalidate-0" href="#" class="button is-small is-danger js-invalidate" data-lane="0">invalidate</a>
+							<a id="invalidate-0" href="#" class="button is-small is-danger js-invalidate js-disable-on-race-started" data-lane="0">invalidate</a>
 						</div>
 					</div>
 				</div>
@@ -378,7 +378,7 @@
 
 							<ul id="laps-lane1"></ul>
 
-							<a id="invalidate-1" href="#" class="button is-small is-danger js-invalidate" data-lane="1">invalidate</a>
+							<a id="invalidate-1" href="#" class="button is-small is-danger js-invalidate js-disable-on-race-started" data-lane="1">invalidate</a>
 						</div>
 					</div>
 				</div>
@@ -401,7 +401,7 @@
 
 							<ul id="laps-lane2"></ul>
 
-							<a id="invalidate-2" href="#" class="button is-small is-danger js-invalidate" data-lane="2">invalidate</a>
+							<a id="invalidate-2" href="#" class="button is-small is-danger js-invalidate js-disable-on-race-started" data-lane="2">invalidate</a>
 						</div>
 					</div>
 				</div>

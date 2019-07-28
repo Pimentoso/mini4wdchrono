@@ -10,7 +10,7 @@ const i18n = new(require('../i18n/i18n'));
 
 let currTrack, currTournament;
 let playerList, mancheList, playerTimesList, mancheTimesList;
-let currManche = 0, currRound = 0, raceStarted = false, freeRound = true;
+let currManche = 0, currRound = 0, raceRunning = false, freeRound = true;
 
 let timerIntervals = [], timerSeconds = [];
 let pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
@@ -83,7 +83,7 @@ const init = () => {
 	showTournamentDetails();
 
 	// other init variables
-	raceStarted = false;
+	raceRunning = false;
 };
 
 const reset = () => {
@@ -97,7 +97,7 @@ const reset = () => {
 	currRound = 0;
 	currTrack = null;
 	currTournament = null;
-	raceStarted = false;
+	raceRunning = false;
 
 	configuration.deleteSettings('mancheTimes');
 	configuration.deleteSettings('playerTimes');
@@ -154,6 +154,8 @@ const guiInit = () => {
 		$('#name-lane2').text(' ');
 		$('#curr-manche').text('0');
 		$('#curr-round').text('0');
+		showPlayerList();
+		showMancheList();
 	}
 	else {
 		$('.js-show-on-no-tournament').hide();
@@ -447,7 +449,7 @@ const startRound = () => {
 	checkRaceTask = setInterval(checkRace, 1000);
 	setTimeout(checkStart, configuration.readSettings('startDelay') * 1000);
 
-	raceStarted = true;
+	raceRunning = true;
 
 	if (configuration.readSettings('raceMode') == 1) {
 		startTimer(0);
@@ -529,7 +531,7 @@ const toggleFreeRound = () => {
 
 // keyboard shortcuts for debug
 const keydown = (keyCode) => {
-	if (raceStarted) {
+	if (raceRunning) {
 		if (keyCode == 49 || keyCode == 97) {
 			// pressed 1
 			addLap(0);
@@ -666,7 +668,12 @@ const checkStart = () => {
 	if (redraw) drawRace();
 };
 
-// called when the current round has completed. Saves times
+// called when a round is started. Handles UI changes
+const raceStarted = () => {
+	$('.js-disable-on-race-started').attr('disabled', true);
+};
+
+// called when the current round has completed. Saves times and handles UI changes
 const raceFinished = () => {
 	console.log('client.raceFinished called');
 
@@ -697,8 +704,8 @@ const raceFinished = () => {
 		showMancheList();
 	}
 
-	raceStarted = false;
-	$('#button-start').removeAttr('disabled');
+	raceRunning = false;
+	$('.js-disable-on-race-started').removeAttr('disabled');
 };
 
 // @param [bool] fromSaved: pass true if you want to render a past round. It will be loaded from configuration.
@@ -754,7 +761,7 @@ const drawRace = (fromSaved) => {
 			$('#place-lane' + i).addClass('is-dark');
 		}
 		else if (car.lapCount == 0) {
-			if (raceStarted) {
+			if (raceRunning) {
 				$('#place-lane' + i).text(i18n.__('label-car-ready'));
 			}
 			else {
@@ -815,17 +822,17 @@ const timer = (lane) => {
 // ==== listen to arduino events
 
 const sensorRead1 = () => {
-	if (raceStarted)
+	if (raceRunning)
 		addLap(0);
 };
 
 const sensorRead2 = () => {
-	if (raceStarted) 
+	if (raceRunning) 
 		addLap(1);
 };
 
 const sensorRead3 = () => {
-	if (raceStarted) 
+	if (raceRunning) 
 		addLap(2);
 };
 
@@ -852,6 +859,7 @@ module.exports = {
 	saveXls: saveXls,
 	disqualify: disqualify,
 	overrideTimes: overrideTimes,
+	raceStarted: raceStarted,
 	initRound: initRound,
 	startRound: startRound,
 	prevRound: prevRound,

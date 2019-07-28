@@ -180,7 +180,7 @@ $('#button-start').on('click', (e) => {
 
 	if (debugMode) {
 		// debug mode
-		$('#button-start').attr('disabled', true);
+		client.raceStarted();
 		client.initRound();
 		client.startRound();
 	}
@@ -193,7 +193,7 @@ $('#button-start').on('click', (e) => {
 				return;
 			}
 		}
-		$('#button-start').attr('disabled', true);
+		client.raceStarted();
 		playStart();
 	}
 });
@@ -245,11 +245,13 @@ $('#button-save-config').on('click', (e) => {
 
 $(document).on('keyup', '.js-time-form', (e) => {
 	$('#button-manches-save').removeAttr('disabled');
+	$('#button-manches-cancel').removeAttr('disabled');
 });
 
 $('#button-manches-cancel').on('click', (e) => {
 	client.showMancheList();
 	$('#button-manches-save').attr('disabled', true);
+	$('#button-manches-cancel').attr('disabled', true);
 });
 
 $('#button-manches-save').on('click', (e) => {
@@ -257,6 +259,7 @@ $('#button-manches-save').on('click', (e) => {
 	if ($this.attr('disabled')) return;
 	client.overrideTimes();
 	$('#button-manches-save').attr('disabled', true);
+	$('#button-manches-cancel').attr('disabled', true);
 });
 
 $('.js-race-mode').on('click', (e) => {
