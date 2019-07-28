@@ -128,6 +128,9 @@ const reset = () => {
 const guiInit = () => {
 	console.log('client.guiInit called');
 
+	$('.js-show-on-race-started').hide();
+	$('.js-hide-on-race-started').show();
+
 	if (currTrack == null) {
 		$('.js-show-on-no-track').show();
 		$('.js-hide-on-no-track').hide();
@@ -458,6 +461,14 @@ const startRound = () => {
 	}
 };
 
+// called when the stop button is pressed
+const stopRound = () => {
+	console.log('client.stopRound called');
+
+	chrono.stopRace();
+	checkRace();
+};
+
 const prevRound = () => {
 	console.log('client.prevRound called');
 
@@ -670,6 +681,8 @@ const checkStart = () => {
 
 // called when a round is started. Handles UI changes
 const raceStarted = () => {
+	$('.js-show-on-race-started').show();
+	$('.js-hide-on-race-started').hide();
 	$('.js-disable-on-race-started').attr('disabled', true);
 };
 
@@ -705,6 +718,8 @@ const raceFinished = () => {
 	}
 
 	raceRunning = false;
+	$('.js-show-on-race-started').hide();
+	$('.js-hide-on-race-started').show();
 	$('.js-disable-on-race-started').removeAttr('disabled');
 };
 
@@ -862,6 +877,7 @@ module.exports = {
 	raceStarted: raceStarted,
 	initRound: initRound,
 	startRound: startRound,
+	stopRound: stopRound,
 	prevRound: prevRound,
 	nextRound: nextRound,
 	isFreeRound: isFreeRound,

@@ -127,6 +127,7 @@ $('.tabs a').on('click', (e) => {
 	$('div[data-tab=' + tab + ']').show();
 
 	$('#button-manches-save').attr('disabled', true);
+	$('#button-manches-cancel').attr('disabled', true);
 });
 
 document.onkeydown = (e) => {
@@ -196,6 +197,10 @@ $('#button-start').on('click', (e) => {
 		client.raceStarted();
 		playStart();
 	}
+});
+
+$('#button-stop').on('click', (e) => {
+	client.stopRound();
 });
 
 $('#button-prev').on('click', (e) => {

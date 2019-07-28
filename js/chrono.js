@@ -165,6 +165,22 @@ const isRaceFinished = () => {
 	return _.every(rCars, (c) => { return c.outOfBounds || c.lapCount == 4; });
 };
 
+// forcefully stops the race. All cars still running are set to 99999.
+const stopRace = () => {
+	let dirty = false;
+	_.each(_.filter(rCars, (c) => {
+		return c.lapCount < 4;
+	}), (c) => {
+		c.currTime = 99999;
+		c.outOfBounds = true;
+		dirty = true;
+	});
+
+	if (dirty) calculateRace();
+
+	return dirty;
+};
+
 // called by timer task
 const checkOutCars = () => {
 	// check cars over max time limit and set them as out
@@ -206,6 +222,7 @@ module.exports = {
 	init: init,
 	addLap: addLap,
 	getCars: getCars,
+	stopRace: stopRace,
 	checkOutCars: checkOutCars,
 	checkNotStartedCars: checkNotStartedCars,
 	isRaceFinished: isRaceFinished

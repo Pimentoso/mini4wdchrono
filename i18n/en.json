@@ -53,6 +53,7 @@
     "button-prev-round": "< Prev round",
     "button-next-round": "Next round >",
     "button-start": "START",
+    "button-stop": "STOP",
     "button-goto-free": "Free round >",
     "button-goto-race": "Return to race >",
     "label-lane-1": "LANE 1",
