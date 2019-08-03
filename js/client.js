@@ -168,6 +168,7 @@ const guiInit = () => {
 		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '//');
 		$('#curr-manche').text(currManche+1);
 		$('#curr-round').text(currRound+1);
+		showNextRoundNames();
 		showPlayerList();
 		showMancheList();
 		drawRace(true);
@@ -517,6 +518,26 @@ const nextRound = () => {
 		chronoInit();
 		guiInit();
 	}
+};
+
+const showNextRoundNames = () => {
+	let r = currRound, m = currManche, text;
+	r += 1;
+	if (r == mancheList[0].length) {
+		m++;
+		r = 0;
+	}
+
+	if (m == (mancheList.length-1) && r == (mancheList[0].length-1)) {
+		'-';
+	}
+	else {
+		text = _.filter([playerList[mancheList[m][r][0]], playerList[mancheList[m][r][1]], playerList[mancheList[m][r][2]]], (n) => {
+			return n;
+		}).join(', ');
+	}
+
+	$('#next-round-names').text(text);
 };
 
 const isFreeRound = () => freeRound;
