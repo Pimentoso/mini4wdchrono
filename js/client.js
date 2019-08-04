@@ -732,8 +732,8 @@ const showNextRoundNames = () => {
 		r = 0;
 	}
 
-	if (m == (mancheList.length-1) && r == (mancheList[0].length-1)) {
-		'-';
+	if (m == mancheList.length) {
+		text = '-';
 	}
 	else {
 		text = _.filter([playerList[mancheList[m][r][0]], playerList[mancheList[m][r][1]], playerList[mancheList[m][r][2]]], (n) => {
