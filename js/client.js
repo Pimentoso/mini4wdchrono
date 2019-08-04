@@ -196,166 +196,8 @@ const chronoInit = (reset) => {
 	}
 };
 
-const showTrackDetails = () => {
-	console.log('client.showTrackDetails called');
-
-	if (currTrack) {
-		if (currTrack.manual) {
-			$('#js-input-track-code').val('');
-			$('#js-track-length').text('-');
-			$('#js-track-order').text('-');
-			$('#js-link-track').attr('href', 'https://mini4wd-track-editor.pimentoso.com/');
-			$('#js-track-length-manual').val(currTrack.length);
-			$('#js-track-order-manual').val(currTrack.order.join('-'));
-		}
-		else {
-			$('#js-input-track-code').val(currTrack.url);
-			$('#js-track-length').text(i18n.__('label-track-length') + ': ' + currTrack.length + ' m');
-			$('#js-track-order').text(i18n.__('label-track-lane-order') + ': ' + currTrack.order + ',1');
-			$('#js-link-track').attr('href', currTrack.view_url);
-			$('#js-track-length-manual').val('');
-			$('#js-track-order-manual').val('');
-		}
-	}
-	else {
-		$('#js-track-length').text('-');
-		$('#js-track-order').text('-');
-		$('#js-link-track').attr('href', 'https://mini4wd-track-editor.pimentoso.com/');
-	}
-	showThresholds();
-	chronoInit(true);
-	guiInit();
-	drawRace();
-};
-
-const showTournamentDetails = () => {
-	console.log('client.showTournamentDetails called');
-
-	if (currTournament) {
-		$('#js-input-tournament-code').val(currTournament.url);
-		$('#js-tournament-players').text(i18n.__('label-tournament-players') + ': ' + currTournament.players.length);
-		$('#js-tournament-manches').text(i18n.__('label-tournament-manches') + ': ' + currTournament.manches.length);
-		$('#js-link-tournament').attr('href', currTournament.url);
-	}
-	else {
-		$('#js-tournament-players').text('-');
-		$('#js-tournament-manches').text('-');
-		$('#js-link-tournament').attr('href', 'https://mini4wd-tournament.pimentoso.com/');
-	}
-	guiInit();
-};
-
-const showThresholds = () => {
-	console.log('client.showThresholds called');
-
-	if (currTrack) {
-		let rTrackLength = currTrack.length;
-		let rSpeedThreshold = configuration.readSettings('speedThreshold');
-		let rTimeThreshold = configuration.readSettings('timeThreshold')/100;
-		let estimatedTime = rTrackLength / rSpeedThreshold;
-		let estimatedCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold);
-		let estimatedCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold);
-		$('#js-settings-estimated-time').show();
-		$('#js-settings-estimated-time').text(i18n.__('label-time-estimated') + ': ' + estimatedTime.toFixed(3) + ' sec');
-		$('#js-settings-estimated-cutoff').show();
-		$('#js-settings-estimated-cutoff').text(i18n.__('label-time-estimated-cutoff') + ': min ' + estimatedCutoffMin.toFixed(3) + ' sec, max ' + estimatedCutoffMax.toFixed(3) + ' sec');
-	}
-	else {
-		$('#js-settings-estimated-time').hide();
-		$('#js-settings-estimated-cutoff').hide();
-	}
-};
-
-// render the player list tab
-const showPlayerList = () => {
-	console.log('client.showPlayerList called');
-
-	$('#tablePlayerList').empty();
-	if (playerList.length > 0) {
-
-		// calculate best time sums
-		let sums = [];
-		_.each(playerList, (_player,pindex) => {
-			let playerTimes = playerTimesList[pindex] || [];
-			let bestTimes = _.filter(playerTimes, (t) => { return t > 0; }).sort().slice(0,2);
-			let bestSum = (bestTimes[0] || 99999) + (bestTimes[1] || 99999);
-			sums[pindex] = bestSum;
-		});
-
-		// sort list by sum desc
-		let times = _.map(playerTimesList, (times, index) => {
-			return {
-				id: index,
-				times: times || [],
-				best: sums[index]
-			};
-		});
-		times = _.sortBy(times, 'best');
-
-		// draw title row
-		let titleCells = _.map(currTournament.manches, (_manche,mindex) => {
-			return '<td>Manche ' + (mindex+1) + '</td>';
-		});
-		titleCells.push('<td>' + i18n.__('label-best-2-times') + '</td>');
-		titleCells.push('<td>' + i18n.__('label-best-speed') + '</td>');
-		$('#tablePlayerList').append('<tr class="is-selected"><td colspan="2"><strong>' + playerList.length + ' RACERS</strong></td>' + titleCells + '</tr>');
-
-		// draw player rows
-		_.each(times, (info) => {
-			let bestTime =  _.min(_.filter(info.times, (t) => { return t > 0 && t < 99999; }));
-			let bestSpeed = currTrack.length / (bestTime/1000);
-			let timeCells = _.map(currTournament.manches, (_manche,mindex) => {
-				let playerTime = info.times[mindex] || 0;
-				let highlight = '';
-				if (playerTime == 0) {
-					highlight = 'has-text-grey-light';
-				}
-				else if (playerTime == bestTime) {
-					highlight = 'has-text-danger';
-				}
-				else if (playerTime < 99999) {
-					highlight = 'has-text-info';
-				}
-				return '<td class="' + highlight + '">' + utils.prettyTime(playerTime) + '</td>';
-			});
-			timeCells.push('<td>' + utils.prettyTime(info.best) + '</td>');
-			timeCells.push('<td>' + bestSpeed.toFixed(2) + ' m/s</td>');
-			$('#tablePlayerList').append('<tr><td>' + (info.id+1) + '</td><td><p class="has-text-centered is-uppercase">' + playerList[info.id] + '</p></td>' + timeCells + '</tr>');
-		});
-	}
-};
-
-// render the manches list tab
-const showMancheList = () => {
-	console.log('client.showManchesList called');
-
-	$('#tableMancheList').empty();
-	let mancheText, playerName, playerTime, playerForm, highlight;
-	_.each(mancheList, (manche, mindex) => {
-		$('#tableMancheList').append('<tr class="is-selected"><td><strong>MANCHE ' + (mindex+1) + '</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>');
-		_.each(manche, (group, rindex) => {
-			mancheText = _.map(group, (id, pindex) => {
-				playerName = '<p class="has-text-centered is-uppercase">' + (playerList[id] || '') + '</p>';
-				playerTime = (mancheTimesList[mindex] && mancheTimesList[mindex][rindex]) ? mancheTimesList[mindex][rindex][pindex] : 0;
-				if (playerList[id]) {
-					playerForm = '<div class="field"><div class="control"><input class="input is-large js-time-form" type="text" data-manche="' + mindex + '" data-round="' + rindex + '" data-player="' + pindex + '" value="' + utils.prettyTime(playerTime) + '"></div></div>';
-				}
-				else {
-					playerForm = '';
-				}
-				return '<td>' + playerName + playerForm + '</td>';
-			}).join();
-			highlight = (mindex == currManche && rindex == currRound) ? 'class="is-highlighted"' : '';
-			$('#tableMancheList').append('<tr ' + highlight + '><td>Round ' + (rindex+1) + '</td>' + mancheText + '</tr>');
-		});
-	});
-};
-
-const saveXls = () => {
-	if (currTournament) {
-		xls.geneateXls(currTournament.manches.length, playerList, playerTimesList);
-	}
-};
+// ==========================================================================
+// ==== time list handling
 
 const disqualify = (mindex, rindex, pindex) => {
 	console.log('client.disqualify called');
@@ -520,26 +362,6 @@ const nextRound = () => {
 	}
 };
 
-const showNextRoundNames = () => {
-	let r = currRound, m = currManche, text;
-	r += 1;
-	if (r == mancheList[0].length) {
-		m++;
-		r = 0;
-	}
-
-	if (m == (mancheList.length-1) && r == (mancheList[0].length-1)) {
-		'-';
-	}
-	else {
-		text = _.filter([playerList[mancheList[m][r][0]], playerList[mancheList[m][r][1]], playerList[mancheList[m][r][2]]], (n) => {
-			return n;
-		}).join(', ');
-	}
-
-	$('#next-round-names').text(text);
-};
-
 const isFreeRound = () => freeRound;
 
 const toggleFreeRound = () => {
@@ -669,7 +491,7 @@ const tournamentLoadFail = () => {
 };
 
 // ==========================================================================
-// ==== write to interface
+// ==== race status
 
 // timer task to check for cars out of track
 const checkRace = () => {
@@ -742,6 +564,184 @@ const raceFinished = () => {
 	$('.js-show-on-race-started').hide();
 	$('.js-hide-on-race-started').show();
 	$('.js-disable-on-race-started').removeAttr('disabled');
+};
+
+// ==========================================================================
+// ==== write to interface
+
+const showTrackDetails = () => {
+	console.log('client.showTrackDetails called');
+
+	if (currTrack) {
+		if (currTrack.manual) {
+			$('#js-input-track-code').val('');
+			$('#js-track-length').text('-');
+			$('#js-track-order').text('-');
+			$('#js-link-track').attr('href', 'https://mini4wd-track-editor.pimentoso.com/');
+			$('#js-track-length-manual').val(currTrack.length);
+			$('#js-track-order-manual').val(currTrack.order.join('-'));
+		}
+		else {
+			$('#js-input-track-code').val(currTrack.url);
+			$('#js-track-length').text(i18n.__('label-track-length') + ': ' + currTrack.length + ' m');
+			$('#js-track-order').text(i18n.__('label-track-lane-order') + ': ' + currTrack.order + ',1');
+			$('#js-link-track').attr('href', currTrack.view_url);
+			$('#js-track-length-manual').val('');
+			$('#js-track-order-manual').val('');
+		}
+	}
+	else {
+		$('#js-track-length').text('-');
+		$('#js-track-order').text('-');
+		$('#js-link-track').attr('href', 'https://mini4wd-track-editor.pimentoso.com/');
+	}
+	showThresholds();
+	chronoInit(true);
+	guiInit();
+	drawRace();
+};
+
+const showTournamentDetails = () => {
+	console.log('client.showTournamentDetails called');
+
+	if (currTournament) {
+		$('#js-input-tournament-code').val(currTournament.url);
+		$('#js-tournament-players').text(i18n.__('label-tournament-players') + ': ' + currTournament.players.length);
+		$('#js-tournament-manches').text(i18n.__('label-tournament-manches') + ': ' + currTournament.manches.length);
+		$('#js-link-tournament').attr('href', currTournament.url);
+	}
+	else {
+		$('#js-tournament-players').text('-');
+		$('#js-tournament-manches').text('-');
+		$('#js-link-tournament').attr('href', 'https://mini4wd-tournament.pimentoso.com/');
+	}
+	guiInit();
+};
+
+const showThresholds = () => {
+	console.log('client.showThresholds called');
+
+	if (currTrack) {
+		let rTrackLength = currTrack.length;
+		let rSpeedThreshold = configuration.readSettings('speedThreshold');
+		let rTimeThreshold = configuration.readSettings('timeThreshold')/100;
+		let estimatedTime = rTrackLength / rSpeedThreshold;
+		let estimatedCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold);
+		let estimatedCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold);
+		$('#js-settings-estimated-time').show();
+		$('#js-settings-estimated-time').text(i18n.__('label-time-estimated') + ': ' + estimatedTime.toFixed(3) + ' sec');
+		$('#js-settings-estimated-cutoff').show();
+		$('#js-settings-estimated-cutoff').text(i18n.__('label-time-estimated-cutoff') + ': min ' + estimatedCutoffMin.toFixed(3) + ' sec, max ' + estimatedCutoffMax.toFixed(3) + ' sec');
+	}
+	else {
+		$('#js-settings-estimated-time').hide();
+		$('#js-settings-estimated-cutoff').hide();
+	}
+};
+
+// render the player list tab
+const showPlayerList = () => {
+	console.log('client.showPlayerList called');
+
+	$('#tablePlayerList').empty();
+	if (playerList.length > 0) {
+
+		// calculate best time sums
+		let sums = [];
+		_.each(playerList, (_player,pindex) => {
+			let playerTimes = playerTimesList[pindex] || [];
+			let bestTimes = _.filter(playerTimes, (t) => { return t > 0; }).sort().slice(0,2);
+			let bestSum = (bestTimes[0] || 99999) + (bestTimes[1] || 99999);
+			sums[pindex] = bestSum;
+		});
+
+		// sort list by sum desc
+		let times = _.map(playerTimesList, (times, index) => {
+			return {
+				id: index,
+				times: times || [],
+				best: sums[index]
+			};
+		});
+		times = _.sortBy(times, 'best');
+
+		// draw title row
+		let titleCells = _.map(currTournament.manches, (_manche,mindex) => {
+			return '<td>Manche ' + (mindex+1) + '</td>';
+		});
+		titleCells.push('<td>' + i18n.__('label-best-2-times') + '</td>');
+		titleCells.push('<td>' + i18n.__('label-best-speed') + '</td>');
+		$('#tablePlayerList').append('<tr class="is-selected"><td colspan="2"><strong>' + playerList.length + ' RACERS</strong></td>' + titleCells + '</tr>');
+
+		// draw player rows
+		_.each(times, (info) => {
+			let bestTime =  _.min(_.filter(info.times, (t) => { return t > 0 && t < 99999; }));
+			let bestSpeed = currTrack.length / (bestTime/1000);
+			let timeCells = _.map(currTournament.manches, (_manche,mindex) => {
+				let playerTime = info.times[mindex] || 0;
+				let highlight = '';
+				if (playerTime == 0) {
+					highlight = 'has-text-grey-light';
+				}
+				else if (playerTime == bestTime) {
+					highlight = 'has-text-danger';
+				}
+				else if (playerTime < 99999) {
+					highlight = 'has-text-info';
+				}
+				return '<td class="' + highlight + '">' + utils.prettyTime(playerTime) + '</td>';
+			});
+			timeCells.push('<td>' + utils.prettyTime(info.best) + '</td>');
+			timeCells.push('<td>' + bestSpeed.toFixed(2) + ' m/s</td>');
+			$('#tablePlayerList').append('<tr><td>' + (info.id+1) + '</td><td><p class="has-text-centered is-uppercase">' + playerList[info.id] + '</p></td>' + timeCells + '</tr>');
+		});
+	}
+};
+
+// render the manches list tab
+const showMancheList = () => {
+	console.log('client.showManchesList called');
+
+	$('#tableMancheList').empty();
+	let mancheText, playerName, playerTime, playerForm, highlight;
+	_.each(mancheList, (manche, mindex) => {
+		$('#tableMancheList').append('<tr class="is-selected"><td><strong>MANCHE ' + (mindex+1) + '</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>');
+		_.each(manche, (group, rindex) => {
+			mancheText = _.map(group, (id, pindex) => {
+				playerName = '<p class="has-text-centered is-uppercase">' + (playerList[id] || '') + '</p>';
+				playerTime = (mancheTimesList[mindex] && mancheTimesList[mindex][rindex]) ? mancheTimesList[mindex][rindex][pindex] : 0;
+				if (playerList[id]) {
+					playerForm = '<div class="field"><div class="control"><input class="input is-large js-time-form" type="text" data-manche="' + mindex + '" data-round="' + rindex + '" data-player="' + pindex + '" value="' + utils.prettyTime(playerTime) + '"></div></div>';
+				}
+				else {
+					playerForm = '';
+				}
+				return '<td>' + playerName + playerForm + '</td>';
+			}).join();
+			highlight = (mindex == currManche && rindex == currRound) ? 'class="is-highlighted"' : '';
+			$('#tableMancheList').append('<tr ' + highlight + '><td>Round ' + (rindex+1) + '</td>' + mancheText + '</tr>');
+		});
+	});
+};
+
+const showNextRoundNames = () => {
+	let r = currRound, m = currManche, text;
+	r += 1;
+	if (r == mancheList[0].length) {
+		m++;
+		r = 0;
+	}
+
+	if (m == (mancheList.length-1) && r == (mancheList[0].length-1)) {
+		'-';
+	}
+	else {
+		text = _.filter([playerList[mancheList[m][r][0]], playerList[mancheList[m][r][1]], playerList[mancheList[m][r][2]]], (n) => {
+			return n;
+		}).join(', ');
+	}
+
+	$('#next-round-names').text(text);
 };
 
 // @param [bool] fromSaved: pass true if you want to render a past round. It will be loaded from configuration.
@@ -852,6 +852,15 @@ const stopTimer = (lane) => {
 
 const timer = (lane) => {
 	pageTimerSeconds[lane].text(`${timerSeconds[lane]++ / 10}00`);
+};
+
+// ==========================================================================
+// ==== export excel
+
+const saveXls = () => {
+	if (currTournament) {
+		xls.geneateXls(currTournament.manches.length, playerList, playerTimesList);
+	}
 };
 
 // ==========================================================================

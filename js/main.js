@@ -16,13 +16,14 @@ process.__defineGetter__("stdin", function() {
   return process.__stdin;
 });
 
-const debugMode = false;
+const debugMode = true;
 const log = require('electron-log');
 log.catchErrors();
 const { dialog, shell } = require('electron').remote;
+const j5 = require('johnny-five');
+
 const xls = require('./js/export');
 const configuration = require('./js/configuration');
-const j5 = require('johnny-five');
 const client = require('./js/client');
 const utils = require('./js/utils');
 const i18n = new(require('./i18n/i18n'));
