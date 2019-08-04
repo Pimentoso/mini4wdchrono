@@ -742,8 +742,7 @@ const showNextRoundNames = () => {
 		r = 0;
 	}
 
-	debugger;
-	if (m == (mancheList.length-1) && r == (mancheList[0].length)) {
+	if (m == mancheList.length) {
 		text = '-';
 	}
 	else {
