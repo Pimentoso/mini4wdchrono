@@ -1,3 +1,5 @@
 TEST VALUES
 - track: 8GPF9C
-- tournament: VTSNY3
+- tournament: 
+VTSNY3
+HGY9X8 (5 player, 3 manche)

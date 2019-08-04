@@ -9,7 +9,7 @@ const xls = require('./export');
 const i18n = new(require('../i18n/i18n'));
 
 let currTrack, currTournament;
-let playerList, mancheList, playerTimesList, mancheTimesList;
+let playerList, mancheList, semifinalMancheList, finalMancheList, playerTimesList, mancheTimesList;
 let currManche = 0, currRound = 0, raceRunning = false, freeRound = true;
 
 let timerIntervals = [], timerSeconds = [];
@@ -272,6 +272,34 @@ const rebuildTimeList = () => {
 	});
 	configuration.saveSettings('mancheTimes', mancheTimesList);
 	configuration.saveSettings('playerTimes', playerTimesList);
+};
+
+const getSortedPlayerList = () => {
+	// calculate best time sums
+	let sums = [], times, playerTimes, bestTimes, bestSum;
+	_.each(playerList, (_player,pindex) => {
+		playerTimes = playerTimesList[pindex] || [];
+		bestTimes = _.filter(playerTimes, (t) => { return t > 0; }).sort().slice(0,2);
+		bestSum = (bestTimes[0] || 99999) + (bestTimes[1] || 99999);
+		sums[pindex] = bestSum;
+	});
+
+	// sort list by sum desc
+	times = _.map(playerTimesList, (times, index) => {
+		return {
+			id: index,
+			times: times || [],
+			best: sums[index]
+		};
+	});
+	return _.sortBy(times, 'best');
+};
+
+const initFinal = () => {
+	console.log('client.initFinal called');
+
+	semifinalMancheList = [];
+	finalMancheList = [];
 };
 
 // ==========================================================================
@@ -645,25 +673,7 @@ const showPlayerList = () => {
 
 	$('#tablePlayerList').empty();
 	if (playerList.length > 0) {
-
-		// calculate best time sums
-		let sums = [];
-		_.each(playerList, (_player,pindex) => {
-			let playerTimes = playerTimesList[pindex] || [];
-			let bestTimes = _.filter(playerTimes, (t) => { return t > 0; }).sort().slice(0,2);
-			let bestSum = (bestTimes[0] || 99999) + (bestTimes[1] || 99999);
-			sums[pindex] = bestSum;
-		});
-
-		// sort list by sum desc
-		let times = _.map(playerTimesList, (times, index) => {
-			return {
-				id: index,
-				times: times || [],
-				best: sums[index]
-			};
-		});
-		times = _.sortBy(times, 'best');
+		let times = getSortedPlayerList();
 
 		// draw title row
 		let titleCells = _.map(currTournament.manches, (_manche,mindex) => {
@@ -732,8 +742,9 @@ const showNextRoundNames = () => {
 		r = 0;
 	}
 
-	if (m == (mancheList.length-1) && r == (mancheList[0].length-1)) {
-		'-';
+	debugger;
+	if (m == (mancheList.length-1) && r == (mancheList[0].length)) {
+		text = '-';
 	}
 	else {
 		text = _.filter([playerList[mancheList[m][r][0]], playerList[mancheList[m][r][1]], playerList[mancheList[m][r][2]]], (n) => {
