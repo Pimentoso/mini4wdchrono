@@ -43,6 +43,7 @@ const board = new j5.Board({
 let connected = false;
 let sensorThreshold = configuration.readSettings('sensorThreshold');
 let led1, led2, led3, sensor1, sensor2, sensor3, piezo;
+let tag1, tag2, tag3;
 
 board.on('ready', () => {
 	connected = true;
@@ -50,35 +51,35 @@ board.on('ready', () => {
 	$('#tag-board-status').text(i18n.__('tag-connected'));
 
 	// ==== hardware init
-	sensor1 = new j5.Sensor({ pin: configuration.readSettings('sensorPin1'), freq: 1, threshold: 5 });
-	sensor2 = new j5.Sensor({ pin: configuration.readSettings('sensorPin2'), freq: 1, threshold: 5 });
-	sensor3 = new j5.Sensor({ pin: configuration.readSettings('sensorPin3'), freq: 1, threshold: 5 });
+	sensor1 = new j5.Sensor({ pin: configuration.readSettings('sensorPin1'), freq: 1 });
+	sensor2 = new j5.Sensor({ pin: configuration.readSettings('sensorPin2'), freq: 1 });
+	sensor3 = new j5.Sensor({ pin: configuration.readSettings('sensorPin3'), freq: 1 });
 	led1 = new j5.Led(configuration.readSettings('ledPin1'));
 	led2 = new j5.Led(configuration.readSettings('ledPin2'));
 	led3 = new j5.Led(configuration.readSettings('ledPin3'));
 	piezo = new j5.Piezo(configuration.readSettings('piezoPin'));
 
+	tag1 = $('#sensor-reading-1');
+	tag2 = $('#sensor-reading-2');
+	tag3 = $('#sensor-reading-3');
+
 	// ==== emit events to client
-	sensor1.on('change', () => {
-		let val = sensor1.scaleTo(0, 100);
-		$('#sensor-reading-1').text(val);
+	sensor1.on('data', (val) => {
+		tag1.text(val);
 		if (val <= sensorThreshold) {
 			client.sensorRead1();
 			flashLed(led1);
 		}
 	});
-	sensor2.on('change', () => {
-		let val = sensor2.scaleTo(0, 100);
-		$('#sensor-reading-2').text(val);
+	sensor2.on('data', (val) => {
+		tag2.text(val);
 		if (val <= sensorThreshold) {
 			client.sensorRead2();
 			flashLed(led2);
 		}
 	});
-	sensor3.on('change', () => {
-		let val = sensor3.scaleTo(0, 100);
-		$('#sensor-reading-3').text(val);
-
+	sensor3.on('data', (val) => {
+		tag3.text(val);
 		if (val <= sensorThreshold) {
 			client.sensorRead3();
 			flashLed(led3);
