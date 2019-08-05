@@ -298,8 +298,9 @@ const getSortedPlayerList = () => {
 const initFinal = () => {
 	console.log('client.initFinal called');
 
-	semifinalMancheList = [];
-	finalMancheList = [];
+	let ids = _.map(getSortedPlayerList(), (t) => { return t.id });
+	semifinalMancheList = ids.slice(3,6);
+	finalMancheList = ids.slice(0,3);
 };
 
 // ==========================================================================
