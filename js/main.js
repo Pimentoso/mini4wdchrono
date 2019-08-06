@@ -51,9 +51,10 @@ board.on('ready', () => {
 	$('#tag-board-status').text(i18n.__('tag-connected'));
 
 	// ==== hardware init
-	sensor1 = new j5.Sensor({ pin: configuration.readSettings('sensorPin1'), freq: 1 });
-	sensor2 = new j5.Sensor({ pin: configuration.readSettings('sensorPin2'), freq: 1 });
-	sensor3 = new j5.Sensor({ pin: configuration.readSettings('sensorPin3'), freq: 1 });
+	board.samplingInterval(1);
+	sensor1 = new j5.Sensor({ pin: configuration.readSettings('sensorPin1')});
+	sensor2 = new j5.Sensor({ pin: configuration.readSettings('sensorPin2')});
+	sensor3 = new j5.Sensor({ pin: configuration.readSettings('sensorPin3')});
 	led1 = new j5.Led(configuration.readSettings('ledPin1'));
 	led2 = new j5.Led(configuration.readSettings('ledPin2'));
 	led3 = new j5.Led(configuration.readSettings('ledPin3'));
