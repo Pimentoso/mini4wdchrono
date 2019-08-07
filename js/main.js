@@ -16,7 +16,7 @@ process.__defineGetter__("stdin", function() {
   return process.__stdin;
 });
 
-const debugMode = true;
+const debugMode = false;
 const log = require('electron-log');
 log.catchErrors();
 const { dialog, shell } = require('electron').remote;
