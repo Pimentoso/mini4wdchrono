@@ -9,7 +9,7 @@ const xls = require('./export');
 const i18n = new(require('../i18n/i18n'));
 
 let currTrack, currTournament;
-let playerList, mancheList, semifinalMancheList, finalMancheList, playerTimesList, mancheTimesList;
+let playerList, mancheList, semifinalMancheList, finalMancheList, mancheCount, roundCount, playerTimesList, mancheTimesList;
 let currManche = 0, currRound = 0, raceRunning = false, freeRound = true;
 
 let timerIntervals = [], timerSeconds = [];
@@ -299,8 +299,25 @@ const initFinal = () => {
 	console.log('client.initFinal called');
 
 	let ids = _.map(getSortedPlayerList(), (t) => { return t.id });
-	semifinalMancheList = ids.slice(3,6);
+	mancheList = mancheList.slice(0,mancheCount); // remove any previously generated finals
+
+	// generate semifinal manche rounds
+	if (playerList.length >= 6) {
+		semifinalMancheList = ids.slice(3,6);
+		mancheList.push([
+			[semifinalMancheList[0], semifinalMancheList[1], semifinalMancheList[2]], 
+			[semifinalMancheList[1], semifinalMancheList[2], semifinalMancheList[0]], 
+			[semifinalMancheList[2], semifinalMancheList[0], semifinalMancheList[1]]
+		]);
+	}
+
+	// generate final manche rounds
 	finalMancheList = ids.slice(0,3);
+	mancheList.push([
+		[finalMancheList[0], finalMancheList[1], finalMancheList[2]], 
+		[finalMancheList[1], finalMancheList[2], finalMancheList[0]], 
+		[finalMancheList[2], finalMancheList[0], finalMancheList[1]]
+	]);
 };
 
 // ==========================================================================
@@ -356,7 +373,7 @@ const prevRound = () => {
 		currRound--;
 		if (currRound < 0) {
 			currManche--;
-			currRound = mancheList[0].length-1;
+			currRound = roundCount-1;
 		}
 
 		configuration.saveSettings('currManche', currManche);
@@ -373,15 +390,26 @@ const nextRound = () => {
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded')});
 		return;
 	}
-	if (currManche == (mancheList.length-1) && currRound == (mancheList[0].length-1)) {
+	if (currManche == (mancheCount-1) && currRound == (roundCount-1)) {
+		// TODO dialog "enter final mode?"
+
 		return;
 	}
 
 	if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel']}) == 0) {
 		currRound++;
-		if (currRound == mancheList[0].length) {
+		if (currRound == roundCount) {
 			currManche++;
 			currRound = 0;
+
+			if (currManche == mancheCount) {
+				// finalina
+				initFinal();
+			}
+
+			if (currManche == mancheCount + 1) {
+				// finale
+			}
 		}
 
 		configuration.saveSettings('currManche', currManche);
@@ -500,6 +528,8 @@ const tournamentLoadDone = (obj) => {
 	currTournament = obj;
 	playerList = obj.players;
 	mancheList = obj.manches;
+	mancheCount = mancheList.length;
+	roundCount = mancheList[0].length;
 	freeRound = false;
 	$('#button-toggle-free-round').show();
 	initTimeList();
@@ -738,12 +768,12 @@ const showMancheList = () => {
 const showNextRoundNames = () => {
 	let r = currRound, m = currManche, text;
 	r += 1;
-	if (r == mancheList[0].length) {
+	if (r == roundCount) {
 		m++;
 		r = 0;
 	}
 
-	if (m == mancheList.length) {
+	if (m == mancheCount) {
 		text = '-';
 	}
 	else {
