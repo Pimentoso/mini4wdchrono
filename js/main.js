@@ -43,48 +43,95 @@ const board = new j5.Board({
 let connected = false;
 let sensorThreshold = configuration.readSettings('sensorThreshold');
 let led1, led2, led3, sensor1, sensor2, sensor3, piezo;
-let tag1, tag2, tag3;
+let val1, val2, val3, tag1, tag2, tag3;
 
 board.on('ready', () => {
 	connected = true;
 	$('#tag-board-status').addClass('is-success');
 	$('#tag-board-status').text(i18n.__('tag-connected'));
 
+	tag1 = $('#sensor-reading-1');
+	tag2 = $('#sensor-reading-2');
+	tag3 = $('#sensor-reading-3');
+
 	// ==== hardware init
-	sensor1 = new j5.Sensor({ pin: configuration.readSettings('sensorPin1'), freq: 1 });
-	sensor2 = new j5.Sensor({ pin: configuration.readSettings('sensorPin2'), freq: 1 });
-	sensor3 = new j5.Sensor({ pin: configuration.readSettings('sensorPin3'), freq: 1 });
+	board.samplingInterval(1);
 	led1 = new j5.Led(configuration.readSettings('ledPin1'));
 	led2 = new j5.Led(configuration.readSettings('ledPin2'));
 	led3 = new j5.Led(configuration.readSettings('ledPin3'));
 	piezo = new j5.Piezo(configuration.readSettings('piezoPin'));
 
-	tag1 = $('#sensor-reading-1');
-	tag2 = $('#sensor-reading-2');
-	tag3 = $('#sensor-reading-3');
+	if (configuration.readSettings('sensorPin1').charAt(0) === 'A') {
+		// analog sensor
+		sensor1 = new j5.Sensor({ pin: configuration.readSettings('sensorPin1'), threshold: 5});
+		sensor1.on('change', () => {
+			val1 = sensor1.scaleTo(0,100);
+			tag1.text(val1);
+			if (val1 <= sensorThreshold) {
+				client.sensorRead1();
+				flashLed(led1);
+			}
+		});
+	}
+	else {
+		// digital sensor
+		sensor1 = new j5.Sensor.Digital({ pin: configuration.readSettings('sensorPin1')});
+		sensor1.on('change', (val) => {
+			tag1.text(val);
+			if (val == 0) {
+				client.sensorRead1();
+				flashLed(led1);
+			}
+		});
+	}
 
-	// ==== emit events to client
-	sensor1.on('data', (val) => {
-		tag1.text(val);
-		if (val <= sensorThreshold) {
-			client.sensorRead1();
-			flashLed(led1);
-		}
-	});
-	sensor2.on('data', (val) => {
-		tag2.text(val);
-		if (val <= sensorThreshold) {
-			client.sensorRead2();
-			flashLed(led2);
-		}
-	});
-	sensor3.on('data', (val) => {
-		tag3.text(val);
-		if (val <= sensorThreshold) {
-			client.sensorRead3();
-			flashLed(led3);
-		}
-	});
+	if (configuration.readSettings('sensorPin2').charAt(0) === 'A') {
+		// analog sensor
+		sensor2 = new j5.Sensor({ pin: configuration.readSettings('sensorPin2'), threshold: 5});
+		sensor2.on('change', () => {
+			val2 = sensor2.scaleTo(0,100);
+			tag2.text(val2);
+			if (val2 <= sensorThreshold) {
+				client.sensorRead2();
+				flashLed(led2);
+			}
+		});
+	}
+	else {
+		// digital sensor
+		sensor2 = new j5.Sensor.Digital({ pin: configuration.readSettings('sensorPin2')});
+		sensor2.on('change', (val) => {
+			tag2.text(val);
+			if (val == 0) {
+				client.sensorRead2();
+				flashLed(led2);
+			}
+		});
+	}
+
+	if (configuration.readSettings('sensorPin3').charAt(0) === 'A') {
+		// analog sensor
+		sensor3 = new j5.Sensor({ pin: configuration.readSettings('sensorPin3'), threshold: 5});
+		sensor3.on('change', () => {
+			val3 = sensor3.scaleTo(0,100);
+			tag3.text(val3);
+			if (val3 <= sensorThreshold) {
+				client.sensorRead3();
+				flashLed(led3);
+			}
+		});
+	}
+	else {
+		// digital sensor
+		sensor3 = new j5.Sensor.Digital({ pin: configuration.readSettings('sensorPin3')});
+		sensor3.on('change', (val) => {
+			tag3.text(val);
+			if (val == 0) {
+				client.sensorRead3();
+				flashLed(led3);
+			}
+		});
+	}
 
 	playConnect();
 });
