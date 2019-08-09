@@ -140,14 +140,18 @@ board.on("fail", function(event) {
 	connected = false;
 	$('#tag-board-status').addClass('is-danger');
 	$('#tag-board-status').text(i18n.__('tag-disconnected'));
-	dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message});
+	if (!debugMode) {
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message});
+	}
 });
 
 board.on("error", function(event) {
 	connected = false;
 	$('#tag-board-status').addClass('is-danger');
 	$('#tag-board-status').text(i18n.__('tag-disconnected'));
-	dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message});
+	if (!debugMode) {
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message});
+	}
 });
 
 // TODO does not work
