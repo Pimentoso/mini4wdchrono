@@ -23,7 +23,7 @@ nconf.defaults({
 	'ledPin3': 5,
 	'piezoPin': 2,
 	// 'usbPort': 'COM3',
-	'sensorThreshold': 900,
+	'sensorThreshold': 50,
 	'timeThreshold': 40,
 	'speedThreshold': 5,
 	'startDelay': 3,
