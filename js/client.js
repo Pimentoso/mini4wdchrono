@@ -168,7 +168,7 @@ const guiInit = () => {
 		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '//');
 
 		if (currManche == mancheCount) {
-			if (semifinalMancheList.length) {
+			if (semifinalMancheList) {
 				$('#curr-manche').text('FINAL 4-5-6 PLACE');
 			}
 			else {
@@ -314,25 +314,31 @@ const initFinal = () => {
 	console.log('client.initFinal called');
 
 	let ids = _.map(getSortedPlayerList(), (t) => { return t.id });
-	mancheList = mancheList.slice(0, mancheCount); // remove any previously generated finals
+
+	// remove any previously generated finals
+	mancheList = mancheList.slice(0, mancheCount);
+	currTournament.finals = []
 
 	// generate semifinal manche rounds
 	if (playerList.length >= 6) {
 		semifinalMancheList = ids.slice(3,6);
-		mancheList.push([
-			[semifinalMancheList[0], semifinalMancheList[1], semifinalMancheList[2]], 
-			[semifinalMancheList[1], semifinalMancheList[2], semifinalMancheList[0]], 
+		currTournament.finals.push([
+			[semifinalMancheList[0], semifinalMancheList[1], semifinalMancheList[2]],
+			[semifinalMancheList[1], semifinalMancheList[2], semifinalMancheList[0]],
 			[semifinalMancheList[2], semifinalMancheList[0], semifinalMancheList[1]]
 		]);
 	}
 
 	// generate final manche rounds
 	finalMancheList = ids.slice(0,3);
-	mancheList.push([
-		[finalMancheList[0], finalMancheList[1], finalMancheList[2]], 
-		[finalMancheList[1], finalMancheList[2], finalMancheList[0]], 
+	currTournament.finals.push([
+		[finalMancheList[0], finalMancheList[1], finalMancheList[2]],
+		[finalMancheList[1], finalMancheList[2], finalMancheList[0]],
 		[finalMancheList[2], finalMancheList[0], finalMancheList[1]]
 	]);
+
+	mancheList.push(...currTournament.finals);
+	configuration.saveSettings('tournament', currTournament);
 };
 
 // ==========================================================================
@@ -405,22 +411,21 @@ const nextRound = () => {
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded')});
 		return;
 	}
-	if (currManche == (mancheCount-1) && currRound == (roundCount-1)) {
-		// TODO dialog "enter final mode?"
 
-		return;
-	}
+	// TODO return if end of finals
 
-	if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel']}) == 0) {
+	let dialogText = (currManche == (mancheCount-1) && currRound == (roundCount-1)) ? 'Enter final?' : i18n.__('dialog-change-round');
+	if (dialog.showMessageBox({ type: 'warning', message: dialogText, buttons: ['Ok', 'Cancel']}) == 0) {
 		currRound++;
 		if (currRound == roundCount) {
 			currManche++;
 			currRound = 0;
 
 			if (currManche >= mancheCount) {
-				// finalina/finale
-				if (mancheList.length == mancheCount) {
-					// init only once TODO maybe add a 'regenerate final' button
+				// manche index is higher than the original count: final mode
+				if (!currTournament.finals) {
+					// generate final rounds only once
+					// TODO maybe add a 'regenerate final' button
 					initFinal();
 				}
 			}
@@ -753,6 +758,11 @@ const showPlayerList = () => {
 	}
 };
 
+// same as showPlayerList but renders final rounds
+const showFinalList = () => {
+	// TODO
+};
+
 // render the manches list tab
 const showMancheList = () => {
 	console.log('client.showManchesList called');
@@ -927,12 +937,12 @@ const sensorRead1 = () => {
 };
 
 const sensorRead2 = () => {
-	if (raceRunning) 
+	if (raceRunning)
 		addLap(1);
 };
 
 const sensorRead3 = () => {
-	if (raceRunning) 
+	if (raceRunning)
 		addLap(2);
 };
 
