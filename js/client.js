@@ -166,7 +166,22 @@ const guiInit = () => {
 		$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '//');
 		$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '//');
 		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '//');
-		$('#curr-manche').text(currManche+1);
+
+		if (currManche == mancheCount) {
+			if (semifinalMancheList.length) {
+				$('#curr-manche').text('FINAL 4-5-6 PLACE');
+			}
+			else {
+				$('#curr-manche').text('FINAL 1-2-3 PLACE');
+			}
+		}
+		else if (currManche == mancheCount+1) {
+			$('#curr-manche').text('FINAL 1-2-3 PLACE');
+		}
+		else {
+			$('#curr-manche').text(currManche+1);
+		}
+
 		$('#curr-round').text(currRound+1);
 		showNextRoundNames();
 		showPlayerList();
@@ -299,7 +314,7 @@ const initFinal = () => {
 	console.log('client.initFinal called');
 
 	let ids = _.map(getSortedPlayerList(), (t) => { return t.id });
-	mancheList = mancheList.slice(0,mancheCount); // remove any previously generated finals
+	mancheList = mancheList.slice(0, mancheCount); // remove any previously generated finals
 
 	// generate semifinal manche rounds
 	if (playerList.length >= 6) {
@@ -402,13 +417,12 @@ const nextRound = () => {
 			currManche++;
 			currRound = 0;
 
-			if (currManche == mancheCount) {
-				// finalina
-				initFinal();
-			}
-
-			if (currManche == mancheCount + 1) {
-				// finale
+			if (currManche >= mancheCount) {
+				// finalina/finale
+				if (mancheList.length == mancheCount) {
+					// init only once TODO maybe add a 'regenerate final' button
+					initFinal();
+				}
 			}
 		}
 
