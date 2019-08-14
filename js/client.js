@@ -10,7 +10,7 @@ const i18n = new(require('../i18n/i18n'));
 const clone = require('clone');
 
 let currTrack, currTournament;
-let playerList, mancheList, semifinalMancheList, finalMancheList, mancheCount, roundCount, playerTimesList, mancheTimesList;
+let playerList, mancheList, mancheCount, playerTimesList, mancheTimesList;
 let currManche = 0, currRound = 0, raceRunning = false, freeRound = true;
 
 let timerIntervals = [], timerSeconds = [];
@@ -169,7 +169,7 @@ const guiInit = () => {
 		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '//');
 
 		if (currManche == mancheCount) {
-			if (semifinalMancheList) {
+			if (currManche < mancheList.length) {
 				$('#curr-manche').text('FINAL 4-5-6 PLACE');
 			}
 			else {
@@ -322,24 +322,24 @@ const initFinal = () => {
 
 	// generate semifinal manche rounds
 	if (playerList.length >= 5) {
-		semifinalMancheList = ids.slice(3,6);
-		if (semifinalMancheList.length == 2) {
+		let semifinalPlayerIds = ids.slice(3,6);
+		if (semifinalPlayerIds.length == 2) {
 			// only 5 players: pad array
-			semifinalMancheList[2] = -1;
+			semifinalPlayerIds[2] = -1;
 		}
 		currTournament.finals.push([
-			[semifinalMancheList[0], semifinalMancheList[1], semifinalMancheList[2]],
-			[semifinalMancheList[1], semifinalMancheList[2], semifinalMancheList[0]],
-			[semifinalMancheList[2], semifinalMancheList[0], semifinalMancheList[1]]
+			[semifinalPlayerIds[0], semifinalPlayerIds[1], semifinalPlayerIds[2]],
+			[semifinalPlayerIds[1], semifinalPlayerIds[2], semifinalPlayerIds[0]],
+			[semifinalPlayerIds[2], semifinalPlayerIds[0], semifinalPlayerIds[1]]
 		]);
 	}
 
 	// generate final manche rounds
-	finalMancheList = ids.slice(0,3);
+	let finalPlayerIds = ids.slice(0,3);
 	currTournament.finals.push([
-		[finalMancheList[0], finalMancheList[1], finalMancheList[2]],
-		[finalMancheList[1], finalMancheList[2], finalMancheList[0]],
-		[finalMancheList[2], finalMancheList[0], finalMancheList[1]]
+		[finalPlayerIds[0], finalPlayerIds[1], finalPlayerIds[2]],
+		[finalPlayerIds[1], finalPlayerIds[2], finalPlayerIds[0]],
+		[finalPlayerIds[2], finalPlayerIds[0], finalPlayerIds[1]]
 	]);
 
 	mancheList.push(...currTournament.finals);
@@ -399,7 +399,7 @@ const prevRound = () => {
 		currRound--;
 		if (currRound < 0) {
 			currManche--;
-			currRound = roundCount-1; // TODO FINALS roundCount non va bene perche' le finali sono sempre di 3 round, le manche no
+			currRound = mancheList[currManche].length-1;
 		}
 
 		configuration.saveSettings('currManche', currManche);
@@ -423,10 +423,10 @@ const nextRound = () => {
 		return;
 	}
 
-	let dialogText = (currManche == (mancheCount-1) && currRound == (roundCount-1)) ? i18n.__('dialog-enter-final') : i18n.__('dialog-change-round');
+	let dialogText = (currManche == (mancheCount-1) && currRound == (mancheList[currManche].length-1)) ? i18n.__('dialog-enter-final') : i18n.__('dialog-change-round');
 	if (dialog.showMessageBox({ type: 'warning', message: dialogText, buttons: ['Ok', 'Cancel']}) == 0) {
 		currRound++;
-		if (currRound == roundCount) { // TODO FINALS roundCount non va bene perche' le finali sono sempre di 3 round, le manche no
+		if (currRound == mancheList[currManche].length) {
 			currManche++;
 			currRound = 0;
 
@@ -557,7 +557,6 @@ const tournamentLoadDone = (obj) => {
 	playerList = clone(obj.players);
 	mancheList = clone(obj.manches);
 	mancheCount = mancheList.length;
-	roundCount = mancheList[0].length;
 
 	if (obj.finals) {
 		mancheList.push(...obj.finals);
@@ -804,14 +803,16 @@ const showMancheList = () => {
 };
 
 const showNextRoundNames = () => {
+
+	// debugger; TODO RIVEDERE TUTTO IL METODO
 	let r = currRound, m = currManche, text;
 	r += 1;
-	if (r == roundCount) { // TODO FINALS rivedere
+	if (r == mancheList[m].length) {
 		m++;
 		r = 0;
 	}
 
-	if (m == mancheCount) {
+	if (m == mancheList.length) {
 		text = '-';
 	}
 	else {
