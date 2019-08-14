@@ -1,6 +1,7 @@
 'use strict';
 
 const configuration = require('./configuration');
+const clone = require('clone');
 
 let rCar0, rCar1, rCar2, rCars;
 let rLaneOrder = [0, 1, 2];
@@ -45,15 +46,15 @@ const init = (track, playerIds, cars) => {
 
 	if (cars == null) {
 		// init car 1
-		rCar0 = JSON.parse(JSON.stringify(carObj));
+		rCar0 = clone(carObj);
 		rCar0.startLane = rCar0.nextLane = 0;
 
 		// init car 2
-		rCar1 = JSON.parse(JSON.stringify(carObj));
+		rCar1 = clone(carObj);
 		rCar1.startLane = rCar1.nextLane = 1;
 
 		// init car 3
-		rCar2 = JSON.parse(JSON.stringify(carObj));
+		rCar2 = clone(carObj);
 		rCar2.startLane = rCar2.nextLane = 2;
 
 		// playerIds is null if it's a free round

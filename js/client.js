@@ -7,6 +7,7 @@ const configuration = require('./configuration');
 const chrono = require('./chrono');
 const xls = require('./export');
 const i18n = new(require('../i18n/i18n'));
+const clone = require('clone');
 
 let currTrack, currTournament;
 let playerList, mancheList, semifinalMancheList, finalMancheList, mancheCount, roundCount, playerTimesList, mancheTimesList;
@@ -320,8 +321,12 @@ const initFinal = () => {
 	currTournament.finals = []
 
 	// generate semifinal manche rounds
-	if (playerList.length >= 6) {
+	if (playerList.length >= 5) {
 		semifinalMancheList = ids.slice(3,6);
+		if (semifinalMancheList.length == 2) {
+			// only 5 players: pad array
+			semifinalMancheList[2] = -1;
+		}
 		currTournament.finals.push([
 			[semifinalMancheList[0], semifinalMancheList[1], semifinalMancheList[2]],
 			[semifinalMancheList[1], semifinalMancheList[2], semifinalMancheList[0]],
@@ -394,7 +399,7 @@ const prevRound = () => {
 		currRound--;
 		if (currRound < 0) {
 			currManche--;
-			currRound = roundCount-1;
+			currRound = roundCount-1; // TODO FINALS roundCount non va bene perche' le finali sono sempre di 3 round, le manche no
 		}
 
 		configuration.saveSettings('currManche', currManche);
@@ -408,16 +413,20 @@ const nextRound = () => {
 	console.log('client.nextRound called');
 
 	if (currTournament == null || currTrack == null) {
+		// tournament not loaded
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded')});
 		return;
 	}
 
-	// TODO return if end of finals
+	if (currTournament.finals && currManche == (mancheCount+currTournament.finals.length-1) && currRound == 2) {
+		// end of finals
+		return;
+	}
 
-	let dialogText = (currManche == (mancheCount-1) && currRound == (roundCount-1)) ? 'Enter final?' : i18n.__('dialog-change-round');
+	let dialogText = (currManche == (mancheCount-1) && currRound == (roundCount-1)) ? i18n.__('dialog-enter-final') : i18n.__('dialog-change-round');
 	if (dialog.showMessageBox({ type: 'warning', message: dialogText, buttons: ['Ok', 'Cancel']}) == 0) {
 		currRound++;
-		if (currRound == roundCount) {
+		if (currRound == roundCount) { // TODO FINALS roundCount non va bene perche' le finali sono sempre di 3 round, le manche no
 			currManche++;
 			currRound = 0;
 
@@ -545,10 +554,15 @@ const tournamentLoadDone = (obj) => {
 	console.log('client.tournamentLoadDone called');
 
 	currTournament = obj;
-	playerList = obj.players;
-	mancheList = obj.manches;
+	playerList = clone(obj.players);
+	mancheList = clone(obj.manches);
 	mancheCount = mancheList.length;
 	roundCount = mancheList[0].length;
+
+	if (obj.finals) {
+		mancheList.push(...obj.finals);
+	}
+
 	freeRound = false;
 	$('#button-toggle-free-round').show();
 	initTimeList();
@@ -760,7 +774,7 @@ const showPlayerList = () => {
 
 // same as showPlayerList but renders final rounds
 const showFinalList = () => {
-	// TODO
+	// TODO FINALS
 };
 
 // render the manches list tab
@@ -792,7 +806,7 @@ const showMancheList = () => {
 const showNextRoundNames = () => {
 	let r = currRound, m = currManche, text;
 	r += 1;
-	if (r == roundCount) {
+	if (r == roundCount) { // TODO FINALS rivedere
 		m++;
 		r = 0;
 	}
