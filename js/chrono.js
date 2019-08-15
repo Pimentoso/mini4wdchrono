@@ -3,13 +3,13 @@
 const configuration = require('./configuration');
 const clone = require('clone');
 
-let rCar0, rCar1, rCar2, rCars;
-let rLaneOrder = [0, 1, 2];
-let rTrackLength = 0;
-let rTimeThreshold = 40; // percentage of single lap time to calculate cutoff
-let rSpeedThreshold = 5; // speed in m/s to calculate cutoff
-let rTimeCutoffMin = 0; // min lap cutoff
-let rTimeCutoffMax = 0; // max lap cutoff
+var rCar0, rCar1, rCar2, rCars;
+var rLaneOrder = [0, 1, 2];
+var rTrackLength = 0;
+var rTimeThreshold = 40; // percentage of single lap time to calculate cutoff
+var rSpeedThreshold = 5; // speed in m/s to calculate cutoff
+var rTimeCutoffMin = 0; // min lap cutoff
+var rTimeCutoffMax = 0; // max lap cutoff
 
 // car object template
 const carObj = {

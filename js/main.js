@@ -40,10 +40,10 @@ const board = new j5.Board({
 	timeout: 1e5,
 	repl: false // does not work with browser console
 });
-let connected = false;
-let sensorThreshold = configuration.readSettings('sensorThreshold');
-let led1, led2, led3, sensor1, sensor2, sensor3, piezo;
-let val1, val2, val3, tag1, tag2, tag3;
+var connected = false;
+var sensorThreshold = configuration.readSettings('sensorThreshold');
+var led1, led2, led3, sensor1, sensor2, sensor3, piezo;
+var val1, val2, val3, tag1, tag2, tag3;
 
 board.on('ready', () => {
 	connected = true;
@@ -242,7 +242,7 @@ $('#button-start').on('click', (e) => {
 		// production mode
 		if (!client.isFreeRound() && configuration.readSettings('tournament') && configuration.loadRound()) {
 			// TODO MODAL SPAREGGIO
-			
+
 			if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-replay-round'), buttons: ['Ok', 'Cancel']}) == 1) {
 				return;
 			}
@@ -325,7 +325,7 @@ $('.js-race-mode').on('click', (e) => {
 	if ($this.attr('disabled')) return;
 	$('.js-race-mode').removeClass('is-primary');
 	$this.addClass('is-primary');
-	var mode = $this.data('race-mode');
+	let mode = $this.data('race-mode');
 	configuration.saveSettings('raceMode', mode);
 	switch(mode) {
 		case 0:

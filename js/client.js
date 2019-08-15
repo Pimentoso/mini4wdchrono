@@ -9,13 +9,13 @@ const xls = require('./export');
 const i18n = new(require('../i18n/i18n'));
 const clone = require('clone');
 
-let currTrack, currTournament;
-let playerList, mancheList, mancheCount, playerTimesList, mancheTimesList;
-let currManche = 0, currRound = 0, raceRunning = false, freeRound = true;
+var currTrack, currTournament;
+var playerList, mancheList, mancheCount, playerTimesList, mancheTimesList;
+var currManche = 0, currRound = 0, raceRunning = false, freeRound = true;
 
-let timerIntervals = [], timerSeconds = [];
-let pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
-let checkRaceTask;
+var timerIntervals = [], timerSeconds = [];
+var pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
+var checkRaceTask;
 
 const init = () => {
 	console.log('client.init called');
@@ -220,7 +220,7 @@ const disqualify = (mindex, rindex, pindex) => {
 
 	mindex = mindex || currManche;
 	rindex = rindex || currRound;
-	var cars = configuration.loadRound(mindex, rindex);
+	let cars = configuration.loadRound(mindex, rindex);
 	cars[pindex].currTime = 99999;
 	configuration.saveRound(mindex, rindex, cars);
 	// $('#invalidate-' + pindex).attr('disabled', true); TODO
@@ -233,7 +233,7 @@ const disqualify = (mindex, rindex, pindex) => {
 const overrideTimes = () => {
 	console.log('client.overrideTimes called');
 
-	var time, cars;
+	let time, cars;
 	_.each(mancheList, (manche, mindex) => {
 		_.each(manche, (round, rindex) => {
 			cars = configuration.loadRound(mindex, rindex);
@@ -270,7 +270,7 @@ const initTimeList = () => {
 const rebuildTimeList = () => {
 	console.log('client.rebuildTimeList called');
 
-	var time, cars;
+	let time, cars;
 	_.each(mancheList, (manche, mindex) => {
 		_.each(manche, (round, rindex) => {
 			cars = configuration.loadRound(mindex, rindex);

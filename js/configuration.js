@@ -8,7 +8,7 @@ const getConfigFilePath = () => {
 	// %APPDATA% on Windows
 	// $XDG_CONFIG_HOME or ~/.config on Linux
 	// ~/Library/Application Support on macOS
-	var dir = app.getPath('userData');
+	let dir = app.getPath('userData');
 	return path.join(dir, filename);
 };
 
