@@ -180,10 +180,10 @@ const guiInit = () => {
 			$('#curr-manche').text('FINAL 1-2-3 PLACE');
 		}
 		else {
-			$('#curr-manche').text(currManche+1);
+			$('#curr-manche').text(`MANCHE ${currManche+1}`);
 		}
 
-		$('#curr-round').text(currRound+1);
+		$('#curr-round').text(`ROUND ${currRound+1}`);
 		showNextRoundNames();
 		showPlayerList();
 		showMancheList();
@@ -329,8 +329,8 @@ const initFinal = () => {
 		}
 		currTournament.finals.push([
 			[semifinalPlayerIds[0], semifinalPlayerIds[1], semifinalPlayerIds[2]],
-			[semifinalPlayerIds[1], semifinalPlayerIds[2], semifinalPlayerIds[0]],
-			[semifinalPlayerIds[2], semifinalPlayerIds[0], semifinalPlayerIds[1]]
+			[semifinalPlayerIds[2], semifinalPlayerIds[0], semifinalPlayerIds[1]],
+			[semifinalPlayerIds[1], semifinalPlayerIds[2], semifinalPlayerIds[0]]
 		]);
 	}
 
@@ -338,8 +338,8 @@ const initFinal = () => {
 	let finalPlayerIds = ids.slice(0,3);
 	currTournament.finals.push([
 		[finalPlayerIds[0], finalPlayerIds[1], finalPlayerIds[2]],
-		[finalPlayerIds[1], finalPlayerIds[2], finalPlayerIds[0]],
-		[finalPlayerIds[2], finalPlayerIds[0], finalPlayerIds[1]]
+		[finalPlayerIds[2], finalPlayerIds[0], finalPlayerIds[1]],
+		[finalPlayerIds[1], finalPlayerIds[2], finalPlayerIds[0]]
 	]);
 
 	mancheList.push(...currTournament.finals);
