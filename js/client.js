@@ -559,7 +559,7 @@ const tournamentLoadDone = (obj) => {
 	mancheCount = mancheList.length;
 
 	if (obj.finals) {
-		mancheList.push(...obj.finals);
+		mancheList.push(...clone(obj.finals));
 	}
 
 	freeRound = false;
@@ -771,33 +771,29 @@ const showPlayerList = () => {
 	}
 };
 
-// same as showPlayerList but renders final rounds
-const showFinalList = () => {
-	// TODO FINALS
-};
-
 // render the manches list tab
 const showMancheList = () => {
 	console.log('client.showManchesList called');
 
 	$('#tableMancheList').empty();
-	let mancheText, playerName, playerTime, playerForm, highlight;
+	let mancheTitle, mancheText, playerName, playerTime, playerForm, highlight;
 	_.each(mancheList, (manche, mindex) => {
-		$('#tableMancheList').append('<tr class="is-selected"><td><strong>MANCHE ' + (mindex+1) + '</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>');
+		mancheTitle = `MANCHE ${mindex+1}`; // TODO change to FINAL XXX if mindex >= mancheCount
+		$('#tableMancheList').append(`<tr class="is-selected"><td><strong>${mancheTitle}</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>`);
 		_.each(manche, (group, rindex) => {
 			mancheText = _.map(group, (id, pindex) => {
-				playerName = '<p class="has-text-centered is-uppercase">' + (playerList[id] || '') + '</p>';
+				playerName = `<p class="has-text-centered is-uppercase">${playerList[id] || ''}</p>`;
 				playerTime = (mancheTimesList[mindex] && mancheTimesList[mindex][rindex]) ? mancheTimesList[mindex][rindex][pindex] : 0;
 				if (playerList[id]) {
-					playerForm = '<div class="field"><div class="control"><input class="input is-large js-time-form" type="text" data-manche="' + mindex + '" data-round="' + rindex + '" data-player="' + pindex + '" value="' + utils.prettyTime(playerTime) + '"></div></div>';
+					playerForm = `<div class="field"><div class="control"><input class="input is-large js-time-form" type="text" data-manche="${mindex}" data-round="${rindex}" data-player="${pindex}" value="${utils.prettyTime(playerTime)}"></div></div>`;
 				}
 				else {
 					playerForm = '';
 				}
-				return '<td>' + playerName + playerForm + '</td>';
+				return `<td>${playerName}${playerForm}</td>`;
 			}).join();
 			highlight = (mindex == currManche && rindex == currRound) ? 'class="is-highlighted"' : '';
-			$('#tableMancheList').append('<tr ' + highlight + '><td>Round ' + (rindex+1) + '</td>' + mancheText + '</tr>');
+			$('#tableMancheList').append(`<tr ${highlight}><td>Round ${rindex+1}</td>${mancheText}</tr>`);
 		});
 	});
 };
