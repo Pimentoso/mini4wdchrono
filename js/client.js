@@ -167,22 +167,7 @@ const guiInit = () => {
 		$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '//');
 		$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '//');
 		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '//');
-
-		if (currManche == mancheCount) {
-			if (currManche < mancheList.length) {
-				$('#curr-manche').text('FINAL 4-5-6 PLACE');
-			}
-			else {
-				$('#curr-manche').text('FINAL 1-2-3 PLACE');
-			}
-		}
-		else if (currManche == mancheCount+1) {
-			$('#curr-manche').text('FINAL 1-2-3 PLACE');
-		}
-		else {
-			$('#curr-manche').text(`MANCHE ${currManche+1}`);
-		}
-
+		$('#curr-manche').text(mancheName());
 		$('#curr-round').text(`ROUND ${currRound+1}`);
 		showNextRoundNames();
 		showPlayerList();
@@ -778,8 +763,7 @@ const showMancheList = () => {
 	$('#tableMancheList').empty();
 	let mancheTitle, mancheText, playerName, playerTime, playerForm, highlight;
 	_.each(mancheList, (manche, mindex) => {
-		mancheTitle = `MANCHE ${mindex+1}`; // TODO change to FINAL XXX if mindex >= mancheCount
-		$('#tableMancheList').append(`<tr class="is-selected"><td><strong>${mancheTitle}</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>`);
+		$('#tableMancheList').append(`<tr class="is-selected"><td><strong>${mancheName(mindex)}</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>`);
 		_.each(manche, (group, rindex) => {
 			mancheText = _.map(group, (id, pindex) => {
 				playerName = `<p class="has-text-centered is-uppercase">${playerList[id] || ''}</p>`;
@@ -799,8 +783,6 @@ const showMancheList = () => {
 };
 
 const showNextRoundNames = () => {
-
-	// debugger; TODO RIVEDERE TUTTO IL METODO
 	let r = currRound, m = currManche, text;
 	r += 1;
 	if (r == mancheList[m].length) {
@@ -818,6 +800,20 @@ const showNextRoundNames = () => {
 	}
 
 	$('#next-round-names').text(text);
+};
+
+const mancheName = (mindex) => {
+	mindex = mindex || currManche;
+
+	if (mindex == mancheCount) {
+		return (mindex < mancheList.length) ? 'FINAL 4-5-6 PLACE' : 'FINAL 1-2-3 PLACE';
+	}
+	else if (mindex == mancheCount+1) {
+		return 'FINAL 1-2-3 PLACE';
+	}
+	else {
+		return `MANCHE ${mindex+1}`;
+	}
 };
 
 // @param [bool] fromSaved: pass true if you want to render a past round. It will be loaded from configuration.
