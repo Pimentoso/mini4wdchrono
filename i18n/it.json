@@ -89,7 +89,7 @@
     "dialog-track-not-loaded": "Pista non caricata!",
     "dialog-tournament-not-loaded": "Torneo non caricato!",
 		"dialog-change-round": "Cambiare round?",
-		"dialog-enter-final": "Passare alla finale?",
+		"dialog-enter-final": "Passare alla finale? Assicurarsi che tutti i tempi dei giocatori siano corretti e definitivi!",
     "dialog-restart": "Si prega di riavviare il programma perche' le modifiche abbiano effetto.",
     "dialog-disqualify": "Squalificare questo tempo? Sara' cambiato in 99.999.",
     "dialog-replay-round": "Giocare di nuovo questo round? I dati attuali saranno persi.",
