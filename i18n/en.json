@@ -61,7 +61,7 @@
     "label-lane-3": "LANE 3",
     "label-best-2-times": "Sum of 2 best",
     "label-best-speed": "Best speed",
-    "label-custom-title": "Custom title",
+    "label-custom-title": "Your team/club name",
     "label-usb-port": "USB Port",
     "label-sensitivity": "Sensitivity - lap will trigger if sensor value goes below this. Not used by digital sensors.",
     "label-sensor-reading": "Sensor values",

@@ -90,10 +90,9 @@ Example lap timer made using cable ducts:
 
 Connection pins: every pin used is configurable inside the program, but the default are:
 
-- Light sensors: A5, A6, A7
+- Light sensors: D6, D7, D8
 - LEDs: D3, D4, D5
 - Buzzer: D2
-The sensor pins are not the same of the above diagram, because the Arduino UNO in the diagram only has 6 analog pins.
 
 Now you need to flash the StandardFirmataPlus firmware on your arduino board. This will allow the arduino to comunicate with the computer via USB. Instructions:
 
