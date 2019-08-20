@@ -17,9 +17,11 @@ process.__defineGetter__("stdin", function() {
 });
 
 const debugMode = false;
+
+const electron = require('electron');
 const log = require('electron-log');
 log.catchErrors();
-const { dialog, shell } = require('electron').remote;
+const { dialog, shell, app } = electron.remote;
 const j5 = require('johnny-five');
 
 const xls = require('./js/export');
@@ -27,6 +29,9 @@ const configuration = require('./js/configuration');
 const client = require('./js/client');
 const utils = require('./js/utils');
 const i18n = new(require('./i18n/i18n'));
+
+// Show version in about tab
+$('#js-about-version').text('Version ' + app.getVersion());
 
 // open links externally by default
 $(document).on('click', 'a[href^="http"]', function(event) {
