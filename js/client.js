@@ -49,8 +49,6 @@ const init = () => {
 		$('#js-config-usb-port').val(configuration.readSettings('usbPort'));
 	});
 
-	$('#js-about-version').text('Version ' + process.env.npm_package_version);
-
 	// translate ui
 	$('.tn').each(function(index) {
 		$(this).text(i18n.__($(this).data('tn')));
