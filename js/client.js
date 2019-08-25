@@ -33,7 +33,6 @@ const init = () => {
 	$('#js-config-led-pin-2').val(configuration.readSettings('ledPin2'));
 	$('#js-config-led-pin-3').val(configuration.readSettings('ledPin3'));
 	$('#js-config-piezo-pin').val(configuration.readSettings('piezoPin'));
-	$('#js-config-sensor-threshold').val(configuration.readSettings('sensorThreshold'));
 	$('#js-config-title').val(configuration.readSettings('title'));
 
 	$('#button-toggle-free-round').hide();

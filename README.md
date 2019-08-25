@@ -47,7 +47,7 @@ https://www.aliexpress.com/item/32341832857.html
 
 https://www.aliexpress.com/item/33000619572.html
 
-- 3x photoresistor sensors. I'm using TEMT6000 for their slim form factor, but it will work with any photoresistor + 10kΩ resistor.
+- 3x phototransistor sensors. I'm using TEMT6000 for their slim form factor. Do not use photoresistors, they're slow.
 
 https://www.aliexpress.com/item/32583469115.html
 
@@ -71,7 +71,7 @@ Real life assembled electronics:
 
 ## Building the lap timer
 
-Drill 3 holes in the middle of the 3 lanes of a mini4wd track piece. Put the photoresistors under the holes and fix them with tape.
+Drill 3 holes in the middle of the 3 lanes of a mini4wd track piece. Put the phototransistors under the holes and fix them with tape.
 
 ![sensors mounted](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/sensors.jpg)
 
