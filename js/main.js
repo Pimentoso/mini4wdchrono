@@ -71,9 +71,9 @@ board.on('ready', function () {
 	sensorPin3 = configuration.readSettings('sensorPin3');
 
 	this.samplingInterval(1);
-	this.pinMode(sensorPin1, five.Pin.INPUT);
-	this.pinMode(sensorPin2, five.Pin.INPUT);
-	this.pinMode(sensorPin3, five.Pin.INPUT);
+	this.pinMode(sensorPin1, j5.Pin.INPUT);
+	this.pinMode(sensorPin2, j5.Pin.INPUT);
+	this.pinMode(sensorPin3, j5.Pin.INPUT);
 
 	this.digitalRead(sensorPin1, function (val) {
 		tag1.text(val);
