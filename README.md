@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.9.7-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
+[![Version](https://img.shields.io/badge/version-0.10.1-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
 
 Mini4wdChrono is a fully free and open source project to make a functional 3-lane lap timer for Mini4WD Japan Cup tracks.
 The hardware has been chosen to be as simple and cheap as possible, while still maintain accuracy.
@@ -47,7 +47,7 @@ https://www.aliexpress.com/item/32341832857.html
 
 https://www.aliexpress.com/item/33000619572.html
 
-- 3x photoresistor sensors. I'm using TEMT6000 for their slim form factor, but it will work with any photoresistor + 10kΩ resistor.
+- 3x phototransistor sensors. I'm using TEMT6000 for their slim form factor. Do not use photoresistors, they're slow.
 
 https://www.aliexpress.com/item/32583469115.html
 
@@ -71,7 +71,7 @@ Real life assembled electronics:
 
 ## Building the lap timer
 
-Drill 3 holes in the middle of the 3 lanes of a mini4wd track piece. Put the photoresistors under the holes and fix them with tape.
+Drill 3 holes in the middle of the 3 lanes of a mini4wd track piece. Put the phototransistors under the holes and fix them with tape.
 
 ![sensors mounted](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/sensors.jpg)
 
@@ -90,10 +90,9 @@ Example lap timer made using cable ducts:
 
 Connection pins: every pin used is configurable inside the program, but the default are:
 
-- Light sensors: A5, A6, A7
+- Light sensors: D6, D7, D8
 - LEDs: D3, D4, D5
 - Buzzer: D2
-The sensor pins are not the same of the above diagram, because the Arduino UNO in the diagram only has 6 analog pins.
 
 Now you need to flash the StandardFirmataPlus firmware on your arduino board. This will allow the arduino to comunicate with the computer via USB. Instructions:
 
