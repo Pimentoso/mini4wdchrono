@@ -95,7 +95,7 @@ const reset = () => {
 	currTournament = null;
 	raceRunning = false;
 
-	configuration.deleteSettings('mancheTimes');
+	configuration.deleteSettings('mancheTimes'); // legacy
 	configuration.deleteSettings('playerTimes');
 	configuration.deleteSettings('track');
 	configuration.deleteSettings('tournament');
