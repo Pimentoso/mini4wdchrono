@@ -218,7 +218,7 @@ const overrideTimes = () => {
 		_.each(manche, (round, rindex) => {
 			cars = configuration.loadRound(mindex, rindex);
 			if (cars) {
-				_.each(round, (playerId, pindex) => {
+				_.each(round, (_playerId, pindex) => {
 					time = $("input[data-manche='" + mindex + "'][data-round='" + rindex + "'][data-player='" + pindex + "']").val();
 					if (time) {
 						cars[pindex].currTime = utils.safeTime(time);
@@ -364,10 +364,12 @@ const prevRound = () => {
 	console.log('client.prevRound called');
 
 	if (currTournament == null || currTrack == null) {
+		// tournament not loaded
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded')});
 		return;
 	}
 	if (currManche == 0 && currRound == 0) {
+		// first round, can't go back
 		return;
 	}
 
@@ -604,15 +606,12 @@ const raceFinished = () => {
 		let cars = chrono.getCars();
 
 		if (cars[0].playerId > -1) {
-			playerTimes[cars[0].playerId] = playerTimes[cars[0].playerId] || [];
 			playerTimes[cars[0].playerId][currManche] = cars[0].currTime;
 		}
 		if (cars[1].playerId > -1) {
-			playerTimes[cars[1].playerId] = playerTimes[cars[1].playerId] || [];
 			playerTimes[cars[1].playerId][currManche] = cars[1].currTime;
 		}
 		if (cars[2].playerId > -1) {
-			playerTimes[cars[2].playerId] = playerTimes[cars[2].playerId] || [];
 			playerTimes[cars[2].playerId][currManche] = cars[2].currTime;
 		}
 		configuration.saveSettings('playerTimes', playerTimes);
@@ -937,25 +936,15 @@ const saveXls = () => {
 // ==========================================================================
 // ==== listen to arduino events
 
-const sensorRead1 = () => {
+const sensorRead = (lane) => {
 	if (raceRunning)
-		addLap(0);
-};
-
-const sensorRead2 = () => {
-	if (raceRunning)
-		addLap(1);
-};
-
-const sensorRead3 = () => {
-	if (raceRunning)
-		addLap(2);
+		addLap(lane);
 };
 
 const addLap = (lane) => {
 	console.log('client.addLap called');
 
-	chrono.addLap(lane);
+	chrono.addLap(lane-1);
 	if (chrono.isRaceFinished()) {
 		raceFinished();
 	}
@@ -965,9 +954,7 @@ const addLap = (lane) => {
 module.exports = {
 	init: init,
 	reset: reset,
-	sensorRead1: sensorRead1,
-	sensorRead2: sensorRead2,
-	sensorRead3: sensorRead3,
+	sensorRead: sensorRead,
 	keydown: keydown,
 	loadTrack: loadTrack,
 	setTrackManual: setTrackManual,

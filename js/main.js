@@ -18,6 +18,7 @@ process.__defineGetter__("stdin", function () {
 
 ////////////////////////
 const debugMode = false;
+////////////////////////
 
 const electron = require('electron');
 
@@ -80,7 +81,7 @@ board.on('ready', function () {
 	this.digitalRead(sensorPin1, function (val) {
 		tag1.text(val);
 		if (val == 0) {
-			client.sensorRead1();
+			client.sensorRead(1);
 			flashLed(led1);
 		}
 	});
@@ -88,7 +89,7 @@ board.on('ready', function () {
 	this.digitalRead(sensorPin2, function (val) {
 		tag2.text(val);
 		if (val == 0) {
-			client.sensorRead2();
+			client.sensorRead(2);
 			flashLed(led2);
 		}
 	});
@@ -96,7 +97,7 @@ board.on('ready', function () {
 	this.digitalRead(sensorPin3, function (val) {
 		tag3.text(val);
 		if (val == 0) {
-			client.sensorRead3();
+			client.sensorRead(3);
 			flashLed(led3);
 		}
 	});
