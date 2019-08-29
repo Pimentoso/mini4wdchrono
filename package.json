@@ -16,12 +16,14 @@
     "electron": "^5.0.6",
     "electron-packager": "^14.0.1",
     "electron-rebuild": "^1.8.4",
-    "electron-reload": "^1.4.0"
+    "electron-reload": "^1.4.0",
+    "jest": "^24.9.0"
   },
   "scripts": {
     "postinstall": "node ./scripts/postinstall.js",
     "start": "./node_modules/.bin/electron .",
-    "watch": "./node_modules/.bin/electron . --watch"
+    "watch": "./node_modules/.bin/electron . --watch",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
