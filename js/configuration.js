@@ -12,7 +12,7 @@ const getConfigFilePath = () => {
 	return path.join(dir, filename);
 };
 
-const nconf = require('nconf').file({file: getConfigFilePath()});
+const nconf = require('nconf').file({ file: getConfigFilePath() });
 
 nconf.defaults({
 	'sensorPin1': 6,
@@ -31,13 +31,13 @@ nconf.defaults({
 });
 
 const saveSettings = (settingKey, settingValue) => {
-  nconf.set(settingKey, settingValue);
-  nconf.save();
+	nconf.set(settingKey, settingValue);
+	nconf.save();
 };
 
 const readSettings = (settingKey) => {
-  nconf.load();
-  return nconf.get(settingKey);
+	nconf.load();
+	return nconf.get(settingKey);
 };
 
 const deleteSettings = (settingKey) => {
@@ -63,11 +63,22 @@ const deleteRound = (manche, round) => {
 	nconf.save();
 };
 
+const reset = () => {
+	deleteSettings('mancheTimes');
+	deleteSettings('playerTimes');
+	deleteSettings('track');
+	deleteSettings('tournament');
+	deleteSettings('race');
+	saveSettings('currManche', 0);
+	saveSettings('currRound', 0);
+};
+
 module.exports = {
-    saveSettings: saveSettings,
-		readSettings: readSettings,
-		deleteSettings: deleteSettings,
-		saveRound: saveRound,
-		loadRound: loadRound,
-		deleteRound: deleteRound
+	saveSettings: saveSettings,
+	readSettings: readSettings,
+	deleteSettings: deleteSettings,
+	saveRound: saveRound,
+	loadRound: loadRound,
+	deleteRound: deleteRound,
+	reset: reset
 };

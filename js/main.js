@@ -27,6 +27,7 @@ const j5 = require('johnny-five');
 const xls = require('./js/export');
 const configuration = require('./js/configuration');
 const client = require('./js/client');
+const ui = require('./js/ui');
 const utils = require('./js/utils');
 const i18n = new (require('./i18n/i18n'));
 
@@ -200,7 +201,7 @@ $('#button-start').on('click', (e) => {
 
 	if (debugMode) {
 		// debug mode
-		client.raceStarted();
+		ui.raceStarted();
 		client.initRound();
 		client.startRound();
 	}
@@ -213,7 +214,7 @@ $('#button-start').on('click', (e) => {
 				return;
 			}
 		}
-		client.raceStarted();
+		ui.raceStarted();
 		playStart();
 	}
 });
@@ -248,7 +249,7 @@ $('#button-save-settings').on('click', (e) => {
 	configuration.saveSettings('timeThreshold', parseFloat($('#js-settings-time-threshold').val().replace(',', '.')));
 	configuration.saveSettings('speedThreshold', parseFloat($('#js-settings-speed-threshold').val().replace(',', '.')));
 	configuration.saveSettings('startDelay', parseFloat($('#js-settings-start-delay').val().replace(',', '.')));
-	client.showThresholds();
+	ui.showThresholds();
 	e.preventDefault();
 });
 
@@ -272,7 +273,7 @@ $(document).on('keyup', '.js-time-form', (e) => {
 });
 
 $('#button-manches-cancel').on('click', (e) => {
-	client.showMancheList();
+	ui.showMancheList();
 	$('#button-manches-save').attr('disabled', true);
 	$('#button-manches-cancel').attr('disabled', true);
 });

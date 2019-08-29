@@ -1,7 +1,7 @@
 'use strict';
 
-const { dialog } = require('electron').remote
-const serialport = require('serialport');
+const { dialog } = require('electron').remote;
+const ui = require('./ui');
 const utils = require('./utils');
 const configuration = require('./configuration');
 const chrono = require('./chrono');
@@ -19,34 +19,7 @@ let checkRaceTask;
 const init = () => {
 	console.log('client.init called');
 
-	// populate ui fields
-	$('#js-title').text(configuration.readSettings('title'));
-	$('#js-race-mode-' + configuration.readSettings('raceMode')).click();
-	$('#js-settings-time-threshold').val(configuration.readSettings('timeThreshold'));
-	$('#js-settings-speed-threshold').val(configuration.readSettings('speedThreshold'));
-	$('#js-settings-start-delay').val(configuration.readSettings('startDelay'));
-
-	$('#js-config-sensor-pin-1').val(configuration.readSettings('sensorPin1'));
-	$('#js-config-sensor-pin-2').val(configuration.readSettings('sensorPin2'));
-	$('#js-config-sensor-pin-3').val(configuration.readSettings('sensorPin3'));
-	$('#js-config-led-pin-1').val(configuration.readSettings('ledPin1'));
-	$('#js-config-led-pin-2').val(configuration.readSettings('ledPin2'));
-	$('#js-config-led-pin-3').val(configuration.readSettings('ledPin3'));
-	$('#js-config-piezo-pin').val(configuration.readSettings('piezoPin'));
-	$('#js-config-title').val(configuration.readSettings('title'));
-
-	$('#button-toggle-free-round').hide();
-
-	serialport.list(function (err, ports) {
-		ports.forEach(function(port) {
-			$('#js-config-usb-port').append($('<option>', {
-				value: port.comName,
-				text: port.comName
-			}));
-			console.log(port.comName);
-		});
-		$('#js-config-usb-port').val(configuration.readSettings('usbPort'));
-	});
+	ui.initialize();
 
 	// translate ui
 	$('.tn').each(function(index) {
@@ -96,80 +69,12 @@ const reset = () => {
 	currTournament = null;
 	raceRunning = false;
 
-	configuration.deleteSettings('mancheTimes');
-	configuration.deleteSettings('playerTimes');
-	configuration.deleteSettings('track');
-	configuration.deleteSettings('tournament');
-	configuration.deleteSettings('race');
-	configuration.saveSettings('currManche', currManche);
-	configuration.saveSettings('currRound', currRound);
-
-	$('#js-input-track-code').removeClass('is-danger');
-	$('#js-input-track-code').val('');
-	$('#js-track-order-manual').val('');
-	$('#js-track-length-manual').val('');
-	$('#js-input-tournament-code').removeClass('is-danger');
-	$('#js-input-tournament-code').val('');
-	$('#tag-track-status').addClass('is-danger');
-	$('#tag-track-status').removeClass('is-success');
-	$('#tag-track-status').text(i18n.__('tag-not-loaded'));
-	$('#tag-tournament-status').addClass('is-danger');
-	$('#tag-tournament-status').removeClass('is-success');
-	$('#tag-tournament-status').text(i18n.__('tag-not-loaded'));
+	configuration.reset();
+	ui.reset();
 
 	initTimeList();
 	showTrackDetails();
 	showTournamentDetails();
-};
-
-const guiInit = () => {
-	console.log('client.guiInit called');
-
-	$('.js-show-on-race-started').hide();
-	$('.js-hide-on-race-started').show();
-
-	if (currTrack == null) {
-		$('.js-show-on-no-track').show();
-		$('.js-hide-on-no-track').hide();
-	}
-	else {
-		$('.js-show-on-no-track').hide();
-		$('.js-hide-on-no-track').show();
-	}
-
-	if (currTournament == null) {
-		$('.js-show-on-no-tournament').show();
-		$('.js-hide-on-no-tournament').hide();
-		$('#name-lane0').text(' ');
-		$('#name-lane1').text(' ');
-		$('#name-lane2').text(' ');
-		$('#curr-manche').text('0');
-		$('#curr-round').text('0');
-	}
-	else if (freeRound) {
-		$('.js-show-on-free-round').show();
-		$('.js-hide-on-free-round').hide();
-		$('#name-lane0').text(' ');
-		$('#name-lane1').text(' ');
-		$('#name-lane2').text(' ');
-		$('#curr-manche').text('0');
-		$('#curr-round').text('0');
-		showPlayerList();
-		showMancheList();
-	}
-	else {
-		$('.js-show-on-no-tournament').hide();
-		$('.js-hide-on-no-tournament').show();
-		$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '//');
-		$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '//');
-		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '//');
-		$('#curr-manche').text(currManche+1);
-		$('#curr-round').text(currRound+1);
-		showNextRoundNames();
-		showPlayerList();
-		showMancheList();
-		drawRace(true);
-	}
 };
 
 const chronoInit = (reset) => {
@@ -204,10 +109,9 @@ const disqualify = (mindex, rindex, pindex) => {
 	var cars = configuration.loadRound(mindex, rindex);
 	cars[pindex].currTime = 99999;
 	configuration.saveRound(mindex, rindex, cars);
-	// $('#invalidate-' + pindex).attr('disabled', true); TODO
 
 	rebuildTimeList();
-	guiInit();
+	ui.initRace(freeRound);
 };
 
 // Reads all input fields in the manches tab and rebuilds time list
@@ -231,7 +135,7 @@ const overrideTimes = () => {
 	});
 
 	rebuildTimeList();
-	guiInit();
+	ui.initRace(freeRound);
 };
 
 // Initializes playerTimes
@@ -277,6 +181,7 @@ const rebuildTimeList = () => {
 // called before the starting sequence
 const initRound = () => {
 	console.log('client.initRound called');
+	
 	chronoInit(true);
 	drawRace();
 };
@@ -330,7 +235,7 @@ const prevRound = () => {
 		configuration.saveSettings('currManche', currManche);
 		configuration.saveSettings('currRound', currRound);
 		chronoInit();
-		guiInit();
+		ui.initRace(freeRound);
 	}
 };
 
@@ -355,28 +260,17 @@ const nextRound = () => {
 		configuration.saveSettings('currManche', currManche);
 		configuration.saveSettings('currRound', currRound);
 		chronoInit();
-		guiInit();
+		ui.initRace(freeRound);
 	}
 };
 
 const isFreeRound = () => freeRound;
 
 const toggleFreeRound = () => {
-	if (freeRound) {
-		freeRound = false;
-		$('#button-toggle-free-round').text(i18n.__('button-goto-free'));
-		$('#button-prev').show();
-		$('#button-next').show();
-		chronoInit();
-	}
-	else {
-		freeRound = true;
-		$('#button-toggle-free-round').text(i18n.__('button-goto-race'));
-		$('#button-prev').hide();
-		$('#button-next').hide();
-		chronoInit(true);
-	}
-	guiInit();
+	freeRound = !freeRound;
+	chronoInit(freeRound);
+	ui.toggleFreeRound(freeRound);
+	ui.initRace(freeRound);
 	drawRace();
 };
 
@@ -428,7 +322,6 @@ const loadTournament = () => {
 	console.log('client.loadTournament called');
 
 	let code = $('#js-input-tournament-code').val().slice(-6);
-	$('#js-input-tournament-code').removeClass('is-danger');
 	$.getJSON('https://mini4wd-tournament.pimentoso.com/api/tournament/' + code)
 	.done((obj) => {
 		tournamentLoadDone(obj);
@@ -444,10 +337,7 @@ const trackLoadDone = (obj) => {
 	console.log('client.trackLoadDone called');
 
 	currTrack = obj;
-	$('#js-input-track-code').removeClass('is-danger');
-	$('#tag-track-status').removeClass('is-danger');
-	$('#tag-track-status').addClass('is-success');
-	$('#tag-track-status').text(obj.code);
+	ui.trackLoadDone(currTrack);
 	showTrackDetails();
 };
 
@@ -455,10 +345,7 @@ const trackLoadFail = () => {
 	console.log('client.trackLoadFail called');
 
 	currTrack = null;
-	$('#js-input-track-code').addClass('is-danger');
-	$('#tag-track-status').addClass('is-danger');
-	$('#tag-track-status').removeClass('is-success');
-	$('#tag-track-status').text(i18n.__('tag-not-loaded'));
+	ui.trackLoadFail();
 	showTrackDetails();
 };
 
@@ -469,22 +356,15 @@ const tournamentLoadDone = (obj) => {
 	playerList = obj.players;
 	mancheList = obj.manches;
 	freeRound = false;
-	$('#button-toggle-free-round').show();
+	ui.tournamentLoadDone(currTournament);
 	initTimeList();
-	$('#tag-tournament-status').removeClass('is-danger');
-	$('#tag-tournament-status').addClass('is-success');
-	$('#tag-tournament-status').text(obj.code);
-	$('#js-input-tournament-code').val(obj.code);
 };
 
 const tournamentLoadFail = () => {
 	console.log('client.tournamentLoadFail called');
 
 	currTournament = null;
-	$('#js-input-tournament-code').addClass('is-danger');
-	$('#tag-tournament-status').addClass('is-danger');
-	$('#tag-tournament-status').removeClass('is-success');
-	$('#tag-tournament-status').text(i18n.__('tag-not-loaded'));
+	ui.tournamentLoadFail();
 };
 
 // ==========================================================================
@@ -519,13 +399,6 @@ const checkStart = () => {
 	if (redraw) drawRace();
 };
 
-// called when a round is started. Handles UI changes
-const raceStarted = () => {
-	$('.js-show-on-race-started').show();
-	$('.js-hide-on-race-started').hide();
-	$('.js-disable-on-race-started').attr('disabled', true);
-};
-
 // called when the current round has completed. Saves times and handles UI changes
 const raceFinished = () => {
 	console.log('client.raceFinished called');
@@ -553,14 +426,12 @@ const raceFinished = () => {
 
 		configuration.saveRound(currManche, currRound, cars);
 
-		showPlayerList();
-		showMancheList();
+		ui.showPlayerList();
+		ui.showMancheList();
 	}
 
 	raceRunning = false;
-	$('.js-show-on-race-started').hide();
-	$('.js-hide-on-race-started').show();
-	$('.js-disable-on-race-started').removeAttr('disabled');
+	ui.raceFinished();
 };
 
 // ==========================================================================
@@ -569,176 +440,18 @@ const raceFinished = () => {
 const showTrackDetails = () => {
 	console.log('client.showTrackDetails called');
 
-	if (currTrack) {
-		if (currTrack.manual) {
-			$('#js-input-track-code').val('');
-			$('#js-track-length').text('-');
-			$('#js-track-order').text('-');
-			$('#js-link-track').attr('href', 'https://mini4wd-track-editor.pimentoso.com/');
-			$('#js-track-length-manual').val(currTrack.length);
-			$('#js-track-order-manual').val(currTrack.order.join('-'));
-		}
-		else {
-			$('#js-input-track-code').val(currTrack.url);
-			$('#js-track-length').text(i18n.__('label-track-length') + ': ' + currTrack.length + ' m');
-			$('#js-track-order').text(i18n.__('label-track-lane-order') + ': ' + currTrack.order + ',1');
-			$('#js-link-track').attr('href', currTrack.view_url);
-			$('#js-track-length-manual').val('');
-			$('#js-track-order-manual').val('');
-		}
-	}
-	else {
-		$('#js-track-length').text('-');
-		$('#js-track-order').text('-');
-		$('#js-link-track').attr('href', 'https://mini4wd-track-editor.pimentoso.com/');
-	}
-	showThresholds();
+	ui.showTrackDetails(currTrack);
+	ui.showThresholds();
 	chronoInit(true);
-	guiInit();
+	ui.initRace(freeRound);
 	drawRace();
 };
 
 const showTournamentDetails = () => {
 	console.log('client.showTournamentDetails called');
 
-	if (currTournament) {
-		$('#js-input-tournament-code').val(currTournament.url);
-		$('#js-tournament-players').text(i18n.__('label-tournament-players') + ': ' + currTournament.players.length);
-		$('#js-tournament-manches').text(i18n.__('label-tournament-manches') + ': ' + currTournament.manches.length);
-		$('#js-link-tournament').attr('href', currTournament.url);
-	}
-	else {
-		$('#js-tournament-players').text('-');
-		$('#js-tournament-manches').text('-');
-		$('#js-link-tournament').attr('href', 'https://mini4wd-tournament.pimentoso.com/');
-	}
-	guiInit();
-};
-
-const showThresholds = () => {
-	console.log('client.showThresholds called');
-
-	if (currTrack) {
-		let rTrackLength = currTrack.length;
-		let rSpeedThreshold = configuration.readSettings('speedThreshold');
-		let rTimeThreshold = configuration.readSettings('timeThreshold')/100;
-		let estimatedTime = rTrackLength / rSpeedThreshold;
-		let estimatedCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold);
-		let estimatedCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold);
-		$('#js-settings-estimated-time').show();
-		$('#js-settings-estimated-time').text(i18n.__('label-time-estimated') + ': ' + estimatedTime.toFixed(3) + ' sec');
-		$('#js-settings-estimated-cutoff').show();
-		$('#js-settings-estimated-cutoff').text(i18n.__('label-time-estimated-cutoff') + ': min ' + estimatedCutoffMin.toFixed(3) + ' sec, max ' + estimatedCutoffMax.toFixed(3) + ' sec');
-	}
-	else {
-		$('#js-settings-estimated-time').hide();
-		$('#js-settings-estimated-cutoff').hide();
-	}
-};
-
-// render the player list tab
-const showPlayerList = () => {
-	console.log('client.showPlayerList called');
-
-	$('#tablePlayerList').empty();
-	if (playerList.length > 0) {
-
-		// calculate best time sums
-		let sums = [];
-		_.each(playerList, (_player,pindex) => {
-			let playerTimes = playerTimesList[pindex] || [];
-			let bestTimes = _.filter(playerTimes, (t) => { return t > 0; }).sort().slice(0,2);
-			let bestSum = (bestTimes[0] || 99999) + (bestTimes[1] || 99999);
-			sums[pindex] = bestSum;
-		});
-
-		// sort list by sum desc
-		let times = _.map(playerTimesList, (times, index) => {
-			return {
-				id: index,
-				times: times || [],
-				best: sums[index]
-			};
-		});
-		times = _.sortBy(times, 'best');
-
-		// draw title row
-		let titleCells = _.map(currTournament.manches, (_manche,mindex) => {
-			return '<td>Manche ' + (mindex+1) + '</td>';
-		});
-		titleCells.push('<td>' + i18n.__('label-best-2-times') + '</td>');
-		titleCells.push('<td>' + i18n.__('label-best-speed') + '</td>');
-		$('#tablePlayerList').append('<tr class="is-selected"><td colspan="2"><strong>' + playerList.length + ' RACERS</strong></td>' + titleCells + '</tr>');
-
-		// draw player rows
-		_.each(times, (info) => {
-			let bestTime =  _.min(_.filter(info.times, (t) => { return t > 0 && t < 99999; }));
-			let bestSpeed = currTrack.length / (bestTime/1000);
-			let timeCells = _.map(currTournament.manches, (_manche,mindex) => {
-				let playerTime = info.times[mindex] || 0;
-				let highlight = '';
-				if (playerTime == 0) {
-					highlight = 'has-text-grey-light';
-				}
-				else if (playerTime == bestTime) {
-					highlight = 'has-text-danger';
-				}
-				else if (playerTime < 99999) {
-					highlight = 'has-text-info';
-				}
-				return '<td class="' + highlight + '">' + utils.prettyTime(playerTime) + '</td>';
-			});
-			timeCells.push('<td>' + utils.prettyTime(info.best) + '</td>');
-			timeCells.push('<td>' + bestSpeed.toFixed(2) + ' m/s</td>');
-			$('#tablePlayerList').append('<tr><td>' + (info.id+1) + '</td><td><p class="has-text-centered is-uppercase">' + playerList[info.id] + '</p></td>' + timeCells + '</tr>');
-		});
-	}
-};
-
-// render the manches list tab
-const showMancheList = () => {
-	console.log('client.showManchesList called');
-
-	$('#tableMancheList').empty();
-	let mancheText, playerName, playerTime, playerForm, highlight;
-	_.each(mancheList, (manche, mindex) => {
-		$('#tableMancheList').append('<tr class="is-selected"><td><strong>MANCHE ' + (mindex+1) + '</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>');
-		_.each(manche, (group, rindex) => {
-			mancheText = _.map(group, (id, pindex) => {
-				playerName = '<p class="has-text-centered is-uppercase">' + (playerList[id] || '') + '</p>';
-				playerTime = (mancheTimesList[mindex] && mancheTimesList[mindex][rindex]) ? mancheTimesList[mindex][rindex][pindex] : 0;
-				if (playerList[id]) {
-					playerForm = '<div class="field"><div class="control"><input class="input is-large js-time-form" type="text" data-manche="' + mindex + '" data-round="' + rindex + '" data-player="' + pindex + '" value="' + utils.prettyTime(playerTime) + '"></div></div>';
-				}
-				else {
-					playerForm = '';
-				}
-				return '<td>' + playerName + playerForm + '</td>';
-			}).join();
-			highlight = (mindex == currManche && rindex == currRound) ? 'class="is-highlighted"' : '';
-			$('#tableMancheList').append('<tr ' + highlight + '><td>Round ' + (rindex+1) + '</td>' + mancheText + '</tr>');
-		});
-	});
-};
-
-const showNextRoundNames = () => {
-	let r = currRound, m = currManche, text;
-	r += 1;
-	if (r == mancheList[0].length) {
-		m++;
-		r = 0;
-	}
-
-	if (m == mancheList.length) {
-		text = '-';
-	}
-	else {
-		text = _.filter([playerList[mancheList[m][r][0]], playerList[mancheList[m][r][1]], playerList[mancheList[m][r][2]]], (n) => {
-			return n;
-		}).join(', ');
-	}
-
-	$('#next-round-names').text(text);
+	ui.showTournamentDetails(currTournament);
+	ui.initRace(freeRound);
 };
 
 // @param [bool] fromSaved: pass true if you want to render a past round. It will be loaded from configuration.
@@ -901,15 +614,11 @@ module.exports = {
 	saveXls: saveXls,
 	disqualify: disqualify,
 	overrideTimes: overrideTimes,
-	raceStarted: raceStarted,
 	initRound: initRound,
 	startRound: startRound,
 	stopRound: stopRound,
 	prevRound: prevRound,
 	nextRound: nextRound,
 	isFreeRound: isFreeRound,
-	toggleFreeRound: toggleFreeRound,
-	showMancheList: showMancheList,
-	showPlayerList: showPlayerList,
-	showThresholds: showThresholds
+	toggleFreeRound: toggleFreeRound
 };
