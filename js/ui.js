@@ -173,25 +173,7 @@ const showPlayerList = () => {
 
 	$('#tablePlayerList').empty();
 	if (playerList.length > 0) {
-
-		// calculate best time sums
-		let sums = [];
-		_.each(playerList, (_player,pindex) => {
-			let playerTimes = playerTimesList[pindex] || [];
-			let bestTimes = _.filter(playerTimes, (t) => { return t > 0; }).sort().slice(0,2);
-			let bestSum = (bestTimes[0] || 99999) + (bestTimes[1] || 99999);
-			sums[pindex] = bestSum;
-		});
-
-		// sort list by sum desc
-		let times = _.map(playerTimesList, (times, index) => {
-			return {
-				id: index,
-				times: times || [],
-				best: sums[index]
-			};
-		});
-		times = _.sortBy(times, 'best');
+		let times = getSortedPlayerList();
 
 		// draw title row
 		let titleCells = _.map(currTournament.manches, (_manche,mindex) => {
@@ -234,23 +216,35 @@ const showMancheList = () => {
     let mancheList = currTournament.manches;
 
 	$('#tableMancheList').empty();
-	let mancheText, playerName, playerTime, playerForm, highlight;
+	let cars, mancheText, playerName, playerTime, playerPosition, playerForm, highlight;
 	_.each(mancheList, (manche, mindex) => {
-		$('#tableMancheList').append('<tr class="is-selected"><td><strong>MANCHE ' + (mindex+1) + '</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>');
+		$('#tableMancheList').append(`<tr class="is-selected"><td><strong>${mancheName(mindex)}</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>`);
 		_.each(manche, (group, rindex) => {
+			cars = configuration.loadRound(mindex, rindex);
 			mancheText = _.map(group, (id, pindex) => {
-				playerName = '<p class="has-text-centered is-uppercase">' + (playerList[id] || '') + '</p>';
-				playerTime = (mancheTimesList[mindex] && mancheTimesList[mindex][rindex]) ? mancheTimesList[mindex][rindex][pindex] : 0;
-				if (playerList[id]) {
-					playerForm = '<div class="field"><div class="control"><input class="input is-large js-time-form" type="text" data-manche="' + mindex + '" data-round="' + rindex + '" data-player="' + pindex + '" value="' + utils.prettyTime(playerTime) + '"></div></div>';
+				if (cars) {
+					playerTime = cars[pindex].currTime;
+					playerPosition = cars[pindex].position;
 				}
 				else {
+					playerTime = 0;
+					playerPosition = null;
+				}
+				if (playerList[id]) {
+					if (playerPosition && playerPosition > 0) {
+						playerPosition = `<span class="tag is-warning is-rounded">${playerPosition}</span>`;
+					}
+					playerName = `<p class="has-text-centered is-uppercase">${playerList[id] || ''} ${playerPosition || ''}</p>`;
+					playerForm = `<div class="field"><div class="control"><input class="input is-large js-time-form" type="text" data-manche="${mindex}" data-round="${rindex}" data-player="${pindex}" value="${utils.prettyTime(playerTime)}"></div></div>`;
+				}
+				else {
+					playerName = '';
 					playerForm = '';
 				}
-				return '<td>' + playerName + playerForm + '</td>';
+				return `<td>${playerName}${playerForm}</td>`;
 			}).join();
 			highlight = (mindex == currManche && rindex == currRound) ? 'class="is-highlighted"' : '';
-			$('#tableMancheList').append('<tr ' + highlight + '><td>Round ' + (rindex+1) + '</td>' + mancheText + '</tr>');
+			$('#tableMancheList').append(`<tr ${highlight}><td>Round ${rindex+1}</td>${mancheText}</tr>`);
 		});
 	});
 };
@@ -279,6 +273,42 @@ const showNextRoundNames = () => {
 	}
 
 	$('#next-round-names').text(text);
+};
+
+const mancheName = (mindex) => {
+	mindex = mindex || currManche;
+
+	if (mindex == mancheCount) {
+		return (mindex < mancheList.length) ? 'FINAL 4-5-6 PLACE' : 'FINAL 1-2-3 PLACE';
+	}
+	else if (mindex == mancheCount+1) {
+		return 'FINAL 1-2-3 PLACE';
+	}
+	else {
+		return `MANCHE ${mindex+1}`;
+	}
+};
+
+// TODO move to client?
+const getSortedPlayerList = () => {
+	// calculate best time sums
+	let sums = [], times, pTimes, bestTimes, bestSum;
+	_.each(playerList, (_player,pindex) => {
+		pTimes = playerTimes[pindex] || [];
+		bestTimes = _.filter(pTimes, (t) => { return t > 0; }).sort().slice(0,2);
+		bestSum = (bestTimes[0] || 99999) + (bestTimes[1] || 99999);
+		sums[pindex] = bestSum;
+	});
+
+	// sort list by sum desc
+	times = _.map(playerTimes, (times, index) => {
+		return {
+			id: index,
+			times: times || [],
+			best: sums[index]
+		};
+	});
+	return _.sortBy(times, 'best');
 };
 
 const initRace = (freeRound) => {
@@ -328,8 +358,8 @@ const initRace = (freeRound) => {
 		$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '//');
 		$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '//');
 		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '//');
-		$('#curr-manche').text(currManche+1);
-		$('#curr-round').text(currRound+1);
+		$('#curr-manche').text(mancheName());
+		$('#curr-round').text(`ROUND ${currRound+1}`);
 		showNextRoundNames();
 		showPlayerList();
 		showMancheList(); 
@@ -356,7 +386,8 @@ module.exports = {
     showThresholds: showThresholds,
     showPlayerList: showPlayerList,
     showMancheList: showMancheList,
-    showNextRoundNames: showNextRoundNames,
+	showNextRoundNames: showNextRoundNames,
+	getSortedPlayerList: getSortedPlayerList,
     initRace: initRace,
     drawRace: drawRace
 

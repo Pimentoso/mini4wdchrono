@@ -88,6 +88,7 @@
     "dialog-track-not-loaded": "Track not loaded!",
     "dialog-tournament-not-loaded": "Tournament not loaded!",
     "dialog-change-round": "Change round?",
+		"dialog-enter-final": "Enter finals? Make sure all the player times are correct and definitive!",
     "dialog-restart": "Please restart the program for the changes to take effect.",
     "dialog-disqualify": "Disqualify this time? It will be set to 99.999.",
     "dialog-replay-round": "Play this round again? The current data will be lost.",

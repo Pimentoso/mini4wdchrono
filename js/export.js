@@ -21,12 +21,12 @@ const createDir = () => {
 };
 
 const geneateXls = (mancheCount, playerData, playerTimes) => {
-	var workbook = new xls.Workbook();
+	let workbook = new xls.Workbook();
 	workbook.creator = 'Mini4wd Chrono';
 	workbook.created = new Date();
 	workbook.modified = new Date();
 
-	var worksheet = workbook.addWorksheet('Racers data');
+	let worksheet = workbook.addWorksheet('Racers data');
 
 	_.each(playerTimes, (pdata, pindex) => {
 		let row = [playerData[pindex].toUpperCase()];

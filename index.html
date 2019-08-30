@@ -204,7 +204,7 @@
 				<span id="js-race-mode-1" class="button js-race-mode tn" data-tn="button-race-mode-final" data-race-mode="1">Final mode</span>
 				<span id="js-race-mode-2" class="button js-race-mode tn" data-tn="button-race-mode-endurance" data-race-mode="2" disabled>Endurance mode</span>
 			</div>
-			<p id="js-race-mode-description" class="has-text-grey is-size-7">(text)</p>	
+			<p id="js-race-mode-description" class="has-text-grey is-size-7">(text)</p>
 		</div>
 
 		<div class="container">
@@ -309,9 +309,9 @@
 	<!-- RACE TAB -->
 	<div class="container" data-tab="race" style="display: none;">
 		<div class="js-hide-on-no-tournament js-hide-on-free-round js-hide-on-no-track level has-text-centered has-text-weight-bold">
-			<span class="level-item tag is-primary is-size-4">Manche&nbsp;<span id="curr-manche"></span></span>
+			<span id="curr-manche" class="level-item tag is-primary is-size-4"></span>
 			&nbsp;
-			<span class="level-item tag is-primary is-size-4">Round&nbsp;<span id="curr-round"></span></span>
+			<span id="curr-round" class="level-item tag is-primary is-size-4"></span>
 		</div>
 
 		<div class="level has-text-centered js-hide-on-no-track">
@@ -449,14 +449,14 @@
 					<span id="sensor-reading-1" class="tag is-primary is-medium">0</span>
 				  </div>
 				</div>
-			  
+
 				<div class="control">
 				  <div class="tags has-addons">
 					<span class="tag is-medium">lane 2</span>
 					<span id="sensor-reading-2" class="tag is-danger is-medium">0</span>
 				  </div>
 				</div>
-			  
+
 				<div class="control">
 				  <div class="tags has-addons">
 					<span class="tag is-medium">lane 3</span>
@@ -485,7 +485,7 @@
 					<input id="js-config-sensor-pin-3" class="input" type="text" placeholder="example: A2" value="">
 				</div>
 			</div>
-			
+
 			<div class="field">
 				<label class="label tn" data-tn="label-led-1">LED 1 pin</label>
 				<div class="control" style="width: 100%;">
