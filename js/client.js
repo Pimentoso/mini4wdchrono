@@ -6,7 +6,7 @@ const utils = require('./utils');
 const configuration = require('./configuration');
 const chrono = require('./chrono');
 const xls = require('./export');
-const i18n = new(require('../i18n/i18n'));
+const i18n = new (require('../i18n/i18n'));
 const clone = require('clone');
 
 var currTrack, currTournament;
@@ -23,7 +23,7 @@ const init = () => {
 	ui.initialize();
 
 	// translate ui
-	$('.tn').each(function(index) {
+	$('.tn').each(function (index) {
 		$(this).text(i18n.__($(this).data('tn')));
 	});
 
@@ -181,7 +181,7 @@ const initFinal = () => {
 
 	// generate semifinal manche rounds
 	if (playerList.length >= 5) {
-		let semifinalPlayerIds = ids.slice(3,6);
+		let semifinalPlayerIds = ids.slice(3, 6);
 		if (semifinalPlayerIds.length == 2) {
 			// only 5 players: pad array
 			semifinalPlayerIds[2] = -1;
@@ -194,7 +194,7 @@ const initFinal = () => {
 	}
 
 	// generate final manche rounds
-	let finalPlayerIds = ids.slice(0,3);
+	let finalPlayerIds = ids.slice(0, 3);
 	currTournament.finals.push([
 		[finalPlayerIds[0], finalPlayerIds[1], finalPlayerIds[2]],
 		[finalPlayerIds[2], finalPlayerIds[0], finalPlayerIds[1]],
@@ -211,7 +211,7 @@ const initFinal = () => {
 // called before the starting sequence
 const initRound = () => {
 	console.log('client.initRound called');
-	
+
 	chronoInit(true);
 	drawRace();
 };
@@ -249,7 +249,7 @@ const prevRound = () => {
 
 	if (currTournament == null || currTrack == null) {
 		// tournament not loaded
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded')});
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded') });
 		return;
 	}
 	if (currManche == 0 && currRound == 0) {
@@ -257,11 +257,11 @@ const prevRound = () => {
 		return;
 	}
 
-	if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel']}) == 0) {
+	if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel'] }) == 0) {
 		currRound--;
 		if (currRound < 0) {
 			currManche--;
-			currRound = mancheList[currManche].length-1;
+			currRound = mancheList[currManche].length - 1;
 		}
 
 		configuration.saveSettings('currManche', currManche);
@@ -276,17 +276,17 @@ const nextRound = () => {
 
 	if (currTournament == null || currTrack == null) {
 		// tournament not loaded
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded')});
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded') });
 		return;
 	}
 
-	if (currTournament.finals && currManche == (mancheCount+currTournament.finals.length-1) && currRound == 2) {
+	if (currTournament.finals && currManche == (mancheCount + currTournament.finals.length - 1) && currRound == 2) {
 		// end of finals
 		return;
 	}
 
-	let dialogText = (currManche == (mancheCount-1) && currRound == (mancheList[currManche].length-1)) ? i18n.__('dialog-enter-final') : i18n.__('dialog-change-round');
-	if (dialog.showMessageBox({ type: 'warning', message: dialogText, buttons: ['Ok', 'Cancel']}) == 0) {
+	let dialogText = (currManche == (mancheCount - 1) && currRound == (mancheList[currManche].length - 1)) ? i18n.__('dialog-enter-final') : i18n.__('dialog-change-round');
+	if (dialog.showMessageBox({ type: 'warning', message: dialogText, buttons: ['Ok', 'Cancel'] }) == 0) {
 		currRound++;
 		if (currRound == mancheList[currManche].length) {
 			currManche++;
@@ -313,7 +313,7 @@ const isFreeRound = () => freeRound;
 
 const toggleFreeRound = () => {
 	console.log('client.toggleFreeRound called');
-	
+
 	freeRound = !freeRound;
 	chronoInit(freeRound);
 	ui.toggleFreeRound(freeRound);
@@ -347,14 +347,14 @@ const loadTrack = () => {
 
 	let code = $('#js-input-track-code').val().slice(-6);
 	$.getJSON('https://mini4wd-track-editor.pimentoso.com/api/track/' + code)
-	.done((obj) => {
-		trackLoadDone(obj);
-		configuration.saveSettings('track', currTrack);
-	})
-	.fail(trackLoadFail)
-	.always(() => {
-		showTrackDetails();
-	});
+		.done((obj) => {
+			trackLoadDone(obj);
+			configuration.saveSettings('track', currTrack);
+		})
+		.fail(trackLoadFail)
+		.always(() => {
+			showTrackDetails();
+		});
 };
 
 const setTrackManual = (length, order) => {
@@ -370,14 +370,14 @@ const loadTournament = () => {
 
 	let code = $('#js-input-tournament-code').val().slice(-6);
 	$.getJSON('https://mini4wd-tournament.pimentoso.com/api/tournament/' + code)
-	.done((obj) => {
-		tournamentLoadDone(obj);
-		configuration.saveSettings('tournament', currTournament);
-	})
-	.fail(tournamentLoadFail)
-	.always(() => {
-		showTournamentDetails(currTournament);
-	});
+		.done((obj) => {
+			tournamentLoadDone(obj);
+			configuration.saveSettings('tournament', currTournament);
+		})
+		.fail(tournamentLoadFail)
+		.always(() => {
+			showTournamentDetails(currTournament);
+		});
 };
 
 const trackLoadDone = (obj) => {
@@ -510,10 +510,10 @@ const drawRace = (fromSaved) => {
 		cars = configuration.loadRound(currManche, currRound);
 	}
 	cars = cars || chrono.getCars();
-	ui.drawRace(cars);
+	ui.drawRace(cars, raceRunning);
 
 	// stop timers
-	_.each(cars, (car,i) => {
+	_.each(cars, (car, i) => {
 		if (car.outOfBounds || car.lapCount == 4) {
 			stopTimer(i);
 		}
@@ -555,7 +555,7 @@ const sensorRead = (lane) => {
 const addLap = (lane) => {
 	console.log('client.addLap called');
 
-	chrono.addLap(lane-1);
+	chrono.addLap(lane - 1);
 	if (chrono.isRaceFinished()) {
 		raceFinished();
 	}

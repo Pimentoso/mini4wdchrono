@@ -32,8 +32,8 @@ const init = (track, playerIds, cars) => {
 	if (track) {
 		// cutoff time calculation
 		rTrackLength = track.length;
-		rLaneOrder = _.map(track.order, (i) => { return i-1; });
-		rTimeThreshold = configuration.readSettings('timeThreshold')/100;
+		rLaneOrder = _.map(track.order, (i) => { return i - 1; });
+		rTimeThreshold = configuration.readSettings('timeThreshold') / 100;
 		rSpeedThreshold = configuration.readSettings('speedThreshold');
 		rTimeCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold) * 1000;
 		rTimeCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold) * 1000;
@@ -119,7 +119,7 @@ const calculateCar = (car, timestamp) => {
 		car.nextLane = nextLane(car.nextLane);
 		car.currTimestamp = timestamp;
 		car.currTime = timestamp - car.startTimestamp;
-		car.speed = (rTrackLength/3)*(car.lapCount-1)/(car.currTime/1000);
+		car.speed = (rTrackLength / 3) * (car.lapCount - 1) / (car.currTime / 1000);
 		if (car.lapCount == 4) {
 			// finish
 			car.endTimestamp = timestamp;
@@ -135,9 +135,9 @@ const calculateRace = () => {
 
 	// first are the cars with the highest lap count,
 	// then with same lapCount first is the one with lowest time
-	_.each([4,3,2], (lap) => {
+	_.each([4, 3, 2], (lap) => {
 		let runningCars = _.filter(rCars, (c) => { return c.lapCount == lap; });
-		_.each(_.sortBy(runningCars, 'currTime'), (c,i) => {
+		_.each(_.sortBy(runningCars, 'currTime'), (c, i) => {
 			if (lap == bestLap) {
 				if (i == 0) {
 					bestTime = c.currTime;

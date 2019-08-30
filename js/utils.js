@@ -1,7 +1,7 @@
 'use strict';
 
 const prettyTime = (millis) => {
-	return ((millis || 0)/1000).toFixed(3);
+  return ((millis || 0) / 1000).toFixed(3);
 };
 
 /* Port of strftime(). Compatibility notes:
@@ -42,51 +42,51 @@ const strftime = (sFormat, date) => {
     aDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
     aMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
     aDayCount = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
-    isLeapYear = function() {
-      if ((nYear&3)!==0) return false;
-      return nYear%100!==0 || nYear%400===0;
+    isLeapYear = function () {
+      if ((nYear & 3) !== 0) return false;
+      return nYear % 100 !== 0 || nYear % 400 === 0;
     },
-    getThursday = function() {
+    getThursday = function () {
       var target = new Date(date);
-      target.setDate(nDate - ((nDay+6)%7) + 3);
+      target.setDate(nDate - ((nDay + 6) % 7) + 3);
       return target;
     },
-    zeroPad = function(nNum, nPad) {
+    zeroPad = function (nNum, nPad) {
       return ('' + (Math.pow(10, nPad) + nNum)).slice(1);
     };
-  return sFormat.replace(/%[a-z]/gi, function(sMatch) {
+  return sFormat.replace(/%[a-z]/gi, function (sMatch) {
     return {
-      '%a': aDays[nDay].slice(0,3),
+      '%a': aDays[nDay].slice(0, 3),
       '%A': aDays[nDay],
-      '%b': aMonths[nMonth].slice(0,3),
+      '%b': aMonths[nMonth].slice(0, 3),
       '%B': aMonths[nMonth],
       '%c': date.toUTCString(),
-      '%C': Math.floor(nYear/100),
+      '%C': Math.floor(nYear / 100),
       '%d': zeroPad(nDate, 2),
       '%e': nDate,
-      '%F': date.toISOString().slice(0,10),
+      '%F': date.toISOString().slice(0, 10),
       '%G': getThursday().getFullYear(),
       '%g': ('' + getThursday().getFullYear()).slice(2),
       '%H': zeroPad(nHour, 2),
-      '%I': zeroPad((nHour+11)%12 + 1, 2),
-      '%j': zeroPad(aDayCount[nMonth] + nDate + ((nMonth>1 && isLeapYear()) ? 1 : 0), 3),
+      '%I': zeroPad((nHour + 11) % 12 + 1, 2),
+      '%j': zeroPad(aDayCount[nMonth] + nDate + ((nMonth > 1 && isLeapYear()) ? 1 : 0), 3),
       '%k': '' + nHour,
-      '%l': (nHour+11)%12 + 1,
+      '%l': (nHour + 11) % 12 + 1,
       '%m': zeroPad(nMonth + 1, 2),
       '%M': zeroPad(date.getMinutes(), 2),
-      '%p': (nHour<12) ? 'AM' : 'PM',
-      '%P': (nHour<12) ? 'am' : 'pm',
-      '%s': Math.round(date.getTime()/1000),
+      '%p': (nHour < 12) ? 'AM' : 'PM',
+      '%P': (nHour < 12) ? 'am' : 'pm',
+      '%s': Math.round(date.getTime() / 1000),
       '%S': zeroPad(date.getSeconds(), 2),
       '%u': nDay || 7,
-      '%V': (function() {
-              var target = getThursday(),
-                n1stThu = target.valueOf();
-              target.setMonth(0, 1);
-              var nJan1 = target.getDay();
-              if (nJan1!==4) target.setMonth(0, 1 + ((4-nJan1)+7)%7);
-              return zeroPad(1 + Math.ceil((n1stThu-target)/604800000), 2);
-            })(),
+      '%V': (function () {
+        var target = getThursday(),
+          n1stThu = target.valueOf();
+        target.setMonth(0, 1);
+        var nJan1 = target.getDay();
+        if (nJan1 !== 4) target.setMonth(0, 1 + ((4 - nJan1) + 7) % 7);
+        return zeroPad(1 + Math.ceil((n1stThu - target) / 604800000), 2);
+      })(),
       '%w': '' + nDay,
       '%x': date.toLocaleDateString(),
       '%X': date.toLocaleTimeString(),
@@ -99,40 +99,40 @@ const strftime = (sFormat, date) => {
 }
 
 const safeTime = (timeStr) => {
-  return parseInt(timeStr.replace(/\D/g,''));
+  return parseInt(timeStr.replace(/\D/g, ''));
 };
 
 const delay = (fn, t) => {
   // private instance variables
   var queue = [], self, timer;
-  
+
   function schedule(fn, t) {
-      timer = setTimeout(function() {
-          timer = null;
-          fn();
-          if (queue.length) {
-              var item = queue.shift();
-              schedule(item.fn, item.t);
-          }
-      }, t);            
+    timer = setTimeout(function () {
+      timer = null;
+      fn();
+      if (queue.length) {
+        var item = queue.shift();
+        schedule(item.fn, item.t);
+      }
+    }, t);
   }
   self = {
-      delay: function(fn, t) {
-          // if already queuing things or running a timer, 
-          //   then just add to the queue
-          if (queue.length || timer) {
-              queue.push({fn: fn, t: t});
-          } else {
-              // no queue or timer yet, so schedule the timer
-              schedule(fn, t);
-          }
-          return self;
-      },
-      cancel: function() {
-          clearTimeout(timer);
-          queue = [];
-          return self;
+    delay: function (fn, t) {
+      // if already queuing things or running a timer, 
+      //   then just add to the queue
+      if (queue.length || timer) {
+        queue.push({ fn: fn, t: t });
+      } else {
+        // no queue or timer yet, so schedule the timer
+        schedule(fn, t);
       }
+      return self;
+    },
+    cancel: function () {
+      clearTimeout(timer);
+      queue = [];
+      return self;
+    }
   };
   return self.delay(fn, t);
 }
