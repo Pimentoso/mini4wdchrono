@@ -312,6 +312,8 @@ const nextRound = () => {
 const isFreeRound = () => freeRound;
 
 const toggleFreeRound = () => {
+	console.log('client.toggleFreeRound called');
+	
 	freeRound = !freeRound;
 	chronoInit(freeRound);
 	ui.toggleFreeRound(freeRound);
@@ -503,92 +505,17 @@ const showTournamentDetails = () => {
 const drawRace = (fromSaved) => {
 	console.log('client.drawRace called');
 
-	$('.js-place').removeClass('is-dark is-light is-primary is-warning');
-	$('.js-delay').removeClass('is-danger');
-	$('.js-timer').removeClass('is-danger is-success');
-
 	let cars;
 	if (fromSaved) {
 		cars = configuration.loadRound(currManche, currRound);
 	}
 	cars = cars || chrono.getCars();
+	ui.drawRace(cars);
+
+	// stop timers
 	_.each(cars, (car,i) => {
-		// delay + speed
-		if (car.outOfBounds) {
-			$('#delay-lane' + i).text('+99.999');
-			$('#speed-lane' + i).text('0.00 m/s');
-		}
-		else {
-			$('#delay-lane' + i).text('+' + (car.delayFromFirst/1000));
-			if (car.delayFromFirst > 0) {
-				$('#delay-lane' + i).addClass('is-danger');
-			}
-			if (car.lapCount > 1) {
-				$('#speed-lane' + i).text(car.speed.toFixed(2) + ' m/s');
-			}
-			else {
-				$('#speed-lane' + i).text('0.00 m/s');
-			}
-		}
-
-		// lap count
-		if (car.lapCount == 4) {
-			$('#lap-lane' + i).text(i18n.__('label-car-finish'));
-		}
-		else {
-			$('#lap-lane' + i).text(i18n.__('label-car-lap') + ' ' + car.lapCount);
-		}
-
-		// split times
-		$('#laps-lane' + i).empty();
-		_.each(car.splitTimes, (t,ii) => {
-			$('#laps-lane' + i).append('<li class="is-size-4">' + i18n.__('label-car-partial') + ' ' + (ii+1) + ' - <strong>' + utils.prettyTime(t) + ' s</strong></li>');
-		});
-
-		// place
-		if (car.outOfBounds) {
-			$('#place-lane' + i).text(i18n.__('label-car-out'));
-			$('#place-lane' + i).addClass('is-dark');
-		}
-		else if (car.lapCount == 0) {
-			if (raceRunning) {
-				$('#place-lane' + i).text(i18n.__('label-car-ready'));
-			}
-			else {
-				$('#place-lane' + i).text(i18n.__('label-car-stopped'));
-			}
-			$('#place-lane' + i).addClass('is-light');
-		}
-		else if (car.lapCount == 1) {
-			$('#place-lane' + i).text(i18n.__('label-car-started'));
-			$('#place-lane' + i).addClass('is-light');
-		}
-		else {
-			$('#place-lane' + i).text(car.position + ' ' + i18n.__('label-car-position'));
-			if (car.position == 1) {
-				$('#place-lane' + i).addClass('is-warning');
-			}
-			else {
-				$('#place-lane' + i).addClass('is-primary');
-			}
-		}
-
-		// timer
-		if (car.outOfBounds) {
+		if (car.outOfBounds || car.lapCount == 4) {
 			stopTimer(i);
-			$('#timer-lane' + i).addClass('is-danger');
-			$('#timer-lane' + i).text(utils.prettyTime(car.currTime));
-		}
-		else if (car.lapCount == 0) {
-			$('#timer-lane' + i).text(utils.prettyTime(0));
-		}
-		else if (car.lapCount == 1) {
-			startTimer(i);
-		}
-		else if (car.lapCount == 4) {
-			stopTimer(i);
-			$('#timer-lane' + i).addClass('is-success');
-			$('#timer-lane' + i).text(utils.prettyTime(car.currTime));
 		}
 	});
 };

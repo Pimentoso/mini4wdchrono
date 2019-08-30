@@ -1,6 +1,5 @@
 'use strict';
 
-const { dialog } = require('electron').remote
 const serialport = require('serialport');
 const utils = require('./utils');
 const configuration = require('./configuration');
@@ -167,16 +166,16 @@ const showThresholds = () => {
 };
 
 const showPlayerList = () => {
-	let currTrack = configuration.readSettings('track');
-	let currTournament = configuration.readSettings('tournament');
-    let playerList = currTournament.players;
+	let track = configuration.readSettings('track');
+	let tournament = configuration.readSettings('tournament');
+    let playerList = tournament.players;
 
 	$('#tablePlayerList').empty();
 	if (playerList.length > 0) {
 		let times = getSortedPlayerList();
 
 		// draw title row
-		let titleCells = _.map(currTournament.manches, (_manche,mindex) => {
+		let titleCells = _.map(tournament.manches, (_manche,mindex) => {
 			return '<td>Manche ' + (mindex+1) + '</td>';
 		});
 		titleCells.push('<td>' + i18n.__('label-best-2-times') + '</td>');
@@ -186,8 +185,8 @@ const showPlayerList = () => {
 		// draw player rows
 		_.each(times, (info) => {
 			let bestTime =  _.min(_.filter(info.times, (t) => { return t > 0 && t < 99999; }));
-			let bestSpeed = currTrack.length / (bestTime/1000);
-			let timeCells = _.map(currTournament.manches, (_manche,mindex) => {
+			let bestSpeed = track.length / (bestTime/1000);
+			let timeCells = _.map(tournament.manches, (_manche,mindex) => {
 				let playerTime = info.times[mindex] || 0;
 				let highlight = '';
 				if (playerTime == 0) {
@@ -209,11 +208,11 @@ const showPlayerList = () => {
 };
 
 const showMancheList = () => {
-	let currTournament = configuration.readSettings('tournament');
+	let tournament = configuration.readSettings('tournament');
 	let currManche = configuration.readSettings('currManche');
     let currRound = configuration.readSettings('currRound');
-    let playerList = currTournament.players;
-    let mancheList = currTournament.manches;
+    let playerList = tournament.players;
+    let mancheList = tournament.manches;
 
 	$('#tableMancheList').empty();
 	let cars, mancheText, playerName, playerTime, playerPosition, playerForm, highlight;
@@ -250,11 +249,11 @@ const showMancheList = () => {
 };
 
 const showNextRoundNames = () => {
-	let currTournament = configuration.readSettings('tournament');
+	let tournament = configuration.readSettings('tournament');
 	let currManche = configuration.readSettings('currManche');
     let currRound = configuration.readSettings('currRound');
-    let playerList = currTournament.players;
-    let mancheList = currTournament.manches;
+    let playerList = tournament.players;
+    let mancheList = tournament.manches;
 
 	let r = currRound, m = currManche, text;
 	r += 1;
@@ -291,6 +290,8 @@ const mancheName = (mindex) => {
 
 // TODO move to client?
 const getSortedPlayerList = () => {
+	let playerTimes = configuration.readSettings('playerTimes');
+
 	// calculate best time sums
 	let sums = [], times, pTimes, bestTimes, bestSum;
 	_.each(playerList, (_player,pindex) => {
@@ -312,15 +313,15 @@ const getSortedPlayerList = () => {
 };
 
 const initRace = (freeRound) => {
-	let currTrack = configuration.readSettings('track');
-	let currTournament = configuration.readSettings('tournament');
+	let track = configuration.readSettings('track');
+	let tournament = configuration.readSettings('tournament');
 	let currManche = configuration.readSettings('currManche');
     let currRound = configuration.readSettings('currRound');
 
 	$('.js-show-on-race-started').hide();
 	$('.js-hide-on-race-started').show();
 
-	if (currTrack == null) {
+	if (track == null) {
 		$('.js-show-on-no-track').show();
 		$('.js-hide-on-no-track').hide();
 	}
@@ -329,7 +330,7 @@ const initRace = (freeRound) => {
 		$('.js-hide-on-no-track').show();
 	}
 
-	if (currTournament == null) {
+	if (tournament == null) {
 		$('.js-show-on-no-tournament').show();
 		$('.js-hide-on-no-tournament').hide();
 		$('#name-lane0').text(' ');
@@ -350,8 +351,8 @@ const initRace = (freeRound) => {
 		showMancheList();
 	}
 	else {
-        let playerList = currTournament.players;
-        let mancheList = currTournament.manches;
+        let playerList = tournament.players;
+        let mancheList = tournament.manches;
 
 		$('.js-show-on-no-tournament').hide();
 		$('.js-hide-on-no-tournament').show();
@@ -367,8 +368,90 @@ const initRace = (freeRound) => {
 	}
 };
 
-const drawRace = (fromSaved) => {
-    // TODO
+const drawRace = (cars) => {
+	$('.js-place').removeClass('is-dark is-light is-primary is-warning');
+	$('.js-delay').removeClass('is-danger');
+	$('.js-timer').removeClass('is-danger is-success');
+
+	_.each(cars, (car,i) => {
+		// delay + speed
+		if (car.outOfBounds) {
+			$('#delay-lane' + i).text('+99.999');
+			$('#speed-lane' + i).text('0.00 m/s');
+		}
+		else {
+			$('#delay-lane' + i).text('+' + (car.delayFromFirst/1000));
+			if (car.delayFromFirst > 0) {
+				$('#delay-lane' + i).addClass('is-danger');
+			}
+			if (car.lapCount > 1) {
+				$('#speed-lane' + i).text(car.speed.toFixed(2) + ' m/s');
+			}
+			else {
+				$('#speed-lane' + i).text('0.00 m/s');
+			}
+		}
+
+		// lap count
+		if (car.lapCount == 4) {
+			$('#lap-lane' + i).text(i18n.__('label-car-finish'));
+		}
+		else {
+			$('#lap-lane' + i).text(i18n.__('label-car-lap') + ' ' + car.lapCount);
+		}
+
+		// split times
+		$('#laps-lane' + i).empty();
+		_.each(car.splitTimes, (t,ii) => {
+			$('#laps-lane' + i).append('<li class="is-size-4">' + i18n.__('label-car-partial') + ' ' + (ii+1) + ' - <strong>' + utils.prettyTime(t) + ' s</strong></li>');
+		});
+
+		// place
+		if (car.outOfBounds) {
+			$('#place-lane' + i).text(i18n.__('label-car-out'));
+			$('#place-lane' + i).addClass('is-dark');
+		}
+		else if (car.lapCount == 0) {
+			if (raceRunning) {
+				$('#place-lane' + i).text(i18n.__('label-car-ready'));
+			}
+			else {
+				$('#place-lane' + i).text(i18n.__('label-car-stopped'));
+			}
+			$('#place-lane' + i).addClass('is-light');
+		}
+		else if (car.lapCount == 1) {
+			$('#place-lane' + i).text(i18n.__('label-car-started'));
+			$('#place-lane' + i).addClass('is-light');
+		}
+		else {
+			$('#place-lane' + i).text(car.position + ' ' + i18n.__('label-car-position'));
+			if (car.position == 1) {
+				$('#place-lane' + i).addClass('is-warning');
+			}
+			else {
+				$('#place-lane' + i).addClass('is-primary');
+			}
+		}
+
+		// timer
+		if (car.outOfBounds) {
+			stopTimer(i);
+			$('#timer-lane' + i).addClass('is-danger');
+			$('#timer-lane' + i).text(utils.prettyTime(car.currTime));
+		}
+		else if (car.lapCount == 0) {
+			$('#timer-lane' + i).text(utils.prettyTime(0));
+		}
+		else if (car.lapCount == 1) {
+			startTimer(i);
+		}
+		else if (car.lapCount == 4) {
+			stopTimer(i);
+			$('#timer-lane' + i).addClass('is-success');
+			$('#timer-lane' + i).text(utils.prettyTime(car.currTime));
+		}
+	});
 };
 
 module.exports = {
