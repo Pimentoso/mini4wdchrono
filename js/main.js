@@ -16,14 +16,17 @@ process.__defineGetter__("stdin", function () {
 	return process.__stdin;
 });
 
+////////////////////////
 const debugMode = false;
+////////////////////////
 
 const electron = require('electron');
+
 const log = require('electron-log');
 log.catchErrors();
+
 const { dialog, shell, app } = electron.remote;
 const j5 = require('johnny-five');
-
 const xls = require('./js/export');
 const configuration = require('./js/configuration');
 const client = require('./js/client');
@@ -78,7 +81,7 @@ board.on('ready', function () {
 	this.digitalRead(sensorPin1, function (val) {
 		tag1.text(val);
 		if (val == 0) {
-			client.sensorRead1();
+			client.sensorRead(1);
 			flashLed(led1);
 		}
 	});
@@ -86,7 +89,7 @@ board.on('ready', function () {
 	this.digitalRead(sensorPin2, function (val) {
 		tag2.text(val);
 		if (val == 0) {
-			client.sensorRead2();
+			client.sensorRead(2);
 			flashLed(led2);
 		}
 	});
@@ -94,7 +97,7 @@ board.on('ready', function () {
 	this.digitalRead(sensorPin3, function (val) {
 		tag3.text(val);
 		if (val == 0) {
-			client.sensorRead3();
+			client.sensorRead(3);
 			flashLed(led3);
 		}
 	});
@@ -290,7 +293,7 @@ $('.js-race-mode').on('click', (e) => {
 	if ($this.attr('disabled')) return;
 	$('.js-race-mode').removeClass('is-primary');
 	$this.addClass('is-primary');
-	var mode = $this.data('race-mode');
+	let mode = $this.data('race-mode');
 	configuration.saveSettings('raceMode', mode);
 	switch (mode) {
 		case 0:

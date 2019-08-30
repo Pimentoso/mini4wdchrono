@@ -7,14 +7,15 @@ const configuration = require('./configuration');
 const chrono = require('./chrono');
 const xls = require('./export');
 const i18n = new(require('../i18n/i18n'));
+const clone = require('clone');
 
-let currTrack, currTournament;
-let playerList, mancheList, playerTimesList, mancheTimesList;
-let currManche = 0, currRound = 0, raceRunning = false, freeRound = true;
+var currTrack, currTournament;
+var playerList, mancheList, mancheCount, playerTimes;
+var currManche = 0, currRound = 0, raceRunning = false, freeRound = true;
 
-let timerIntervals = [], timerSeconds = [];
-let pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
-let checkRaceTask;
+var timerIntervals = [], timerSeconds = [];
+var pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
+var checkRaceTask;
 
 const init = () => {
 	console.log('client.init called');
@@ -54,8 +55,7 @@ const init = () => {
 	});
 
 	// read stuff from settings
-	mancheTimesList = configuration.readSettings('mancheTimes') || [];
-	playerTimesList = configuration.readSettings('playerTimes') || [];
+	playerTimes = configuration.readSettings('playerTimes') || [];
 	currManche = configuration.readSettings('currManche') || 0;
 	currRound = configuration.readSettings('currRound') || 0;
 
@@ -86,8 +86,7 @@ const init = () => {
 const reset = () => {
 	console.log('client.reset called');
 
-	mancheTimesList = [];
-	playerTimesList = [];
+	playerTimes = [];
 	playerList = [];
 	mancheList = [];
 	currManche = 0;
@@ -96,7 +95,7 @@ const reset = () => {
 	currTournament = null;
 	raceRunning = false;
 
-	configuration.deleteSettings('mancheTimes');
+	configuration.deleteSettings('mancheTimes'); // legacy
 	configuration.deleteSettings('playerTimes');
 	configuration.deleteSettings('track');
 	configuration.deleteSettings('tournament');
@@ -163,8 +162,8 @@ const guiInit = () => {
 		$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '//');
 		$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '//');
 		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '//');
-		$('#curr-manche').text(currManche+1);
-		$('#curr-round').text(currRound+1);
+		$('#curr-manche').text(mancheName());
+		$('#curr-round').text(`ROUND ${currRound+1}`);
 		showNextRoundNames();
 		showPlayerList();
 		showMancheList();
@@ -201,7 +200,7 @@ const disqualify = (mindex, rindex, pindex) => {
 
 	mindex = mindex || currManche;
 	rindex = rindex || currRound;
-	var cars = configuration.loadRound(mindex, rindex);
+	let cars = configuration.loadRound(mindex, rindex);
 	cars[pindex].currTime = 99999;
 	configuration.saveRound(mindex, rindex, cars);
 	// $('#invalidate-' + pindex).attr('disabled', true); TODO
@@ -214,12 +213,12 @@ const disqualify = (mindex, rindex, pindex) => {
 const overrideTimes = () => {
 	console.log('client.overrideTimes called');
 
-	var time, cars;
+	let time, cars;
 	_.each(mancheList, (manche, mindex) => {
 		_.each(manche, (round, rindex) => {
 			cars = configuration.loadRound(mindex, rindex);
 			if (cars) {
-				_.each(round, (playerId, pindex) => {
+				_.each(round, (_playerId, pindex) => {
 					time = $("input[data-manche='" + mindex + "'][data-round='" + rindex + "'][data-player='" + pindex + "']").val();
 					if (time) {
 						cars[pindex].currTime = utils.safeTime(time);
@@ -240,35 +239,87 @@ const initTimeList = () => {
 
 	_.each(mancheList, (_manche, mindex) => {
 		_.each(playerList, (_playerId, pindex) => {
-			playerTimesList[pindex] = playerTimesList[pindex] || [];
-			playerTimesList[pindex][mindex] = playerTimesList[pindex][mindex] || 0;
+			playerTimes[pindex] = playerTimes[pindex] || [];
+			playerTimes[pindex][mindex] = playerTimes[pindex][mindex] || 0;
 		});
 	});
-	configuration.saveSettings('playerTimes', playerTimesList);
+	configuration.saveSettings('playerTimes', playerTimes);
 };
 
-// Rebuilds mancheTimes and playerTimes starting from saved race results
+// Rebuilds playerTimes starting from saved race results
 const rebuildTimeList = () => {
 	console.log('client.rebuildTimeList called');
 
-	var time, cars;
+	let time, cars;
 	_.each(mancheList, (manche, mindex) => {
 		_.each(manche, (round, rindex) => {
 			cars = configuration.loadRound(mindex, rindex);
 			if (cars) {
 				_.each(round, (playerId, pindex) => {
 					time = cars[pindex].currTime;
-					mancheTimesList[mindex] = mancheTimesList[mindex] || [];
-					mancheTimesList[mindex][rindex] = mancheTimesList[mindex][rindex] || [];
-					mancheTimesList[mindex][rindex][pindex] = time;
-					playerTimesList[playerId] = playerTimesList[playerId] || [];
-					playerTimesList[playerId][mindex] = time;
+					playerTimes[playerId] = playerTimes[playerId] || [];
+					playerTimes[playerId][mindex] = time;
 				});
 			}
 		});
 	});
-	configuration.saveSettings('mancheTimes', mancheTimesList);
-	configuration.saveSettings('playerTimes', playerTimesList);
+	configuration.saveSettings('playerTimes', playerTimes);
+};
+
+const getSortedPlayerList = () => {
+	// calculate best time sums
+	let sums = [], times, pTimes, bestTimes, bestSum;
+	_.each(playerList, (_player,pindex) => {
+		pTimes = playerTimes[pindex] || [];
+		bestTimes = _.filter(pTimes, (t) => { return t > 0; }).sort().slice(0,2);
+		bestSum = (bestTimes[0] || 99999) + (bestTimes[1] || 99999);
+		sums[pindex] = bestSum;
+	});
+
+	// sort list by sum desc
+	times = _.map(playerTimes, (times, index) => {
+		return {
+			id: index,
+			times: times || [],
+			best: sums[index]
+		};
+	});
+	return _.sortBy(times, 'best');
+};
+
+const initFinal = () => {
+	console.log('client.initFinal called');
+
+	let ids = _.map(getSortedPlayerList(), (t) => { return t.id });
+
+	// remove any previously generated finals
+	mancheList = mancheList.slice(0, mancheCount);
+	currTournament.finals = []
+
+	// generate semifinal manche rounds
+	if (playerList.length >= 5) {
+		let semifinalPlayerIds = ids.slice(3,6);
+		if (semifinalPlayerIds.length == 2) {
+			// only 5 players: pad array
+			semifinalPlayerIds[2] = -1;
+		}
+		currTournament.finals.push([
+			[semifinalPlayerIds[0], semifinalPlayerIds[1], semifinalPlayerIds[2]],
+			[semifinalPlayerIds[2], semifinalPlayerIds[0], semifinalPlayerIds[1]],
+			[semifinalPlayerIds[1], semifinalPlayerIds[2], semifinalPlayerIds[0]]
+		]);
+	}
+
+	// generate final manche rounds
+	let finalPlayerIds = ids.slice(0,3);
+	currTournament.finals.push([
+		[finalPlayerIds[0], finalPlayerIds[1], finalPlayerIds[2]],
+		[finalPlayerIds[2], finalPlayerIds[0], finalPlayerIds[1]],
+		[finalPlayerIds[1], finalPlayerIds[2], finalPlayerIds[0]]
+	]);
+
+	mancheList.push(...currTournament.finals);
+	configuration.saveSettings('tournament', currTournament);
 };
 
 // ==========================================================================
@@ -313,10 +364,12 @@ const prevRound = () => {
 	console.log('client.prevRound called');
 
 	if (currTournament == null || currTrack == null) {
+		// tournament not loaded
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded')});
 		return;
 	}
 	if (currManche == 0 && currRound == 0) {
+		// first round, can't go back
 		return;
 	}
 
@@ -324,7 +377,7 @@ const prevRound = () => {
 		currRound--;
 		if (currRound < 0) {
 			currManche--;
-			currRound = mancheList[0].length-1;
+			currRound = mancheList[currManche].length-1;
 		}
 
 		configuration.saveSettings('currManche', currManche);
@@ -338,18 +391,31 @@ const nextRound = () => {
 	console.log('client.nextRound called');
 
 	if (currTournament == null || currTrack == null) {
+		// tournament not loaded
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded')});
 		return;
 	}
-	if (currManche == (mancheList.length-1) && currRound == (mancheList[0].length-1)) {
+
+	if (currTournament.finals && currManche == (mancheCount+currTournament.finals.length-1) && currRound == 2) {
+		// end of finals
 		return;
 	}
 
-	if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel']}) == 0) {
+	let dialogText = (currManche == (mancheCount-1) && currRound == (mancheList[currManche].length-1)) ? i18n.__('dialog-enter-final') : i18n.__('dialog-change-round');
+	if (dialog.showMessageBox({ type: 'warning', message: dialogText, buttons: ['Ok', 'Cancel']}) == 0) {
 		currRound++;
-		if (currRound == mancheList[0].length) {
+		if (currRound == mancheList[currManche].length) {
 			currManche++;
 			currRound = 0;
+
+			if (currManche >= mancheCount) {
+				// manche index is higher than the original count: final mode
+				if (!currTournament.finals) {
+					// generate final rounds only once
+					// TODO maybe add a 'regenerate final' button
+					initFinal();
+				}
+			}
 		}
 
 		configuration.saveSettings('currManche', currManche);
@@ -466,8 +532,14 @@ const tournamentLoadDone = (obj) => {
 	console.log('client.tournamentLoadDone called');
 
 	currTournament = obj;
-	playerList = obj.players;
-	mancheList = obj.manches;
+	playerList = clone(obj.players);
+	mancheList = clone(obj.manches);
+	mancheCount = mancheList.length;
+
+	if (obj.finals) {
+		mancheList.push(...clone(obj.finals));
+	}
+
 	freeRound = false;
 	$('#button-toggle-free-round').show();
 	initTimeList();
@@ -533,23 +605,16 @@ const raceFinished = () => {
 	if (currTournament && !freeRound) {
 		let cars = chrono.getCars();
 
-		mancheTimesList[currManche] = mancheTimesList[currManche] || [];
-		mancheTimesList[currManche][currRound] = [cars[0].currTime, cars[1].currTime, cars[2].currTime];
-		configuration.saveSettings('mancheTimes', mancheTimesList);
-
 		if (cars[0].playerId > -1) {
-			playerTimesList[cars[0].playerId] = playerTimesList[cars[0].playerId] || [];
-			playerTimesList[cars[0].playerId][currManche] = cars[0].currTime;
+			playerTimes[cars[0].playerId][currManche] = cars[0].currTime;
 		}
 		if (cars[1].playerId > -1) {
-			playerTimesList[cars[1].playerId] = playerTimesList[cars[1].playerId] || [];
-			playerTimesList[cars[1].playerId][currManche] = cars[1].currTime;
+			playerTimes[cars[1].playerId][currManche] = cars[1].currTime;
 		}
 		if (cars[2].playerId > -1) {
-			playerTimesList[cars[2].playerId] = playerTimesList[cars[2].playerId] || [];
-			playerTimesList[cars[2].playerId][currManche] = cars[2].currTime;
+			playerTimes[cars[2].playerId][currManche] = cars[2].currTime;
 		}
-		configuration.saveSettings('playerTimes', playerTimesList);
+		configuration.saveSettings('playerTimes', playerTimes);
 
 		configuration.saveRound(currManche, currRound, cars);
 
@@ -642,25 +707,7 @@ const showPlayerList = () => {
 
 	$('#tablePlayerList').empty();
 	if (playerList.length > 0) {
-
-		// calculate best time sums
-		let sums = [];
-		_.each(playerList, (_player,pindex) => {
-			let playerTimes = playerTimesList[pindex] || [];
-			let bestTimes = _.filter(playerTimes, (t) => { return t > 0; }).sort().slice(0,2);
-			let bestSum = (bestTimes[0] || 99999) + (bestTimes[1] || 99999);
-			sums[pindex] = bestSum;
-		});
-
-		// sort list by sum desc
-		let times = _.map(playerTimesList, (times, index) => {
-			return {
-				id: index,
-				times: times || [],
-				best: sums[index]
-			};
-		});
-		times = _.sortBy(times, 'best');
+		let times = getSortedPlayerList();
 
 		// draw title row
 		let titleCells = _.map(currTournament.manches, (_manche,mindex) => {
@@ -700,23 +747,35 @@ const showMancheList = () => {
 	console.log('client.showManchesList called');
 
 	$('#tableMancheList').empty();
-	let mancheText, playerName, playerTime, playerForm, highlight;
+	let cars, mancheText, playerName, playerTime, playerPosition, playerForm, highlight;
 	_.each(mancheList, (manche, mindex) => {
-		$('#tableMancheList').append('<tr class="is-selected"><td><strong>MANCHE ' + (mindex+1) + '</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>');
+		$('#tableMancheList').append(`<tr class="is-selected"><td><strong>${mancheName(mindex)}</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>`);
 		_.each(manche, (group, rindex) => {
+			cars = configuration.loadRound(mindex, rindex);
 			mancheText = _.map(group, (id, pindex) => {
-				playerName = '<p class="has-text-centered is-uppercase">' + (playerList[id] || '') + '</p>';
-				playerTime = (mancheTimesList[mindex] && mancheTimesList[mindex][rindex]) ? mancheTimesList[mindex][rindex][pindex] : 0;
-				if (playerList[id]) {
-					playerForm = '<div class="field"><div class="control"><input class="input is-large js-time-form" type="text" data-manche="' + mindex + '" data-round="' + rindex + '" data-player="' + pindex + '" value="' + utils.prettyTime(playerTime) + '"></div></div>';
+				if (cars) {
+					playerTime = cars[pindex].currTime;
+					playerPosition = cars[pindex].position;
 				}
 				else {
+					playerTime = 0;
+					playerPosition = null;
+				}
+				if (playerList[id]) {
+					if (playerPosition && playerPosition > 0) {
+						playerPosition = `<span class="tag is-warning is-rounded">${playerPosition}</span>`;
+					}
+					playerName = `<p class="has-text-centered is-uppercase">${playerList[id] || ''} ${playerPosition || ''}</p>`;
+					playerForm = `<div class="field"><div class="control"><input class="input is-large js-time-form" type="text" data-manche="${mindex}" data-round="${rindex}" data-player="${pindex}" value="${utils.prettyTime(playerTime)}"></div></div>`;
+				}
+				else {
+					playerName = '';
 					playerForm = '';
 				}
-				return '<td>' + playerName + playerForm + '</td>';
+				return `<td>${playerName}${playerForm}</td>`;
 			}).join();
 			highlight = (mindex == currManche && rindex == currRound) ? 'class="is-highlighted"' : '';
-			$('#tableMancheList').append('<tr ' + highlight + '><td>Round ' + (rindex+1) + '</td>' + mancheText + '</tr>');
+			$('#tableMancheList').append(`<tr ${highlight}><td>Round ${rindex+1}</td>${mancheText}</tr>`);
 		});
 	});
 };
@@ -724,7 +783,7 @@ const showMancheList = () => {
 const showNextRoundNames = () => {
 	let r = currRound, m = currManche, text;
 	r += 1;
-	if (r == mancheList[0].length) {
+	if (r == mancheList[m].length) {
 		m++;
 		r = 0;
 	}
@@ -739,6 +798,20 @@ const showNextRoundNames = () => {
 	}
 
 	$('#next-round-names').text(text);
+};
+
+const mancheName = (mindex) => {
+	mindex = mindex || currManche;
+
+	if (mindex == mancheCount) {
+		return (mindex < mancheList.length) ? 'FINAL 4-5-6 PLACE' : 'FINAL 1-2-3 PLACE';
+	}
+	else if (mindex == mancheCount+1) {
+		return 'FINAL 1-2-3 PLACE';
+	}
+	else {
+		return `MANCHE ${mindex+1}`;
+	}
 };
 
 // @param [bool] fromSaved: pass true if you want to render a past round. It will be loaded from configuration.
@@ -856,32 +929,22 @@ const timer = (lane) => {
 
 const saveXls = () => {
 	if (currTournament) {
-		xls.geneateXls(currTournament.manches.length, playerList, playerTimesList);
+		xls.geneateXls(currTournament.manches.length, playerList, playerTimes);
 	}
 };
 
 // ==========================================================================
 // ==== listen to arduino events
 
-const sensorRead1 = () => {
+const sensorRead = (lane) => {
 	if (raceRunning)
-		addLap(0);
-};
-
-const sensorRead2 = () => {
-	if (raceRunning) 
-		addLap(1);
-};
-
-const sensorRead3 = () => {
-	if (raceRunning) 
-		addLap(2);
+		addLap(lane);
 };
 
 const addLap = (lane) => {
 	console.log('client.addLap called');
 
-	chrono.addLap(lane);
+	chrono.addLap(lane-1);
 	if (chrono.isRaceFinished()) {
 		raceFinished();
 	}
@@ -891,9 +954,7 @@ const addLap = (lane) => {
 module.exports = {
 	init: init,
 	reset: reset,
-	sensorRead1: sensorRead1,
-	sensorRead2: sensorRead2,
-	sensorRead3: sensorRead3,
+	sensorRead: sensorRead,
 	keydown: keydown,
 	loadTrack: loadTrack,
 	setTrackManual: setTrackManual,
