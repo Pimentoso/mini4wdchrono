@@ -332,8 +332,8 @@ const playBuzzer = (millis) => {
 
 const playStart = () => {
 	client.initRound();
+	led1.on(); led2.on(); led3.on(); playBuzzer(1500);
 	utils
-		.delay(() => { led1.on(); led2.on(); led3.on(); playBuzzer(1500); }, 200)
 		.delay(() => { led1.off(); led2.off(); led3.off(); }, 1500)
 		.delay(() => { led1.on(); playBuzzer(500); }, 1000)
 		.delay(() => { led1.off(); led2.on(); playBuzzer(500); }, 1000)
@@ -344,9 +344,8 @@ const playStart = () => {
 };
 
 const playConnect = () => {
-	utils
-		.delay(() => { led1.blink(125); led2.blink(125); led3.blink(125); }, 125)
-		.delay(() => { led1.stop().off(); led2.stop().off(); led3.stop().off(); }, 2000);
+	led1.blink(125); led2.blink(125); led3.blink(125);
+	utils.delay(() => { led1.stop().off(); led2.stop().off(); led3.stop().off(); }, 3000);
 };
 
 // ==========================================================================
