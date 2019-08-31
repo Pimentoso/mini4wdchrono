@@ -55,7 +55,7 @@ https://www.aliexpress.com/item/32583469115.html
 
 https://www.aliexpress.com/item/32962136265.html
 
-- A magnetic buzzer.
+- A magnetic (active) buzzer.
 
 https://www.aliexpress.com/item/32666789405.html
 
