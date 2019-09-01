@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.10.1-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
+[![Version](https://img.shields.io/badge/version-0.11.0-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
 
 Mini4wdChrono is a fully free and open source project to make a functional 3-lane lap timer for Mini4WD Japan Cup tracks.
 The hardware has been chosen to be as simple and cheap as possible, while still maintain accuracy.
@@ -55,7 +55,7 @@ https://www.aliexpress.com/item/32583469115.html
 
 https://www.aliexpress.com/item/32962136265.html
 
-- A magnetic buzzer.
+- A magnetic (active) buzzer.
 
 https://www.aliexpress.com/item/32666789405.html
 

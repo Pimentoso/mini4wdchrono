@@ -50,8 +50,8 @@ const board = new j5.Board({
 	repl: false // does not work with browser console
 });
 let connected = false;
-let sensorPin1, sensorPin2, sensorPin3;
-let led1, led2, led3, piezo;
+let sensorPin1, sensorPin2, sensorPin3, buzzerPin;
+let led1, led2, led3;
 let tag1, tag2, tag3;
 
 board.on('ready', function () {
@@ -67,17 +67,18 @@ board.on('ready', function () {
 	led1 = new j5.Led(configuration.readSettings('ledPin1'));
 	led2 = new j5.Led(configuration.readSettings('ledPin2'));
 	led3 = new j5.Led(configuration.readSettings('ledPin3'));
-	piezo = new j5.Piezo(configuration.readSettings('piezoPin'));
 
 	// raw reading from digital pins because it's faster
 	sensorPin1 = configuration.readSettings('sensorPin1');
 	sensorPin2 = configuration.readSettings('sensorPin2');
 	sensorPin3 = configuration.readSettings('sensorPin3');
+	buzzerPin = configuration.readSettings('piezoPin')
 
 	this.samplingInterval(1);
 	this.pinMode(sensorPin1, j5.Pin.INPUT);
 	this.pinMode(sensorPin2, j5.Pin.INPUT);
 	this.pinMode(sensorPin3, j5.Pin.INPUT);
+	this.pinMode(buzzerPin, j5.Pin.OUTPUT);
 
 	this.digitalRead(sensorPin1, function (val) {
 		tag1.text(val);
@@ -134,7 +135,7 @@ board.on("exit", () => {
 	led1.stop().off();
 	led2.stop().off();
 	led3.stop().off();
-	piezo.noTone();
+	board.digitalWrite(buzzerPin, 0);
 });
 
 // ==========================================================================
@@ -325,27 +326,27 @@ const flashLed = (led) => {
 	utils.delay(() => { led.off(); }, 1000);
 };
 
+const playBuzzer = (millis) => {
+	board.digitalWrite(buzzerPin, 1);
+	utils.delay(() => { board.digitalWrite(buzzerPin, 0); }, millis);
+};
+
 const playStart = () => {
 	client.initRound();
+	led1.on(); led2.on(); led3.on(); playBuzzer(1500);
 	utils
-		.delay(() => { led1.on(); led2.on(); led3.on(); piezo.tone(3900, 1500); }, 200)
-		.delay(() => { led1.off(); led2.off(); led3.off(); piezo.noTone(); }, 1500)
-		.delay(() => { led1.on(); piezo.tone(3900, 500); }, 1000)
-		.delay(() => { piezo.noTone(); }, 500)
-		.delay(() => { led1.off(); led2.on(); piezo.tone(3900, 500); }, 500)
-		.delay(() => { piezo.noTone(); }, 500)
-		.delay(() => { led2.off(); led3.on(); piezo.tone(3900, 500); }, 500)
-		.delay(() => { piezo.noTone(); }, 500)
-		.delay(() => { led3.off(); }, 500)
-		.delay(() => { led1.on(); led2.on(); led3.on(); piezo.tone(3900, 1000); client.startRound(); }, 1500)
-		.delay(() => { piezo.noTone() }, 1000)
-		.delay(() => { led1.off(); led2.off(); led3.off(); }, 1500);
+		.delay(() => { led1.off(); led2.off(); led3.off(); }, 1500)
+		.delay(() => { led1.on(); playBuzzer(500); }, 1000)
+		.delay(() => { led1.off(); led2.on(); playBuzzer(500); }, 1000)
+		.delay(() => { led2.off(); led3.on(); playBuzzer(500); }, 1000)
+		.delay(() => { led3.off(); }, 1000)
+		.delay(() => { led1.on(); led2.on(); led3.on(); playBuzzer(1000); client.startRound(); }, 1500)
+		.delay(() => { led1.off(); led2.off(); led3.off(); }, 2500);
 };
 
 const playConnect = () => {
-	utils
-		.delay(() => { led1.blink(125); led2.blink(125); led3.blink(125); }, 125)
-		.delay(() => { led1.stop().off(); led2.stop().off(); led3.stop().off(); }, 2000);
+	led1.blink(125); led2.blink(125); led3.blink(125);
+	utils.delay(() => { led1.stop().off(); led2.stop().off(); led3.stop().off(); }, 3000);
 };
 
 // ==========================================================================
