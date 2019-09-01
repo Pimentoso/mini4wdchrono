@@ -123,7 +123,7 @@ const overrideTimes = () => {
 			cars = configuration.loadRound(mindex, rindex);
 			if (cars) {
 				_.each(round, (_playerId, pindex) => {
-					time = $("input[data-manche='" + mindex + "'][data-round='" + rindex + "'][data-player='" + pindex + "']").val();
+					time = $(`input[data-manche='${mindex}'][data-round='${rindex}'][data-player='${pindex}']`).val();
 					if (time) {
 						cars[pindex].currTime = utils.safeTime(time);
 					}
@@ -342,14 +342,12 @@ const keydown = (keyCode) => {
 // ==========================================================================
 // ==== API calls
 
-const loadTrack = () => {
+const loadTrack = (code) => {
 	console.log('client.loadTrack called');
 
-	let code = $('#js-input-track-code').val().slice(-6);
-	$.getJSON('https://mini4wd-track-editor.pimentoso.com/api/track/' + code)
+	$.getJSON(`https://mini4wd-track-editor.pimentoso.com/api/track/${code}`)
 		.done((obj) => {
 			trackLoadDone(obj);
-			configuration.saveSettings('track', currTrack);
 		})
 		.fail(trackLoadFail)
 		.always(() => {
@@ -365,14 +363,12 @@ const setTrackManual = (length, order) => {
 	trackLoadDone(obj);
 };
 
-const loadTournament = () => {
+const loadTournament = (code) => {
 	console.log('client.loadTournament called');
 
-	let code = $('#js-input-tournament-code').val().slice(-6);
-	$.getJSON('https://mini4wd-tournament.pimentoso.com/api/tournament/' + code)
+	$.getJSON(`https://mini4wd-tournament.pimentoso.com/api/tournament/${code}`)
 		.done((obj) => {
 			tournamentLoadDone(obj);
-			configuration.saveSettings('tournament', currTournament);
 		})
 		.fail(tournamentLoadFail)
 		.always(() => {
@@ -384,6 +380,8 @@ const trackLoadDone = (obj) => {
 	console.log('client.trackLoadDone called');
 
 	currTrack = obj;
+	configuration.saveSettings('track', currTrack);
+
 	ui.trackLoadDone(currTrack);
 	showTrackDetails();
 };
@@ -402,11 +400,14 @@ const tournamentLoadDone = (obj) => {
 	currTournament = obj;
 	playerList = clone(obj.players);
 	mancheList = clone(obj.manches);
-	mancheCount = mancheList.length;
+	mancheCount = mancheList.length; // save original manche count, without finals
+	currTournament.mancheCount = mancheCount;
 
 	if (obj.finals) {
 		mancheList.push(...clone(obj.finals));
 	}
+
+	configuration.saveSettings('tournament', currTournament);
 
 	freeRound = false;
 	ui.tournamentLoadDone(currTournament);

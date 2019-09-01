@@ -5,9 +5,21 @@ const utils = require('./utils');
 const configuration = require('./configuration');
 const i18n = new (require('../i18n/i18n'));
 
+const boardConnected = () => {
+	$('#tag-board-status').removeClass('is-danger');
+	$('#tag-board-status').addClass('is-success');
+	$('#tag-board-status').text(i18n.__('tag-connected'));
+};
+
+const boardDisonnected = () => {
+	$('#tag-board-status').removeClass('is-success');
+	$('#tag-board-status').addClass('is-danger');
+	$('#tag-board-status').text(i18n.__('tag-disconnected'));
+};
+
 const initialize = () => {
 	$('#js-title').text(configuration.readSettings('title'));
-	$('#js-race-mode-' + configuration.readSettings('raceMode')).click();
+	$(`#js-race-mode-${configuration.readSettings('raceMode')}`).click();
 	$('#js-settings-time-threshold').val(configuration.readSettings('timeThreshold'));
 	$('#js-settings-speed-threshold').val(configuration.readSettings('speedThreshold'));
 	$('#js-settings-start-delay').val(configuration.readSettings('startDelay'));
@@ -117,8 +129,8 @@ const showTrackDetails = (track) => {
 		}
 		else {
 			$('#js-input-track-code').val(track.url);
-			$('#js-track-length').text(i18n.__('label-track-length') + ': ' + track.length + ' m');
-			$('#js-track-order').text(i18n.__('label-track-lane-order') + ': ' + track.order + ',1');
+			$('#js-track-length').text(`${i18n.__('label-track-length')}: ${track.length} m`);
+			$('#js-track-order').text(`${i18n.__('label-track-lane-order')}: ${track.order},1`);
 			$('#js-link-track').attr('href', track.view_url);
 			$('#js-track-length-manual').val('');
 			$('#js-track-order-manual').val('');
@@ -134,8 +146,8 @@ const showTrackDetails = (track) => {
 const showTournamentDetails = (tournament) => {
 	if (tournament) {
 		$('#js-input-tournament-code').val(tournament.url);
-		$('#js-tournament-players').text(i18n.__('label-tournament-players') + ': ' + tournament.players.length);
-		$('#js-tournament-manches').text(i18n.__('label-tournament-manches') + ': ' + tournament.manches.length);
+		$('#js-tournament-players').text(`${i18n.__('label-tournament-players')}: ${tournament.players.length}`);
+		$('#js-tournament-manches').text(`${i18n.__('label-tournament-manches')}: ${tournament.manches.length}`);
 		$('#js-link-tournament').attr('href', tournament.url);
 	}
 	else {
@@ -155,9 +167,9 @@ const showThresholds = () => {
 		let estimatedCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold);
 		let estimatedCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold);
 		$('#js-settings-estimated-time').show();
-		$('#js-settings-estimated-time').text(i18n.__('label-time-estimated') + ': ' + estimatedTime.toFixed(3) + ' sec');
+		$('#js-settings-estimated-time').text(`${i18n.__('label-time-estimated')}: ${estimatedTime.toFixed(3)} sec`);
 		$('#js-settings-estimated-cutoff').show();
-		$('#js-settings-estimated-cutoff').text(i18n.__('label-time-estimated-cutoff') + ': min ' + estimatedCutoffMin.toFixed(3) + ' sec, max ' + estimatedCutoffMax.toFixed(3) + ' sec');
+		$('#js-settings-estimated-cutoff').text(`${i18n.__('label-time-estimated-cutoff')}: min ${estimatedCutoffMin.toFixed(3)} sec, max ${estimatedCutoffMax.toFixed(3)} sec`);
 	}
 	else {
 		$('#js-settings-estimated-time').hide();
@@ -176,11 +188,11 @@ const showPlayerList = () => {
 
 		// draw title row
 		let titleCells = _.map(tournament.manches, (_manche, mindex) => {
-			return '<td>Manche ' + (mindex + 1) + '</td>';
+			return `<td>Manche ${mindex + 1}</td>`;
 		});
-		titleCells.push('<td>' + i18n.__('label-best-2-times') + '</td>');
-		titleCells.push('<td>' + i18n.__('label-best-speed') + '</td>');
-		$('#tablePlayerList').append('<tr class="is-selected"><td colspan="2"><strong>' + playerList.length + ' RACERS</strong></td>' + titleCells + '</tr>');
+		titleCells.push(`<td>${i18n.__('label-best-2-times')}</td>`);
+		titleCells.push(`<td>${i18n.__('label-best-speed')}</td>`);
+		$('#tablePlayerList').append(`<tr class="is-selected"><td colspan="2"><strong>${playerList.length} RACERS</strong></td>${titleCells}</tr>`);
 
 		// draw player rows
 		_.each(times, (info) => {
@@ -198,11 +210,11 @@ const showPlayerList = () => {
 				else if (playerTime < 99999) {
 					highlight = 'has-text-info';
 				}
-				return '<td class="' + highlight + '">' + utils.prettyTime(playerTime) + '</td>';
+				return `<td class="${highlight}">${utils.prettyTime(playerTime)}</td>`;
 			});
-			timeCells.push('<td>' + utils.prettyTime(info.best) + '</td>');
-			timeCells.push('<td>' + bestSpeed.toFixed(2) + ' m/s</td>');
-			$('#tablePlayerList').append('<tr><td>' + (info.id + 1) + '</td><td><p class="has-text-centered is-uppercase">' + playerList[info.id] + '</p></td>' + timeCells + '</tr>');
+			timeCells.push(`<td>${utils.prettyTime(info.best)}</td>`);
+			timeCells.push(`<td>${bestSpeed.toFixed(2)} m/s</td>`);
+			$('#tablePlayerList').append(`<tr><td>${info.id + 1}</td><td><p class="has-text-centered is-uppercase">${playerList[info.id]}</p></td>${timeCells}</tr>`);
 		});
 	}
 };
@@ -275,12 +287,12 @@ const showNextRoundNames = () => {
 };
 
 const mancheName = (mindex) => {
-	mindex = mindex || currManche;
+	let tournament = configuration.readSettings('tournament');
 
-	if (mindex == mancheCount) {
+	if (mindex == tournament.mancheCount) {
 		return (mindex < mancheList.length) ? 'FINAL 4-5-6 PLACE' : 'FINAL 1-2-3 PLACE';
 	}
-	else if (mindex == mancheCount + 1) {
+	else if (mindex == tournament.mancheCount + 1) {
 		return 'FINAL 1-2-3 PLACE';
 	}
 	else {
@@ -290,6 +302,8 @@ const mancheName = (mindex) => {
 
 // TODO move to client?
 const getSortedPlayerList = () => {
+	let tournament = configuration.readSettings('tournament');
+	let playerList = tournament.players;
 	let playerTimes = configuration.readSettings('playerTimes');
 
 	// calculate best time sums
@@ -359,7 +373,7 @@ const initRace = (freeRound) => {
 		$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '//');
 		$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '//');
 		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '//');
-		$('#curr-manche').text(mancheName());
+		$('#curr-manche').text(mancheName(currManche));
 		$('#curr-round').text(`ROUND ${currRound + 1}`);
 		showNextRoundNames();
 		showPlayerList();
@@ -376,83 +390,85 @@ const drawRace = (cars, running) => {
 	_.each(cars, (car, i) => {
 		// delay + speed
 		if (car.outOfBounds) {
-			$('#delay-lane' + i).text('+99.999');
-			$('#speed-lane' + i).text('0.00 m/s');
+			$(`#delay-lane${i}`).text('+99.999');
+			$(`#speed-lane${i}`).text('0.00 m/s');
 		}
 		else {
-			$('#delay-lane' + i).text('+' + (car.delayFromFirst / 1000));
+			$(`#delay-lane${i}`).text(`+${car.delayFromFirst / 1000}`);
 			if (car.delayFromFirst > 0) {
-				$('#delay-lane' + i).addClass('is-danger');
+				$(`#delay-lane${i}`).addClass('is-danger');
 			}
 			if (car.lapCount > 1) {
-				$('#speed-lane' + i).text(car.speed.toFixed(2) + ' m/s');
+				$(`#speed-lane${i}`).text(`${car.speed.toFixed(2)} m/s`);
 			}
 			else {
-				$('#speed-lane' + i).text('0.00 m/s');
+				$(`#speed-lane${i}`).text('0.00 m/s');
 			}
 		}
 
 		// lap count
 		if (car.lapCount == 4) {
-			$('#lap-lane' + i).text(i18n.__('label-car-finish'));
+			$(`#lap-lane${i}`).text(i18n.__('label-car-finish'));
 		}
 		else {
-			$('#lap-lane' + i).text(i18n.__('label-car-lap') + ' ' + car.lapCount);
+			$(`#lap-lane${i}`).text(`${i18n.__('label-car-lap')} ${car.lapCount}`);
 		}
 
 		// split times
-		$('#laps-lane' + i).empty();
+		$(`#laps-lane${i}`).empty();
 		_.each(car.splitTimes, (t, ii) => {
-			$('#laps-lane' + i).append('<li class="is-size-4">' + i18n.__('label-car-partial') + ' ' + (ii + 1) + ' - <strong>' + utils.prettyTime(t) + ' s</strong></li>');
+			$(`#laps-lane${i}`).append(`<li class="is-size-4">${i18n.__('label-car-partial')} ${ii + 1} - <strong>${utils.prettyTime(t)} s</strong></li>`);
 		});
 
 		// place
 		if (car.outOfBounds) {
-			$('#place-lane' + i).text(i18n.__('label-car-out'));
-			$('#place-lane' + i).addClass('is-dark');
+			$(`#place-lane${i}`).text(i18n.__('label-car-out'));
+			$(`#place-lane${i}`).addClass('is-dark');
 		}
 		else if (car.lapCount == 0) {
 			if (running) {
-				$('#place-lane' + i).text(i18n.__('label-car-ready'));
+				$(`#place-lane${i}`).text(i18n.__('label-car-ready'));
 			}
 			else {
-				$('#place-lane' + i).text(i18n.__('label-car-stopped'));
+				$(`#place-lane${i}`).text(i18n.__('label-car-stopped'));
 			}
-			$('#place-lane' + i).addClass('is-light');
+			$(`#place-lane${i}`).addClass('is-light');
 		}
 		else if (car.lapCount == 1) {
-			$('#place-lane' + i).text(i18n.__('label-car-started'));
-			$('#place-lane' + i).addClass('is-light');
+			$(`#place-lane${i}`).text(i18n.__('label-car-started'));
+			$(`#place-lane${i}`).addClass('is-light');
 		}
 		else {
-			$('#place-lane' + i).text(car.position + ' ' + i18n.__('label-car-position'));
+			$(`#place-lane${i}`).text(`${car.position} ${i18n.__('label-car-position')}`);
 			if (car.position == 1) {
-				$('#place-lane' + i).addClass('is-warning');
+				$(`#place-lane${i}`).addClass('is-warning');
 			}
 			else {
-				$('#place-lane' + i).addClass('is-primary');
+				$(`#place-lane${i}`).addClass('is-primary');
 			}
 		}
 
 		// timer
 		if (car.outOfBounds) {
-			$('#timer-lane' + i).addClass('is-danger');
-			$('#timer-lane' + i).text(utils.prettyTime(car.currTime));
+			$(`#timer-lane${i}`).addClass('is-danger');
+			$(`#timer-lane${i}`).text(utils.prettyTime(car.currTime));
 		}
 		else if (car.lapCount == 0) {
-			$('#timer-lane' + i).text(utils.prettyTime(0));
+			$(`#timer-lane${i}`).text(utils.prettyTime(0));
 		}
 		else if (car.lapCount == 1) {
 			startTimer(i);
 		}
 		else if (car.lapCount == 4) {
-			$('#timer-lane' + i).addClass('is-success');
-			$('#timer-lane' + i).text(utils.prettyTime(car.currTime));
+			$(`#timer-lane${i}`).addClass('is-success');
+			$(`#timer-lane${i}`).text(utils.prettyTime(car.currTime));
 		}
 	});
 };
 
 module.exports = {
+	boardConnected: boardConnected,
+	boardDisonnected: boardDisonnected,
 	initialize: initialize,
 	reset: reset,
 	toggleFreeRound: toggleFreeRound,

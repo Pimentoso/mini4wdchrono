@@ -35,7 +35,7 @@ const utils = require('./js/utils');
 const i18n = new (require('./i18n/i18n'));
 
 // Show version in about tab
-$('#js-about-version').text('Version ' + app.getVersion());
+$('#js-about-version').text(`Version ${app.getVersion()}`);
 
 // open links externally by default
 $(document).on('click', 'a[href^="http"]', function (event) {
@@ -56,8 +56,7 @@ let tag1, tag2, tag3;
 
 board.on('ready', function () {
 	connected = true;
-	$('#tag-board-status').addClass('is-success');
-	$('#tag-board-status').text(i18n.__('tag-connected'));
+	ui.boardConnected();
 
 	tag1 = $('#sensor-reading-1');
 	tag2 = $('#sensor-reading-2');
@@ -109,8 +108,7 @@ board.on('ready', function () {
 
 board.on("fail", function (event) {
 	connected = false;
-	$('#tag-board-status').addClass('is-danger');
-	$('#tag-board-status').text(i18n.__('tag-disconnected'));
+	ui.boardDisonnected();
 	if (!debugMode) {
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message });
 	}
@@ -118,8 +116,7 @@ board.on("fail", function (event) {
 
 board.on("error", function (event) {
 	connected = false;
-	$('#tag-board-status').addClass('is-danger');
-	$('#tag-board-status').text(i18n.__('tag-disconnected'));
+	ui.boardDisonnected();
 	if (!debugMode) {
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message });
 	}
@@ -128,10 +125,7 @@ board.on("error", function (event) {
 // TODO does not work
 board.on("exit", () => {
 	connected = false;
-	$('#tag-board-status').removeClass('is-success');
-	$('#tag-board-status').addClass('is-danger');
-	$('#tag-board-status').text(i18n.__('tag-disconnected'));
-
+	ui.boardDisonnected();
 	led1.stop().off();
 	led2.stop().off();
 	led3.stop().off();
@@ -148,7 +142,7 @@ $('.tabs a').on('click', (e) => {
 	$this.closest('li').addClass('is-active');
 	let tab = $this.closest('li').data('tab');
 	$('div[data-tab]').hide();
-	$('div[data-tab=' + tab + ']').show();
+	$(`div[data-tab=${tab}]`).show();
 
 	$('#button-manches-save').attr('disabled', true);
 	$('#button-manches-cancel').attr('disabled', true);
@@ -162,7 +156,8 @@ document.onkeydown = (e) => {
 };
 
 $('#js-load-track').on('click', (e) => {
-	client.loadTrack();
+	let code = $('#js-input-track-code').val().slice(-6);
+	client.loadTrack(code);
 });
 
 $('#js-track-save-manual').on('click', (e) => {
@@ -184,7 +179,8 @@ $('#js-track-save-manual').on('click', (e) => {
 });
 
 $('#js-load-tournament').on('click', (e) => {
-	client.loadTournament();
+	let code = $('#js-input-tournament-code').val().slice(-6);
+	client.loadTournament(code);
 });
 
 $('#button-reset').on('click', (e) => {

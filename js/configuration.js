@@ -46,7 +46,7 @@ const deleteSettings = (settingKey) => {
 };
 
 const saveRound = (manche, round, cars) => {
-	nconf.set('race:' + manche + '-' + round, cars);
+	nconf.set(`race:${manche}-${round}`, cars);
 	nconf.save();
 };
 
@@ -55,11 +55,11 @@ const loadRound = (manche, round) => {
 		manche = readSettings('currManche');
 	if (round == null)
 		round = readSettings('currRound');
-	return readSettings('race:' + manche + '-' + round);
+	return readSettings(`race:${manche}-${round}`);
 };
 
 const deleteRound = (manche, round) => {
-	nconf.clear('race:' + manche + '-' + round);
+	nconf.clear(`race:${manche}-${round}`);
 	nconf.save();
 };
 
