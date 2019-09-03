@@ -1,6 +1,6 @@
 'use strict';
 
-const app = require('electron').remote.app;
+const { app } = require('electron').remote;
 const path = require('path')
 const filename = 'settings.json';
 

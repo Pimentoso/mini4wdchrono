@@ -2,7 +2,7 @@
 
 const xls = require('exceljs');
 const utils = require('./utils');
-const app = require('electron').remote.app;
+const { app } = require('electron').remote;
 const fs = require('fs');
 const path = require('path');
 

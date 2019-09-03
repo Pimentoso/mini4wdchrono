@@ -20,12 +20,11 @@ process.__defineGetter__("stdin", function () {
 const debugMode = false;
 ////////////////////////
 
-const electron = require('electron');
+const { dialog, shell, app } = require('electron').remote;
 
 const log = require('electron-log');
 log.catchErrors();
 
-const { dialog, shell, app } = electron.remote;
 const j5 = require('johnny-five');
 const xls = require('./js/export');
 const configuration = require('./js/configuration');
