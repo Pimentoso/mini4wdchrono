@@ -326,15 +326,15 @@ const keydown = (keyCode) => {
 	if (raceRunning) {
 		if (keyCode == 49 || keyCode == 97) {
 			// pressed 1
-			addLap(0);
+			addLap(1);
 		}
 		else if (keyCode == 50 || keyCode == 98) {
 			// pressed 2
-			addLap(1);
+			addLap(2);
 		}
 		else if (keyCode == 51 || keyCode == 99) {
 			// pressed 3
-			addLap(2);
+			addLap(3);
 		}
 	}
 };
@@ -517,6 +517,9 @@ const drawRace = (fromSaved) => {
 	_.each(cars, (car, i) => {
 		if (car.outOfBounds || car.lapCount == 4) {
 			stopTimer(i);
+		}
+		else if (car.lapCount == 1) {
+			startTimer(i);
 		}
 	});
 };
