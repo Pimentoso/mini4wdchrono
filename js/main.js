@@ -23,6 +23,7 @@ const debugMode = false;
 const { dialog, shell, app } = require('electron').remote;
 
 const log = require('electron-log');
+log.info(`Launched Mini4wdChrono at ${new Date()}`);
 log.catchErrors();
 
 const j5 = require('johnny-five');
