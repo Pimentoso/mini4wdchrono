@@ -23,6 +23,7 @@ const debugMode = false;
 const electron = require('electron');
 
 const log = require('electron-log');
+log.info(`Launched Mini4wdChrono at ${new Date()}`);
 log.catchErrors();
 
 const { dialog, shell, app } = electron.remote;
