@@ -249,6 +249,10 @@ $('#button-xls-folder').on('click', (e) => {
 	shell.openItem(dir);
 });
 
+$('#button-log-file').on('click', (e) => {
+	shell.openItem(log.transports.file.findLogPath());
+});
+
 $('#button-save-settings').on('click', (e) => {
 	configuration.saveSettings('timeThreshold', parseFloat($('#js-settings-time-threshold').val().replace(',', '.')));
 	configuration.saveSettings('speedThreshold', parseFloat($('#js-settings-speed-threshold').val().replace(',', '.')));
