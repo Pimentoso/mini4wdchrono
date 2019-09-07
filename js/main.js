@@ -146,6 +146,13 @@ $('.tabs a').on('click', (e) => {
 
 	$('#button-manches-save').attr('disabled', true);
 	$('#button-manches-cancel').attr('disabled', true);
+
+	if ($this.data('fn') == 'free') {
+		client.setFreeRound(true);
+	}
+	else {
+		client.setFreeRound(false);
+	}
 });
 
 document.onkeydown = (e) => {
@@ -232,7 +239,7 @@ $('#button-next').on('click', (e) => {
 });
 
 $('#button-toggle-free-round').on('click', (e) => {
-	client.toggleFreeRound();
+
 });
 
 $('#button-xls').on('click', (e) => {

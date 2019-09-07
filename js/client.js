@@ -311,10 +311,10 @@ const nextRound = () => {
 
 const isFreeRound = () => freeRound;
 
-const toggleFreeRound = () => {
+const setFreeRound = (free) => {
 	console.log('client.toggleFreeRound called');
 
-	freeRound = !freeRound;
+	freeRound = free;
 	chronoInit(freeRound);
 	ui.toggleFreeRound(freeRound);
 	ui.initRace(freeRound);
@@ -583,5 +583,5 @@ module.exports = {
 	prevRound: prevRound,
 	nextRound: nextRound,
 	isFreeRound: isFreeRound,
-	toggleFreeRound: toggleFreeRound
+	setFreeRound: setFreeRound
 };
