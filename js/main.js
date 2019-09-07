@@ -56,6 +56,8 @@ let tag1, tag2, tag3;
 
 board.on('ready', function () {
 	connected = true;
+	log.info(`Board READY at ${new Date()}`);
+
 	ui.boardConnected();
 
 	tag1 = $('#sensor-reading-1');
@@ -108,7 +110,10 @@ board.on('ready', function () {
 
 board.on("fail", function (event) {
 	connected = false;
+	log.error(`Board FAIL at ${new Date()} - ${event.message}`);
+
 	ui.boardDisonnected();
+
 	if (!debugMode) {
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message });
 	}
@@ -116,16 +121,43 @@ board.on("fail", function (event) {
 
 board.on("error", function (event) {
 	connected = false;
+	log.error(`Board ERROR at ${new Date()} - ${event.message}`);
+
 	ui.boardDisonnected();
+
 	if (!debugMode) {
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message });
 	}
 });
 
+board.on("info", function (event) {
+	log.info(`Board INFO at ${new Date()} - ${event.message}`);
+});
+
+board.on("warn", function (event) {
+	log.warn(`Board WARN at ${new Date()} - ${event.message}`);
+});
+
 // TODO does not work
-board.on("exit", () => {
+board.on("close", function (event) {
 	connected = false;
+	log.error(`Board CLOSE at ${new Date()} - ${event.message}`);
+
 	ui.boardDisonnected();
+
+	led1.stop().off();
+	led2.stop().off();
+	led3.stop().off();
+	board.digitalWrite(buzzerPin, 0);
+});
+
+// TODO does not work
+board.on("exit", function (event) {
+	connected = false;
+	log.error(`Board EXIT at ${new Date()} - ${event.message}`);
+
+	ui.boardDisonnected();
+
 	led1.stop().off();
 	led2.stop().off();
 	led3.stop().off();
