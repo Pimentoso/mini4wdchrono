@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.11.0-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
+[![Version](https://img.shields.io/badge/version-0.11.1-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
 
 Mini4wdChrono is a fully free and open source project to make a functional 3-lane lap timer for Mini4WD Japan Cup tracks.
 The hardware has been chosen to be as simple and cheap as possible, while still maintain accuracy.
@@ -33,7 +33,7 @@ You can download the latest releases for Windows 10 (64-bit) or Mac OS (64-bit) 
 
 Unzip the program anywhere on your computer, connect the lap timer to the computer via USB, and then launch the program.
 
-# The hardware 
+# The hardware
 
 ## Hardware needed
 
@@ -103,7 +103,7 @@ Now you need to flash the StandardFirmataPlus firmware on your arduino board. Th
 - Upload sketch onto board.
 - Done!
 
-When you launch Mini4WD Chrono, the small badge on the top right will be green and say "board connected". 
+When you launch Mini4WD Chrono, the small badge on the top right will be green and say "board connected".
 If you have problems, go to the configuration tab, change the USB port, and save settings. Disconnect and reconnect the arduino board to USB, and reload the program.
 **NOTE: the arduino board must be connected to the computer USB BEFORE launching the program.**
 
