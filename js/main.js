@@ -56,6 +56,8 @@ let tag1, tag2, tag3;
 
 board.on('ready', function () {
 	connected = true;
+	log.info(`Board READY at ${new Date()}`);
+
 	$('#tag-board-status').addClass('is-success');
 	$('#tag-board-status').text(i18n.__('tag-connected'));
 
@@ -109,6 +111,8 @@ board.on('ready', function () {
 
 board.on("fail", function (event) {
 	connected = false;
+	log.error(`Board ERROR at ${new Date()} - ${event.message}`);
+
 	$('#tag-board-status').addClass('is-danger');
 	$('#tag-board-status').text(i18n.__('tag-disconnected'));
 	if (!debugMode) {
@@ -118,6 +122,8 @@ board.on("fail", function (event) {
 
 board.on("error", function (event) {
 	connected = false;
+	log.error(`Board EXIT at ${new Date()} - ${event.message}`);
+
 	$('#tag-board-status').addClass('is-danger');
 	$('#tag-board-status').text(i18n.__('tag-disconnected'));
 	if (!debugMode) {
@@ -125,9 +131,33 @@ board.on("error", function (event) {
 	}
 });
 
-// TODO does not work
-board.on("exit", () => {
+board.on("close", function (event) {
 	connected = false;
+	log.error(`Board CLOSE at ${new Date()} - ${event.message}`);
+
+	$('#tag-board-status').removeClass('is-success');
+	$('#tag-board-status').addClass('is-danger');
+	$('#tag-board-status').text(i18n.__('tag-disconnected'));
+
+	led1.stop().off();
+	led2.stop().off();
+	led3.stop().off();
+	board.digitalWrite(buzzerPin, 0);
+});
+
+board.on("info", function (event) {
+	log.info(`Board INFO at ${new Date()} - ${event.message}`);
+});
+
+board.on("warn", function (event) {
+	log.warn(`Board WARN at ${new Date()} - ${event.message}`);
+});
+
+// TODO does not work
+board.on("exit", function (event) {
+	connected = false;
+	log.error(`Board EXIT at ${new Date()} - ${event.message}`);
+
 	$('#tag-board-status').removeClass('is-success');
 	$('#tag-board-status').addClass('is-danger');
 	$('#tag-board-status').text(i18n.__('tag-disconnected'));
