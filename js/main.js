@@ -57,7 +57,6 @@ let tag1, tag2, tag3;
 board.on('ready', function () {
 	connected = true;
 	log.info(`Board READY at ${new Date()}`);
-	
 	ui.boardConnected();
 
 	tag1 = $('#sensor-reading-1');
@@ -118,7 +117,8 @@ board.on("warn", function (event) {
 
 board.on("fail", function (event) {
 	connected = false;
-	log.error(`Board ERROR at ${new Date()} - ${event.message}`);
+	log.error(`Board FAIL at ${new Date()} - ${event.message}`);
+
 	ui.boardDisonnected();
 
 	if (!debugMode) {
@@ -128,7 +128,8 @@ board.on("fail", function (event) {
 
 board.on("error", function (event) {
 	connected = false;
-	log.error(`Board EXIT at ${new Date()} - ${event.message}`);
+	log.error(`Board ERROR at ${new Date()} - ${event.message}`);
+
 	ui.boardDisonnected();
 
 	if (!debugMode) {
@@ -136,6 +137,15 @@ board.on("error", function (event) {
 	}
 });
 
+board.on("info", function (event) {
+	log.info(`Board INFO at ${new Date()} - ${event.message}`);
+});
+
+board.on("warn", function (event) {
+	log.warn(`Board WARN at ${new Date()} - ${event.message}`);
+});
+
+// TODO does not work
 board.on("close", function (event) {
 	connected = false;
 	log.error(`Board CLOSE at ${new Date()} - ${event.message}`);
@@ -172,6 +182,13 @@ $('.tabs a').on('click', (e) => {
 
 	$('#button-manches-save').attr('disabled', true);
 	$('#button-manches-cancel').attr('disabled', true);
+
+	if ($this.data('fn') == 'free') {
+		client.setFreeRound(true);
+	}
+	else {
+		client.setFreeRound(false);
+	}
 });
 
 document.onkeydown = (e) => {
@@ -258,7 +275,7 @@ $('#button-next').on('click', (e) => {
 });
 
 $('#button-toggle-free-round').on('click', (e) => {
-	client.toggleFreeRound();
+
 });
 
 $('#button-xls').on('click', (e) => {

@@ -456,9 +456,6 @@ const drawRace = (cars, running) => {
 		else if (car.lapCount == 0) {
 			$(`#timer-lane${i}`).text(utils.prettyTime(0));
 		}
-		else if (car.lapCount == 1) {
-			startTimer(i);
-		}
 		else if (car.lapCount == 4) {
 			$(`#timer-lane${i}`).addClass('is-success');
 			$(`#timer-lane${i}`).text(utils.prettyTime(car.currTime));

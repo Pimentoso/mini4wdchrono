@@ -311,10 +311,10 @@ const nextRound = () => {
 
 const isFreeRound = () => freeRound;
 
-const toggleFreeRound = () => {
+const setFreeRound = (free) => {
 	console.log('client.toggleFreeRound called');
 
-	freeRound = !freeRound;
+	freeRound = free;
 	chronoInit(freeRound);
 	ui.toggleFreeRound(freeRound);
 	ui.initRace(freeRound);
@@ -326,15 +326,15 @@ const keydown = (keyCode) => {
 	if (raceRunning) {
 		if (keyCode == 49 || keyCode == 97) {
 			// pressed 1
-			addLap(0);
+			addLap(1);
 		}
 		else if (keyCode == 50 || keyCode == 98) {
 			// pressed 2
-			addLap(1);
+			addLap(2);
 		}
 		else if (keyCode == 51 || keyCode == 99) {
 			// pressed 3
-			addLap(2);
+			addLap(3);
 		}
 	}
 };
@@ -518,6 +518,9 @@ const drawRace = (fromSaved) => {
 		if (car.outOfBounds || car.lapCount == 4) {
 			stopTimer(i);
 		}
+		else if (car.lapCount == 1) {
+			startTimer(i);
+		}
 	});
 };
 
@@ -580,5 +583,5 @@ module.exports = {
 	prevRound: prevRound,
 	nextRound: nextRound,
 	isFreeRound: isFreeRound,
-	toggleFreeRound: toggleFreeRound
+	setFreeRound: setFreeRound
 };
