@@ -46,6 +46,7 @@
     "button-save-settings": "Salva impostazioni",
     "button-save-xls": "Salva file Excel",
     "button-open-folder": "Apri cartella >",
+    "button-open-log": "Visualizza file di log",
     "label-tournament-not-loaded": "Torneo non caricato",
     "label-track-not-loaded": "Pista non caricata",
     "button-cancel": "Annulla",

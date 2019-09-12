@@ -1,9 +1,10 @@
 {
   "name": "Mini4wdChrono",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "[![WIP](https://img.shields.io/badge/status-WORK%20IN%20PROGRESS-red.svg)](https://github.com/Pimentoso/mini4wdchrono)",
   "main": "window.js",
   "dependencies": {
+    "clone": "^2.1.2",
     "electron-log": "^3.0.5",
     "exceljs": "^1.10.0",
     "johnny-five": "^1.1.0",
