@@ -126,7 +126,7 @@ npm install
 npm start
 ```
 
-To package the project:
+To package the project run utils/build_darwin.sh, or
 
 ```
 electron-packager . Mini4wdChrono --overwrite --icon=images/ic_launcher_web.icns --prune=true --out=release-builds
@@ -143,7 +143,7 @@ choco install arduino
 // now open the arduino IDE, and use it to upload the StandardFirmataPlus firmware on the board
 ```
 
-Now open a Node.js Command Prompt with administrator access
+Now open Powershell with administrator access
 
 ```
 npm install -g windows-build-tools
@@ -154,7 +154,7 @@ npm install
 npm start
 ```
 
-To package the project:
+To package the project run utils/build_win64.ps1, or
 
 ```
 electron-packager . Mini4wdChrono --overwrite --asar --icon=images/ic_launcher_web.ico --prune=true --out=release-builds
