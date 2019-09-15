@@ -79,7 +79,6 @@ const reset = () => {
 const chronoInit = (reset) => {
 	console.log('client.chronoInit called');
 
-	debugger;
 	if (reset) {
 		// new blank round, or replay a past round
 		configuration.deleteRound(currManche, currRound);
@@ -110,7 +109,7 @@ const disqualify = (mindex, rindex, pindex) => {
 
 	rebuildTimeList();
 	ui.initRace(freeRound);
-	drawRace(true);
+	drawRace();
 };
 
 // Reads all input fields in the manches tab and rebuilds time list
@@ -135,7 +134,7 @@ const overrideTimes = () => {
 
 	rebuildTimeList();
 	ui.initRace(freeRound);
-	drawRace(true);
+	drawRace();
 };
 
 // Initializes playerTimes
@@ -213,7 +212,7 @@ const initFinal = () => {
 const initRound = () => {
 	console.log('client.initRound called');
 
-	chronoInit(true);
+	chronoInit(!freeRound);
 	drawRace();
 };
 
@@ -269,7 +268,7 @@ const prevRound = () => {
 		configuration.saveSettings('currRound', currRound);
 		chronoInit();
 		ui.initRace(freeRound);
-		drawRace(true);
+		drawRace();
 	}
 };
 
@@ -308,7 +307,7 @@ const nextRound = () => {
 		configuration.saveSettings('currRound', currRound);
 		chronoInit();
 		ui.initRace(freeRound);
-		drawRace(true);
+		drawRace();
 	}
 };
 
@@ -502,19 +501,14 @@ const showTournamentDetails = () => {
 
 	ui.showTournamentDetails(currTournament);
 	ui.initRace(freeRound);
-	drawRace(true);
+	drawRace();
 };
 
-// @param [bool] fromSaved: pass true if you want to render a past round. It will be loaded from configuration.
-// else it will be loaded from the chrono instance
-const drawRace = (fromSaved) => {
+const drawRace = () => {
 	console.log('client.drawRace called');
 
-	let cars;
-	if (fromSaved) {
-		cars = configuration.loadRound(currManche, currRound);
-	}
-	cars = cars || chrono.getCars();
+	let cars = (raceRunning || freeRound) ? chrono.getCars() : configuration.loadRound(currManche, currRound);
+	cars = cars || chrono.getCars(); // if loaded round was undefined
 	ui.drawRace(cars, raceRunning);
 
 	// stop timers
