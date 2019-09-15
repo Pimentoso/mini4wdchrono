@@ -229,6 +229,9 @@ const showMancheList = () => {
 	let currRound = configuration.readSettings('currRound');
 	let playerList = tournament.players;
 	let mancheList = tournament.manches;
+	if (tournament.finals) {
+		mancheList.push(...tournament.finals);
+	}
 
 	$('#tableMancheList').empty();
 	let cars, mancheText, playerName, playerTime, playerPosition, playerForm, highlight;
@@ -270,6 +273,9 @@ const showNextRoundNames = () => {
 	let currRound = configuration.readSettings('currRound');
 	let playerList = tournament.players;
 	let mancheList = tournament.manches;
+	if (tournament.finals) {
+		mancheList.push(...tournament.finals);
+	}
 
 	let r = currRound, m = currManche, text;
 	r += 1;
@@ -292,6 +298,10 @@ const showNextRoundNames = () => {
 
 const mancheName = (mindex) => {
 	let tournament = configuration.readSettings('tournament');
+	let mancheList = tournament.manches;
+	if (tournament.finals) {
+		mancheList.push(...tournament.finals);
+	}
 
 	if (mindex == tournament.mancheCount) {
 		return (mindex < mancheList.length) ? 'FINAL 4-5-6 PLACE' : 'FINAL 1-2-3 PLACE';
@@ -371,6 +381,9 @@ const initRace = (freeRound) => {
 	else {
 		let playerList = tournament.players;
 		let mancheList = tournament.manches;
+		if (tournament.finals) {
+			mancheList.push(...tournament.finals);
+		}
 
 		$('.js-show-on-no-tournament').hide();
 		$('.js-hide-on-no-tournament').show();
