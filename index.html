@@ -62,11 +62,6 @@
 					<span class="tn" data-tn="tab-race-view">Race view</span>
 				</a>
 			</li>
-			<li data-tab="free">
-				<a data-fn="free">
-					<span class="tn" data-tn="tab-free-round">Free round</span>
-				</a>
-			</li>
 			<li data-tab="players">
 				<a>
 					<span class="tn" data-tn="tab-racers-list">Racers list</span>
@@ -328,6 +323,10 @@
 			<div class="level-item">
 				<button class="button is-link is-large has-text-weight-bold js-disable-on-race-started" id="button-start" style="min-width: 200px;">
 					<span class="tn" data-tn="button-start">START</span>
+				</button>
+
+				<button class="button is-link is-outlined js-hide-on-race-started js-hide-on-no-tournament" id="button-toggle-free-round" style="min-width: 150px; margin-left: 20px;">
+					<span class="tn" data-tn="button-goto-free">Free round ></span>
 				</button>
 
 				<button class="button is-danger is-outlined js-show-on-race-started" id="button-stop" style="min-width: 150px; margin-left: 20px;">
