@@ -79,21 +79,20 @@ const reset = () => {
 const chronoInit = (reset) => {
 	console.log('client.chronoInit called');
 
-	if (reset == null) {
-		// existing round
-		let cars = configuration.loadRound(currManche, currRound);
-		chrono.init(currTrack, mancheList[currManche][currRound], cars);
+	debugger;
+	if (reset) {
+		// new blank round, or replay a past round
+		configuration.deleteRound(currManche, currRound);
+		chrono.init(currTrack, mancheList[currManche][currRound]);
+	}
+	else if (currTournament == null || freeRound) {
+		// free round
+		chrono.init(currTrack);
 	}
 	else {
-		if (currTournament == null || freeRound) {
-			// free round
-			chrono.init(currTrack);
-		}
-		else {
-			// new blank round
-			configuration.deleteRound(currManche, currRound);
-			chrono.init(currTrack, mancheList[currManche][currRound]);
-		}
+		// load existing round
+		let cars = configuration.loadRound(currManche, currRound);
+		chrono.init(currTrack, mancheList[currManche][currRound], cars);
 	}
 };
 
@@ -111,6 +110,7 @@ const disqualify = (mindex, rindex, pindex) => {
 
 	rebuildTimeList();
 	ui.initRace(freeRound);
+	drawRace(true);
 };
 
 // Reads all input fields in the manches tab and rebuilds time list
@@ -135,6 +135,7 @@ const overrideTimes = () => {
 
 	rebuildTimeList();
 	ui.initRace(freeRound);
+	drawRace(true);
 };
 
 // Initializes playerTimes
@@ -268,6 +269,7 @@ const prevRound = () => {
 		configuration.saveSettings('currRound', currRound);
 		chronoInit();
 		ui.initRace(freeRound);
+		drawRace(true);
 	}
 };
 
@@ -306,6 +308,7 @@ const nextRound = () => {
 		configuration.saveSettings('currRound', currRound);
 		chronoInit();
 		ui.initRace(freeRound);
+		drawRace(true);
 	}
 };
 
@@ -315,7 +318,7 @@ const toggleFreeRound = () => {
 	console.log('client.toggleFreeRound called');
 
 	freeRound = !freeRound;
-	chronoInit(freeRound);
+	chronoInit();
 	ui.toggleFreeRound(freeRound);
 	ui.initRace(freeRound);
 	drawRace();
@@ -489,7 +492,7 @@ const showTrackDetails = () => {
 
 	ui.showTrackDetails(currTrack);
 	ui.showThresholds();
-	chronoInit(true);
+	chronoInit();
 	ui.initRace(freeRound);
 	drawRace();
 };
@@ -499,6 +502,7 @@ const showTournamentDetails = () => {
 
 	ui.showTournamentDetails(currTournament);
 	ui.initRace(freeRound);
+	drawRace(true);
 };
 
 // @param [bool] fromSaved: pass true if you want to render a past round. It will be loaded from configuration.

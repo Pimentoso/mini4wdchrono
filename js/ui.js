@@ -64,14 +64,14 @@ const reset = () => {
 
 const toggleFreeRound = (freeRound) => {
 	if (freeRound) {
-		$('#button-toggle-free-round').text(i18n.__('button-goto-free'));
-		$('#button-prev').show();
-		$('#button-next').show();
-	}
-	else {
 		$('#button-toggle-free-round').text(i18n.__('button-goto-race'));
 		$('#button-prev').hide();
 		$('#button-next').hide();
+	}
+	else {
+		$('#button-toggle-free-round').text(i18n.__('button-goto-free'));
+		$('#button-prev').show();
+		$('#button-next').show();
 	}
 };
 
@@ -378,7 +378,6 @@ const initRace = (freeRound) => {
 		showNextRoundNames();
 		showPlayerList();
 		showMancheList();
-		drawRace(true);
 	}
 };
 
