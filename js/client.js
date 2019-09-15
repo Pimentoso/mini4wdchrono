@@ -480,7 +480,7 @@ const raceFinished = () => {
 	}
 
 	raceRunning = false;
-	ui.raceFinished();
+	ui.raceFinished(freeRound);
 };
 
 // ==========================================================================

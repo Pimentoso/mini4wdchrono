@@ -111,10 +111,14 @@ const raceStarted = () => {
 	$('.js-disable-on-race-started').attr('disabled', true);
 };
 
-const raceFinished = () => {
+const raceFinished = (freeRound) => {
 	$('.js-show-on-race-started').hide();
 	$('.js-hide-on-race-started').show();
 	$('.js-disable-on-race-started').removeAttr('disabled');
+	if (freeRound) {
+		$('.js-show-on-free-round').show();
+		$('.js-hide-on-free-round').hide();
+	}
 };
 
 const showTrackDetails = (track) => {
