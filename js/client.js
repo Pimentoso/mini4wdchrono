@@ -33,7 +33,7 @@ const init = () => {
 	currRound = configuration.readSettings('currRound') || 0;
 
 	// load track from settings (do this before tournament)
-	let savedTrack = configuration.readSettings('track');
+	let savedTrack = configuration.loadTrack();
 	if (savedTrack) {
 		trackLoadDone(savedTrack);
 	}
@@ -43,7 +43,7 @@ const init = () => {
 	showTrackDetails();
 
 	// load tournament from settings
-	let savedTournament = configuration.readSettings('tournament');
+	let savedTournament = configuration.loadTournament();
 	if (savedTournament) {
 		tournamentLoadDone(savedTournament);
 	}

@@ -50,6 +50,29 @@ const saveRound = (manche, round, cars) => {
 	nconf.save();
 };
 
+const loadTrack = () => {
+	return readSettings('track');
+};
+
+const loadTournament = () => {
+	return readSettings('tournament');
+};
+
+const loadMancheList = () => {
+	let tournament = readSettings('tournament');
+	let mancheList = tournament.manches;
+	if (tournament.finals) {
+		mancheList.push(...tournament.finals);
+	}
+	return mancheList;
+};
+
+const loadPlayerList = () => {
+	let tournament = readSettings('tournament');
+	let playerList = tournament.players;
+	return playerList;
+};
+
 const loadRound = (manche, round) => {
 	if (manche == null)
 		manche = readSettings('currManche');
@@ -80,5 +103,9 @@ module.exports = {
 	saveRound: saveRound,
 	loadRound: loadRound,
 	deleteRound: deleteRound,
+	loadTrack: loadTrack,
+	loadTournament: loadTournament,
+	loadMancheList: loadMancheList,
+	loadPlayerList: loadPlayerList,
 	reset: reset
 };

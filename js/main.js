@@ -230,7 +230,7 @@ $('#button-start').on('click', (e) => {
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-disconnected') });
 		return;
 	}
-	if (configuration.readSettings('track') == null) {
+	if (configuration.loadTrack() == null) {
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-track-not-loaded') });
 		return;
 	}
@@ -243,7 +243,7 @@ $('#button-start').on('click', (e) => {
 	}
 	else {
 		// production mode
-		if (!client.isFreeRound() && configuration.readSettings('tournament') && configuration.loadRound()) {
+		if (!client.isFreeRound() && configuration.loadTournament() && configuration.loadRound()) {
 			// TODO MODAL SPAREGGIO
 
 			if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-replay-round'), buttons: ['Ok', 'Cancel'] }) == 1) {
