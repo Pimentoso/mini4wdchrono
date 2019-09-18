@@ -109,7 +109,7 @@ const disqualify = (mindex, rindex, pindex) => {
 
 	rebuildTimeList();
 	ui.initRace(freeRound);
-	drawRace();
+	updateRace();
 };
 
 // Reads all input fields in the manches tab and rebuilds time list
@@ -134,7 +134,7 @@ const overrideTimes = () => {
 
 	rebuildTimeList();
 	ui.initRace(freeRound);
-	drawRace();
+	updateRace();
 };
 
 // Initializes playerTimes
@@ -213,7 +213,7 @@ const initRound = () => {
 	console.log('client.initRound called');
 
 	chronoInit(!freeRound);
-	drawRace();
+	updateRace();
 };
 
 // called when the starting sequence has finished
@@ -268,7 +268,7 @@ const prevRound = () => {
 		configuration.saveSettings('currRound', currRound);
 		chronoInit();
 		ui.initRace(freeRound);
-		drawRace();
+		updateRace();
 	}
 };
 
@@ -307,7 +307,7 @@ const nextRound = () => {
 		configuration.saveSettings('currRound', currRound);
 		chronoInit();
 		ui.initRace(freeRound);
-		drawRace();
+		updateRace();
 	}
 };
 
@@ -320,7 +320,7 @@ const toggleFreeRound = () => {
 	chronoInit();
 	ui.toggleFreeRound(freeRound);
 	ui.initRace(freeRound);
-	drawRace();
+	updateRace();
 };
 
 // keyboard shortcuts for debug
@@ -440,7 +440,7 @@ const checkRace = () => {
 	else {
 		redraw = chrono.checkOutCars();
 	}
-	if (redraw) drawRace();
+	if (redraw) updateRace();
 };
 
 // timer task to invalidate cars not passed in 3 seconds
@@ -452,7 +452,7 @@ const checkStart = () => {
 		raceFinished();
 		redraw = true;
 	}
-	if (redraw) drawRace();
+	if (redraw) updateRace();
 };
 
 // called when the current round has completed. Saves times and handles UI changes
@@ -493,7 +493,7 @@ const showTrackDetails = () => {
 	ui.showThresholds();
 	chronoInit();
 	ui.initRace(freeRound);
-	drawRace();
+	updateRace();
 };
 
 const showTournamentDetails = () => {
@@ -501,11 +501,11 @@ const showTournamentDetails = () => {
 
 	ui.showTournamentDetails(currTournament);
 	ui.initRace(freeRound);
-	drawRace();
+	updateRace();
 };
 
-const drawRace = () => {
-	console.log('client.drawRace called');
+const updateRace = () => {
+	console.log('client.updateRace called');
 
 	let cars = (raceRunning || freeRound) ? chrono.getCars() : configuration.loadRound(currManche, currRound);
 	cars = cars || chrono.getCars(); // if loaded round was undefined
@@ -561,7 +561,7 @@ const addLap = (lane) => {
 	if (chrono.isRaceFinished()) {
 		raceFinished();
 	}
-	drawRace();
+	updateRace();
 }
 
 module.exports = {
