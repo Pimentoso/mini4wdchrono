@@ -20,22 +20,22 @@ process.__defineGetter__("stdin", function () {
 const debugMode = false;
 ////////////////////////
 
-const electron = require('electron');
+const { dialog, shell, app } = require('electron').remote;
 
 const log = require('electron-log');
 log.info(`Launched Mini4wdChrono at ${new Date()}`);
 log.catchErrors();
 
-const { dialog, shell, app } = electron.remote;
 const j5 = require('johnny-five');
 const xls = require('./js/export');
 const configuration = require('./js/configuration');
 const client = require('./js/client');
+const ui = require('./js/ui');
 const utils = require('./js/utils');
 const i18n = new (require('./i18n/i18n'));
 
 // Show version in about tab
-$('#js-about-version').text('Version ' + app.getVersion());
+$('#js-about-version').text(`Version ${app.getVersion()}`);
 
 // open links externally by default
 $(document).on('click', 'a[href^="http"]', function (event) {
@@ -57,9 +57,7 @@ let tag1, tag2, tag3;
 board.on('ready', function () {
 	connected = true;
 	log.info(`Board READY at ${new Date()}`);
-
-	$('#tag-board-status').addClass('is-success');
-	$('#tag-board-status').text(i18n.__('tag-connected'));
+	ui.boardConnected();
 
 	tag1 = $('#sensor-reading-1');
 	tag2 = $('#sensor-reading-2');
@@ -109,12 +107,20 @@ board.on('ready', function () {
 	playConnect();
 });
 
+board.on("info", function (event) {
+	log.info(`Board INFO at ${new Date()} - ${event.message}`);
+});
+
+board.on("warn", function (event) {
+	log.warn(`Board WARN at ${new Date()} - ${event.message}`);
+});
+
 board.on("fail", function (event) {
 	connected = false;
-	log.error(`Board ERROR at ${new Date()} - ${event.message}`);
+	log.error(`Board FAIL at ${new Date()} - ${event.message}`);
 
-	$('#tag-board-status').addClass('is-danger');
-	$('#tag-board-status').text(i18n.__('tag-disconnected'));
+	ui.boardDisonnected();
+
 	if (!debugMode) {
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message });
 	}
@@ -122,27 +128,13 @@ board.on("fail", function (event) {
 
 board.on("error", function (event) {
 	connected = false;
-	log.error(`Board EXIT at ${new Date()} - ${event.message}`);
+	log.error(`Board ERROR at ${new Date()} - ${event.message}`);
 
-	$('#tag-board-status').addClass('is-danger');
-	$('#tag-board-status').text(i18n.__('tag-disconnected'));
+	ui.boardDisonnected();
+
 	if (!debugMode) {
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message });
 	}
-});
-
-board.on("close", function (event) {
-	connected = false;
-	log.error(`Board CLOSE at ${new Date()} - ${event.message}`);
-
-	$('#tag-board-status').removeClass('is-success');
-	$('#tag-board-status').addClass('is-danger');
-	$('#tag-board-status').text(i18n.__('tag-disconnected'));
-
-	led1.stop().off();
-	led2.stop().off();
-	led3.stop().off();
-	board.digitalWrite(buzzerPin, 0);
 });
 
 board.on("info", function (event) {
@@ -154,13 +146,21 @@ board.on("warn", function (event) {
 });
 
 // TODO does not work
+board.on("close", function (event) {
+	connected = false;
+	log.error(`Board CLOSE at ${new Date()} - ${event.message}`);
+	ui.boardDisonnected();
+
+	led1.stop().off();
+	led2.stop().off();
+	led3.stop().off();
+	board.digitalWrite(buzzerPin, 0);
+});
+
 board.on("exit", function (event) {
 	connected = false;
 	log.error(`Board EXIT at ${new Date()} - ${event.message}`);
-
-	$('#tag-board-status').removeClass('is-success');
-	$('#tag-board-status').addClass('is-danger');
-	$('#tag-board-status').text(i18n.__('tag-disconnected'));
+	ui.boardDisonnected();
 
 	led1.stop().off();
 	led2.stop().off();
@@ -178,7 +178,7 @@ $('.tabs a').on('click', (e) => {
 	$this.closest('li').addClass('is-active');
 	let tab = $this.closest('li').data('tab');
 	$('div[data-tab]').hide();
-	$('div[data-tab=' + tab + ']').show();
+	$(`div[data-tab=${tab}]`).show();
 
 	$('#button-manches-save').attr('disabled', true);
 	$('#button-manches-cancel').attr('disabled', true);
@@ -192,7 +192,8 @@ document.onkeydown = (e) => {
 };
 
 $('#js-load-track').on('click', (e) => {
-	client.loadTrack();
+	let code = $('#js-input-track-code').val().slice(-6);
+	client.loadTrack(code);
 });
 
 $('#js-track-save-manual').on('click', (e) => {
@@ -214,7 +215,8 @@ $('#js-track-save-manual').on('click', (e) => {
 });
 
 $('#js-load-tournament').on('click', (e) => {
-	client.loadTournament();
+	let code = $('#js-input-tournament-code').val().slice(-6);
+	client.loadTournament(code);
 });
 
 $('#button-reset').on('click', (e) => {
@@ -228,27 +230,27 @@ $('#button-start').on('click', (e) => {
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-disconnected') });
 		return;
 	}
-	if (configuration.readSettings('track') == null) {
+	if (configuration.loadTrack() == null) {
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-track-not-loaded') });
 		return;
 	}
 
 	if (debugMode) {
 		// debug mode
-		client.raceStarted();
+		ui.raceStarted();
 		client.initRound();
 		client.startRound();
 	}
 	else {
 		// production mode
-		if (!client.isFreeRound() && configuration.readSettings('tournament') && configuration.loadRound()) {
+		if (!client.isFreeRound() && configuration.loadTournament() && configuration.loadRound()) {
 			// TODO MODAL SPAREGGIO
 
 			if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-replay-round'), buttons: ['Ok', 'Cancel'] }) == 1) {
 				return;
 			}
 		}
-		client.raceStarted();
+		ui.raceStarted();
 		playStart();
 	}
 });
@@ -287,7 +289,7 @@ $('#button-save-settings').on('click', (e) => {
 	configuration.saveSettings('timeThreshold', parseFloat($('#js-settings-time-threshold').val().replace(',', '.')));
 	configuration.saveSettings('speedThreshold', parseFloat($('#js-settings-speed-threshold').val().replace(',', '.')));
 	configuration.saveSettings('startDelay', parseFloat($('#js-settings-start-delay').val().replace(',', '.')));
-	client.showThresholds();
+	ui.showThresholds();
 	e.preventDefault();
 });
 
@@ -311,7 +313,7 @@ $(document).on('keyup', '.js-time-form', (e) => {
 });
 
 $('#button-manches-cancel').on('click', (e) => {
-	client.showMancheList();
+	ui.showMancheList();
 	$('#button-manches-save').attr('disabled', true);
 	$('#button-manches-cancel').attr('disabled', true);
 });

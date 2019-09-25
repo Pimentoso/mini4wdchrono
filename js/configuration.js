@@ -1,6 +1,6 @@
 'use strict';
 
-const app = require('electron').remote.app;
+const { app } = require('electron').remote;
 const path = require('path')
 const filename = 'settings.json';
 
@@ -12,7 +12,7 @@ const getConfigFilePath = () => {
 	return path.join(dir, filename);
 };
 
-const nconf = require('nconf').file({file: getConfigFilePath()});
+const nconf = require('nconf').file({ file: getConfigFilePath() });
 
 nconf.defaults({
 	'sensorPin1': 6,
@@ -31,13 +31,13 @@ nconf.defaults({
 });
 
 const saveSettings = (settingKey, settingValue) => {
-  nconf.set(settingKey, settingValue);
-  nconf.save();
+	nconf.set(settingKey, settingValue);
+	nconf.save();
 };
 
 const readSettings = (settingKey) => {
-  nconf.load();
-  return nconf.get(settingKey);
+	nconf.load();
+	return nconf.get(settingKey);
 };
 
 const deleteSettings = (settingKey) => {
@@ -46,8 +46,31 @@ const deleteSettings = (settingKey) => {
 };
 
 const saveRound = (manche, round, cars) => {
-	nconf.set('race:' + manche + '-' + round, cars);
+	nconf.set(`race:${manche}-${round}`, cars);
 	nconf.save();
+};
+
+const loadTrack = () => {
+	return readSettings('track');
+};
+
+const loadTournament = () => {
+	return readSettings('tournament');
+};
+
+const loadMancheList = () => {
+	let tournament = readSettings('tournament');
+	let mancheList = tournament.manches;
+	if (tournament.finals) {
+		mancheList.push(...tournament.finals);
+	}
+	return mancheList;
+};
+
+const loadPlayerList = () => {
+	let tournament = readSettings('tournament');
+	let playerList = tournament.players;
+	return playerList;
 };
 
 const loadRound = (manche, round) => {
@@ -55,19 +78,34 @@ const loadRound = (manche, round) => {
 		manche = readSettings('currManche');
 	if (round == null)
 		round = readSettings('currRound');
-	return readSettings('race:' + manche + '-' + round);
+	return readSettings(`race:${manche}-${round}`);
 };
 
 const deleteRound = (manche, round) => {
-	nconf.clear('race:' + manche + '-' + round);
+	nconf.clear(`race:${manche}-${round}`);
 	nconf.save();
 };
 
+const reset = () => {
+	deleteSettings('mancheTimes'); // legacy
+	deleteSettings('playerTimes');
+	deleteSettings('track');
+	deleteSettings('tournament');
+	deleteSettings('race');
+	saveSettings('currManche', 0);
+	saveSettings('currRound', 0);
+};
+
 module.exports = {
-    saveSettings: saveSettings,
-		readSettings: readSettings,
-		deleteSettings: deleteSettings,
-		saveRound: saveRound,
-		loadRound: loadRound,
-		deleteRound: deleteRound
+	saveSettings: saveSettings,
+	readSettings: readSettings,
+	deleteSettings: deleteSettings,
+	saveRound: saveRound,
+	loadRound: loadRound,
+	deleteRound: deleteRound,
+	loadTrack: loadTrack,
+	loadTournament: loadTournament,
+	loadMancheList: loadMancheList,
+	loadPlayerList: loadPlayerList,
+	reset: reset
 };

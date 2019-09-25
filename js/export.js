@@ -2,7 +2,7 @@
 
 const xls = require('exceljs');
 const utils = require('./utils');
-const app = require('electron').remote.app;
+const { app } = require('electron').remote;
 const fs = require('fs');
 const path = require('path');
 
@@ -38,12 +38,12 @@ const geneateXls = (mancheCount, playerData, playerTimes) => {
 	});
 
 	let dir = createDir();
-	let filename = path.join(dir, 'mini4wd_race_' + utils.strftime('%Y-%m-%d_%H-%M-%S', new Date()) + '.xlsx');
+	let filename = path.join(dir, `mini4wd_race_${utils.strftime('%Y-%m-%d_%H-%M-%S', new Date())}.xlsx`);
 	workbook.xlsx.writeFile(filename)
 		.then(() =>  {
 			// done
 			$('#button-xls').removeAttr('disabled');
-			$('#status-xls').text('saved ' + filename);
+			$('#status-xls').text(`saved ${filename}`);
 		});
 };
 
