@@ -205,14 +205,11 @@ const showPlayerList = () => {
 			let timeCells = _.map(tournament.manches, (_manche, mindex) => {
 				let playerTime = info.times[mindex] || 0;
 				let highlight = '';
-				if (playerTime == 0) {
+				if (playerTime == 0 || playerTime == 99999) {
 					highlight = 'has-text-grey-light';
 				}
 				else if (playerTime == bestTime) {
 					highlight = 'has-text-danger';
-				}
-				else if (playerTime < 99999) {
-					highlight = 'has-text-info';
 				}
 				return `<td class="${highlight}">${utils.prettyTime(playerTime)}</td>`;
 			});

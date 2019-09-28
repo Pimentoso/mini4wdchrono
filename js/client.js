@@ -542,7 +542,7 @@ const timer = (lane) => {
 
 const saveXls = () => {
 	if (currTournament) {
-		xls.geneateXls(currTournament.manches.length, playerList, playerTimes);
+		xls.geneateXls(mancheList.length, playerList, playerTimes);
 	}
 };
 
