@@ -230,32 +230,47 @@ const showMancheList = () => {
 	let mancheList = configuration.loadMancheList();
 
 	$('#tableMancheList').empty();
-	let cars, mancheText, playerName, playerTime, playerPosition, playerForm, highlight;
+	let cars, mancheText, playerName, playerTime, playerPosition, playerNameTag, playerPositionTag, playerHeader, playerForm, highlight;
 	_.each(mancheList, (manche, mindex) => {
 		$('#tableMancheList').append(`<tr class="is-selected"><td><strong>${mancheName(mindex)}</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>`);
 		_.each(manche, (group, rindex) => {
 			cars = configuration.loadRound(mindex, rindex);
 			mancheText = _.map(group, (id, pindex) => {
-				if (cars) {
-					playerTime = cars[pindex].currTime;
-					playerPosition = cars[pindex].position;
-				}
-				else {
-					playerTime = 0;
-					playerPosition = null;
-				}
-				if (playerList[id]) {
-					if (playerPosition && playerPosition > 0) {
-						playerPosition = `<span class="tag is-warning is-rounded">${playerPosition}</span>`;
+
+				playerName = playerList[id];
+				if (playerName) {
+					if (cars) {
+						playerTime = cars[pindex].currTime;
+						playerPosition = cars[pindex].position;
 					}
-					playerName = `<p class="has-text-centered is-uppercase">${playerList[id] || ''} ${playerPosition || ''}</p>`;
-					playerForm = `<div class="field"><div class="control"><input class="input is-large js-time-form" type="text" data-manche="${mindex}" data-round="${rindex}" data-player="${pindex}" value="${utils.prettyTime(playerTime)}"></div></div>`;
+					else {
+						playerTime = 0;
+						playerPosition = null;
+					}
+
+					playerNameTag = `<span class="tag is-large is-uppercase">${playerList[id] || ''}</span>`;
+					playerPositionTag = ``;
+
+					if (playerPosition != null) {
+						if (playerPosition == 0) {
+							playerPositionTag = `<span class="tag is-dark is-large">out</span>`;
+						}
+						else if (playerPosition == 1) {
+							playerPositionTag = `<span class="tag is-warning is-large">${playerPosition}</span>`;
+						}
+						else {
+							playerPositionTag = `<span class="tag is-large">${playerPosition}</span>`;
+						}
+					}
+
+					playerHeader = `<div style="display: flex; justify-content: center; margin-bottom: 5px;"><div class="tags has-addons">${playerNameTag}${playerPositionTag}</div></div>`;
+					playerForm = `<div class="field"><div class="control"><input class="input is-large js-time-form" type="text" data-manche="${mindex}" data-round="${rindex}" data-player="${pindex}" value="${utils.prettyTime(playerTime)}" /></div></div>`;
+
+					return `<td>${playerHeader}${playerForm}</td>`;
 				}
 				else {
-					playerName = '';
-					playerForm = '';
+					return `<td></td>`;
 				}
-				return `<td>${playerName}${playerForm}</td>`;
 			}).join();
 			highlight = (mindex == currManche && rindex == currRound) ? 'class="is-highlighted"' : '';
 			$('#tableMancheList').append(`<tr ${highlight}><td>Round ${rindex + 1}</td>${mancheText}</tr>`);
