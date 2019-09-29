@@ -286,7 +286,7 @@ const nextRound = () => {
 		return;
 	}
 
-	let dialogText = (currManche == (mancheCount - 1) && currRound == (mancheList[currManche].length - 1)) ? i18n.__('dialog-enter-final') : i18n.__('dialog-change-round');
+	let dialogText = (currManche == (mancheCount - 1) && currRound == (mancheList[currManche].length - 1) && !currTournament.finals) ? i18n.__('dialog-enter-final') : i18n.__('dialog-change-round');
 	if (dialog.showMessageBox({ type: 'warning', message: dialogText, buttons: ['Ok', 'Cancel'] }) == 0) {
 		currRound++;
 		if (currRound == mancheList[currManche].length) {
