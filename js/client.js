@@ -23,7 +23,7 @@ const init = () => {
 	ui.initialize();
 
 	// translate ui
-	$('.tn').each(function (index) {
+	$('.tn').each(function () {
 		$(this).text(i18n.__($(this).data('tn')));
 	});
 

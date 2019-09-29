@@ -72,7 +72,7 @@ board.on('ready', function () {
 	sensorPin1 = configuration.readSettings('sensorPin1');
 	sensorPin2 = configuration.readSettings('sensorPin2');
 	sensorPin3 = configuration.readSettings('sensorPin3');
-	buzzerPin = configuration.readSettings('piezoPin')
+	buzzerPin = configuration.readSettings('piezoPin');
 
 	this.samplingInterval(1);
 	this.pinMode(sensorPin1, j5.Pin.INPUT);
