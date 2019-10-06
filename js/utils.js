@@ -1,9 +1,5 @@
 'use strict';
 
-const prettyTime = (millis) => {
-	return ((millis || 0) / 1000).toFixed(3);
-};
-
 /* Port of strftime(). Compatibility notes:
  *
  * %c - formatted string is slightly different
@@ -98,11 +94,21 @@ const strftime = (sFormat, date) => {
 	});
 }
 
+// converts a milliseconds integer in a readable string like '12.345'
+const prettyTime = (millis) => {
+	return ((millis || 0) / 1000).toFixed(3);
+};
+
 // converts a string like '12,345' or '12.345' into a milliseconds integer like 12345
 const safeTime = (timeStr) => {
 	return Math.round(parseFloat(timeStr.replace(',', '.')) * 1000);
 };
 
+/* Chainable timeout function
+ *
+ * Reference:
+ * https://stackoverflow.com/questions/6921275/is-it-possible-to-chain-settimeout-functions-in-javascript
+ */
 const delay = (fn, t) => {
 	// private instance variables
 	var queue = [], self, timer;
