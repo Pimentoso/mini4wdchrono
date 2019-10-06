@@ -534,7 +534,7 @@ const stopTimer = (lane) => {
 };
 
 const timer = (lane) => {
-	pageTimerSeconds[lane].text(`${timerSeconds[lane]++ / 10}00`);
+	pageTimerSeconds[lane].text((timerSeconds[lane]++ / 10).toFixed(3));
 };
 
 // ==========================================================================
