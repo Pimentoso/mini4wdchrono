@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.11.2-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
+[![Version](https://img.shields.io/badge/version-0.11.3-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
 
 Mini4wdChrono is a fully free and open source project to make a functional 3-lane lap timer for Mini4WD Japan Cup tracks.
 The hardware has been chosen to be as simple and cheap as possible, while still maintain accuracy.
@@ -47,6 +47,10 @@ https://www.aliexpress.com/item/32341832857.html
 
 https://www.aliexpress.com/item/33000619572.html
 
+- Alternatively, you can use 3 cheap laser diodes. They are more reliable than a LED strip.
+
+https://www.aliexpress.com/item/32822976597.html
+
 - 3x phototransistor sensors. I'm using TEMT6000 for their slim form factor. Do not use photoresistors, they're slow.
 
 https://www.aliexpress.com/item/32583469115.html
@@ -58,6 +62,8 @@ https://www.aliexpress.com/item/32962136265.html
 - A magnetic (active) buzzer.
 
 https://www.aliexpress.com/item/32666789405.html
+
+https://www.aliexpress.com/item/33015702712.html
 
 - A straight piece of 3 lane Japan Cup Mini4wd track.
 
@@ -75,9 +81,8 @@ Drill 3 holes in the middle of the 3 lanes of a mini4wd track piece. Put the pho
 
 ![sensors mounted](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/sensors.jpg)
 
-Build some sort of bridge-like structure to hold the electronics. Stick the LED strip underside it, so that it casts light on the sensors. Put the structure over the 3 holes on the track with the sensors.
-
-The mini4wd car passing over the photoresistor will trigger a lap.
+Build some sort of bridge-like structure to hold the electronics. Stick the LED strip underside it, so that it casts light on the sensors. If using laser diodes, make sure they are exactly pointed at the phototransistors.
+Put the structure over the 3 holes on the track with the sensors. The mini4wd car passing over the phototransistors will trigger a lap.
 Put the 3 green leds on the front of the lap timer, one over each lane.
 
 Prototype lap timer made of wood and 3d printed joints:
@@ -141,11 +146,7 @@ choco install node
 choco install python2
 choco install arduino
 // now open the arduino IDE, and use it to upload the StandardFirmataPlus firmware on the board
-```
 
-Now open Powershell with administrator access
-
-```
 npm install -g windows-build-tools
 cd mini4wdchrono
 npm install
