@@ -189,6 +189,7 @@ const showPlayerList = () => {
 	$('#tablePlayerList').empty();
 	if (playerList.length > 0) {
 		let times = getSortedPlayerList();
+		let raceBestTime = _.min(_.flatten(_.map(times, (info) => { return _.filter(info.times, (t) => { return t > 0 && t < 99999; }) })));
 
 		// draw title row
 		let titleCells = _.map(tournament.manches, (_manche, mindex) => {
@@ -207,6 +208,9 @@ const showPlayerList = () => {
 				let highlight = '';
 				if (playerTime == 0 || playerTime == 99999) {
 					highlight = 'has-text-grey-light';
+				}
+				else if (playerTime == raceBestTime) {
+					highlight = 'has-background-danger';
 				}
 				else if (playerTime == bestTime) {
 					highlight = 'has-text-danger';
