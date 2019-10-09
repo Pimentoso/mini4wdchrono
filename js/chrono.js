@@ -36,6 +36,7 @@ const init = (track, playerIds, cars) => {
 		rTimeThreshold = configuration.readSettings('timeThreshold') / 100;
 		rSpeedThreshold = configuration.readSettings('speedThreshold');
 		rTimeCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold) * 1000;
+		if (rTimeCutoffMin < 1000) rTimeCutoffMin = 1000;
 		rTimeCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold) * 1000;
 	}
 
@@ -183,7 +184,7 @@ const checkOutCars = () => {
 	let timestamp = new Date().getTime();
 	let dirty = false;
 	_.each(_.filter(rCars, (c) => {
-		return c.startTimestamp > 0 && !c.outOfBounds && (timestamp - c.currTimestamp) > rTimeCutoffMax;
+		return c.startTimestamp > 0 && !c.outOfBounds && c.lapCount < 4 && (timestamp - c.currTimestamp) > rTimeCutoffMax;
 	}), (c) => {
 		c.currTime = 99999;
 		c.outOfBounds = true;

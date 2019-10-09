@@ -430,15 +430,10 @@ const tournamentLoadFail = () => {
 const checkRace = () => {
 	console.log('client.checkRace called');
 
-	let redraw = false;
+	let redraw = chrono.checkOutCars();
 	if (chrono.isRaceFinished()) {
-		// race finished, kill this task
 		raceFinished();
-		clearInterval(checkRaceTask);
 		redraw = true;
-	}
-	else {
-		redraw = chrono.checkOutCars();
 	}
 	if (redraw) updateRace();
 };
@@ -458,6 +453,9 @@ const checkStart = () => {
 // called when the current round has completed. Saves times and handles UI changes
 const raceFinished = () => {
 	console.log('client.raceFinished called');
+
+	// kill race check task
+	clearInterval(checkRaceTask);
 
 	if (currTournament && !freeRound) {
 		let cars = chrono.getCars();

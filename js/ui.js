@@ -106,18 +106,30 @@ const tournamentLoadFail = () => {
 };
 
 const raceStarted = () => {
+	let tournament = configuration.loadTournament();
+
 	$('.js-show-on-race-started').show();
 	$('.js-hide-on-race-started').hide();
 	$('.js-disable-on-race-started').attr('disabled', true);
+	if (tournament == null) {
+		$('.js-show-on-no-tournament').show();
+		$('.js-hide-on-no-tournament').hide();
+	}
 };
 
 const raceFinished = (freeRound) => {
+	let tournament = configuration.loadTournament();
+
 	$('.js-show-on-race-started').hide();
 	$('.js-hide-on-race-started').show();
 	$('.js-disable-on-race-started').removeAttr('disabled');
 	if (freeRound) {
 		$('.js-show-on-free-round').show();
 		$('.js-hide-on-free-round').hide();
+	}
+	if (tournament == null) {
+		$('.js-show-on-no-tournament').show();
+		$('.js-hide-on-no-tournament').hide();
 	}
 };
 
@@ -169,6 +181,7 @@ const showThresholds = () => {
 		let rTimeThreshold = configuration.readSettings('timeThreshold') / 100;
 		let estimatedTime = rTrackLength / rSpeedThreshold;
 		let estimatedCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold);
+		if (estimatedCutoffMin < 1) estimatedCutoffMin = 1;
 		let estimatedCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold);
 		$('#js-settings-estimated-time').show();
 		$('#js-settings-estimated-time').text(`${i18n.__('label-time-estimated')}: ${estimatedTime.toFixed(3)} sec`);
@@ -210,7 +223,7 @@ const showPlayerList = () => {
 					highlight = 'has-text-grey-light';
 				}
 				else if (playerTime == raceBestTime) {
-					highlight = 'has-background-danger';
+					highlight = 'has-background-danger has-text-white';
 				}
 				else if (playerTime == bestTime) {
 					highlight = 'has-text-danger';
