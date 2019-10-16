@@ -32,6 +32,7 @@ const configuration = require('./js/configuration');
 const client = require('./js/client');
 const ui = require('./js/ui');
 const utils = require('./js/utils');
+const ledManagers = require('./js/led_manager');
 const i18n = new (require('./i18n/i18n'));
 
 // Show version in about tab
@@ -49,10 +50,16 @@ const board = new j5.Board({
 	timeout: 1e5,
 	repl: false // does not work with browser console
 });
-let connected = false;
-let sensorPin1, sensorPin2, sensorPin3, buzzerPin;
-let led1, led2, led3;
-let tag1, tag2, tag3;
+var connected = false;
+var sensorPin1, sensorPin2, sensorPin3;
+var tag1, tag2, tag3;
+var ledManager = new ledManagers.LedManagerLilypad(board, [
+		configuration.readSettings('ledPin1'),
+		configuration.readSettings('ledPin2'),
+		configuration.readSettings('ledPin3')
+	],
+	configuration.readSettings('piezoPin')
+);
 
 board.on('ready', function () {
 	connected = true;
@@ -63,28 +70,21 @@ board.on('ready', function () {
 	tag2 = $('#sensor-reading-2');
 	tag3 = $('#sensor-reading-3');
 
-	// ==== hardware init
-	led1 = new j5.Led(configuration.readSettings('ledPin1'));
-	led2 = new j5.Led(configuration.readSettings('ledPin2'));
-	led3 = new j5.Led(configuration.readSettings('ledPin3'));
-
 	// raw reading from digital pins because it's faster
 	sensorPin1 = configuration.readSettings('sensorPin1');
 	sensorPin2 = configuration.readSettings('sensorPin2');
 	sensorPin3 = configuration.readSettings('sensorPin3');
-	buzzerPin = configuration.readSettings('piezoPin');
 
 	this.samplingInterval(1);
 	this.pinMode(sensorPin1, j5.Pin.INPUT);
 	this.pinMode(sensorPin2, j5.Pin.INPUT);
 	this.pinMode(sensorPin3, j5.Pin.INPUT);
-	this.pinMode(buzzerPin, j5.Pin.OUTPUT);
 
 	this.digitalRead(sensorPin1, function (val) {
 		tag1.text(val);
 		if (val == 0) {
 			client.sensorRead(1);
-			flashLed(led1);
+			ledManager.lap(0);
 		}
 	});
 
@@ -92,7 +92,7 @@ board.on('ready', function () {
 		tag2.text(val);
 		if (val == 0) {
 			client.sensorRead(2);
-			flashLed(led2);
+			ledManager.lap(1);
 		}
 	});
 
@@ -100,11 +100,11 @@ board.on('ready', function () {
 		tag3.text(val);
 		if (val == 0) {
 			client.sensorRead(3);
-			flashLed(led3);
+			ledManager.lap(2);
 		}
 	});
 
-	playConnect();
+	ledManager.connected();
 });
 
 board.on("info", function (event) {
@@ -119,6 +119,7 @@ board.on("fail", function (event) {
 	connected = false;
 	log.error(`Board FAIL at ${new Date()} - ${event.message}`);
 
+	ledManager.disconnected();
 	ui.boardDisonnected();
 
 	if (!debugMode) {
@@ -130,6 +131,7 @@ board.on("error", function (event) {
 	connected = false;
 	log.error(`Board ERROR at ${new Date()} - ${event.message}`);
 
+	ledManager.disconnected();
 	ui.boardDisonnected();
 
 	if (!debugMode) {
@@ -150,22 +152,14 @@ board.on("close", function (event) {
 	connected = false;
 	log.error(`Board CLOSE at ${new Date()} - ${event.message}`);
 	ui.boardDisonnected();
-
-	led1.stop().off();
-	led2.stop().off();
-	led3.stop().off();
-	board.digitalWrite(buzzerPin, 0);
+	ledManager.disconnected();
 });
 
 board.on("exit", function (event) {
 	connected = false;
 	log.error(`Board EXIT at ${new Date()} - ${event.message}`);
 	ui.boardDisonnected();
-
-	led1.stop().off();
-	led2.stop().off();
-	led3.stop().off();
-	board.digitalWrite(buzzerPin, 0);
+	ledManager.disconnected();
 });
 
 // ==========================================================================
@@ -251,7 +245,8 @@ $('#button-start').on('click', (e) => {
 			}
 		}
 		ui.raceStarted();
-		playStart();
+		client.initRound();
+		ledManager.roundStart(client.startRound);
 	}
 });
 
@@ -353,37 +348,6 @@ $('.js-invalidate').on('click', (e) => {
 		client.disqualify(null, null, parseInt($this.data('lane')));
 	}
 });
-
-// ==========================================================================
-// ==== send commands to hardware
-
-const flashLed = (led) => {
-	led.on();
-	utils.delay(() => { led.off(); }, 1000);
-};
-
-const playBuzzer = (millis) => {
-	board.digitalWrite(buzzerPin, 1);
-	utils.delay(() => { board.digitalWrite(buzzerPin, 0); }, millis);
-};
-
-const playStart = () => {
-	client.initRound();
-	led1.on(); led2.on(); led3.on(); playBuzzer(1500);
-	utils
-		.delay(() => { led1.off(); led2.off(); led3.off(); }, 1500)
-		.delay(() => { led1.on(); playBuzzer(500); }, 1000)
-		.delay(() => { led1.off(); led2.on(); playBuzzer(500); }, 1000)
-		.delay(() => { led2.off(); led3.on(); playBuzzer(500); }, 1000)
-		.delay(() => { led3.off(); }, 1000)
-		.delay(() => { led1.on(); led2.on(); led3.on(); playBuzzer(1000); client.startRound(); }, 1500)
-		.delay(() => { led1.off(); led2.off(); led3.off(); }, 2500);
-};
-
-const playConnect = () => {
-	led1.blink(125); led2.blink(125); led3.blink(125);
-	utils.delay(() => { led1.stop().off(); led2.stop().off(); led3.stop().off(); }, 3000);
-};
 
 // ==========================================================================
 // ==== init client

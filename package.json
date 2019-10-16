@@ -11,14 +11,14 @@
     "jquery": "^3.4.1",
     "nconf": "^0.10.0",
     "serialport": "^7.1.5",
-    "underscore": "^1.9.1"
+    "underscore": "^1.9.1",
+    "node-pixel": "ajfisher/node-pixel#j5-firmata-upg"
   },
   "devDependencies": {
     "electron": "^5.0.6",
     "electron-packager": "^14.0.1",
     "electron-rebuild": "^1.8.4",
-    "electron-reload": "^1.4.0",
-    "jest": "^24.9.0"
+    "electron-reload": "^1.4.0"
   },
   "scripts": {
     "postinstall": "node ./scripts/postinstall.js",
