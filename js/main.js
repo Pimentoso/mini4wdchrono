@@ -64,7 +64,6 @@ var ledManager = new ledManagers.LedManagerLilypad(board, [
 board.on('ready', function () {
 	connected = true;
 	log.info(`Board READY at ${new Date()}`);
-	ui.boardConnected();
 
 	tag1 = $('#sensor-reading-1');
 	tag2 = $('#sensor-reading-2');
@@ -105,6 +104,7 @@ board.on('ready', function () {
 	});
 
 	ledManager.connected();
+	ui.boardConnected();
 });
 
 board.on("info", function (event) {
