@@ -49,10 +49,10 @@ const board = new j5.Board({
 	timeout: 1e5,
 	repl: false // does not work with browser console
 });
-let connected = false;
-let sensorPin1, sensorPin2, sensorPin3, buzzerPin;
-let led1, led2, led3;
-let tag1, tag2, tag3;
+var connected = false;
+var sensorPin1, sensorPin2, sensorPin3, buzzerPin;
+var led1, led2, led3;
+var tag1, tag2, tag3;
 
 board.on('ready', function () {
 	connected = true;
