@@ -10,7 +10,8 @@ class LedManager {
 	}
 
 	connected() {
-		this.board.pinMode(this.pinBuzzer, j5.Pin.OUTPUT);
+        this.board.pinMode(this.pinBuzzer, j5.Pin.OUTPUT);
+        this.beep(250);
 	}
 
 	disconnected() {
