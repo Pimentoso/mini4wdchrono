@@ -2,6 +2,7 @@
 
 const j5 = require('johnny-five');
 const utils = require('./utils');
+const pixel = require('node-pixel');
 
 class LedManager {
 	constructor(board, pinBuzzer) {
@@ -10,8 +11,8 @@ class LedManager {
 	}
 
 	connected() {
-        this.board.pinMode(this.pinBuzzer, j5.Pin.OUTPUT);
-        this.beep(250);
+		this.board.pinMode(this.pinBuzzer, j5.Pin.OUTPUT);
+		this.beep(250);
 	}
 
 	disconnected() {
@@ -92,9 +93,74 @@ class LedManagerLilypad extends LedManager {
 
 // Manager for a 9 LEDs WS2812b strip and a buzzer.
 class LedManagerRgbStrip extends LedManager {
-	constructor(board, pinLeds, pinBuzzer) {
+	constructor(board, pin, pinBuzzer) {
 		super(board, pinBuzzer);
-		// TODO init strip, pinLeds will be an array with 1 element
+		this.pin = pin;
+	}
+
+	connected() {
+		super.connected();
+		this.strip = new pixel.Strip({
+			board: this.board,
+			controller: "FIRMATA",
+			strips: [{ pin: this.pin, length: 9 },],
+			gamma: 2.8
+		});
+		var stripp = this.strip;
+
+		this.strip.on("ready", function () {
+			stripp.pixel(0).color('#188bc8');
+			stripp.pixel(3).color('#e62227');
+			stripp.pixel(6).color('#f8f8f8');
+			stripp.show();
+
+			setInterval(function () {
+				stripp.shift(1, pixel.FORWARD, true);
+				stripp.show();
+			}, 125);
+			utils.delay(() => { stripp.off(); }, 3000);
+		});
+	}
+
+	disconnected() {
+		super.disconnected();
+		this.strip.off();
+	}
+
+	roundStart(startTimerCallback) {
+
+	}
+
+	roundFinish(cars) {
+		// turn on winner car led
+		let finishCars = _.filter(cars, (c) => { return !c.outOfBounds && c.lapCount == 4 });
+		_.each(finishCars, (c) => {
+			if (c.position == 1) {
+				colorLane(c.startLane);
+			}
+		});
+		this.strip.show();
+	}
+
+	lap(lane) {
+		// flash lane led for 1 sec
+		this.colorLane(lane, '#06a14e');
+		this.strip.show();
+		utils.delay(() => {
+			this.clearLane(lane);
+		}, 1000);
+	}
+
+	colorLane(lane, color) {
+		for (let i = lane * 3; i <= 2; ++i) {
+			this.strip.pixel(i).color(color);
+		}
+	}
+
+	clearLane(lane) {
+		for (let i = lane * 3; i <= 2; ++i) {
+			this.strip.pixel(i).off();
+		}
 	}
 }
 

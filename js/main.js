@@ -53,11 +53,16 @@ const board = new j5.Board({
 var connected = false;
 var sensorPin1, sensorPin2, sensorPin3;
 var tag1, tag2, tag3;
-var ledManager = new ledManagers.LedManagerLilypad(board, [
-		configuration.readSettings('ledPin1'),
-		configuration.readSettings('ledPin2'),
-		configuration.readSettings('ledPin3')
-	],
+// var ledManager = new ledManagers.LedManagerLilypad(board, [
+// 		configuration.readSettings('ledPin1'),
+// 		configuration.readSettings('ledPin2'),
+// 		configuration.readSettings('ledPin3')
+// 	],
+// 	configuration.readSettings('piezoPin')
+// );
+var ledManager = new ledManagers.LedManagerRgbStrip(
+	board,
+	configuration.readSettings('ledPin1'),
 	configuration.readSettings('piezoPin')
 );
 
