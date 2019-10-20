@@ -16,7 +16,9 @@ class LedManager {
 	}
 
 	disconnected() {
-		this.board.digitalWrite(this.pinBuzzer, 0);
+		try {
+			this.board.digitalWrite(this.pinBuzzer, 0);
+		} catch (e) { }
 	}
 
 	roundStart() {
@@ -58,9 +60,11 @@ class LedManagerLilypad extends LedManager {
 
 	disconnected() {
 		super.disconnected();
-		this.led1.stop().off();
-		this.led2.stop().off();
-		this.led3.stop().off();
+		try {
+			this.led1.stop().off();
+			this.led2.stop().off();
+			this.led3.stop().off();
+		} catch (e) { }
 	}
 
 	roundStart(startTimerCallback) {
@@ -107,47 +111,38 @@ class LedManagerRgbStrip extends LedManager {
 		this.strip = new pixel.Strip({
 			board: this.board,
 			controller: "FIRMATA",
-			strips: [{ pin: this.pin, length: 9 },],
+			strips: [{ pin: this.pin, length: 9 }],
 			gamma: 2.8
 		});
 		var manager = this;
-
 		this.strip.on("ready", function () {
-			manager.strip.pixel(0).color('#188bc8');
-			manager.strip.pixel(3).color('#e62227');
-			manager.strip.pixel(6).color('#f8f8f8');
-			manager.strip.show();
-
-			let shift = setInterval(function () {
-				manager.strip.shift(1, pixel.FORWARD, true);
-				manager.strip.show();
-			}, 125);
-			utils
-				.delay(() => { clearInterval(shift); }, 3000)
-				.delay(() => { manager.strip.off(); manager.ready = true; }, 125);
+			manager.tamiyaSlide();
 		});
 	}
 
 	disconnected() {
 		super.disconnected();
-		this.strip.off();
+		try {
+			this.strip.off();
+		} catch (e) { }
 	}
 
 	roundStart(startTimerCallback) {
 		var stripp = this.strip;
 		this.beep(1500);
+		this.kitt('#188bc8');
 		utils
 			.delay(() => { stripp.off(); }, 1500)
-			.delay(() => { stripp.pixel(0).color('#ff0100'); stripp.show(); }, 400)
+			.delay(() => { stripp.pixel(0).color('#ff0100'); stripp.show(); this.beep(200); }, 1000)
 			.delay(() => { stripp.pixel(1).color('#ff0100'); stripp.show(); }, 400)
 			.delay(() => { stripp.pixel(2).color('#ff0100'); stripp.show(); }, 400)
-			.delay(() => { stripp.pixel(3).color('#ff0100'); stripp.show(); }, 400)
+			.delay(() => { stripp.pixel(3).color('#ff0100'); stripp.show(); this.beep(200); }, 400)
 			.delay(() => { stripp.pixel(4).color('#ff0100'); stripp.show(); }, 400)
 			.delay(() => { stripp.pixel(5).color('#ff0100'); stripp.show(); }, 400)
-			.delay(() => { stripp.pixel(6).color('#ff0100'); stripp.show(); }, 400)
+			.delay(() => { stripp.pixel(6).color('#ff0100'); stripp.show(); this.beep(200); }, 400)
 			.delay(() => { stripp.pixel(7).color('#ff0100'); stripp.show(); }, 400)
 			.delay(() => { stripp.pixel(8).color('#ff0100'); stripp.show(); }, 400)
-			.delay(() => { stripp.color('#06a14e'); stripp.show(); this.beep(1000); startTimerCallback(); }, 1500)
+			.delay(() => { stripp.color('#66cc33'); stripp.show(); this.beep(1000); startTimerCallback(); }, 1500)
 			.delay(() => { stripp.off(); }, 2500)
 	}
 
@@ -171,7 +166,7 @@ class LedManagerRgbStrip extends LedManager {
 	lap(lane) {
 		// flash lane led for 1 sec
 		if (this.ready) {
-			this.colorLane(lane, '#06a14e');
+			this.colorLane(lane, '#66cc33');
 			utils.delay(() => {
 				this.clearLane(lane);
 			}, 1000);
@@ -180,7 +175,7 @@ class LedManagerRgbStrip extends LedManager {
 
 	colorLane(lane, color) {
 		let start = lane * 3;
-		for (let i = start; i <= start+2; i++) {
+		for (let i = start; i <= start + 2; i++) {
 			this.strip.pixel(i).color(color);
 		}
 		this.strip.show();
@@ -188,10 +183,63 @@ class LedManagerRgbStrip extends LedManager {
 
 	clearLane(lane) {
 		let start = lane * 3;
-		for (let i = start; i <= start+2; ++i) {
+		for (let i = start; i <= start + 2; ++i) {
 			this.strip.pixel(i).off();
 		}
 		this.strip.show();
+	}
+
+	kitt(color) {
+		var manager = this;
+		let direction = 0, curr = 0, prev = -1, millis = 50;
+		let shift = setInterval(function () {
+			manager.strip.pixel(curr).color(color);
+			if (prev >= 0) {
+				manager.strip.pixel(prev).off();
+			}
+			manager.strip.show();
+
+			if (direction == 0) {
+				curr++; prev++;
+				if (curr > 8) {
+					direction = 1;
+					curr = 7;
+				}
+			}
+			else {
+				curr--; prev--;
+				if (curr < 0) {
+					direction = 0;
+					curr = 1;
+				}
+			}
+		}, millis);
+		utils
+			.delay(() => { clearInterval(shift); }, 1500)
+			.delay(() => { manager.strip.off(); }, millis);
+	}
+
+	tamiyaSlide() {
+		var manager = this;
+		let millis = 75;
+		manager.strip.pixel(0).color('#188bc8');
+		manager.strip.pixel(1).color('#188bc8');
+		manager.strip.pixel(2).color('#188bc8');
+		manager.strip.pixel(3).color('#e62227');
+		manager.strip.pixel(4).color('#e62227');
+		manager.strip.pixel(5).color('#e62227');
+		manager.strip.pixel(6).color('#f8f8f8');
+		manager.strip.pixel(7).color('#f8f8f8');
+		manager.strip.pixel(8).color('#f8f8f8');
+		manager.strip.show();
+
+		let shift = setInterval(function () {
+			manager.strip.shift(1, pixel.FORWARD, true);
+			manager.strip.show();
+		}, millis);
+		utils
+			.delay(() => { clearInterval(shift); }, 3000)
+			.delay(() => { manager.strip.off(); manager.ready = true; }, millis);
 	}
 }
 
