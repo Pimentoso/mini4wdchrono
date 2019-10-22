@@ -198,6 +198,8 @@ const showPlayerList = () => {
 	let track = configuration.loadTrack();
 	let tournament = configuration.loadTournament();
 	let playerList = configuration.loadPlayerList();
+	if (!track) return;
+	if (!tournament) return;
 
 	$('#tablePlayerList').empty();
 	if (playerList.length > 0) {
@@ -238,13 +240,18 @@ const showPlayerList = () => {
 };
 
 const showMancheList = () => {
+	let track = configuration.loadTrack();
+	let tournament = configuration.loadTournament();
+	if (!track) return;
+	if (!tournament) return;
+
 	let currManche = configuration.readSettings('currManche');
 	let currRound = configuration.readSettings('currRound');
 	let playerList = configuration.loadPlayerList();
 	let mancheList = configuration.loadMancheList();
 
 	$('#tableMancheList').empty();
-	let cars, mancheText, playerName, playerTime, playerPosition, playerNameTag, playerPositionTag, playerHeader, playerForm, highlight;
+	let cars, mancheText, playerName, playerTime, playerPosition, playerOut, playerNameTag, playerPositionTag, playerHeader, playerForm, highlight;
 	_.each(mancheList, (manche, mindex) => {
 		$('#tableMancheList').append(`<tr class="is-selected"><td><strong>${mancheName(mindex)}</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>`);
 		_.each(manche, (group, rindex) => {
@@ -256,17 +263,19 @@ const showMancheList = () => {
 					if (cars) {
 						playerTime = cars[pindex].currTime;
 						playerPosition = cars[pindex].position;
+						playerOut = cars[pindex].outOfBounds;
 					}
 					else {
 						playerTime = 0;
 						playerPosition = null;
+						playerOut = false;
 					}
 
 					playerNameTag = `<span class="tag is-large is-uppercase">${playerList[id] || ''}</span>`;
 					playerPositionTag = ``;
 
 					if (playerPosition != null) {
-						if (playerPosition == 0) {
+						if (playerOut) {
 							playerPositionTag = `<span class="tag is-dark is-large">out</span>`;
 						}
 						else if (playerPosition == 1) {

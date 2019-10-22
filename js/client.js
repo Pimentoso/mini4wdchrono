@@ -374,7 +374,7 @@ const loadTournament = (code) => {
 		})
 		.fail(tournamentLoadFail)
 		.always(() => {
-			showTournamentDetails(currTournament);
+			showTournamentDetails();
 		});
 };
 
