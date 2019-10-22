@@ -1,0 +1,444 @@
+{
+  "raceMode": 0,
+  "timeThreshold": 40,
+  "speedThreshold": 6,
+  "startDelay": 3,
+  "sensorPin1": 6,
+  "sensorPin2": 7,
+  "sensorPin3": 8,
+  "ledPin1": 3,
+  "ledPin2": 4,
+  "ledPin3": 5,
+  "piezoPin": 2,
+  "sensorThreshold": 50,
+  "title": "--",
+  "usbPort": null,
+  "currManche": 0,
+  "currRound": 0,
+  "playerTimes": [
+    [
+      99999,
+      13191,
+      12087
+    ],
+    [
+      11855,
+      12288,
+      13695
+    ],
+    [
+      12623,
+      12512,
+      13815
+    ],
+    [
+      11911,
+      12455,
+      14120
+    ],
+    [
+      12559,
+      99999,
+      99999
+    ]
+  ],
+  "track": {
+    "code": "MANUAL",
+    "length": 100,
+    "order": [
+      1,
+      2,
+      3
+    ],
+    "manual": true
+  },
+  "tournament": {
+    "code": "HGY9X8",
+    "created_at": "2019-08-04T20:05:03.000Z",
+    "url": "https://mini4wd-tournament.pimentoso.com/HGY9X8",
+    "players": [
+      "hidenori",
+      "yoshitake",
+      "tadakuni",
+      "toshiyuki",
+      "motoharu"
+    ],
+    "manches": [
+      [
+        [
+          4,
+          2,
+          1
+        ],
+        [
+          3,
+          -1,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          -1,
+          4,
+          3
+        ]
+      ],
+      [
+        [
+          2,
+          3,
+          1
+        ],
+        [
+          -1,
+          0,
+          4
+        ]
+      ]
+    ],
+    "mancheCount": 3
+  },
+  "race": {
+    "0-0": [
+      {
+        "playerId": 4,
+        "startLane": 0,
+        "nextLane": 1,
+        "lapCount": 4,
+        "startTimestamp": 1571741911062,
+        "currTimestamp": 1571741923621,
+        "endTimestamp": 1571741923621,
+        "currTime": 12559,
+        "splitTimes": [
+          4664,
+          4192,
+          3703
+        ],
+        "position": 2,
+        "delayFromFirst": 648,
+        "speed": 7.9624173899195805,
+        "outOfBounds": false
+      },
+      {
+        "playerId": 2,
+        "startLane": 1,
+        "nextLane": 2,
+        "lapCount": 4,
+        "startTimestamp": 1571741911270,
+        "currTimestamp": 1571741923893,
+        "endTimestamp": 1571741923893,
+        "currTime": 12623,
+        "splitTimes": [
+          4648,
+          3544,
+          4431
+        ],
+        "position": 3,
+        "delayFromFirst": 712,
+        "speed": 7.922047056959519,
+        "outOfBounds": false
+      },
+      {
+        "playerId": 1,
+        "startLane": 2,
+        "nextLane": 0,
+        "lapCount": 4,
+        "startTimestamp": 1571741911462,
+        "currTimestamp": 1571741923373,
+        "endTimestamp": 1571741923373,
+        "currTime": 11855,
+        "splitTimes": [
+          4064,
+          4184,
+          3663
+        ],
+        "position": 1,
+        "delayFromFirst": 0,
+        "speed": 8.395600705230459,
+        "outOfBounds": false
+      }
+    ],
+    "0-1": [
+      {
+        "playerId": 3,
+        "startLane": 0,
+        "nextLane": 1,
+        "lapCount": 4,
+        "startTimestamp": 1571741944149,
+        "currTimestamp": 1571741956060,
+        "endTimestamp": 1571741956060,
+        "currTime": 11911,
+        "splitTimes": [
+          3968,
+          3903,
+          4040
+        ],
+        "position": 1,
+        "delayFromFirst": 0,
+        "speed": 8.395600705230459,
+        "outOfBounds": false
+      },
+      {
+        "playerId": -1,
+        "startLane": 1,
+        "nextLane": 2,
+        "lapCount": 1,
+        "startTimestamp": 1571741944397,
+        "currTimestamp": 1571741944397,
+        "endTimestamp": 0,
+        "currTime": 99999,
+        "splitTimes": [],
+        "position": 0,
+        "delayFromFirst": 0,
+        "speed": null,
+        "outOfBounds": true
+      },
+      {
+        "playerId": 0,
+        "startLane": 2,
+        "nextLane": 1,
+        "lapCount": 2,
+        "startTimestamp": 1571741944637,
+        "currTimestamp": 1571741948412,
+        "endTimestamp": 0,
+        "currTime": 99999,
+        "splitTimes": [
+          3775
+        ],
+        "position": 2,
+        "delayFromFirst": 0,
+        "speed": 8.830022075055188,
+        "outOfBounds": true
+      }
+    ],
+    "1-0": [
+      {
+        "playerId": 0,
+        "startLane": 0,
+        "nextLane": 1,
+        "lapCount": 4,
+        "startTimestamp": 1571742207068,
+        "currTimestamp": 1571742220259,
+        "endTimestamp": 1571742220259,
+        "currTime": 13191,
+        "splitTimes": [
+          4463,
+          5024,
+          3704
+        ],
+        "position": 3,
+        "delayFromFirst": 903,
+        "speed": 7.580926389204761,
+        "outOfBounds": false
+      },
+      {
+        "playerId": 1,
+        "startLane": 1,
+        "nextLane": 2,
+        "lapCount": 4,
+        "startTimestamp": 1571742207227,
+        "currTimestamp": 1571742219515,
+        "endTimestamp": 1571742219515,
+        "currTime": 12288,
+        "splitTimes": [
+          4472,
+          4432,
+          3384
+        ],
+        "position": 1,
+        "delayFromFirst": 0,
+        "speed": 8.138020833333334,
+        "outOfBounds": false
+      },
+      {
+        "playerId": 2,
+        "startLane": 2,
+        "nextLane": 0,
+        "lapCount": 4,
+        "startTimestamp": 1571742207379,
+        "currTimestamp": 1571742219891,
+        "endTimestamp": 1571742219891,
+        "currTime": 12512,
+        "splitTimes": [
+          4496,
+          4488,
+          3528
+        ],
+        "position": 2,
+        "delayFromFirst": 224,
+        "speed": 7.9923273657289,
+        "outOfBounds": false
+      }
+    ],
+    "1-1": [
+      {
+        "playerId": -1,
+        "startLane": 0,
+        "nextLane": 0,
+        "lapCount": 0,
+        "startTimestamp": 0,
+        "currTimestamp": 0,
+        "endTimestamp": 0,
+        "currTime": 99999,
+        "splitTimes": [],
+        "position": 0,
+        "delayFromFirst": 0,
+        "speed": 0,
+        "outOfBounds": true
+      },
+      {
+        "playerId": 4,
+        "startLane": 1,
+        "nextLane": 0,
+        "lapCount": 2,
+        "startTimestamp": 1571742227083,
+        "currTimestamp": 1571742231674,
+        "endTimestamp": 0,
+        "currTime": 99999,
+        "splitTimes": [
+          4591
+        ],
+        "position": 2,
+        "delayFromFirst": 0,
+        "speed": 7.260582298700356,
+        "outOfBounds": true
+      },
+      {
+        "playerId": 3,
+        "startLane": 2,
+        "nextLane": 0,
+        "lapCount": 4,
+        "startTimestamp": 1571742227211,
+        "currTimestamp": 1571742239666,
+        "endTimestamp": 1571742239666,
+        "currTime": 12455,
+        "splitTimes": [
+          4639,
+          4128,
+          3688
+        ],
+        "position": 1,
+        "delayFromFirst": 0,
+        "speed": 8.028904054596547,
+        "outOfBounds": false
+      }
+    ],
+    "2-0": [
+      {
+        "playerId": 2,
+        "startLane": 0,
+        "nextLane": 1,
+        "lapCount": 4,
+        "startTimestamp": 1571742251450,
+        "currTimestamp": 1571742265265,
+        "endTimestamp": 1571742265265,
+        "currTime": 13815,
+        "splitTimes": [
+          4608,
+          4815,
+          4392
+        ],
+        "position": 2,
+        "delayFromFirst": 120,
+        "speed": 7.238508867173363,
+        "outOfBounds": false
+      },
+      {
+        "playerId": 3,
+        "startLane": 1,
+        "nextLane": 2,
+        "lapCount": 4,
+        "startTimestamp": 1571742251354,
+        "currTimestamp": 1571742265474,
+        "endTimestamp": 1571742265474,
+        "currTime": 14120,
+        "splitTimes": [
+          5056,
+          3824,
+          5240
+        ],
+        "position": 3,
+        "delayFromFirst": 425,
+        "speed": 7.0821529745042495,
+        "outOfBounds": false
+      },
+      {
+        "playerId": 1,
+        "startLane": 2,
+        "nextLane": 0,
+        "lapCount": 4,
+        "startTimestamp": 1571742251218,
+        "currTimestamp": 1571742264913,
+        "endTimestamp": 1571742264913,
+        "currTime": 13695,
+        "splitTimes": [
+          4272,
+          5055,
+          4368
+        ],
+        "position": 1,
+        "delayFromFirst": 0,
+        "speed": 7.301935012778386,
+        "outOfBounds": false
+      }
+    ],
+    "2-1": [
+      {
+        "playerId": -1,
+        "startLane": 0,
+        "nextLane": 0,
+        "lapCount": 0,
+        "startTimestamp": 0,
+        "currTimestamp": 0,
+        "endTimestamp": 0,
+        "currTime": 99999,
+        "splitTimes": [],
+        "position": 0,
+        "delayFromFirst": 0,
+        "speed": 0,
+        "outOfBounds": true
+      },
+      {
+        "playerId": 0,
+        "startLane": 1,
+        "nextLane": 2,
+        "lapCount": 4,
+        "startTimestamp": 1571742313416,
+        "currTimestamp": 1571742325503,
+        "endTimestamp": 1571742325503,
+        "currTime": 12087,
+        "splitTimes": [
+          4343,
+          3912,
+          3832
+        ],
+        "position": 1,
+        "delayFromFirst": 0,
+        "speed": 8.273351534706709,
+        "outOfBounds": false
+      },
+      {
+        "playerId": 4,
+        "startLane": 2,
+        "nextLane": 1,
+        "lapCount": 2,
+        "startTimestamp": 1571742313527,
+        "currTimestamp": 1571742317879,
+        "endTimestamp": 0,
+        "currTime": 99999,
+        "splitTimes": [
+          4352
+        ],
+        "position": 2,
+        "delayFromFirst": 9,
+        "speed": 7.659313725490196,
+        "outOfBounds": true
+      }
+    ]
+  }
+}

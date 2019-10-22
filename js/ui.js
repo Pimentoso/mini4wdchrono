@@ -309,7 +309,7 @@ const showNextRoundNames = () => {
 
 	let r = currRound, m = currManche, text;
 	r += 1;
-	if (r == mancheList[0].length) {
+	if (r == mancheList[currManche].length) {
 		m++;
 		r = 0;
 	}
