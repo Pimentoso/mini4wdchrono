@@ -179,9 +179,6 @@ $('.tabs a').on('click', (e) => {
 	let tab = $this.closest('li').data('tab');
 	$('div[data-tab]').hide();
 	$(`div[data-tab=${tab}]`).show();
-
-	$('#button-manches-save').attr('disabled', true);
-	$('#button-manches-cancel').attr('disabled', true);
 });
 
 document.onkeydown = (e) => {
@@ -307,23 +304,11 @@ $('#button-save-config').on('click', (e) => {
 	e.preventDefault();
 });
 
-$(document).on('keyup', '.js-time-form', (e) => {
-	$('#button-manches-save').removeAttr('disabled');
-	$('#button-manches-cancel').removeAttr('disabled');
-});
-
-$('#button-manches-cancel').on('click', (e) => {
-	ui.showMancheList();
-	$('#button-manches-save').attr('disabled', true);
-	$('#button-manches-cancel').attr('disabled', true);
-});
-
 $('#button-manches-save').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
 	client.overrideTimes();
-	$('#button-manches-save').attr('disabled', true);
-	$('#button-manches-cancel').attr('disabled', true);
+	dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-saved') });
 });
 
 $('.js-race-mode').on('click', (e) => {

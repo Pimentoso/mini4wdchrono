@@ -93,6 +93,7 @@
     "dialog-restart": "Please restart the program for the changes to take effect.",
     "dialog-disqualify": "Disqualify this time? It will be set to 99.999.",
     "dialog-replay-round": "Play this round again? The current data will be lost.",
+    "dialog-saved": "Changes saved correctly.",
     "label-check-updates": "Check for updates",
     "option-lane-order": "Select lane order"
 }
