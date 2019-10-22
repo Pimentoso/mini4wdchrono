@@ -86,7 +86,19 @@ function createWindow() {
 }
 
 // Prevent multiple instances of this app to run.
-app.makeSingleInstance();
+const gotTheLock = app.requestSingleInstanceLock();
+
+app.on('second-instance', (_cl, _wd) => {
+  // Someone tried to run a second instance, we should focus our window.
+  if (myWindow) {
+    if (myWindow.isMinimized()) myWindow.restore();
+    myWindow.focus();
+  }
+})
+
+if (!gotTheLock) {
+  return app.quit();
+}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
