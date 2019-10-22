@@ -86,7 +86,7 @@ function createWindow() {
 }
 
 // Prevent multiple instances of this app to run.
-app.makeSingleInstance;
+app.makeSingleInstance();
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
