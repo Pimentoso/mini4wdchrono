@@ -26,6 +26,7 @@ const init = () => {
 	$('.tn').each(function () {
 		$(this).text(i18n.__($(this).data('tn')));
 	});
+	$('#main').show();
 
 	// read stuff from settings
 	playerTimes = configuration.readSettings('playerTimes') || [];
