@@ -275,7 +275,10 @@ const showMancheList = () => {
 					playerPositionTag = ``;
 
 					if (playerPosition != null) {
-						if (playerOut) {
+						if (cars[pindex].originalTime != null) {
+							playerPositionTag = `<span class="tag is-danger is-large">mod</span>`;
+						}
+						else if (playerOut) {
 							playerPositionTag = `<span class="tag is-dark is-large">out</span>`;
 						}
 						else if (playerPosition == 1) {

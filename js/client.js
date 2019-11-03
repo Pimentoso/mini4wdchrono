@@ -104,6 +104,7 @@ const disqualify = (mindex, rindex, pindex) => {
 	mindex = mindex || currManche;
 	rindex = rindex || currRound;
 	let cars = configuration.loadRound(mindex, rindex);
+	cars[pindex].originalTime = cars[pindex].currTime;
 	cars[pindex].currTime = 99999;
 	configuration.saveRound(mindex, rindex, cars);
 
@@ -116,7 +117,7 @@ const disqualify = (mindex, rindex, pindex) => {
 const overrideTimes = () => {
 	console.log('client.overrideTimes called');
 
-	let time, cars;
+	let time, newTime, oldTime, cars;
 	_.each(mancheList, (manche, mindex) => {
 		_.each(manche, (round, rindex) => {
 			cars = configuration.loadRound(mindex, rindex);
@@ -124,7 +125,12 @@ const overrideTimes = () => {
 				_.each(round, (_playerId, pindex) => {
 					time = $(`input[data-manche='${mindex}'][data-round='${rindex}'][data-player='${pindex}']`).val();
 					if (time) {
-						cars[pindex].currTime = utils.safeTime(time);
+						newTime = utils.safeTime(time);
+						oldTime = cars[pindex].currTime;
+						if (newTime != oldTime) {
+							cars[pindex].originalTime = oldTime;
+							cars[pindex].currTime = newTime;
+						}
 					}
 				});
 			}
