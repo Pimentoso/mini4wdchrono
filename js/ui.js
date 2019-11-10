@@ -215,10 +215,13 @@ const showPlayerList = () => {
 		$('#tablePlayerList').append(`<tr class="is-selected"><td colspan="2"><strong>${playerList.length} RACERS</strong></td>${titleCells}</tr>`);
 
 		// draw player rows
-		_.each(times, (info) => {
+		_.each(times, (info, pos) => {
 			let bestTime = _.min(_.filter(info.times, (t) => { return t > 0 && t < 99999; }));
 			let bestSpeed = track.length / (bestTime / 1000);
-			let timeCells = _.map(tournament.manches, (_manche, mindex) => {
+			let cells = [];
+			cells.push(`<td class="has-text-centered"><span class="tag is-large ${_.contains([0,1,2], pos) ? 'is-warning' : _.contains([3,4,5], pos) ? 'is-success' : '' }">${pos + 1}</span></td>`);
+			cells.push(`<td><p class="is-uppercase">${playerList[info.id]}</p></td>`);
+			cells.push(_.map(tournament.manches, (_manche, mindex) => {
 				let playerTime = info.times[mindex] || 0;
 				let highlight = '';
 				if (playerTime == 0 || playerTime == 99999) {
@@ -230,11 +233,11 @@ const showPlayerList = () => {
 				else if (playerTime == bestTime) {
 					highlight = 'has-text-danger';
 				}
-				return `<td class="${highlight}">${utils.prettyTime(playerTime)}</td>`;
-			});
-			timeCells.push(`<td>${utils.prettyTime(info.best)}</td>`);
-			timeCells.push(`<td>${bestSpeed.toFixed(2)} m/s</td>`);
-			$('#tablePlayerList').append(`<tr><td>${info.id + 1}</td><td><p class="has-text-centered is-uppercase">${playerList[info.id]}</p></td>${timeCells}</tr>`);
+				return `<td class="has-text-centered ${highlight}">${utils.prettyTime(playerTime)}</td>`;
+			}));
+			cells.push(`<td class="has-text-centered">${utils.prettyTime(info.best)}</td>`);
+			cells.push(`<td class="has-text-centered">${bestSpeed.toFixed(2)} m/s</td>`);
+			$('#tablePlayerList').append(`<tr>${cells}</tr>`);
 		});
 	}
 };
