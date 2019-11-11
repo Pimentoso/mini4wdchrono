@@ -57,6 +57,8 @@
     "button-stop": "STOP",
     "button-goto-free": "Free round >",
     "button-goto-race": "Return to race >",
+    "label-next-round": "Next round:",
+    "label-next-round-end": "MANCHE ENDED - Next round:",
     "label-lane-1": "LANE 1",
     "label-lane-2": "LANE 2",
     "label-lane-3": "LANE 3",

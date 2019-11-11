@@ -313,23 +313,23 @@ const showNextRoundNames = () => {
 	let playerList = configuration.loadPlayerList();
 	let mancheList = configuration.loadMancheList();
 
-	let r = currRound, m = currManche, text;
+	let r = currRound, m = currManche, names;
+	let label = i18n.__('label-next-round');
 	r += 1;
 	if (r == mancheList[currManche].length) {
 		m++;
 		r = 0;
+		label = i18n.__('label-next-round-end');
 	}
 
 	if (m == mancheList.length) {
-		text = '-';
+		names = '-';
 	}
 	else {
-		text = _.filter([playerList[mancheList[m][r][0]], playerList[mancheList[m][r][1]], playerList[mancheList[m][r][2]]], (n) => {
-			return n;
-		}).join(', ');
+		names = _.filter([playerList[mancheList[m][r][0]], playerList[mancheList[m][r][1]], playerList[mancheList[m][r][2]]], (n) => { return n; });
 	}
 
-	$('#next-round-names').text(text);
+	$('#next-round-names').text(`${label} ${names.join(', ').toUpperCase()}`);
 };
 
 const mancheName = (mindex) => {
