@@ -12,534 +12,533 @@
 
 <body>
 
-	<!-- NAVBAR -->
-	<nav class="navbar is-transparent">
-		<div class="navbar-brand">
-			<a class="navbar-item" href="https://github.com/Pimentoso/mini4wdchrono" target="_blank">
-				<img src="images/pimentoso.png" width="60" height="60">
-			</a>
-			<p id="js-title" class="navbar-item title is-2 is-uppercase"></p>
-		</div>
+	<div id="main" style="display: none;">
 
-		<div class="navbar-menu">
-			<div class="navbar-end">
-				<div class="navbar-item">
-					<div class="field is-grouped is-grouped-multiline">
-						<div class="control">
-							<div class="tags has-addons">
-								<span class="tag tn" data-tn="tag-board-status">Board status</span>
-								<span id="tag-board-status" class="tag is-uppercase tn" data-tn="tag-connecting">connecting...</span>
+		<!-- NAVBAR -->
+		<nav class="navbar is-transparent">
+			<div class="navbar-brand">
+				<a class="navbar-item" href="https://github.com/Pimentoso/mini4wdchrono" target="_blank">
+					<img src="images/pimentoso.png" width="60" height="60">
+				</a>
+				<p id="js-title" class="navbar-item title is-2 is-uppercase"></p>
+			</div>
+
+			<div class="navbar-menu">
+				<div class="navbar-end">
+					<div class="navbar-item">
+						<div class="field is-grouped is-grouped-multiline">
+							<div class="control">
+								<div class="tags has-addons">
+									<span class="tag tn" data-tn="tag-board-status">Board status</span>
+									<span id="tag-board-status" class="tag is-uppercase tn" data-tn="tag-connecting">connecting...</span>
+								</div>
 							</div>
-						</div>
-						<div class="control">
-							<div class="tags has-addons">
-								<span class="tag tn" data-tn="tag-track">Track</span>
-								<span id="tag-track-status" class="tag is-danger is-uppercase tn" data-tn="tag-not-loaded">not loaded</span>
+							<div class="control">
+								<div class="tags has-addons">
+									<span class="tag tn" data-tn="tag-track">Track</span>
+									<span id="tag-track-status" class="tag is-danger is-uppercase tn" data-tn="tag-not-loaded">not loaded</span>
+								</div>
 							</div>
-						</div>
-						<div class="control">
-							<div class="tags has-addons">
-								<span class="tag tn" data-tn="tag-tournament">Tournament</span>
-								<span id="tag-tournament-status" class="tag is-danger is-uppercase tn" data-tn="tag-not-loaded">not loaded</span>
+							<div class="control">
+								<div class="tags has-addons">
+									<span class="tag tn" data-tn="tag-tournament">Tournament</span>
+									<span id="tag-tournament-status" class="tag is-danger is-uppercase tn" data-tn="tag-not-loaded">not loaded</span>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	</nav>
+		</nav>
 
-	<!-- TABS -->
-	<div class="tabs is-centered is-boxed">
-		<ul>
-			<li class="is-active" data-tab="setup">
-				<a>
-					<span class="tn" data-tn="tab-race-setup">Race setup</span>
-				</a>
-			</li>
-			<li data-tab="race">
-				<a>
-					<span class="tn" data-tn="tab-race-view">Race view</span>
-				</a>
-			</li>
-			<li data-tab="players">
-				<a>
-					<span class="tn" data-tn="tab-racers-list">Racers list</span>
-				</a>
-			</li>
-			<li data-tab="manches">
-				<a>
-					<span class="tn" data-tn="tab-manches-list">Manches list</span>
-				</a>
-			</li>
-			<li data-tab="config">
-				<a>
-					<span class="tn" data-tn="tab-configuration">Configuration</span>
-				</a>
-			</li>
-			<li data-tab="about">
-				<a>
-					<span class="tn" data-tn="tab-about">About</span>
-				</a>
-			</li>
-		</ul>
-	</div>
-
-	<!-- SETUP TAB -->
-	<div class="container" data-tab="setup">
-		<p class="has-text-centered">
-			<a id="button-reset" href="#" class="button is-info tn" data-tn="button-new-race" style="width: 200px;">
-				New race
-			</a>
-		</p>
-
-		<hr />
-
-		<p class="title is-4 tn" data-tn="label-track-info">Track informations</p>
-
-		<div class="container">
-			<label class="label tn" data-tn="label-load-track">Load track from Track Editor link</label>
-			<div class="field has-addons">
-				<div class="control" style="width: 100%;">
-					<input id="js-input-track-code" class="input" type="text" placeholder="example: https://mini4wd-track-editor.pimentoso.com/4QT8GM" value="">
-				</div>
-				<div class="control">
-					<a id="js-load-track" class="button is-info tn" data-tn="button-load">
-						Load
+		<!-- TABS -->
+		<div class="tabs is-centered is-boxed">
+			<ul>
+				<li class="is-active" data-tab="setup">
+					<a>
+						<span class="tn" data-tn="tab-race-setup">Race setup</span>
 					</a>
+				</li>
+				<li data-tab="race">
+					<a>
+						<span class="tn" data-tn="tab-race-view">Race view</span>
+					</a>
+				</li>
+				<li data-tab="players">
+					<a>
+						<span class="tn" data-tn="tab-racers-list">Racers list</span>
+					</a>
+				</li>
+				<li data-tab="manches">
+					<a>
+						<span class="tn" data-tn="tab-manches-list">Manches list</span>
+					</a>
+				</li>
+				<li data-tab="config">
+					<a>
+						<span class="tn" data-tn="tab-configuration">Configuration</span>
+					</a>
+				</li>
+				<li data-tab="about">
+					<a>
+						<span class="tn" data-tn="tab-about">About</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+
+		<!-- SETUP TAB -->
+		<div class="container" data-tab="setup">
+			<p class="has-text-centered">
+				<a id="button-reset" href="#" class="button is-info tn" data-tn="button-new-race" style="width: 200px;">
+					New race
+				</a>
+			</p>
+
+			<hr />
+
+			<p class="title is-4 tn" data-tn="label-track-info">Track informations</p>
+
+			<div class="container">
+				<label class="label tn" data-tn="label-load-track">Load track from Track Editor link</label>
+				<div class="field has-addons">
+					<div class="control" style="width: 100%;">
+						<input id="js-input-track-code" class="input" type="text" placeholder="example: https://mini4wd-track-editor.pimentoso.com/4QT8GM" value="">
+					</div>
+					<div class="control">
+						<a id="js-load-track" class="button is-info tn" data-tn="button-load">
+							Load
+						</a>
+					</div>
+				</div>
+
+				<div class="level">
+					<div class="level-left">
+						<p id="js-track-info">
+							<span id="js-track-length" class="tag is-light is-medium">-</span>
+							<span id="js-track-order" class="tag is-light is-medium">-</span>
+						</p>
+					</div>
+					<div class="level-right">
+						<a id="js-link-track" href="#" class="button tn" data-tn="button-open-track-editor">
+							See in Mini4WD Track Editor &gt;
+						</a>
+					</div>
+				</div>
+
+				<label class="label tn" data-tn="label-manual-input">Or manual input</label>
+				<div class="field is-horizontal">
+					<div class="field-body">
+						<div class="field has-addons">
+							<p class="control is-expanded">
+								<input id="js-track-length-manual" class="input" type="text" placeholder="Track length">
+							</p>
+							<p class="control">
+								<a class="button is-static">
+									m
+								</a>
+							</p>
+						</div>
+						<div class="field">
+							<p class="control">
+								<div class="select is-fullwidth">
+									<select id="js-track-order-manual">
+									<option value="" disabled selected class="tn" data-tn="option-lane-order">Select lane order</option>
+									<option value="1-2-3">1-2-3-1</option>
+									<option value="1-3-2">1-3-2-1</option>
+									</select>
+								</div>
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="level">
+					<div class="level-left"></div>
+					<div class="level-right">
+						<a id="js-track-save-manual" href="#" class="button tn" data-tn="button-save">
+							Save
+						</a>
+					</div>
 				</div>
 			</div>
 
-			<div class="level">
-				<div class="level-left">
-					<p id="js-track-info">
-						<span id="js-track-length" class="tag is-light is-medium">-</span>
-						<span id="js-track-order" class="tag is-light is-medium">-</span>
+			<hr />
+
+			<p class="title is-4 tn" data-tn="label-tournament-info">Tournament informations</p>
+
+			<div class="container">
+				<label class="label tn" data-tn="label-load-tournament">Load tournament from Tournament Generator link</label>
+				<div class="field has-addons">
+					<div class="control" style="width: 100%;">
+						<input id="js-input-tournament-code" class="input" type="text" placeholder="example: https://mini4wd-tournament.pimentoso.com/49PMRU" value="">
+					</div>
+					<div class="control">
+						<a id="js-load-tournament" class="button is-info tn" data-tn="button-load">
+							Load
+						</a>
+					</div>
+				</div>
+
+				<div class="level">
+					<div class="level-left">
+						<p id="js-tournament-info">
+							<span id="js-tournament-players" class="tag is-light is-medium">-</span>
+							<span id="js-tournament-manches" class="tag is-light is-medium">-</span>
+						</p>
+					</div>
+					<div class="level-right">
+						<a id="js-link-tournament" href="#" class="button tn" data-tn="button-open-tournament-editor">
+							See in Mini4WD Tournament Generator &gt;
+						</a>
+					</div>
+				</div>
+			</div>
+
+			<hr />
+
+			<p class="title is-4 tn" data-tn="label-setup">Setup</p>
+
+			<div class="container">
+				<label class="label tn" data-tn="label-race-mode">Race mode</label>
+				<div class="buttons has-addons">
+					<span id="js-race-mode-0" class="button js-race-mode tn" data-tn="button-race-mode-time-attack" data-race-mode="0">Time attack mode</span>
+					<span id="js-race-mode-1" class="button js-race-mode tn" data-tn="button-race-mode-final" data-race-mode="1">Final mode</span>
+					<span id="js-race-mode-2" class="button js-race-mode tn" data-tn="button-race-mode-endurance" data-race-mode="2" disabled>Endurance mode</span>
+				</div>
+				<p id="js-race-mode-description" class="has-text-grey is-size-7">(text)</p>
+			</div>
+
+			<div class="container">
+				<label class="label tn" data-tn="label-start-delay">Max start delay</label>
+				<div class="field has-addons">
+					<p class="control" style="width: 100%;">
+						<input id="js-settings-start-delay" class="input" type="text" placeholder="Text input" value="3">
+					</p>
+					<p class="control">
+						<a class="button is-static">
+							sec
+						</a>
 					</p>
 				</div>
-				<div class="level-right">
-					<a id="js-link-track" href="#" class="button tn" data-tn="button-open-track-editor">
-						See in Mini4WD Track Editor &gt;
-					</a>
-				</div>
+				<p class="has-text-dark is-size-7 tn" data-tn="label-start-delay-desc">Time limit for a car to pass on the sensor after race start. Default is 3 sec.</p>
 			</div>
 
-			<label class="label tn" data-tn="label-manual-input">Or manual input</label>
-			<div class="field is-horizontal">
-				<div class="field-body">
-					<div class="field has-addons">
-						<p class="control is-expanded">
-							<input id="js-track-length-manual" class="input" type="text" placeholder="Track length">
-						</p>
-						<p class="control">
-							<a class="button is-static">
-								m
-							</a>
-						</p>
-					</div>
-					<div class="field">
-						<p class="control">
-							<div class="select is-fullwidth">
-								<select id="js-track-order-manual">
-								<option value="" disabled selected class="tn" data-tn="option-lane-order">Select lane order</option>
-								<option value="1-2-3">1-2-3-1</option>
-								<option value="1-3-2">1-3-2-1</option>
-								</select>
-							</div>
-						</p>
-					</div>
+			<div class="container">
+				<label class="label tn" data-tn="label-average-speed">Average speed</label>
+				<div class="field has-addons">
+					<p class="control" style="width: 100%;">
+						<input id="js-settings-speed-threshold" class="input" type="text" placeholder="Text input" value="5">
+					</p>
+					<p class="control">
+						<a class="button is-static">
+							m/s
+						</a>
+					</p>
 				</div>
+				<p class="has-text-dark is-size-7 tn" data-tn="label-average-speed-desc">Estimated speed for this race (in m/s). Jump race: 5, Italian classic: 7.5, Speed race: 10</p>
+				<p id="js-settings-estimated-time" class="has-text-dark is-size-8 has-text-weight-bold">(text)</p>
 			</div>
 
-			<div class="level">
+			<div class="container">
+				<label class="label tn" data-tn="label-time-threshold">Lap time threshold</label>
+				<div class="field has-addons">
+					<p class="control" style="width: 100%;">
+						<input id="js-settings-time-threshold" class="input" type="text" placeholder="Text input" value="40">
+					</p>
+					<p class="control">
+						<a class="button is-static">
+							%
+						</a>
+					</p>
+				</div>
+				<p class="has-text-dark is-size-7 tn" data-tn="label-time-threshold-desc">If a car does not complete a lap within this %, it's considered out. Default is 40.</p>
+				<p id="js-settings-estimated-cutoff" class="has-text-dark is-size-8 has-text-weight-bold">(text)</p>
+			</div>
+
+			<p class="has-text-centered">
+				<a id="button-save-settings" href="#" class="button is-info tn" data-tn="button-save-settings">
+					Save settings
+				</a>
+			</p>
+		</div>
+
+		<!-- PLAYERS TAB -->
+		<div class="container" data-tab="players" style="display: none;">
+			<div class="js-hide-on-no-tournament level has-text-centered">
 				<div class="level-left"></div>
 				<div class="level-right">
-					<a id="js-track-save-manual" href="#" class="button tn" data-tn="button-save">
-						Save
-					</a>
+					<div class="level-item">
+						<span id="status-xls" class="has-text-grey"></span>
+					</div>
+					<div class="level-item">
+						<button class="button is-info" id="button-xls">
+							<span class="tn" data-tn="button-save-xls">Save XLS file</span>
+						</button>
+					</div>
+					<div class="level-item">
+						<button class="button" id="button-xls-folder">
+							<span class="tn" data-tn="button-open-folder">Open folder</span>
+						</button>
+					</div>
 				</div>
 			</div>
+			<table id="tablePlayerList" class="js-hide-on-no-tournament table table is-bordered is-striped is-hoverable is-fullwidth is-size-5"></table>
+			<p class="js-show-on-no-tournament has-text-grey has-text-centered tn" data-tn="label-tournament-not-loaded">Tournament not loaded</p>
 		</div>
 
-		<hr />
-
-		<p class="title is-4 tn" data-tn="label-tournament-info">Tournament informations</p>
-
-		<div class="container">
-			<label class="label tn" data-tn="label-load-tournament">Load tournament from Tournament Generator link</label>
-			<div class="field has-addons">
-				<div class="control" style="width: 100%;">
-					<input id="js-input-tournament-code" class="input" type="text" placeholder="example: https://mini4wd-tournament.pimentoso.com/49PMRU" value="">
+		<!-- MANCHES TAB -->
+		<div class="container" data-tab="manches" style="display: none;">
+			<div class="js-hide-on-no-tournament level has-text-centered">
+				<div class="level-left"></div>
+				<div class="level-right">
+					<div class="level-item">
+						<button class="button is-info" id="button-manches-save">
+							<span class="tn" data-tn="button-save-changes">Save changes</span>
+						</button>
+					</div>
 				</div>
-				<div class="control">
-					<a id="js-load-tournament" class="button is-info tn" data-tn="button-load">
-						Load
-					</a>
+			</div>
+			<table id="tableMancheList" class="js-hide-on-no-tournament table table is-bordered is-striped is-hoverable is-fullwidth is-size-5"></table>
+			<p class="js-show-on-no-tournament has-text-grey has-text-centered tn" data-tn="label-tournament-not-loaded">Tournament not loaded</p>
+		</div>
+
+		<!-- RACE TAB -->
+		<div class="container" data-tab="race" style="display: none;">
+			<div class="js-hide-on-no-tournament js-hide-on-free-round js-hide-on-no-track level has-text-centered has-text-weight-bold">
+				<span id="curr-manche" class="level-item tag is-primary is-size-4"></span>
+				&nbsp;
+				<span id="curr-round" class="level-item tag is-primary is-size-4"></span>
+			</div>
+
+			<div class="level has-text-centered js-hide-on-no-track">
+				<div class="level-item">
+					<button class="button js-hide-on-no-tournament js-hide-on-free-round js-hide-on-race-started" id="button-prev">
+						<span class="tn" data-tn="button-prev-round">&lt; Prev round</span>
+					</button>
+				</div>
+				<div class="level-item">
+					<button class="button is-link is-large has-text-weight-bold js-disable-on-race-started" id="button-start" style="min-width: 200px;">
+						<span class="tn" data-tn="button-start">START</span>
+					</button>
+
+					<button class="button is-link is-outlined js-hide-on-race-started js-hide-on-no-tournament" id="button-toggle-free-round" style="min-width: 150px; margin-left: 20px;">
+						<span class="tn" data-tn="button-goto-free">Free round ></span>
+					</button>
+
+					<button class="button is-danger is-outlined js-show-on-race-started" id="button-stop" style="min-width: 150px; margin-left: 20px;">
+						<span class="tn" data-tn="button-stop">STOP</span>
+					</button>
+				</div>
+				<div class="level-item">
+					<button class="button js-hide-on-no-tournament js-hide-on-free-round js-hide-on-race-started" id="button-next">
+						<span class="tn" data-tn="button-next-round">Next round &gt;</span>
+					</button>
 				</div>
 			</div>
 
-			<div class="level">
-				<div class="level-left">
-					<p id="js-tournament-info">
-						<span id="js-tournament-players" class="tag is-light is-medium">-</span>
-						<span id="js-tournament-manches" class="tag is-light is-medium">-</span>
+			<div class="columns js-hide-on-no-track">
+				<div class="column box-lane0">
+					<p class="has-background-primary has-text-white is-block is-size-4 has-text-centered has-text-weight-bold has-margin-vertical tn" data-tn="label-lane-1">LANE 1</p>
+					<div class="card has-text-centered">
+						<header class="card-header">
+							<p id="name-lane0" class="card-header-title is-size-3 is-block has-text-grey-dark is-uppercase"></p>
+						</header>
+						<div class="card-content">
+							<div class="content">
+								<span id="place-lane0" class="tag is-size-6 is-uppercase is-light js-place">stopped</span>
+								&nbsp;
+								<span id="delay-lane0" class="tag is-size-6 is-light js-delay">+0.000 sec</span>
+								<span id="timer-lane0" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
+								<span id="lap-lane0" class="tag is-size-6 is-uppercase is-light js-lap">lap 0</span>
+								&nbsp;
+								<span id="speed-lane0" class="tag is-size-6 is-light js-speed">0.00 m/s</span>
+
+								<ul id="laps-lane0"></ul>
+
+								<a id="invalidate-0" href="#" class="button is-small is-danger js-invalidate js-disable-on-race-started" data-lane="0">invalidate</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="column box-lane1">
+					<p class="has-background-warning has-text-white is-block is-size-4 has-text-centered has-text-weight-bold has-margin-vertical tn" data-tn="label-lane-2">LANE 2</p>
+					<div class="card has-text-centered">
+						<header class="card-header">
+							<p id="name-lane1" class="card-header-title is-size-3 is-block has-text-grey-dark is-uppercase"></p>
+						</header>
+						<div class="card-content">
+							<div class="content">
+								<span id="place-lane1" class="tag is-size-6 is-uppercase is-light js-place">stopped</span>
+								&nbsp;
+								<span id="delay-lane1" class="tag is-size-6 is-light js-delay">+0.000 sec</span>
+								<span id="timer-lane1" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
+								<span id="lap-lane1" class="tag is-size-6 is-uppercase is-light js-lap">lap 0</span>
+								&nbsp;
+								<span id="speed-lane1" class="tag is-size-6 is-light js-speed">0.00 m/s</span>
+
+								<ul id="laps-lane1"></ul>
+
+								<a id="invalidate-1" href="#" class="button is-small is-danger js-invalidate js-disable-on-race-started" data-lane="1">invalidate</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="column box-lane2">
+					<p class="has-background-danger has-text-white is-block is-size-4 has-text-centered has-text-weight-bold has-margin-vertical tn" data-tn="label-lane-3">LANE 3</p>
+					<div class="card has-text-centered">
+						<header class="card-header">
+							<p id="name-lane2" class="card-header-title is-size-3 is-block has-text-grey-dark is-uppercase"></p>
+						</header>
+						<div class="card-content">
+							<div class="content">
+								<span id="place-lane2" class="tag is-size-6 is-uppercase is-light js-place">stopped</span>
+								&nbsp;
+								<span id="delay-lane2" class="tag is-size-6 is-light js-delay">+0.000 sec</span>
+								<span id="timer-lane2" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
+								<span id="lap-lane2" class="tag is-size-6 is-uppercase is-light js-lap">lap 0</span>
+								&nbsp;
+								<span id="speed-lane2" class="tag is-size-6 is-light js-speed">0.00 m/s</span>
+
+								<ul id="laps-lane2"></ul>
+
+								<a id="invalidate-2" href="#" class="button is-small is-danger js-invalidate js-disable-on-race-started" data-lane="2">invalidate</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="js-hide-on-no-tournament js-hide-on-free-round js-hide-on-no-track level has-text-centered">
+				<span id="next-round-names" class="level-item tag is-info is-size-5 is-uppercase">-</span>
+			</div>
+
+			<p class="js-show-on-no-track has-text-grey has-text-centered tn" data-tn="label-track-not-loaded">Track not loaded</p>
+		</div>
+
+		<!-- CONFIG TAB -->
+		<div class="container" data-tab="config" style="display: none;">
+			<div class="container">
+
+				<div class="field">
+					<label class="label tn" data-tn="label-custom-title">Your team/club name</label>
+					<div class="control" style="width: 100%;">
+						<input id="js-config-title" class="input" type="text" placeholder="default: MINI4WD CHRONO" value="">
+					</div>
+				</div>
+
+				<div class="field">
+					<label class="label tn" data-tn="label-usb-port">USB Port</label>
+					<p class="control">
+						<div class="select is-fullwidth">
+							<select id="js-config-usb-port">
+								<option value="" selected>Auto</option>
+							</select>
+						</div>
 					</p>
 				</div>
-				<div class="level-right">
-					<a id="js-link-tournament" href="#" class="button tn" data-tn="button-open-tournament-editor">
-						See in Mini4WD Tournament Generator &gt;
-					</a>
-				</div>
-			</div>
-		</div>
 
-		<hr />
+				<label class="label tn" data-tn="label-sensor-reading">Sensor reading</label>
+				<div class="field is-grouped is-grouped-multiline">
+					<div class="control">
+						<div class="tags has-addons">
+						<span class="tag is-medium">lane 1</span>
+						<span id="sensor-reading-1" class="tag is-primary is-medium">0</span>
+						</div>
+					</div>
 
-		<p class="title is-4 tn" data-tn="label-setup">Setup</p>
+					<div class="control">
+						<div class="tags has-addons">
+						<span class="tag is-medium">lane 2</span>
+						<span id="sensor-reading-2" class="tag is-danger is-medium">0</span>
+						</div>
+					</div>
 
-		<div class="container">
-			<label class="label tn" data-tn="label-race-mode">Race mode</label>
-			<div class="buttons has-addons">
-				<span id="js-race-mode-0" class="button js-race-mode tn" data-tn="button-race-mode-time-attack" data-race-mode="0">Time attack mode</span>
-				<span id="js-race-mode-1" class="button js-race-mode tn" data-tn="button-race-mode-final" data-race-mode="1">Final mode</span>
-				<span id="js-race-mode-2" class="button js-race-mode tn" data-tn="button-race-mode-endurance" data-race-mode="2" disabled>Endurance mode</span>
-			</div>
-			<p id="js-race-mode-description" class="has-text-grey is-size-7">(text)</p>
-		</div>
-
-		<div class="container">
-			<label class="label tn" data-tn="label-start-delay">Max start delay</label>
-			<div class="field has-addons">
-				<p class="control" style="width: 100%;">
-					<input id="js-settings-start-delay" class="input" type="text" placeholder="Text input" value="3">
-				</p>
-				<p class="control">
-					<a class="button is-static">
-						sec
-					</a>
-				</p>
-			</div>
-			<p class="has-text-dark is-size-7 tn" data-tn="label-start-delay-desc">Time limit for a car to pass on the sensor after race start. Default is 3 sec.</p>
-		</div>
-
-		<div class="container">
-			<label class="label tn" data-tn="label-average-speed">Average speed</label>
-			<div class="field has-addons">
-				<p class="control" style="width: 100%;">
-					<input id="js-settings-speed-threshold" class="input" type="text" placeholder="Text input" value="5">
-				</p>
-				<p class="control">
-					<a class="button is-static">
-						m/s
-					</a>
-				</p>
-			</div>
-			<p class="has-text-dark is-size-7 tn" data-tn="label-average-speed-desc">Estimated speed for this race (in m/s). Jump race: 5, Italian classic: 7.5, Speed race: 10</p>
-			<p id="js-settings-estimated-time" class="has-text-dark is-size-7">(text)</p>
-		</div>
-
-		<div class="container">
-			<label class="label tn" data-tn="label-time-threshold">Lap time threshold</label>
-			<div class="field has-addons">
-				<p class="control" style="width: 100%;">
-					<input id="js-settings-time-threshold" class="input" type="text" placeholder="Text input" value="40">
-				</p>
-				<p class="control">
-					<a class="button is-static">
-						%
-					</a>
-				</p>
-			</div>
-			<p class="has-text-dark is-size-7 tn" data-tn="label-time-threshold-desc">If a car does not complete a lap within this %, it's considered out. Default is 40.</p>
-			<p id="js-settings-estimated-cutoff" class="has-text-dark is-size-7">(text)</p>
-		</div>
-
-		<p class="has-text-centered">
-			<a id="button-save-settings" href="#" class="button is-info tn" data-tn="button-save-settings">
-				Save settings
-			</a>
-		</p>
-	</div>
-
-	<!-- PLAYERS TAB -->
-	<div class="container" data-tab="players" style="display: none;">
-		<div class="js-hide-on-no-tournament level has-text-centered">
-			<div class="level-left"></div>
-			<div class="level-right">
-				<div class="level-item">
-					<span id="status-xls" class="has-text-grey"></span>
-				</div>
-				<div class="level-item">
-					<button class="button is-info" id="button-xls">
-						<span class="tn" data-tn="button-save-xls">Save XLS file</span>
-					</button>
-				</div>
-				<div class="level-item">
-					<button class="button" id="button-xls-folder">
-						<span class="tn" data-tn="button-open-folder">Open folder</span>
-					</button>
-				</div>
-			</div>
-		</div>
-		<table id="tablePlayerList" class="js-hide-on-no-tournament table table is-bordered is-striped is-hoverable is-fullwidth is-size-5"></table>
-		<p class="js-show-on-no-tournament has-text-grey has-text-centered tn" data-tn="label-tournament-not-loaded">Tournament not loaded</p>
-	</div>
-
-	<!-- MANCHES TAB -->
-	<div class="container" data-tab="manches" style="display: none;">
-		<div class="js-hide-on-no-tournament level has-text-centered">
-			<div class="level-left"></div>
-			<div class="level-right">
-				<div class="level-item">
-					<button class="button" id="button-manches-cancel">
-						<span class="tn" data-tn="button-cancel">Cancel</span>
-					</button>
-				</div>
-				<div class="level-item">
-					<button class="button is-info" id="button-manches-save">
-						<span class="tn" data-tn="button-save-changes">Save changes</span>
-					</button>
-				</div>
-			</div>
-		</div>
-		<table id="tableMancheList" class="js-hide-on-no-tournament table table is-bordered is-striped is-hoverable is-fullwidth is-size-5"></table>
-		<p class="js-show-on-no-tournament has-text-grey has-text-centered tn" data-tn="label-tournament-not-loaded">Tournament not loaded</p>
-	</div>
-
-	<!-- RACE TAB -->
-	<div class="container" data-tab="race" style="display: none;">
-		<div class="js-hide-on-no-tournament js-hide-on-free-round js-hide-on-no-track level has-text-centered has-text-weight-bold">
-			<span id="curr-manche" class="level-item tag is-primary is-size-4"></span>
-			&nbsp;
-			<span id="curr-round" class="level-item tag is-primary is-size-4"></span>
-		</div>
-
-		<div class="level has-text-centered js-hide-on-no-track">
-			<div class="level-item">
-				<button class="button js-hide-on-no-tournament js-hide-on-free-round js-hide-on-race-started" id="button-prev">
-					<span class="tn" data-tn="button-prev-round">&lt; Prev round</span>
-				</button>
-			</div>
-			<div class="level-item">
-				<button class="button is-link is-large has-text-weight-bold js-disable-on-race-started" id="button-start" style="min-width: 200px;">
-					<span class="tn" data-tn="button-start">START</span>
-				</button>
-
-				<button class="button is-link is-outlined js-hide-on-race-started js-hide-on-no-tournament" id="button-toggle-free-round" style="min-width: 150px; margin-left: 20px;">
-					<span class="tn" data-tn="button-goto-free">Free round ></span>
-				</button>
-
-				<button class="button is-danger is-outlined js-show-on-race-started" id="button-stop" style="min-width: 150px; margin-left: 20px;">
-					<span class="tn" data-tn="button-stop">STOP</span>
-				</button>
-			</div>
-			<div class="level-item">
-				<button class="button js-hide-on-no-tournament js-hide-on-free-round js-hide-on-race-started" id="button-next">
-					<span class="tn" data-tn="button-next-round">Next round &gt;</span>
-				</button>
-			</div>
-		</div>
-
-		<div class="columns js-hide-on-no-track">
-			<div class="column box-lane0">
-				<p class="has-background-primary has-text-white is-block is-size-4 has-text-centered has-text-weight-bold has-margin-vertical tn" data-tn="label-lane-1">LANE 1</p>
-				<div class="card has-text-centered">
-					<header class="card-header">
-						<p id="name-lane0" class="card-header-title is-size-3 is-block has-text-grey-dark is-uppercase"></p>
-					</header>
-					<div class="card-content">
-						<div class="content">
-							<span id="place-lane0" class="tag is-size-6 is-uppercase is-light js-place">stopped</span>
-							&nbsp;
-							<span id="delay-lane0" class="tag is-size-6 is-light js-delay">+0.000 sec</span>
-							<span id="timer-lane0" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
-							<span id="lap-lane0" class="tag is-size-6 is-uppercase is-light js-lap">lap 0</span>
-							&nbsp;
-							<span id="speed-lane0" class="tag is-size-6 is-light js-speed">0.00 m/s</span>
-
-							<ul id="laps-lane0"></ul>
-
-							<a id="invalidate-0" href="#" class="button is-small is-danger js-invalidate js-disable-on-race-started" data-lane="0">invalidate</a>
+					<div class="control">
+						<div class="tags has-addons">
+						<span class="tag is-medium">lane 3</span>
+						<span id="sensor-reading-3" class="tag is-warning is-medium">0</span>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="column box-lane1">
-				<p class="has-background-warning has-text-white is-block is-size-4 has-text-centered has-text-weight-bold has-margin-vertical tn" data-tn="label-lane-2">LANE 2</p>
-				<div class="card has-text-centered">
-					<header class="card-header">
-						<p id="name-lane1" class="card-header-title is-size-3 is-block has-text-grey-dark is-uppercase"></p>
-					</header>
-					<div class="card-content">
-						<div class="content">
-							<span id="place-lane1" class="tag is-size-6 is-uppercase is-light js-place">stopped</span>
-							&nbsp;
-							<span id="delay-lane1" class="tag is-size-6 is-light js-delay">+0.000 sec</span>
-							<span id="timer-lane1" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
-							<span id="lap-lane1" class="tag is-size-6 is-uppercase is-light js-lap">lap 0</span>
-							&nbsp;
-							<span id="speed-lane1" class="tag is-size-6 is-light js-speed">0.00 m/s</span>
 
-							<ul id="laps-lane1"></ul>
+				<div class="field">
+					<label class="label tn" data-tn="label-sensor-1">Sensor 1 pin</label>
+					<div class="control" style="width: 100%;">
+						<input id="js-config-sensor-pin-1" class="input" type="text" placeholder="example: A0" value="">
+					</div>
+				</div>
 
-							<a id="invalidate-1" href="#" class="button is-small is-danger js-invalidate js-disable-on-race-started" data-lane="1">invalidate</a>
-						</div>
+				<div class="field">
+					<label class="label tn" data-tn="label-sensor-2">Sensor 2 pin</label>
+					<div class="control" style="width: 100%;">
+						<input id="js-config-sensor-pin-2" class="input" type="text" placeholder="example: A1" value="">
+					</div>
+				</div>
+
+				<div class="field">
+					<label class="label tn" data-tn="label-sensor-3">Sensor 3 pin</label>
+					<div class="control" style="width: 100%;">
+						<input id="js-config-sensor-pin-3" class="input" type="text" placeholder="example: A2" value="">
+					</div>
+				</div>
+
+				<div class="field">
+					<label class="label tn" data-tn="label-led-1">LED 1 pin</label>
+					<div class="control" style="width: 100%;">
+						<input id="js-config-led-pin-1" class="input" type="text" placeholder="example: 0" value="">
+					</div>
+				</div>
+
+				<div class="field">
+					<label class="label tn" data-tn="label-led-2">LED 2 pin</label>
+					<div class="control" style="width: 100%;">
+						<input id="js-config-led-pin-2" class="input" type="text" placeholder="example: 1" value="">
+					</div>
+				</div>
+
+				<div class="field">
+					<label class="label tn" data-tn="label-led-3">LED 3 pin</label>
+					<div class="control" style="width: 100%;">
+						<input id="js-config-led-pin-3" class="input" type="text" placeholder="example: 2" value="">
+					</div>
+				</div>
+
+				<div class="field">
+					<label class="label tn" data-tn="label-speaker">Speaker pin</label>
+					<div class="control" style="width: 100%;">
+						<input id="js-config-piezo-pin" class="input" type="text" placeholder="example: 4" value="">
 					</div>
 				</div>
 			</div>
-			<div class="column box-lane2">
-				<p class="has-background-danger has-text-white is-block is-size-4 has-text-centered has-text-weight-bold has-margin-vertical tn" data-tn="label-lane-3">LANE 3</p>
-				<div class="card has-text-centered">
-					<header class="card-header">
-						<p id="name-lane2" class="card-header-title is-size-3 is-block has-text-grey-dark is-uppercase"></p>
-					</header>
-					<div class="card-content">
-						<div class="content">
-							<span id="place-lane2" class="tag is-size-6 is-uppercase is-light js-place">stopped</span>
-							&nbsp;
-							<span id="delay-lane2" class="tag is-size-6 is-light js-delay">+0.000 sec</span>
-							<span id="timer-lane2" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
-							<span id="lap-lane2" class="tag is-size-6 is-uppercase is-light js-lap">lap 0</span>
-							&nbsp;
-							<span id="speed-lane2" class="tag is-size-6 is-light js-speed">0.00 m/s</span>
 
-							<ul id="laps-lane2"></ul>
-
-							<a id="invalidate-2" href="#" class="button is-small is-danger js-invalidate js-disable-on-race-started" data-lane="2">invalidate</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="js-hide-on-no-tournament js-hide-on-free-round js-hide-on-no-track level has-text-centered">
-			<span class="level-item tag is-info is-size-5">Next round:&nbsp;<span id="next-round-names" class="is-uppercase">-</span></span>
-		</div>
-
-		<p class="js-show-on-no-track has-text-grey has-text-centered tn" data-tn="label-track-not-loaded">Track not loaded</p>
-	</div>
-
-	<!-- CONFIG TAB -->
-	<div class="container" data-tab="config" style="display: none;">
-		<div class="container">
-
-			<div class="field">
-				<label class="label tn" data-tn="label-custom-title">Your team/club name</label>
-				<div class="control" style="width: 100%;">
-					<input id="js-config-title" class="input" type="text" placeholder="default: MINI4WD CHRONO" value="">
-				</div>
-			</div>
-
-			<div class="field">
-				<label class="label tn" data-tn="label-usb-port">USB Port</label>
-				<p class="control">
-					<div class="select is-fullwidth">
-						<select id="js-config-usb-port">
-							<option value="" selected>Auto</option>
-						</select>
-					</div>
-				</p>
-			</div>
-
-			<label class="label tn" data-tn="label-sensor-reading">Sensor reading</label>
-			<div class="field is-grouped is-grouped-multiline">
-				<div class="control">
-				  <div class="tags has-addons">
-					<span class="tag is-medium">lane 1</span>
-					<span id="sensor-reading-1" class="tag is-primary is-medium">0</span>
-				  </div>
-				</div>
-
-				<div class="control">
-				  <div class="tags has-addons">
-					<span class="tag is-medium">lane 2</span>
-					<span id="sensor-reading-2" class="tag is-danger is-medium">0</span>
-				  </div>
-				</div>
-
-				<div class="control">
-				  <div class="tags has-addons">
-					<span class="tag is-medium">lane 3</span>
-					<span id="sensor-reading-3" class="tag is-warning is-medium">0</span>
-				  </div>
-				</div>
-			</div>
-
-			<div class="field">
-				<label class="label tn" data-tn="label-sensor-1">Sensor 1 pin</label>
-				<div class="control" style="width: 100%;">
-					<input id="js-config-sensor-pin-1" class="input" type="text" placeholder="example: A0" value="">
-				</div>
-			</div>
-
-			<div class="field">
-				<label class="label tn" data-tn="label-sensor-2">Sensor 2 pin</label>
-				<div class="control" style="width: 100%;">
-					<input id="js-config-sensor-pin-2" class="input" type="text" placeholder="example: A1" value="">
-				</div>
-			</div>
-
-			<div class="field">
-				<label class="label tn" data-tn="label-sensor-3">Sensor 3 pin</label>
-				<div class="control" style="width: 100%;">
-					<input id="js-config-sensor-pin-3" class="input" type="text" placeholder="example: A2" value="">
-				</div>
-			</div>
-
-			<div class="field">
-				<label class="label tn" data-tn="label-led-1">LED 1 pin</label>
-				<div class="control" style="width: 100%;">
-					<input id="js-config-led-pin-1" class="input" type="text" placeholder="example: 0" value="">
-				</div>
-			</div>
-
-			<div class="field">
-				<label class="label tn" data-tn="label-led-2">LED 2 pin</label>
-				<div class="control" style="width: 100%;">
-					<input id="js-config-led-pin-2" class="input" type="text" placeholder="example: 1" value="">
-				</div>
-			</div>
-
-			<div class="field">
-				<label class="label tn" data-tn="label-led-3">LED 3 pin</label>
-				<div class="control" style="width: 100%;">
-					<input id="js-config-led-pin-3" class="input" type="text" placeholder="example: 2" value="">
-				</div>
-			</div>
-
-			<div class="field">
-				<label class="label tn" data-tn="label-speaker">Speaker pin</label>
-				<div class="control" style="width: 100%;">
-					<input id="js-config-piezo-pin" class="input" type="text" placeholder="example: 4" value="">
-				</div>
-			</div>
-		</div>
-
-		<p class="has-text-centered">
-			<a id="button-save-config" href="#" class="button is-info tn" data-tn="button-save-settings">
-				Save settings
-			</a>
-		</p>
-	</div>
-
-	<!-- ABOUT TAB -->
-	<div class="container" data-tab="about" style="display: none;">
-		<div class="content">
-			<p class="title is-4">Mini4WD Chrono - by Pimentoso 2019</p>
-			<p id="js-about-version"></p>
-			<p>
-				<a href="https://github.com/Pimentoso/mini4wdchrono/releases" class="tn button is-link is-outlined" data-tn="label-check-updates">check for updates</a>
-				<a id="button-log-file" class="tn button is-outlined" data-tn="button-open-log">open log file</a>
+			<p class="has-text-centered">
+				<a id="button-save-config" href="#" class="button is-info tn" data-tn="button-save-settings">
+					Save settings
+				</a>
 			</p>
-			<hr />
-			<p class="title is-4 tn" data-tn="label-paypal">If you enjoy this program, buy me a coffee!</p>
-			<p><a href="https://paypal.me/pimentoso" class="button is-link">Paypal</a></p>
-			<hr />
-			<p class="title is-4 tn" data-tn="label-external-tools">External tools</p>
-			<p><a href="https://mini4wd-track-editor.pimentoso.com/" class="button is-success is-outlined">Mini4WD Track Editor</a></p>
-			<p><a href="https://mini4wd-tournament.pimentoso.com/" class="button is-link is-outlined">Mini4WD Tournament Generator</a></p>
-			<p><a href="https://github.com/Pimentoso/mini4wdchrono" class="button is-outlined">Project page on Github</a></p>
 		</div>
+
+		<!-- ABOUT TAB -->
+		<div class="container" data-tab="about" style="display: none;">
+			<div class="content">
+				<p class="title is-4">Mini4WD Chrono - by Pimentoso 2019</p>
+				<p id="js-about-version"></p>
+				<p>
+					<a href="https://github.com/Pimentoso/mini4wdchrono/releases" class="tn button is-link is-outlined" data-tn="label-check-updates">check for updates</a>
+					<a id="button-log-file" class="tn button is-outlined" data-tn="button-open-log">open log file</a>
+				</p>
+				<hr />
+				<p class="title is-4 tn" data-tn="label-paypal">If you enjoy this program, buy me a coffee!</p>
+				<p><a href="https://paypal.me/pimentoso" class="button is-link">Paypal</a></p>
+				<hr />
+				<p class="title is-4 tn" data-tn="label-external-tools">External tools</p>
+				<p><a href="https://mini4wd-track-editor.pimentoso.com/" class="button is-success is-outlined">Mini4WD Track Editor</a></p>
+				<p><a href="https://mini4wd-tournament.pimentoso.com/" class="button is-link is-outlined">Mini4WD Tournament Generator</a></p>
+				<p><a href="https://github.com/Pimentoso/mini4wdchrono" class="button is-outlined">Project page on Github</a></p>
+			</div>
+		</div>
+
 	</div>
 
 </body>

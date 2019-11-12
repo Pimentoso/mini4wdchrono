@@ -1,6 +1,6 @@
 {
   "name": "Mini4wdChrono",
-  "version": "0.11.4",
+  "version": "0.11.6",
   "description": "[![WIP](https://img.shields.io/badge/status-WORK%20IN%20PROGRESS-red.svg)](https://github.com/Pimentoso/mini4wdchrono)",
   "main": "window.js",
   "dependencies": {
@@ -23,8 +23,7 @@
   "scripts": {
     "postinstall": "node ./scripts/postinstall.js",
     "start": "./node_modules/.bin/electron .",
-    "watch": "./node_modules/.bin/electron . --watch",
-    "test": "jest"
+    "watch": "./node_modules/.bin/electron . --watch"
   },
   "repository": {
     "type": "git",
