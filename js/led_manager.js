@@ -4,6 +4,18 @@ const j5 = require('johnny-five');
 const utils = require('./utils');
 const pixel = require('node-pixel');
 
+const COLOR_GREEN = '#66cc33';
+const COLOR_BLUE = '#188bc8';
+const COLOR_RED = '#ff0100';
+
+const COLOR_POS1 = '#ff0100';
+const COLOR_POS2 = '#ff7400';
+const COLOR_POS3 = '#fec101';
+
+const COLOR_TAMIYA_RED = '#e62227';
+const COLOR_TAMIYA_WHITE = '#f8f8f8';
+const COLOR_TAMIYA_BLUE = COLOR_BLUE;
+
 class LedManager {
 	constructor(board, pinBuzzer) {
 		this.board = board;
@@ -130,19 +142,19 @@ class LedManagerRgbStrip extends LedManager {
 	roundStart(startTimerCallback) {
 		var stripp = this.strip;
 		this.beep(1500);
-		this.kitt('#188bc8');
+		this.kitt(COLOR_BLUE);
 		utils
 			.delay(() => { stripp.off(); }, 1500)
-			.delay(() => { stripp.pixel(0).color('#ff0100'); stripp.show(); this.beep(200); }, 1000)
-			.delay(() => { stripp.pixel(1).color('#ff0100'); stripp.show(); }, 400)
-			.delay(() => { stripp.pixel(2).color('#ff0100'); stripp.show(); }, 400)
-			.delay(() => { stripp.pixel(3).color('#ff0100'); stripp.show(); this.beep(200); }, 400)
-			.delay(() => { stripp.pixel(4).color('#ff0100'); stripp.show(); }, 400)
-			.delay(() => { stripp.pixel(5).color('#ff0100'); stripp.show(); }, 400)
-			.delay(() => { stripp.pixel(6).color('#ff0100'); stripp.show(); this.beep(200); }, 400)
-			.delay(() => { stripp.pixel(7).color('#ff0100'); stripp.show(); }, 400)
-			.delay(() => { stripp.pixel(8).color('#ff0100'); stripp.show(); }, 400)
-			.delay(() => { stripp.color('#66cc33'); stripp.show(); this.beep(1000); startTimerCallback(); }, 1500)
+			.delay(() => { stripp.pixel(0).color(COLOR_RED); stripp.show(); this.beep(200); }, 1000)
+			.delay(() => { stripp.pixel(1).color(COLOR_RED); stripp.show(); }, 400)
+			.delay(() => { stripp.pixel(2).color(COLOR_RED); stripp.show(); }, 400)
+			.delay(() => { stripp.pixel(3).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
+			.delay(() => { stripp.pixel(4).color(COLOR_RED); stripp.show(); }, 400)
+			.delay(() => { stripp.pixel(5).color(COLOR_RED); stripp.show(); }, 400)
+			.delay(() => { stripp.pixel(6).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
+			.delay(() => { stripp.pixel(7).color(COLOR_RED); stripp.show(); }, 400)
+			.delay(() => { stripp.pixel(8).color(COLOR_RED); stripp.show(); }, 400)
+			.delay(() => { stripp.color(COLOR_GREEN); stripp.show(); this.beep(1000); startTimerCallback(); }, 1500)
 			.delay(() => { stripp.off(); }, 2500)
 	}
 
@@ -151,13 +163,13 @@ class LedManagerRgbStrip extends LedManager {
 		let finishCars = _.filter(cars, (c) => { return !c.outOfBounds && c.lapCount == 4 });
 		_.each(finishCars, (c) => {
 			if (c.position == 1) {
-				colorLane(c.startLane, '#ff0100');
+				colorLane(c.startLane, COLOR_POS1);
 			}
 			else if (c.position == 2) {
-				colorLane(c.startLane, '#ff7400');
+				colorLane(c.startLane, COLOR_POS2);
 			}
 			else if (c.position == 3) {
-				colorLane(c.startLane, '#fec101');
+				colorLane(c.startLane, COLOR_POS3);
 			}
 		});
 		this.strip.show();
@@ -166,7 +178,7 @@ class LedManagerRgbStrip extends LedManager {
 	lap(lane) {
 		// flash lane led for 1 sec
 		if (this.ready) {
-			this.colorLane(lane, '#66cc33');
+			this.colorLane(lane, COLOR_GREEN);
 			utils.delay(() => {
 				this.clearLane(lane);
 			}, 1000);
@@ -222,15 +234,15 @@ class LedManagerRgbStrip extends LedManager {
 	tamiyaSlide() {
 		var manager = this;
 		let millis = 75;
-		manager.strip.pixel(0).color('#188bc8');
-		manager.strip.pixel(1).color('#188bc8');
-		manager.strip.pixel(2).color('#188bc8');
-		manager.strip.pixel(3).color('#e62227');
-		manager.strip.pixel(4).color('#e62227');
-		manager.strip.pixel(5).color('#e62227');
-		manager.strip.pixel(6).color('#f8f8f8');
-		manager.strip.pixel(7).color('#f8f8f8');
-		manager.strip.pixel(8).color('#f8f8f8');
+		manager.strip.pixel(0).color(COLOR_TAMIYA_BLUE);
+		manager.strip.pixel(1).color(COLOR_TAMIYA_BLUE);
+		manager.strip.pixel(2).color(COLOR_TAMIYA_BLUE);
+		manager.strip.pixel(3).color(COLOR_TAMIYA_RED);
+		manager.strip.pixel(4).color(COLOR_TAMIYA_RED);
+		manager.strip.pixel(5).color(COLOR_TAMIYA_RED);
+		manager.strip.pixel(6).color(COLOR_TAMIYA_WHITE);
+		manager.strip.pixel(7).color(COLOR_TAMIYA_WHITE);
+		manager.strip.pixel(8).color(COLOR_TAMIYA_WHITE);
 		manager.strip.show();
 
 		let shift = setInterval(function () {
