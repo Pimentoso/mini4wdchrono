@@ -161,18 +161,19 @@ class LedManagerRgbStrip extends LedManager {
 	roundFinish(cars) {
 		// turn on winner car led
 		let finishCars = _.filter(cars, (c) => { return !c.outOfBounds && c.lapCount == 4 });
-		_.each(finishCars, (c) => {
-			if (c.position == 1) {
-				colorLane(c.startLane, COLOR_POS1);
-			}
-			else if (c.position == 2) {
-				colorLane(c.startLane, COLOR_POS2);
-			}
-			else if (c.position == 3) {
-				colorLane(c.startLane, COLOR_POS3);
-			}
-		});
-		this.strip.show();
+		utils.delay(() => {
+			_.each(finishCars, (c) => {
+				if (c.position == 1) {
+					this.colorLane(c.startLane, COLOR_POS1);
+				}
+				else if (c.position == 2) {
+					this.colorLane(c.startLane, COLOR_POS2);
+				}
+				else if (c.position == 3) {
+					this.colorLane(c.startLane, COLOR_POS3);
+				}
+			})
+		}, 1500);
 	}
 
 	lap(lane) {

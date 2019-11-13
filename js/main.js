@@ -53,6 +53,8 @@ const board = new j5.Board({
 var connected = false;
 var sensorPin1, sensorPin2, sensorPin3;
 var tag1, tag2, tag3;
+var val1 = 0, val2 = 0, val3 = 0;
+
 // var ledManager = new ledManagers.LedManagerLilypad(board, [
 // 		configuration.readSettings('ledPin1'),
 // 		configuration.readSettings('ledPin2'),
@@ -86,26 +88,29 @@ board.on('ready', function () {
 
 	this.digitalRead(sensorPin1, function (val) {
 		tag1.text(val);
-		if (val == 0) {
+		if (val == 0 && val1 == 1) {
 			client.sensorRead(1);
 			ledManager.lap(0);
 		}
+		val1 = val;
 	});
 
 	this.digitalRead(sensorPin2, function (val) {
 		tag2.text(val);
-		if (val == 0) {
+		if (val == 0 && val2 == 1) {
 			client.sensorRead(2);
 			ledManager.lap(1);
 		}
+		val2 = val;
 	});
 
 	this.digitalRead(sensorPin3, function (val) {
 		tag3.text(val);
-		if (val == 0) {
+		if (val == 0 && val3 == 1) {
 			client.sensorRead(3);
 			ledManager.lap(2);
 		}
+		val3 = val;
 	});
 
 	ledManager.connected();
@@ -343,3 +348,4 @@ $('.js-invalidate').on('click', (e) => {
 // ==== init client
 
 client.init();
+client.setLedManager(ledManager);
