@@ -323,7 +323,7 @@ const showNextRoundNames = () => {
 	}
 
 	if (m == mancheList.length) {
-		names = '-';
+		names = ['-'];
 	}
 	else {
 		names = _.filter([playerList[mancheList[m][r][0]], playerList[mancheList[m][r][1]], playerList[mancheList[m][r][2]]], (n) => { return n; });
