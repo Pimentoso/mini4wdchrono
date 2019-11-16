@@ -57,6 +57,7 @@
     "button-stop": "STOP",
     "button-goto-free": "Round libero >",
     "button-goto-race": "Torna alla gara >",
+		"button-invalidate": "squalifica",
     "label-next-round": "Prossimo round:",
     "label-next-round-end": "MANCHE TERMINATA - Prossimo round:",
     "label-lane-1": "CORSIA 1",
