@@ -24,6 +24,7 @@ const initialize = () => {
 	$('#js-settings-speed-threshold').val(configuration.readSettings('speedThreshold'));
 	$('#js-settings-start-delay').val(configuration.readSettings('startDelay'));
 
+	$(`#js-led-type-${configuration.readSettings('ledType')}`).click();
 	$('#js-config-sensor-pin-1').val(configuration.readSettings('sensorPin1'));
 	$('#js-config-sensor-pin-2').val(configuration.readSettings('sensorPin2'));
 	$('#js-config-sensor-pin-3').val(configuration.readSettings('sensorPin3'));

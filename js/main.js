@@ -55,18 +55,22 @@ var sensorPin1, sensorPin2, sensorPin3;
 var tag1, tag2, tag3;
 var val1 = 0, val2 = 0, val3 = 0;
 
-// var ledManager = new ledManagers.LedManagerLilypad(board, [
-// 		configuration.readSettings('ledPin1'),
-// 		configuration.readSettings('ledPin2'),
-// 		configuration.readSettings('ledPin3')
-// 	],
-// 	configuration.readSettings('piezoPin')
-// );
-var ledManager = new ledManagers.LedManagerRgbStrip(
-	board,
-	configuration.readSettings('ledPin1'),
-	configuration.readSettings('piezoPin')
-);
+if (configuration.readSettings('ledType') == 0) {
+	var ledManager = new ledManagers.LedManagerLilypad(board, [
+			configuration.readSettings('ledPin1'),
+			configuration.readSettings('ledPin2'),
+			configuration.readSettings('ledPin3')
+		],
+		configuration.readSettings('piezoPin')
+	)
+}
+else if (configuration.readSettings('ledType') == 1) {
+	var ledManager = new ledManagers.LedManagerRgbStrip(
+		board,
+		configuration.readSettings('ledPin1'),
+		configuration.readSettings('piezoPin')
+	);
+}
 
 board.on('ready', function () {
 	connected = true;
@@ -314,6 +318,16 @@ $('#button-manches-save').on('click', (e) => {
 	if ($this.attr('disabled')) return;
 	client.overrideTimes();
 	dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-saved') });
+});
+
+$('.js-led-type').on('click', (e) => {
+	debugger;
+	let $this = $(e.currentTarget);
+	if ($this.attr('disabled')) return;
+	$('.js-led-type').removeClass('is-primary');
+	$this.addClass('is-primary');
+	let type = $this.data('led-type');
+	configuration.saveSettings('ledType', type);
 });
 
 $('.js-race-mode').on('click', (e) => {

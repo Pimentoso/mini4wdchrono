@@ -15,6 +15,7 @@ const getConfigFilePath = () => {
 const nconf = require('nconf').file({ file: getConfigFilePath() });
 
 nconf.defaults({
+	'ledType': 0,
 	'sensorPin1': 6,
 	'sensorPin2': 7,
 	'sensorPin3': 8,
