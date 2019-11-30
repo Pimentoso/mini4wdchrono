@@ -55,6 +55,7 @@ class LedManager {
 class LedManagerLilypad extends LedManager {
 	constructor(board, pinLeds, pinBuzzer) {
 		super(board, pinBuzzer);
+		this.pinLeds = pinLeds;
 		this.ready = false;
 	}
 
@@ -64,15 +65,15 @@ class LedManagerLilypad extends LedManager {
 		// board is connected, init hardware
 		this.led1 = new j5.Led({
 			board: this.board,
-			pin: pinLeds[0]
+			pin: this.pinLeds[0]
 		});
 		this.led2 = new j5.Led({
 			board: this.board,
-			pin: pinLeds[0]
+			pin: this.pinLeds[1]
 		});
-		this.led3 = new new j5.Led({
+		this.led3 = new j5.Led({
 			board: this.board,
-			pin: pinLeds[0]
+			pin: this.pinLeds[2]
 		});
 		this.leds = [this.led1, this.led2, this.led3];
 
