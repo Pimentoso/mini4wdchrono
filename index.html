@@ -52,7 +52,7 @@
 		</nav>
 
 		<!-- TABS -->
-		<div class="tabs is-centered is-boxed">
+		<div class="tabs is-centered is-boxed is-hidden-print">
 			<ul>
 				<li class="is-active" data-tab="setup">
 					<a>
@@ -265,7 +265,7 @@
 
 		<!-- PLAYERS TAB -->
 		<div class="container" data-tab="players" style="display: none;">
-			<div class="js-hide-on-no-tournament level has-text-centered">
+			<div class="js-hide-on-no-tournament level has-text-centered is-hidden-print">
 				<div class="level-left"></div>
 				<div class="level-right">
 					<div class="level-item">
@@ -288,7 +288,7 @@
 					</div>
 				</div>
 			</div>
-			<table id="tablePlayerList" class="js-hide-on-no-tournament table table is-bordered is-striped is-hoverable is-fullwidth is-size-5"></table>
+			<table id="tablePlayerList" class="js-hide-on-no-tournament table table is-bordered is-striped is-hoverable is-fullwidth is-size-5 is-table-print"></table>
 			<p class="js-show-on-no-tournament has-text-grey has-text-centered tn" data-tn="label-tournament-not-loaded">Tournament not loaded</p>
 		</div>
 

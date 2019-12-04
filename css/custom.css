@@ -24,3 +24,18 @@
 .js-time-form {
 	text-align: center;
 }
+
+@media print {
+	.is-hidden-print {
+		display: none !important;
+	}
+
+	.is-table-print {
+		font-size: 0.75rem !important;
+	}
+
+	.is-race-best {
+		color: #ff3860 !important;
+		font-weight: bold;
+	}
+}
