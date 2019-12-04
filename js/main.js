@@ -20,7 +20,7 @@ process.__defineGetter__("stdin", function () {
 const debugMode = false;
 ////////////////////////
 
-const { dialog, shell, app } = require('electron').remote;
+const { dialog, shell, app, webContents } = require('electron').remote;
 
 const log = require('electron-log');
 log.info(`Launched Mini4wdChrono at ${new Date()}`);
@@ -266,6 +266,10 @@ $('#button-next').on('click', (e) => {
 
 $('#button-toggle-free-round').on('click', (e) => {
 	client.toggleFreeRound();
+});
+
+$('#button-print').on('click', (e) => {
+	webContents.getFocusedWebContents().print();
 });
 
 $('#button-xls').on('click', (e) => {
