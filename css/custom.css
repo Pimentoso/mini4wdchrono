@@ -30,8 +30,17 @@
 		display: none !important;
 	}
 
-	.is-table-print {
+	table.is-table-print {
 		font-size: 0.75rem !important;
+	}
+
+	table.is-table-print tr.is-selected {
+		background-color: inherit;
+		color: inherit;
+	}
+
+	table.is-table-print tr.is-selected td {
+		border-color: #dbdbdb;
 	}
 
 	.is-race-best {
