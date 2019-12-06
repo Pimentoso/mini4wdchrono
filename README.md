@@ -11,13 +11,19 @@ so you are required to create your track and player list using those websites.
 
 **Quick start guide:**
 
-- draw the track in the https://mini4wd-track-editor.pimentoso.com/ website, and save it. Copy the 6-letter code or just copy the link.
-- import the track in the "race setup" screen. This is important because the program needs to know the length of the track and the lane changes.
-- you can now already go to the "race view" screen and start a race.
-- insert the player names in the https://mini4wd-tournament.pimentoso.com/ website, generate the tournament, and save it. Copy the 6-letter code or just copy the link.
-- import the tournament in the "race setup" screen.
-- now in the "race view" screen you can start the actual rounds of the race. The times will be recorded and assigned to the correct players.
-- now you can go to the "racers list" and "manches list" screens to check the current race rankings.
+- Launch the program and go to the "configuration" tab. 
+    - Change the arduino pins to match your setup.
+    - Change the USB port if needed. 
+    - Save and reboot the program.
+    - Make sure the 3 colored squares read "1". This mean the light source is correctly pointed at the sensors. 
+- Draw the track in the https://mini4wd-track-editor.pimentoso.com/ website, and save it. Copy the 6-letter code or just copy the link.
+- Import the track in the "race setup" screen. This is important because the program needs to know the length of the track and the lane changes.
+- You can now already go to the "race view" screen and start a race.
+- Insert the player names in the https://mini4wd-tournament.pimentoso.com/ website, generate the tournament, and save it. Copy the 6-letter code or just copy the link.
+- Import the tournament in the "race setup" screen.
+- Now in the "race view" screen you can start the actual rounds of the race. The times will be recorded and assigned to the correct players.
+- You can also go to the "racers list" and "manches list" screens to check the current race rankings.
+- Enjoy the race.
 
 ## Screenshots
 
@@ -39,7 +45,7 @@ Unzip the program anywhere on your computer, connect the lap timer to the comput
 
 - A computer with the Mini4WDChrono software installed.
 
-- An arduino board. The project has been tested with both Arduino UNO and NANO.
+- An arduino board. The project has been tested with both Arduino UNO, Arduino Nano and Pro Micro.
 
 https://www.aliexpress.com/item/32341832857.html
 
@@ -63,17 +69,11 @@ https://www.aliexpress.com/item/32962136265.html
 
 https://www.aliexpress.com/item/32666789405.html
 
-https://www.aliexpress.com/item/33015702712.html
-
 - A straight piece of 3 lane Japan Cup Mini4wd track.
 
 Diagram link: https://www.tinkercad.com/things/jGPGsdLMKwj-mini4wd-chrono
 
 ![diagram](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/schema.png)
-
-Real life assembled electronics:
-
-![assembled electronics](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/electronics.jpg)
 
 ## Building the lap timer
 
@@ -85,11 +85,11 @@ Build some sort of bridge-like structure to hold the electronics. Stick the LED 
 Put the structure over the 3 holes on the track with the sensors. The mini4wd car passing over the phototransistors will trigger a lap.
 Put the 3 green leds on the front of the lap timer, one over each lane.
 
-Prototype lap timer made of wood and 3d printed joints:
+Prototype lap timer made of wood and 3d printed joints and LED strip:
 
 ![lap timer](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/semaforo2.jpg)
 
-Example lap timer made using cable ducts:
+Example lap timer made using cable ducts and laser diodes:
 
 ![lap timer](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/semaforo1.jpg)
 
@@ -160,3 +160,18 @@ To package the project run utils/build_win64.ps1, or
 ```
 electron-packager . Mini4wdChrono --overwrite --asar --icon=images/ic_launcher_web.ico --prune=true --out=release-builds
 ```
+
+## Errors
+
+If you get an error when running the program like
+
+```
+Serialport was compiled against a different Node.js version using NODE_MODULE_VERSION 72. This version of Node.js requires NODE_MODULE_VERSION 70. Please try re-compiling or re-installing the module (for instance, using npm rebuild or npm install).
+```
+
+- Remove from the node-modules folder the serialport and @serialport folders.
+- Remove the file packages-lock.json
+- Run `npm install` to install non-installed modules
+- And finally run `./node_modules/.bin/electron-rebuild`
+
+Related issue: https://github.com/serialport/node-serialport/issues/1910
