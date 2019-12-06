@@ -209,10 +209,10 @@ const showPlayerList = () => {
 
 		// draw title row
 		let titleCells = _.map(tournament.manches, (_manche, mindex) => {
-			return `<td>Manche ${mindex + 1}</td>`;
+			return `<td class="has-text-centered">Manche ${mindex + 1}</td>`;
 		});
-		titleCells.push(`<td>${i18n.__('label-best-2-times')}</td>`);
-		titleCells.push(`<td>${i18n.__('label-best-speed')}</td>`);
+		titleCells.push(`<td class="has-text-centered">${i18n.__('label-best-2-times')}</td>`);
+		titleCells.push(`<td class="has-text-centered">${i18n.__('label-best-speed')}</td>`);
 		$('#tablePlayerList').append(`<tr class="is-selected"><td colspan="2"><strong>${playerList.length} RACERS</strong></td>${titleCells}</tr>`);
 
 		// draw player rows
@@ -226,13 +226,13 @@ const showPlayerList = () => {
 				let playerTime = info.times[mindex] || 0;
 				let highlight = '';
 				if (playerTime == 0 || playerTime == 99999) {
-					highlight = 'has-text-grey-light';
+					highlight = 'has-text-grey-light is-out';
 				}
 				else if (playerTime == raceBestTime) {
-					highlight = 'has-background-danger has-text-white';
+					highlight = 'has-background-danger has-text-white is-race-best';
 				}
 				else if (playerTime == bestTime) {
-					highlight = 'has-text-danger';
+					highlight = 'has-text-danger is-player-best';
 				}
 				return `<td class="has-text-centered ${highlight}">${utils.prettyTime(playerTime)}</td>`;
 			}));

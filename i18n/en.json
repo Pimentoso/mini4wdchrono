@@ -45,6 +45,7 @@
 	"label-time-estimated-cutoff": "ESTIMATED CUTOFF TIME",
 	"button-save-settings": "Save settings",
 	"button-save-xls": "Save XLS file",
+    "button-print": "Print",
 	"button-open-folder": "Open folder >",
 	"button-open-log": "Show log file",
 	"label-tournament-not-loaded": "Tournament not loaded",

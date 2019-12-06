@@ -24,3 +24,27 @@
 .js-time-form {
 	text-align: center;
 }
+
+@media print {
+	.is-hidden-print {
+		display: none !important;
+	}
+
+	table.is-table-print {
+		font-size: 0.75rem !important;
+	}
+
+	table.is-table-print tr.is-selected {
+		background-color: inherit;
+		color: inherit;
+	}
+
+	table.is-table-print tr.is-selected td {
+		border-color: #dbdbdb;
+	}
+
+	.is-race-best {
+		color: #ff3860 !important;
+		font-weight: bold;
+	}
+}
