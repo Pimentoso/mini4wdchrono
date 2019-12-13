@@ -12,7 +12,7 @@
     "nconf": "^0.10.0",
     "serialport": "^7.1.5",
     "underscore": "^1.9.1",
-    "node-pixel": "ajfisher/node-pixel#j5-firmata-upg"
+    "node-pixel": "Pimentoso/node-pixel"
   },
   "devDependencies": {
     "electron": "^5.0.6",
