@@ -1,7 +1,9 @@
 'use strict';
 
 const { app } = require('electron').remote;
-const path = require('path')
+const fs = require('fs');
+const path = require('path');
+const storage = require('electron-settings');
 const filename = 'settings.json';
 
 const getConfigFilePath = () => {
@@ -12,9 +14,11 @@ const getConfigFilePath = () => {
 	return path.join(dir, filename);
 };
 
-const nconf = require('nconf').file({ file: getConfigFilePath() });
+////// global config methods
 
-nconf.defaults({
+const globalConf = require('nconf').file('global', { file: getConfigFilePath() });
+
+globalConf.defaults({
 	'sensorPin1': 6,
 	'sensorPin2': 7,
 	'sensorPin3': 8,
@@ -23,43 +27,75 @@ nconf.defaults({
 	'ledPin3': 5,
 	'piezoPin': 2,
 	// 'usbPort': 'COM3',
-	'timeThreshold': 40,
-	'speedThreshold': 5,
-	'startDelay': 3,
 	'title': 'MINI4WD CHRONO',
-	'raceMode': 0
+	'raceMode': 0,
+	'raceFile': '',
+
+	'timeThreshold': 40, // race specific, move to the other file if needed
+	'speedThreshold': 5, // race specific, move to the other file if needed
+	'startDelay': 3, // race specific, move to the other file if needed
 });
 
-const saveSettings = (settingKey, settingValue) => {
-	nconf.set(settingKey, settingValue);
-	nconf.save();
+const set = (settingKey, settingValue) => {
+	globalConf.set(settingKey, settingValue);
+	globalConf.save();
 };
 
-const readSettings = (settingKey) => {
-	nconf.load();
-	return nconf.get(settingKey);
+const get = (settingKey) => {
+	globalConf.load();
+	return globalConf.get(settingKey);
 };
 
-const deleteSettings = (settingKey) => {
-	nconf.clear(settingKey);
-	nconf.save();
+const del = (settingKey) => {
+	globalConf.clear(settingKey);
+	globalConf.save();
+};
+
+////// race storage methods
+
+const newRace = () => {
+	let userdir = app.getPath('userData');
+
+	let storagedir = path.join(userdir, 'races');
+	if (!fs.existsSync(storagedir)) {
+		fs.mkdirSync(storagedir);
+	}
+
+	let filename = `${parseInt(new Date().getTime() / 1000)}.json`;
+	let filepath = path.join(userdir, 'races', filename);
+	globalConf.set('raceFile', filepath);
+	globalConf.save();
+	fs.closeSync(fs.openSync(filepath, 'w')); // create empty file
+	storage.setPath(filepath);
+
+	storage.set('currManche', 0);
+	storage.set('currRound', 0);
 };
 
 const saveRound = (manche, round, cars) => {
-	nconf.set(`race:${manche}-${round}`, cars);
-	nconf.save();
+	storage.set(`race.m${manche}.r${round}`, cars);
+};
+
+const loadRound = (manche, round) => {
+	manche = manche || storage.get('currManche');
+	round = round || storage.get('currRound');
+	return storage.get(`race.m${manche}.r${round}`);
+};
+
+const deleteRound = (manche, round) => {
+	storage.delete(`race.m${manche}.r${round}`);
 };
 
 const loadTrack = () => {
-	return readSettings('track');
+	return storage.get('track');
 };
 
 const loadTournament = () => {
-	return readSettings('tournament');
+	return storage.get('tournament');
 };
 
 const loadMancheList = () => {
-	let tournament = readSettings('tournament');
+	let tournament = loadTournament();
 	let mancheList = tournament.manches;
 	if (tournament.finals) {
 		mancheList.push(...tournament.finals);
@@ -68,44 +104,21 @@ const loadMancheList = () => {
 };
 
 const loadPlayerList = () => {
-	let tournament = readSettings('tournament');
+	let tournament = loadTournament();
 	let playerList = tournament.players;
 	return playerList;
 };
 
-const loadRound = (manche, round) => {
-	if (manche == null)
-		manche = readSettings('currManche');
-	if (round == null)
-		round = readSettings('currRound');
-	return readSettings(`race:${manche}-${round}`);
-};
-
-const deleteRound = (manche, round) => {
-	nconf.clear(`race:${manche}-${round}`);
-	nconf.save();
-};
-
-const reset = () => {
-	deleteSettings('mancheTimes'); // legacy
-	deleteSettings('playerTimes');
-	deleteSettings('track');
-	deleteSettings('tournament');
-	deleteSettings('race');
-	saveSettings('currManche', 0);
-	saveSettings('currRound', 0);
-};
-
 module.exports = {
-	saveSettings: saveSettings,
-	readSettings: readSettings,
-	deleteSettings: deleteSettings,
+	newRace: newRace,
+	set: set,
+	get: get,
+	del: del,
 	saveRound: saveRound,
 	loadRound: loadRound,
 	deleteRound: deleteRound,
 	loadTrack: loadTrack,
 	loadTournament: loadTournament,
 	loadMancheList: loadMancheList,
-	loadPlayerList: loadPlayerList,
-	reset: reset
+	loadPlayerList: loadPlayerList
 };

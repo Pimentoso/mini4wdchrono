@@ -18,20 +18,20 @@ const boardDisonnected = () => {
 };
 
 const initialize = () => {
-	$('#js-title').text(configuration.readSettings('title'));
-	$(`#js-race-mode-${configuration.readSettings('raceMode')}`).click();
-	$('#js-settings-time-threshold').val(configuration.readSettings('timeThreshold'));
-	$('#js-settings-speed-threshold').val(configuration.readSettings('speedThreshold'));
-	$('#js-settings-start-delay').val(configuration.readSettings('startDelay'));
+	$('#js-title').text(configuration.get('title'));
+	$(`#js-race-mode-${configuration.get('raceMode')}`).click();
+	$('#js-settings-time-threshold').val(configuration.get('timeThreshold'));
+	$('#js-settings-speed-threshold').val(configuration.get('speedThreshold'));
+	$('#js-settings-start-delay').val(configuration.get('startDelay'));
 
-	$('#js-config-sensor-pin-1').val(configuration.readSettings('sensorPin1'));
-	$('#js-config-sensor-pin-2').val(configuration.readSettings('sensorPin2'));
-	$('#js-config-sensor-pin-3').val(configuration.readSettings('sensorPin3'));
-	$('#js-config-led-pin-1').val(configuration.readSettings('ledPin1'));
-	$('#js-config-led-pin-2').val(configuration.readSettings('ledPin2'));
-	$('#js-config-led-pin-3').val(configuration.readSettings('ledPin3'));
-	$('#js-config-piezo-pin').val(configuration.readSettings('piezoPin'));
-	$('#js-config-title').val(configuration.readSettings('title'));
+	$('#js-config-sensor-pin-1').val(configuration.get('sensorPin1'));
+	$('#js-config-sensor-pin-2').val(configuration.get('sensorPin2'));
+	$('#js-config-sensor-pin-3').val(configuration.get('sensorPin3'));
+	$('#js-config-led-pin-1').val(configuration.get('ledPin1'));
+	$('#js-config-led-pin-2').val(configuration.get('ledPin2'));
+	$('#js-config-led-pin-3').val(configuration.get('ledPin3'));
+	$('#js-config-piezo-pin').val(configuration.get('piezoPin'));
+	$('#js-config-title').val(configuration.get('title'));
 
 	$('#button-toggle-free-round').hide();
 
@@ -43,7 +43,7 @@ const initialize = () => {
 			}));
 			console.log(port.comName);
 		});
-		$('#js-config-usb-port').val(configuration.readSettings('usbPort'));
+		$('#js-config-usb-port').val(configuration.get('usbPort'));
 	});
 };
 
@@ -177,8 +177,8 @@ const showThresholds = () => {
 	let track = configuration.loadTrack();
 	if (track) {
 		let rTrackLength = track.length;
-		let rSpeedThreshold = configuration.readSettings('speedThreshold');
-		let rTimeThreshold = configuration.readSettings('timeThreshold') / 100;
+		let rSpeedThreshold = configuration.get('speedThreshold');
+		let rTimeThreshold = configuration.get('timeThreshold') / 100;
 		let estimatedTime = rTrackLength / rSpeedThreshold;
 		let estimatedCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold);
 		if (estimatedCutoffMin < 1) estimatedCutoffMin = 1;
@@ -248,8 +248,8 @@ const showMancheList = () => {
 	if (!track) return;
 	if (!tournament) return;
 
-	let currManche = configuration.readSettings('currManche');
-	let currRound = configuration.readSettings('currRound');
+	let currManche = configuration.get('currManche');
+	let currRound = configuration.get('currRound');
 	let playerList = configuration.loadPlayerList();
 	let mancheList = configuration.loadMancheList();
 
@@ -308,8 +308,8 @@ const showMancheList = () => {
 };
 
 const showNextRoundNames = () => {
-	let currManche = configuration.readSettings('currManche');
-	let currRound = configuration.readSettings('currRound');
+	let currManche = configuration.get('currManche');
+	let currRound = configuration.get('currRound');
 	let playerList = configuration.loadPlayerList();
 	let mancheList = configuration.loadMancheList();
 
@@ -350,7 +350,7 @@ const mancheName = (mindex) => {
 // TODO move to client?
 const getSortedPlayerList = () => {
 	let playerList = configuration.loadPlayerList();
-	let playerTimes = configuration.readSettings('playerTimes');
+	let playerTimes = configuration.get('playerTimes');
 
 	// calculate best time sums
 	let sums = [], times, pTimes, bestTimes, bestSum;
@@ -375,8 +375,8 @@ const getSortedPlayerList = () => {
 const initRace = (freeRound) => {
 	let track = configuration.loadTrack();
 	let tournament = configuration.loadTournament();
-	let currManche = configuration.readSettings('currManche');
-	let currRound = configuration.readSettings('currRound');
+	let currManche = configuration.get('currManche');
+	let currRound = configuration.get('currRound');
 
 	$('.js-show-on-race-started').hide();
 	$('.js-hide-on-race-started').show();

@@ -29,9 +29,12 @@ const init = () => {
 	$('#main').show();
 
 	// read stuff from settings
-	playerTimes = configuration.readSettings('playerTimes') || [];
-	currManche = configuration.readSettings('currManche') || 0;
-	currRound = configuration.readSettings('currRound') || 0;
+	if (configuration.get('raceFile') == null) {
+		configuration.newRace();
+	}
+	playerTimes = configuration.get('playerTimes') || [];
+	currManche = configuration.get('currManche') || 0;
+	currRound = configuration.get('currRound') || 0;
 
 	// load track from settings (do this before tournament)
 	let savedTrack = configuration.loadTrack();
@@ -69,7 +72,6 @@ const reset = () => {
 	currTournament = null;
 	raceRunning = false;
 
-	configuration.reset();
 	ui.reset();
 
 	initTimeList();
@@ -154,7 +156,7 @@ const initTimeList = () => {
 			playerTimes[pindex][mindex] = playerTimes[pindex][mindex] || 0;
 		});
 	});
-	configuration.saveSettings('playerTimes', playerTimes);
+	configuration.set('playerTimes', playerTimes);
 };
 
 // Rebuilds playerTimes starting from saved race results
@@ -174,7 +176,7 @@ const rebuildTimeList = () => {
 			}
 		});
 	});
-	configuration.saveSettings('playerTimes', playerTimes);
+	configuration.set('playerTimes', playerTimes);
 };
 
 const initFinal = () => {
@@ -209,7 +211,7 @@ const initFinal = () => {
 	]);
 
 	mancheList.push(...currTournament.finals);
-	configuration.saveSettings('tournament', currTournament);
+	configuration.set('tournament', currTournament);
 };
 
 // ==========================================================================
@@ -232,11 +234,11 @@ const startRound = () => {
 
 	// run tasks periodically
 	checkRaceTask = setInterval(checkRace, 1000);
-	setTimeout(checkStart, configuration.readSettings('startDelay') * 1000);
+	setTimeout(checkStart, configuration.get('startDelay') * 1000);
 
 	raceRunning = true;
 
-	if (configuration.readSettings('raceMode') == 1) {
+	if (configuration.get('raceMode') == 1) {
 		startTimer(0);
 		startTimer(1);
 		startTimer(2);
@@ -271,8 +273,8 @@ const prevRound = () => {
 			currRound = mancheList[currManche].length - 1;
 		}
 
-		configuration.saveSettings('currManche', currManche);
-		configuration.saveSettings('currRound', currRound);
+		configuration.set('currManche', currManche);
+		configuration.set('currRound', currRound);
 		chronoInit();
 		ui.initRace(freeRound);
 		updateRace();
@@ -310,8 +312,8 @@ const nextRound = () => {
 			}
 		}
 
-		configuration.saveSettings('currManche', currManche);
-		configuration.saveSettings('currRound', currRound);
+		configuration.set('currManche', currManche);
+		configuration.set('currRound', currRound);
 		chronoInit();
 		ui.initRace(freeRound);
 		updateRace();
@@ -368,7 +370,7 @@ const setTrackManual = (length, order) => {
 	console.log('client.setTrackManual called');
 
 	let obj = { 'code': i18n.__('tag-track-manual'), 'length': length, 'order': order, 'manual': true };
-	configuration.saveSettings('track', obj);
+	configuration.set('track', obj);
 	trackLoadDone(obj);
 };
 
@@ -389,7 +391,7 @@ const trackLoadDone = (obj) => {
 	console.log('client.trackLoadDone called');
 
 	currTrack = obj;
-	configuration.saveSettings('track', currTrack);
+	configuration.set('track', currTrack);
 
 	ui.trackLoadDone(currTrack);
 	showTrackDetails();
@@ -416,7 +418,7 @@ const tournamentLoadDone = (obj) => {
 		mancheList.push(...clone(obj.finals));
 	}
 
-	configuration.saveSettings('tournament', currTournament);
+	configuration.set('tournament', currTournament);
 
 	freeRound = false;
 	ui.tournamentLoadDone(currTournament);
@@ -476,7 +478,7 @@ const raceFinished = () => {
 		if (cars[2].playerId > -1) {
 			playerTimes[cars[2].playerId][currManche] = cars[2].currTime;
 		}
-		configuration.saveSettings('playerTimes', playerTimes);
+		configuration.set('playerTimes', playerTimes);
 
 		configuration.saveRound(currManche, currRound, cars);
 
