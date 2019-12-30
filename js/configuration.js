@@ -29,7 +29,6 @@ globalConf.defaults({
 	// 'usbPort': 'COM3',
 	'title': 'MINI4WD CHRONO',
 	'raceMode': 0,
-	'raceFile': '',
 
 	'timeThreshold': 40, // race specific, move to the other file if needed
 	'speedThreshold': 5, // race specific, move to the other file if needed
@@ -86,15 +85,15 @@ const deleteRound = (manche, round) => {
 	storage.delete(`race.m${manche}.r${round}`);
 };
 
-const loadTrack = () => {
+const getTrack = () => {
 	return storage.get('track');
 };
 
-const loadTournament = () => {
+const getTournament = () => {
 	return storage.get('tournament');
 };
 
-const loadMancheList = () => {
+const getMancheList = () => {
 	let tournament = loadTournament();
 	let mancheList = tournament.manches;
 	if (tournament.finals) {
@@ -103,10 +102,9 @@ const loadMancheList = () => {
 	return mancheList;
 };
 
-const loadPlayerList = () => {
+const getPlayerList = () => {
 	let tournament = loadTournament();
-	let playerList = tournament.players;
-	return playerList;
+	return tournament.players;
 };
 
 module.exports = {
@@ -117,8 +115,8 @@ module.exports = {
 	saveRound: saveRound,
 	loadRound: loadRound,
 	deleteRound: deleteRound,
-	loadTrack: loadTrack,
-	loadTournament: loadTournament,
-	loadMancheList: loadMancheList,
-	loadPlayerList: loadPlayerList
+	getTrack: getTrack,
+	getTournament: getTournament,
+	getMancheList: getMancheList,
+	getPlayerList: getPlayerList
 };

@@ -29,7 +29,7 @@ const init = () => {
 	$('#main').show();
 
 	// read stuff from settings
-	if (configuration.get('raceFile') == null) {
+	if (!configuration.get('raceFile')) {
 		configuration.newRace();
 	}
 	playerTimes = configuration.get('playerTimes') || [];
@@ -37,7 +37,7 @@ const init = () => {
 	currRound = configuration.get('currRound') || 0;
 
 	// load track from settings (do this before tournament)
-	let savedTrack = configuration.loadTrack();
+	let savedTrack = configuration.getTrack();
 	if (savedTrack) {
 		trackLoadDone(savedTrack);
 	}
@@ -47,7 +47,7 @@ const init = () => {
 	showTrackDetails();
 
 	// load tournament from settings
-	let savedTournament = configuration.loadTournament();
+	let savedTournament = configuration.getTournament();
 	if (savedTournament) {
 		tournamentLoadDone(savedTournament);
 	}
@@ -72,6 +72,7 @@ const reset = () => {
 	currTournament = null;
 	raceRunning = false;
 
+	configuration.newRace();
 	ui.reset();
 
 	initTimeList();

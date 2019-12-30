@@ -106,7 +106,7 @@ const tournamentLoadFail = () => {
 };
 
 const raceStarted = () => {
-	let tournament = configuration.loadTournament();
+	let tournament = configuration.getTournament();
 
 	$('.js-show-on-race-started').show();
 	$('.js-hide-on-race-started').hide();
@@ -118,7 +118,7 @@ const raceStarted = () => {
 };
 
 const raceFinished = (freeRound) => {
-	let tournament = configuration.loadTournament();
+	let tournament = configuration.getTournament();
 
 	$('.js-show-on-race-started').hide();
 	$('.js-hide-on-race-started').show();
@@ -174,7 +174,7 @@ const showTournamentDetails = (tournament) => {
 };
 
 const showThresholds = () => {
-	let track = configuration.loadTrack();
+	let track = configuration.getTrack();
 	if (track) {
 		let rTrackLength = track.length;
 		let rSpeedThreshold = configuration.get('speedThreshold');
@@ -195,9 +195,9 @@ const showThresholds = () => {
 };
 
 const showPlayerList = () => {
-	let track = configuration.loadTrack();
-	let tournament = configuration.loadTournament();
-	let playerList = configuration.loadPlayerList();
+	let track = configuration.getTrack();
+	let tournament = configuration.getTournament();
+	let playerList = configuration.getPlayerList();
 	if (!track) return;
 	if (!tournament) return;
 
@@ -243,15 +243,15 @@ const showPlayerList = () => {
 };
 
 const showMancheList = () => {
-	let track = configuration.loadTrack();
-	let tournament = configuration.loadTournament();
+	let track = configuration.getTrack();
+	let tournament = configuration.getTournament();
 	if (!track) return;
 	if (!tournament) return;
 
 	let currManche = configuration.get('currManche');
 	let currRound = configuration.get('currRound');
-	let playerList = configuration.loadPlayerList();
-	let mancheList = configuration.loadMancheList();
+	let playerList = configuration.getPlayerList();
+	let mancheList = configuration.getMancheList();
 
 	$('#tableMancheList').empty();
 	let cars, mancheText, playerName, playerTime, playerPosition, playerOut, playerNameTag, playerPositionTag, playerHeader, playerForm, highlight;
@@ -310,8 +310,8 @@ const showMancheList = () => {
 const showNextRoundNames = () => {
 	let currManche = configuration.get('currManche');
 	let currRound = configuration.get('currRound');
-	let playerList = configuration.loadPlayerList();
-	let mancheList = configuration.loadMancheList();
+	let playerList = configuration.getPlayerList();
+	let mancheList = configuration.getMancheList();
 
 	let r = currRound, m = currManche, names;
 	let label = i18n.__('label-next-round');
@@ -333,8 +333,8 @@ const showNextRoundNames = () => {
 };
 
 const mancheName = (mindex) => {
-	let tournament = configuration.loadTournament();
-	let mancheList = configuration.loadMancheList();
+	let tournament = configuration.getTournament();
+	let mancheList = configuration.getMancheList();
 
 	if (mindex == tournament.mancheCount) {
 		return (mindex < mancheList.length) ? 'FINAL 4-5-6 PLACE' : 'FINAL 1-2-3 PLACE';
@@ -349,7 +349,7 @@ const mancheName = (mindex) => {
 
 // TODO move to client?
 const getSortedPlayerList = () => {
-	let playerList = configuration.loadPlayerList();
+	let playerList = configuration.getPlayerList();
 	let playerTimes = configuration.get('playerTimes');
 
 	// calculate best time sums
@@ -373,8 +373,8 @@ const getSortedPlayerList = () => {
 };
 
 const initRace = (freeRound) => {
-	let track = configuration.loadTrack();
-	let tournament = configuration.loadTournament();
+	let track = configuration.getTrack();
+	let tournament = configuration.getTournament();
 	let currManche = configuration.get('currManche');
 	let currRound = configuration.get('currRound');
 
@@ -411,8 +411,8 @@ const initRace = (freeRound) => {
 		showMancheList();
 	}
 	else {
-		let playerList = configuration.loadPlayerList();
-		let mancheList = configuration.loadMancheList();
+		let playerList = configuration.getPlayerList();
+		let mancheList = configuration.getMancheList();
 
 		$('.js-show-on-no-tournament').hide();
 		$('.js-hide-on-no-tournament').show();
