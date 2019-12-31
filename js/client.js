@@ -4,6 +4,7 @@ const { dialog } = require('electron').remote;
 const ui = require('./ui');
 const utils = require('./utils');
 const configuration = require('./configuration');
+const storage = require('./storage');
 const chrono = require('./chrono');
 const xls = require('./export');
 const i18n = new (require('../i18n/i18n'));
@@ -20,7 +21,7 @@ var checkRaceTask;
 const init = () => {
 	console.log('client.init called');
 
-	ui.initialize();
+	ui.init();
 
 	// translate ui
 	$('.tn').each(function () {
@@ -29,9 +30,6 @@ const init = () => {
 	$('#main').show();
 
 	// read stuff from settings
-	if (!configuration.get('raceFile')) {
-		configuration.newRace();
-	}
 	playerTimes = configuration.get('playerTimes') || [];
 	currManche = configuration.get('currManche') || 0;
 	currRound = configuration.get('currRound') || 0;

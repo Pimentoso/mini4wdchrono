@@ -17,7 +17,7 @@ const boardDisonnected = () => {
 	$('#tag-board-status').text(i18n.__('tag-disconnected'));
 };
 
-const initialize = () => {
+const init = () => {
 	$('#js-title').text(configuration.get('title'));
 	$(`#js-race-mode-${configuration.get('raceMode')}`).click();
 	$('#js-settings-time-threshold').val(configuration.get('timeThreshold'));
@@ -511,7 +511,7 @@ const drawRace = (cars, running) => {
 module.exports = {
 	boardConnected: boardConnected,
 	boardDisonnected: boardDisonnected,
-	initialize: initialize,
+	init: init,
 	reset: reset,
 	toggleFreeRound: toggleFreeRound,
 	trackLoadDone: trackLoadDone,
