@@ -29,6 +29,7 @@ log.catchErrors();
 const j5 = require('johnny-five');
 const xls = require('./js/export');
 const configuration = require('./js/configuration');
+const storage = require('./js/storage');
 const client = require('./js/client');
 const ui = require('./js/ui');
 const utils = require('./js/utils');
@@ -227,7 +228,7 @@ $('#button-start').on('click', (e) => {
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-disconnected') });
 		return;
 	}
-	if (!configuration.getTrack()) {
+	if (!storage.get('track')) {
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-track-not-loaded') });
 		return;
 	}
@@ -240,9 +241,7 @@ $('#button-start').on('click', (e) => {
 	}
 	else {
 		// production mode
-		if (!client.isFreeRound() && configuration.getTournament() && configuration.loadRound()) {
-			// TODO MODAL SPAREGGIO
-
+		if (!client.isFreeRound() && storage.get('tournament') && storage.loadRound()) {
 			if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-replay-round'), buttons: ['Ok', 'Cancel'] }) == 1) {
 				return;
 			}
@@ -287,9 +286,9 @@ $('#button-log-file').on('click', (e) => {
 });
 
 $('#button-save-settings').on('click', (e) => {
-	configuration.set('timeThreshold', parseFloat($('#js-settings-time-threshold').val().replace(',', '.')));
-	configuration.set('speedThreshold', parseFloat($('#js-settings-speed-threshold').val().replace(',', '.')));
-	configuration.set('startDelay', parseFloat($('#js-settings-start-delay').val().replace(',', '.')));
+	storage.set('timeThreshold', parseFloat($('#js-settings-time-threshold').val().replace(',', '.')));
+	storage.set('speedThreshold', parseFloat($('#js-settings-speed-threshold').val().replace(',', '.')));
+	storage.set('startDelay', parseFloat($('#js-settings-start-delay').val().replace(',', '.')));
 	ui.showThresholds();
 	e.preventDefault();
 });
@@ -321,7 +320,7 @@ $('.js-race-mode').on('click', (e) => {
 	$('.js-race-mode').removeClass('is-primary');
 	$this.addClass('is-primary');
 	let mode = $this.data('race-mode');
-	configuration.set('raceMode', mode);
+	storage.set('raceMode', mode);
 	switch (mode) {
 		case 0:
 			$('#js-race-mode-description').text(i18n.__('button-race-mode-time-attack-description'));

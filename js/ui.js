@@ -19,10 +19,10 @@ const boardDisonnected = () => {
 
 const init = () => {
 	$('#js-title').text(configuration.get('title'));
-	$(`#js-race-mode-${configuration.get('raceMode')}`).click();
-	$('#js-settings-time-threshold').val(configuration.get('timeThreshold'));
-	$('#js-settings-speed-threshold').val(configuration.get('speedThreshold'));
-	$('#js-settings-start-delay').val(configuration.get('startDelay'));
+	$(`#js-race-mode-${storage.get('raceMode')}`).click();
+	$('#js-settings-time-threshold').val(storage.get('timeThreshold'));
+	$('#js-settings-speed-threshold').val(storage.get('speedThreshold'));
+	$('#js-settings-start-delay').val(storage.get('startDelay'));
 
 	$('#js-config-sensor-pin-1').val(configuration.get('sensorPin1'));
 	$('#js-config-sensor-pin-2').val(configuration.get('sensorPin2'));
@@ -106,7 +106,7 @@ const tournamentLoadFail = () => {
 };
 
 const raceStarted = () => {
-	let tournament = configuration.getTournament();
+	let tournament = storage.get('tournament');
 
 	$('.js-show-on-race-started').show();
 	$('.js-hide-on-race-started').hide();
@@ -118,7 +118,7 @@ const raceStarted = () => {
 };
 
 const raceFinished = (freeRound) => {
-	let tournament = configuration.getTournament();
+	let tournament = storage.get('tournament');
 
 	$('.js-show-on-race-started').hide();
 	$('.js-hide-on-race-started').show();
@@ -174,11 +174,11 @@ const showTournamentDetails = (tournament) => {
 };
 
 const showThresholds = () => {
-	let track = configuration.getTrack();
+	let track = storage.get('track');
 	if (track) {
 		let rTrackLength = track.length;
-		let rSpeedThreshold = configuration.get('speedThreshold');
-		let rTimeThreshold = configuration.get('timeThreshold') / 100;
+		let rSpeedThreshold = storage.get('speedThreshold');
+		let rTimeThreshold = storage.get('timeThreshold') / 100;
 		let estimatedTime = rTrackLength / rSpeedThreshold;
 		let estimatedCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold);
 		if (estimatedCutoffMin < 1) estimatedCutoffMin = 1;
@@ -195,9 +195,9 @@ const showThresholds = () => {
 };
 
 const showPlayerList = () => {
-	let track = configuration.getTrack();
-	let tournament = configuration.getTournament();
-	let playerList = configuration.getPlayerList();
+	let track = storage.get('track');
+	let tournament = storage.get('tournament');
+	let playerList = tournament.players;
 	if (!track) return;
 	if (!tournament) return;
 
@@ -243,22 +243,22 @@ const showPlayerList = () => {
 };
 
 const showMancheList = () => {
-	let track = configuration.getTrack();
-	let tournament = configuration.getTournament();
+	let track = storage.get('track');
+	let tournament = storage.get('tournament');
 	if (!track) return;
 	if (!tournament) return;
 
-	let currManche = configuration.get('currManche');
-	let currRound = configuration.get('currRound');
-	let playerList = configuration.getPlayerList();
-	let mancheList = configuration.getMancheList();
+	let currManche = storage.get('currManche');
+	let currRound = storage.get('currRound');
+	let playerList = tournament.players;
+	let mancheList = storage.getManches();
 
 	$('#tableMancheList').empty();
 	let cars, mancheText, playerName, playerTime, playerPosition, playerOut, playerNameTag, playerPositionTag, playerHeader, playerForm, highlight;
 	_.each(mancheList, (manche, mindex) => {
 		$('#tableMancheList').append(`<tr class="is-selected"><td><strong>${mancheName(mindex)}</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>`);
 		_.each(manche, (group, rindex) => {
-			cars = configuration.loadRound(mindex, rindex);
+			cars = storage.loadRound(mindex, rindex);
 			mancheText = _.map(group, (id, pindex) => {
 
 				playerName = playerList[id];
@@ -308,10 +308,10 @@ const showMancheList = () => {
 };
 
 const showNextRoundNames = () => {
-	let currManche = configuration.get('currManche');
-	let currRound = configuration.get('currRound');
-	let playerList = configuration.getPlayerList();
-	let mancheList = configuration.getMancheList();
+	let currManche = storage.get('currManche');
+	let currRound = storage.get('currRound');
+	let playerList = tournament.players;
+	let mancheList = storage.getManches();
 
 	let r = currRound, m = currManche, names;
 	let label = i18n.__('label-next-round');
@@ -333,8 +333,8 @@ const showNextRoundNames = () => {
 };
 
 const mancheName = (mindex) => {
-	let tournament = configuration.getTournament();
-	let mancheList = configuration.getMancheList();
+	let tournament = storage.get('tournament');
+	let mancheList = storage.getManches();
 
 	if (mindex == tournament.mancheCount) {
 		return (mindex < mancheList.length) ? 'FINAL 4-5-6 PLACE' : 'FINAL 1-2-3 PLACE';
@@ -349,8 +349,8 @@ const mancheName = (mindex) => {
 
 // TODO move to client?
 const getSortedPlayerList = () => {
-	let playerList = configuration.getPlayerList();
-	let playerTimes = configuration.get('playerTimes');
+	let playerList = storage.get('tournament').players;
+	let playerTimes = storage.get('playerTimes');
 
 	// calculate best time sums
 	let sums = [], times, pTimes, bestTimes, bestSum;
@@ -373,10 +373,10 @@ const getSortedPlayerList = () => {
 };
 
 const initRace = (freeRound) => {
-	let track = configuration.getTrack();
-	let tournament = configuration.getTournament();
-	let currManche = configuration.get('currManche');
-	let currRound = configuration.get('currRound');
+	let track = storage.get('track');
+	let tournament = storage.get('tournament');
+	let currManche = storage.get('currManche');
+	let currRound = storage.get('currRound');
 
 	$('.js-show-on-race-started').hide();
 	$('.js-hide-on-race-started').show();
@@ -411,8 +411,8 @@ const initRace = (freeRound) => {
 		showMancheList();
 	}
 	else {
-		let playerList = configuration.getPlayerList();
-		let mancheList = configuration.getMancheList();
+		let playerList = tournament.players;
+		let mancheList = storage.getManches();
 
 		$('.js-show-on-no-tournament').hide();
 		$('.js-hide-on-no-tournament').show();

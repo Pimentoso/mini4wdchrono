@@ -5,14 +5,6 @@ const fs = require('fs');
 const storage = require('electron-settings');
 const configuration = require('./configuration');
 
-var filepath = configuration.get('raceFile');
-if (filepath) {
-	storage.setPath(filepath);
-}
-else {
-	configuration.newRace();
-}
-
 const newRace = () => {
 	let userdir = app.getPath('userData');
 
@@ -27,8 +19,27 @@ const newRace = () => {
 	fs.closeSync(fs.openSync(filepath, 'w')); // create empty file
 	storage.setPath(filepath);
 
-	storage.set('currManche', 0);
-	storage.set('currRound', 0);
+	// defaults
+	storage.set('raceMode', 0);
+	storage.set('timeThreshold', 40);
+	storage.set('speedThreshold', 5);
+	storage.set('startDelay', 3);
+};
+
+var filepath = configuration.get('raceFile');
+if (filepath) {
+	storage.setPath(filepath);
+}
+else {
+	newRace();
+}
+
+const set = (key, value) => {
+	storage.set(key, value);
+};
+
+const get = (key) => {
+	return storage.get(key);
 };
 
 const saveRound = (manche, round, cars) => {
@@ -45,16 +56,8 @@ const deleteRound = (manche, round) => {
 	storage.delete(`race.m${manche}.r${round}`);
 };
 
-const getTrack = () => {
-	return storage.get('track');
-};
-
-const getTournament = () => {
-	return storage.get('tournament');
-};
-
-const getMancheList = () => {
-	let tournament = loadTournament();
+const getManches = () => {
+	let tournament = get('tournament');
 	let mancheList = tournament.manches;
 	if (tournament.finals) {
 		mancheList.push(...tournament.finals);
@@ -62,18 +65,13 @@ const getMancheList = () => {
 	return mancheList;
 };
 
-const getPlayerList = () => {
-	let tournament = loadTournament();
-	return tournament.players;
-};
-
 module.exports = {
 	newRace: newRace,
+	set: set,
+	get: get,
+	del: del,
 	saveRound: saveRound,
 	loadRound: loadRound,
 	deleteRound: deleteRound,
-	getTrack: getTrack,
-	getTournament: getTournament,
-	getMancheList: getMancheList,
-	getPlayerList: getPlayerList
+	getManches: getManches
 };

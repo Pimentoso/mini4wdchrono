@@ -19,12 +19,7 @@ globalConf.defaults({
 	'ledPin3': 5,
 	'piezoPin': 2,
 	// 'usbPort': 'COM3',
-	'title': 'MINI4WD CHRONO',
-	'raceMode': 0,
-
-	'timeThreshold': 40, // race specific, move to the other file if needed
-	'speedThreshold': 5, // race specific, move to the other file if needed
-	'startDelay': 3, // race specific, move to the other file if needed
+	'title': 'MINI4WD CHRONO'
 });
 
 const set = (settingKey, settingValue) => {
