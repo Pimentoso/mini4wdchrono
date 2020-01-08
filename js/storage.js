@@ -2,6 +2,7 @@
 
 const { app } = require('electron').remote;
 const fs = require('fs');
+const path = require('path');
 const storage = require('electron-settings');
 const configuration = require('./configuration');
 
@@ -69,7 +70,6 @@ module.exports = {
 	newRace: newRace,
 	set: set,
 	get: get,
-	del: del,
 	saveRound: saveRound,
 	loadRound: loadRound,
 	deleteRound: deleteRound,
