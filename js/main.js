@@ -190,11 +190,15 @@ document.onkeydown = (e) => {
 };
 
 $('#js-load-track').on('click', (e) => {
+	let $this = $(e.currentTarget);
+	if ($this.attr('disabled')) return;
 	let code = $('#js-input-track-code').val().slice(-6);
 	client.loadTrack(code);
 });
 
 $('#js-track-save-manual').on('click', (e) => {
+	let $this = $(e.currentTarget);
+	if ($this.attr('disabled')) return;
 	if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-save-track'), buttons: ['Ok', 'Cancel'] }) == 0) {
 		$('#js-track-length-manual').removeClass('is-danger');
 		$('#js-track-order-manual').removeClass('is-danger');
@@ -213,6 +217,8 @@ $('#js-track-save-manual').on('click', (e) => {
 });
 
 $('#js-load-tournament').on('click', (e) => {
+	let $this = $(e.currentTarget);
+	if ($this.attr('disabled')) return;
 	let code = $('#js-input-tournament-code').val().slice(-6);
 	client.loadTournament(code);
 });
@@ -294,9 +300,9 @@ $('#button-save-settings').on('click', (e) => {
 });
 
 $('#button-save-config').on('click', (e) => {
-	configuration.set('sensorPin1', $('#js-config-sensor-pin-1').val());
-	configuration.set('sensorPin2', $('#js-config-sensor-pin-2').val());
-	configuration.set('sensorPin3', $('#js-config-sensor-pin-3').val());
+	configuration.set('sensorPin1', parseInt($('#js-config-sensor-pin-1').val()));
+	configuration.set('sensorPin2', parseInt($('#js-config-sensor-pin-2').val()));
+	configuration.set('sensorPin3', parseInt($('#js-config-sensor-pin-3').val()));
 	configuration.set('ledPin1', parseInt($('#js-config-led-pin-1').val()));
 	configuration.set('ledPin2', parseInt($('#js-config-led-pin-2').val()));
 	configuration.set('ledPin3', parseInt($('#js-config-led-pin-3').val()));

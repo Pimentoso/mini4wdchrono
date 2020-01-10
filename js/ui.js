@@ -35,6 +35,10 @@ const init = () => {
 
 	$('#button-toggle-free-round').hide();
 
+	if (storage.get('race')) {
+		disableRaceInput(true);
+	}
+
 	serialport.list(function (_err, ports) {
 		ports.forEach(function (port) {
 			$('#js-config-usb-port').append($('<option>', {
@@ -313,6 +317,7 @@ const showMancheList = () => {
 const showNextRoundNames = () => {
 	let currManche = storage.get('currManche');
 	let currRound = storage.get('currRound');
+	let tournament = storage.get('tournament');
 	let playerList = tournament.players;
 	let mancheList = storage.getManches();
 

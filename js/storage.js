@@ -21,6 +21,8 @@ const newRace = () => {
 	storage.setPath(filepath);
 
 	// defaults
+	storage.set('currManche', 0);
+	storage.set('currRound', 0);
 	storage.set('raceMode', 0);
 	storage.set('timeThreshold', 40);
 	storage.set('speedThreshold', 5);

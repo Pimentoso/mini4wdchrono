@@ -39,18 +39,12 @@ const init = () => {
 	if (savedTrack) {
 		trackLoadDone(savedTrack);
 	}
-	else {
-		trackLoadFail();
-	}
 	showTrackDetails();
 
 	// load tournament from settings
 	let savedTournament = storage.get('tournament');
 	if (savedTournament) {
 		tournamentLoadDone(savedTournament);
-	}
-	else {
-		tournamentLoadFail();
 	}
 	showTournamentDetails();
 
