@@ -72,6 +72,7 @@ const reset = () => {
 
 	storage.newRace();
 	ui.reset();
+	// TODO need to reset race-specific UI elements like thresholds values
 
 	initTimeList();
 	showTrackDetails();

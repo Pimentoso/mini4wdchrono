@@ -60,6 +60,7 @@ const reset = () => {
 	$('#tag-tournament-status').addClass('is-danger');
 	$('#tag-tournament-status').removeClass('is-success');
 	$('#tag-tournament-status').text(i18n.__('tag-not-loaded'));
+	disableRaceInput(false);
 };
 
 const toggleFreeRound = (freeRound) => {
@@ -131,6 +132,8 @@ const raceFinished = (freeRound) => {
 		$('.js-show-on-no-tournament').show();
 		$('.js-hide-on-no-tournament').hide();
 	}
+
+	disableRaceInput(true);
 };
 
 const showTrackDetails = (track) => {
@@ -506,6 +509,16 @@ const drawRace = (cars, running) => {
 			$(`#timer-lane${i}`).text(utils.prettyTime(car.currTime));
 		}
 	});
+};
+
+const disableRaceInput = (disabled) => {
+	$('#js-input-tournament-code').prop('disabled', disabled);
+	$('#js-load-tournament').prop('disabled', disabled);
+	$('#js-input-track-code').prop('disabled', disabled);
+	$('#js-load-track').prop('disabled', disabled);
+	$('#js-track-length-manual').prop('disabled', disabled);
+	$('#js-track-order-manual').prop('disabled', disabled);
+	$('#js-track-save-manual').prop('disabled', disabled);
 };
 
 module.exports = {
