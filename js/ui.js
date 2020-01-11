@@ -17,37 +17,23 @@ const boardDisonnected = () => {
 	$('#tag-board-status').text(i18n.__('tag-disconnected'));
 };
 
-const initialize = () => {
-	$('#js-title').text(configuration.readSettings('title'));
-	$(`#js-race-mode-${configuration.readSettings('raceMode')}`).click();
-	$('#js-settings-time-threshold').val(configuration.readSettings('timeThreshold'));
-	$('#js-settings-speed-threshold').val(configuration.readSettings('speedThreshold'));
-	$('#js-settings-start-delay').val(configuration.readSettings('startDelay'));
+const init = () => {
+	$('#js-title').text(configuration.get('title'));
+	$(`#js-race-mode-${storage.get('raceMode')}`).click();
+	$('#js-settings-time-threshold').val(storage.get('timeThreshold'));
+	$('#js-settings-speed-threshold').val(storage.get('speedThreshold'));
+	$('#js-settings-start-delay').val(storage.get('startDelay'));
 
-	$('#js-config-sensor-pin-1').val(configuration.readSettings('sensorPin1'));
-	$('#js-config-sensor-pin-2').val(configuration.readSettings('sensorPin2'));
-	$('#js-config-sensor-pin-3').val(configuration.readSettings('sensorPin3'));
-	$('#js-config-led-pin-1').val(configuration.readSettings('ledPin1'));
-	$('#js-config-led-pin-2').val(configuration.readSettings('ledPin2'));
-	$('#js-config-led-pin-3').val(configuration.readSettings('ledPin3'));
-	$('#js-config-piezo-pin').val(configuration.readSettings('piezoPin'));
-	$('#js-config-title').val(configuration.readSettings('title'));
+	$('#js-config-sensor-pin-1').val(configuration.get('sensorPin1'));
+	$('#js-config-sensor-pin-2').val(configuration.get('sensorPin2'));
+	$('#js-config-sensor-pin-3').val(configuration.get('sensorPin3'));
+	$('#js-config-led-pin-1').val(configuration.get('ledPin1'));
+	$('#js-config-led-pin-2').val(configuration.get('ledPin2'));
+	$('#js-config-led-pin-3').val(configuration.get('ledPin3'));
+	$('#js-config-piezo-pin').val(configuration.get('piezoPin'));
+	$('#js-config-title').val(configuration.get('title'));
 
 	$('#button-toggle-free-round').hide();
-
-	serialport.list(function (_err, ports) {
-		ports.forEach(function (port) {
-			$('#js-config-usb-port').append($('<option>', {
-				value: port.comName,
-				text: port.comName
-			}));
-			console.log(port.comName);
-		});
-		$('#js-config-usb-port').val(configuration.readSettings('usbPort'));
-	});
-};
-
-const reset = () => {
 	$('#js-input-track-code').removeClass('is-danger');
 	$('#js-input-track-code').val('');
 	$('#js-track-order-manual').val('');
@@ -60,6 +46,22 @@ const reset = () => {
 	$('#tag-tournament-status').addClass('is-danger');
 	$('#tag-tournament-status').removeClass('is-success');
 	$('#tag-tournament-status').text(i18n.__('tag-not-loaded'));
+
+	disableRaceInput(false);
+	if (storage.get('race')) {
+		disableRaceInput(true);
+	}
+
+	serialport.list(function (_err, ports) {
+		ports.forEach(function (port) {
+			$('#js-config-usb-port').append($('<option>', {
+				value: port.comName,
+				text: port.comName
+			}));
+			console.log(port.comName);
+		});
+		$('#js-config-usb-port').val(configuration.get('usbPort'));
+	});
 };
 
 const toggleFreeRound = (freeRound) => {
@@ -106,7 +108,7 @@ const tournamentLoadFail = () => {
 };
 
 const raceStarted = () => {
-	let tournament = configuration.loadTournament();
+	let tournament = storage.get('tournament');
 
 	$('.js-show-on-race-started').show();
 	$('.js-hide-on-race-started').hide();
@@ -118,7 +120,7 @@ const raceStarted = () => {
 };
 
 const raceFinished = (freeRound) => {
-	let tournament = configuration.loadTournament();
+	let tournament = storage.get('tournament');
 
 	$('.js-show-on-race-started').hide();
 	$('.js-hide-on-race-started').show();
@@ -131,6 +133,8 @@ const raceFinished = (freeRound) => {
 		$('.js-show-on-no-tournament').show();
 		$('.js-hide-on-no-tournament').hide();
 	}
+
+	disableRaceInput(true);
 };
 
 const showTrackDetails = (track) => {
@@ -174,11 +178,11 @@ const showTournamentDetails = (tournament) => {
 };
 
 const showThresholds = () => {
-	let track = configuration.loadTrack();
+	let track = storage.get('track');
 	if (track) {
 		let rTrackLength = track.length;
-		let rSpeedThreshold = configuration.readSettings('speedThreshold');
-		let rTimeThreshold = configuration.readSettings('timeThreshold') / 100;
+		let rSpeedThreshold = storage.get('speedThreshold');
+		let rTimeThreshold = storage.get('timeThreshold') / 100;
 		let estimatedTime = rTrackLength / rSpeedThreshold;
 		let estimatedCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold);
 		if (estimatedCutoffMin < 1) estimatedCutoffMin = 1;
@@ -195,9 +199,9 @@ const showThresholds = () => {
 };
 
 const showPlayerList = () => {
-	let track = configuration.loadTrack();
-	let tournament = configuration.loadTournament();
-	let playerList = configuration.loadPlayerList();
+	let track = storage.get('track');
+	let tournament = storage.get('tournament');
+	let playerList = tournament.players;
 	if (!track) return;
 	if (!tournament) return;
 
@@ -243,22 +247,22 @@ const showPlayerList = () => {
 };
 
 const showMancheList = () => {
-	let track = configuration.loadTrack();
-	let tournament = configuration.loadTournament();
+	let track = storage.get('track');
+	let tournament = storage.get('tournament');
 	if (!track) return;
 	if (!tournament) return;
 
-	let currManche = configuration.readSettings('currManche');
-	let currRound = configuration.readSettings('currRound');
-	let playerList = configuration.loadPlayerList();
-	let mancheList = configuration.loadMancheList();
+	let currManche = storage.get('currManche');
+	let currRound = storage.get('currRound');
+	let playerList = tournament.players;
+	let mancheList = storage.getManches();
 
 	$('#tableMancheList').empty();
 	let cars, mancheText, playerName, playerTime, playerPosition, playerOut, playerNameTag, playerPositionTag, playerHeader, playerForm, highlight;
 	_.each(mancheList, (manche, mindex) => {
 		$('#tableMancheList').append(`<tr class="is-selected"><td><strong>${mancheName(mindex)}</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>`);
 		_.each(manche, (group, rindex) => {
-			cars = configuration.loadRound(mindex, rindex);
+			cars = storage.loadRound(mindex, rindex);
 			mancheText = _.map(group, (id, pindex) => {
 
 				playerName = playerList[id];
@@ -308,10 +312,11 @@ const showMancheList = () => {
 };
 
 const showNextRoundNames = () => {
-	let currManche = configuration.readSettings('currManche');
-	let currRound = configuration.readSettings('currRound');
-	let playerList = configuration.loadPlayerList();
-	let mancheList = configuration.loadMancheList();
+	let currManche = storage.get('currManche');
+	let currRound = storage.get('currRound');
+	let tournament = storage.get('tournament');
+	let playerList = tournament.players;
+	let mancheList = storage.getManches();
 
 	let r = currRound, m = currManche, names;
 	let label = i18n.__('label-next-round');
@@ -333,8 +338,8 @@ const showNextRoundNames = () => {
 };
 
 const mancheName = (mindex) => {
-	let tournament = configuration.loadTournament();
-	let mancheList = configuration.loadMancheList();
+	let tournament = storage.get('tournament');
+	let mancheList = storage.getManches();
 
 	if (mindex == tournament.mancheCount) {
 		return (mindex < mancheList.length) ? 'FINAL 4-5-6 PLACE' : 'FINAL 1-2-3 PLACE';
@@ -349,8 +354,8 @@ const mancheName = (mindex) => {
 
 // TODO move to client?
 const getSortedPlayerList = () => {
-	let playerList = configuration.loadPlayerList();
-	let playerTimes = configuration.readSettings('playerTimes');
+	let playerList = storage.get('tournament').players;
+	let playerTimes = storage.get('playerTimes');
 
 	// calculate best time sums
 	let sums = [], times, pTimes, bestTimes, bestSum;
@@ -373,10 +378,10 @@ const getSortedPlayerList = () => {
 };
 
 const initRace = (freeRound) => {
-	let track = configuration.loadTrack();
-	let tournament = configuration.loadTournament();
-	let currManche = configuration.readSettings('currManche');
-	let currRound = configuration.readSettings('currRound');
+	let track = storage.get('track');
+	let tournament = storage.get('tournament');
+	let currManche = storage.get('currManche');
+	let currRound = storage.get('currRound');
 
 	$('.js-show-on-race-started').hide();
 	$('.js-hide-on-race-started').show();
@@ -411,8 +416,8 @@ const initRace = (freeRound) => {
 		showMancheList();
 	}
 	else {
-		let playerList = configuration.loadPlayerList();
-		let mancheList = configuration.loadMancheList();
+		let playerList = tournament.players;
+		let mancheList = storage.getManches();
 
 		$('.js-show-on-no-tournament').hide();
 		$('.js-hide-on-no-tournament').show();
@@ -508,11 +513,20 @@ const drawRace = (cars, running) => {
 	});
 };
 
+const disableRaceInput = (disabled) => {
+	$('#js-input-tournament-code').prop('disabled', disabled);
+	$('#js-load-tournament').prop('disabled', disabled);
+	$('#js-input-track-code').prop('disabled', disabled);
+	$('#js-load-track').prop('disabled', disabled);
+	$('#js-track-length-manual').prop('disabled', disabled);
+	$('#js-track-order-manual').prop('disabled', disabled);
+	$('#js-track-save-manual').prop('disabled', disabled);
+};
+
 module.exports = {
 	boardConnected: boardConnected,
 	boardDisonnected: boardDisonnected,
-	initialize: initialize,
-	reset: reset,
+	init: init,
 	toggleFreeRound: toggleFreeRound,
 	trackLoadDone: trackLoadDone,
 	trackLoadFail: trackLoadFail,

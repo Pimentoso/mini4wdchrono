@@ -1,20 +1,16 @@
 'use strict';
 
 const { app } = require('electron').remote;
-const path = require('path')
-const filename = 'settings.json';
+const path = require('path');
 
-const getConfigFilePath = () => {
-	// %APPDATA% on Windows
-	// $XDG_CONFIG_HOME or ~/.config on Linux
-	// ~/Library/Application Support on macOS
-	let dir = app.getPath('userData');
-	return path.join(dir, filename);
-};
+// %APPDATA% on Windows
+// $XDG_CONFIG_HOME or ~/.config on Linux
+// ~/Library/Application Support on macOS
+var dir = app.getPath('userData');
+var filepath = path.join(dir, 'settings.json');
+const globalConf = require('nconf').file('global', { file: filepath });
 
-const nconf = require('nconf').file({ file: getConfigFilePath() });
-
-nconf.defaults({
+globalConf.defaults({
 	'sensorPin1': 6,
 	'sensorPin2': 7,
 	'sensorPin3': 8,
@@ -23,89 +19,26 @@ nconf.defaults({
 	'ledPin3': 5,
 	'piezoPin': 2,
 	// 'usbPort': 'COM3',
-	'timeThreshold': 40,
-	'speedThreshold': 5,
-	'startDelay': 3,
-	'title': 'MINI4WD CHRONO',
-	'raceMode': 0
+	'title': 'MINI4WD CHRONO'
 });
 
-const saveSettings = (settingKey, settingValue) => {
-	nconf.set(settingKey, settingValue);
-	nconf.save();
+const set = (settingKey, settingValue) => {
+	globalConf.set(settingKey, settingValue);
+	globalConf.save();
 };
 
-const readSettings = (settingKey) => {
-	nconf.load();
-	return nconf.get(settingKey);
+const get = (settingKey) => {
+	globalConf.load();
+	return globalConf.get(settingKey);
 };
 
-const deleteSettings = (settingKey) => {
-	nconf.clear(settingKey);
-	nconf.save();
-};
-
-const saveRound = (manche, round, cars) => {
-	nconf.set(`race:${manche}-${round}`, cars);
-	nconf.save();
-};
-
-const loadTrack = () => {
-	return readSettings('track');
-};
-
-const loadTournament = () => {
-	return readSettings('tournament');
-};
-
-const loadMancheList = () => {
-	let tournament = readSettings('tournament');
-	let mancheList = tournament.manches;
-	if (tournament.finals) {
-		mancheList.push(...tournament.finals);
-	}
-	return mancheList;
-};
-
-const loadPlayerList = () => {
-	let tournament = readSettings('tournament');
-	let playerList = tournament.players;
-	return playerList;
-};
-
-const loadRound = (manche, round) => {
-	if (manche == null)
-		manche = readSettings('currManche');
-	if (round == null)
-		round = readSettings('currRound');
-	return readSettings(`race:${manche}-${round}`);
-};
-
-const deleteRound = (manche, round) => {
-	nconf.clear(`race:${manche}-${round}`);
-	nconf.save();
-};
-
-const reset = () => {
-	deleteSettings('mancheTimes'); // legacy
-	deleteSettings('playerTimes');
-	deleteSettings('track');
-	deleteSettings('tournament');
-	deleteSettings('race');
-	saveSettings('currManche', 0);
-	saveSettings('currRound', 0);
+const del = (settingKey) => {
+	globalConf.clear(settingKey);
+	globalConf.save();
 };
 
 module.exports = {
-	saveSettings: saveSettings,
-	readSettings: readSettings,
-	deleteSettings: deleteSettings,
-	saveRound: saveRound,
-	loadRound: loadRound,
-	deleteRound: deleteRound,
-	loadTrack: loadTrack,
-	loadTournament: loadTournament,
-	loadMancheList: loadMancheList,
-	loadPlayerList: loadPlayerList,
-	reset: reset
+	set: set,
+	get: get,
+	del: del
 };

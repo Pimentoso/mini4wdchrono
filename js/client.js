@@ -4,6 +4,7 @@ const { dialog } = require('electron').remote;
 const ui = require('./ui');
 const utils = require('./utils');
 const configuration = require('./configuration');
+const storage = require('./storage');
 const chrono = require('./chrono');
 const xls = require('./export');
 const i18n = new (require('../i18n/i18n'));
@@ -20,7 +21,7 @@ var checkRaceTask;
 const init = () => {
 	console.log('client.init called');
 
-	ui.initialize();
+	ui.init();
 
 	// translate ui
 	$('.tn').each(function () {
@@ -29,27 +30,21 @@ const init = () => {
 	$('#main').show();
 
 	// read stuff from settings
-	playerTimes = configuration.readSettings('playerTimes') || [];
-	currManche = configuration.readSettings('currManche') || 0;
-	currRound = configuration.readSettings('currRound') || 0;
+	playerTimes = storage.get('playerTimes') || [];
+	currManche = storage.get('currManche') || 0;
+	currRound = storage.get('currRound') || 0;
 
 	// load track from settings (do this before tournament)
-	let savedTrack = configuration.loadTrack();
+	let savedTrack = storage.get('track');
 	if (savedTrack) {
 		trackLoadDone(savedTrack);
-	}
-	else {
-		trackLoadFail();
 	}
 	showTrackDetails();
 
 	// load tournament from settings
-	let savedTournament = configuration.loadTournament();
+	let savedTournament = storage.get('tournament');
 	if (savedTournament) {
 		tournamentLoadDone(savedTournament);
-	}
-	else {
-		tournamentLoadFail();
 	}
 	showTournamentDetails();
 
@@ -69,8 +64,8 @@ const reset = () => {
 	currTournament = null;
 	raceRunning = false;
 
-	configuration.reset();
-	ui.reset();
+	storage.newRace();
+	ui.init();
 
 	initTimeList();
 	showTrackDetails();
@@ -82,7 +77,7 @@ const chronoInit = (reset) => {
 
 	if (reset) {
 		// new blank round, or replay a past round
-		configuration.deleteRound(currManche, currRound);
+		storage.deleteRound(currManche, currRound);
 		chrono.init(currTrack, mancheList[currManche][currRound]);
 	}
 	else if (currTournament == null || freeRound) {
@@ -91,7 +86,7 @@ const chronoInit = (reset) => {
 	}
 	else {
 		// load existing round
-		let cars = configuration.loadRound(currManche, currRound);
+		let cars = storage.loadRound(currManche, currRound);
 		chrono.init(currTrack, mancheList[currManche][currRound], cars);
 	}
 };
@@ -104,10 +99,10 @@ const disqualify = (mindex, rindex, pindex) => {
 
 	mindex = mindex || currManche;
 	rindex = rindex || currRound;
-	let cars = configuration.loadRound(mindex, rindex);
+	let cars = storage.loadRound(mindex, rindex);
 	cars[pindex].originalTime = cars[pindex].currTime;
 	cars[pindex].currTime = 99999;
-	configuration.saveRound(mindex, rindex, cars);
+	storage.saveRound(mindex, rindex, cars);
 
 	rebuildTimeList();
 	ui.initRace(freeRound);
@@ -121,7 +116,7 @@ const overrideTimes = () => {
 	let time, newTime, oldTime, cars;
 	_.each(mancheList, (manche, mindex) => {
 		_.each(manche, (round, rindex) => {
-			cars = configuration.loadRound(mindex, rindex);
+			cars = storage.loadRound(mindex, rindex);
 			if (cars) {
 				_.each(round, (_playerId, pindex) => {
 					time = $(`input[data-manche='${mindex}'][data-round='${rindex}'][data-player='${pindex}']`).val();
@@ -135,7 +130,7 @@ const overrideTimes = () => {
 					}
 				});
 			}
-			configuration.saveRound(mindex, rindex, cars);
+			storage.saveRound(mindex, rindex, cars);
 		});
 	});
 
@@ -154,7 +149,7 @@ const initTimeList = () => {
 			playerTimes[pindex][mindex] = playerTimes[pindex][mindex] || 0;
 		});
 	});
-	configuration.saveSettings('playerTimes', playerTimes);
+	storage.set('playerTimes', playerTimes);
 };
 
 // Rebuilds playerTimes starting from saved race results
@@ -164,7 +159,7 @@ const rebuildTimeList = () => {
 	let time, cars;
 	_.each(mancheList, (manche, mindex) => {
 		_.each(manche, (round, rindex) => {
-			cars = configuration.loadRound(mindex, rindex);
+			cars = storage.loadRound(mindex, rindex);
 			if (cars) {
 				_.each(round, (playerId, pindex) => {
 					time = cars[pindex].currTime;
@@ -174,7 +169,7 @@ const rebuildTimeList = () => {
 			}
 		});
 	});
-	configuration.saveSettings('playerTimes', playerTimes);
+	storage.set('playerTimes', playerTimes);
 };
 
 const initFinal = () => {
@@ -209,7 +204,7 @@ const initFinal = () => {
 	]);
 
 	mancheList.push(...currTournament.finals);
-	configuration.saveSettings('tournament', currTournament);
+	storage.set('tournament', currTournament);
 };
 
 // ==========================================================================
@@ -232,11 +227,11 @@ const startRound = () => {
 
 	// run tasks periodically
 	checkRaceTask = setInterval(checkRace, 1000);
-	setTimeout(checkStart, configuration.readSettings('startDelay') * 1000);
+	setTimeout(checkStart, storage.get('startDelay') * 1000);
 
 	raceRunning = true;
 
-	if (configuration.readSettings('raceMode') == 1) {
+	if (storage.get('raceMode') == 1) {
 		startTimer(0);
 		startTimer(1);
 		startTimer(2);
@@ -271,8 +266,8 @@ const prevRound = () => {
 			currRound = mancheList[currManche].length - 1;
 		}
 
-		configuration.saveSettings('currManche', currManche);
-		configuration.saveSettings('currRound', currRound);
+		storage.set('currManche', currManche);
+		storage.set('currRound', currRound);
 		chronoInit();
 		ui.initRace(freeRound);
 		updateRace();
@@ -304,14 +299,13 @@ const nextRound = () => {
 				// manche index is higher than the original count: final mode
 				if (!currTournament.finals) {
 					// generate final rounds only once
-					// TODO maybe add a 'regenerate final' button
 					initFinal();
 				}
 			}
 		}
 
-		configuration.saveSettings('currManche', currManche);
-		configuration.saveSettings('currRound', currRound);
+		storage.set('currManche', currManche);
+		storage.set('currRound', currRound);
 		chronoInit();
 		ui.initRace(freeRound);
 		updateRace();
@@ -368,7 +362,7 @@ const setTrackManual = (length, order) => {
 	console.log('client.setTrackManual called');
 
 	let obj = { 'code': i18n.__('tag-track-manual'), 'length': length, 'order': order, 'manual': true };
-	configuration.saveSettings('track', obj);
+	storage.set('track', obj);
 	trackLoadDone(obj);
 };
 
@@ -389,7 +383,7 @@ const trackLoadDone = (obj) => {
 	console.log('client.trackLoadDone called');
 
 	currTrack = obj;
-	configuration.saveSettings('track', currTrack);
+	storage.set('track', currTrack);
 
 	ui.trackLoadDone(currTrack);
 	showTrackDetails();
@@ -416,7 +410,7 @@ const tournamentLoadDone = (obj) => {
 		mancheList.push(...clone(obj.finals));
 	}
 
-	configuration.saveSettings('tournament', currTournament);
+	storage.set('tournament', currTournament);
 
 	freeRound = false;
 	ui.tournamentLoadDone(currTournament);
@@ -476,9 +470,9 @@ const raceFinished = () => {
 		if (cars[2].playerId > -1) {
 			playerTimes[cars[2].playerId][currManche] = cars[2].currTime;
 		}
-		configuration.saveSettings('playerTimes', playerTimes);
+		storage.set('playerTimes', playerTimes);
 
-		configuration.saveRound(currManche, currRound, cars);
+		storage.saveRound(currManche, currRound, cars);
 
 		ui.showPlayerList();
 		ui.showMancheList();
@@ -512,7 +506,7 @@ const showTournamentDetails = () => {
 const updateRace = () => {
 	console.log('client.updateRace called');
 
-	let cars = (raceRunning || freeRound) ? chrono.getCars() : configuration.loadRound(currManche, currRound);
+	let cars = (raceRunning || freeRound) ? chrono.getCars() : storage.loadRound(currManche, currRound);
 	cars = cars || chrono.getCars(); // if loaded round was undefined
 	ui.drawRace(cars, raceRunning);
 

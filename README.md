@@ -117,13 +117,13 @@ Some Arduino Nano clones may need the CH340 USB driver to be recognized. [You ca
 # Contributing
 
 ## Build on OSX
+Run ```brew install nodenv``` and follow installation instructions here. https://github.com/nodenv/nodenv
 
 ```
-brew update
-brew install node
 brew cask install arduino
 // now open the arduino IDE, and use it to upload the StandardFirmataPlus firmware on the board
 
+nodenv install 10.16.3
 cd mini4wdchrono
 npm install
 
@@ -142,11 +142,11 @@ electron-packager . Mini4wdChrono --overwrite --icon=images/ic_launcher_web.icns
 Make sure you are running a Powershell with administrator permissions, and Chocolatey is installed.
 
 ```
-choco install node
 choco install python2
 choco install arduino
 // now open the arduino IDE, and use it to upload the StandardFirmataPlus firmware on the board
 
+choco install nodejs --version=10.16.3
 npm install -g windows-build-tools
 cd mini4wdchrono
 npm install
