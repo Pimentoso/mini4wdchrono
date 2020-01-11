@@ -66,7 +66,6 @@ const reset = () => {
 
 	storage.newRace();
 	ui.init();
-	// TODO need to reset race-specific UI elements like thresholds values
 
 	initTimeList();
 	showTrackDetails();
@@ -300,7 +299,6 @@ const nextRound = () => {
 				// manche index is higher than the original count: final mode
 				if (!currTournament.finals) {
 					// generate final rounds only once
-					// TODO maybe add a 'regenerate final' button
 					initFinal();
 				}
 			}
