@@ -34,7 +34,20 @@ const init = () => {
 	$('#js-config-title').val(configuration.get('title'));
 
 	$('#button-toggle-free-round').hide();
+	$('#js-input-track-code').removeClass('is-danger');
+	$('#js-input-track-code').val('');
+	$('#js-track-order-manual').val('');
+	$('#js-track-length-manual').val('');
+	$('#js-input-tournament-code').removeClass('is-danger');
+	$('#js-input-tournament-code').val('');
+	$('#tag-track-status').addClass('is-danger');
+	$('#tag-track-status').removeClass('is-success');
+	$('#tag-track-status').text(i18n.__('tag-not-loaded'));
+	$('#tag-tournament-status').addClass('is-danger');
+	$('#tag-tournament-status').removeClass('is-success');
+	$('#tag-tournament-status').text(i18n.__('tag-not-loaded'));
 
+	disableRaceInput(false);
 	if (storage.get('race')) {
 		disableRaceInput(true);
 	}
@@ -49,22 +62,6 @@ const init = () => {
 		});
 		$('#js-config-usb-port').val(configuration.get('usbPort'));
 	});
-};
-
-const reset = () => {
-	$('#js-input-track-code').removeClass('is-danger');
-	$('#js-input-track-code').val('');
-	$('#js-track-order-manual').val('');
-	$('#js-track-length-manual').val('');
-	$('#js-input-tournament-code').removeClass('is-danger');
-	$('#js-input-tournament-code').val('');
-	$('#tag-track-status').addClass('is-danger');
-	$('#tag-track-status').removeClass('is-success');
-	$('#tag-track-status').text(i18n.__('tag-not-loaded'));
-	$('#tag-tournament-status').addClass('is-danger');
-	$('#tag-tournament-status').removeClass('is-success');
-	$('#tag-tournament-status').text(i18n.__('tag-not-loaded'));
-	disableRaceInput(false);
 };
 
 const toggleFreeRound = (freeRound) => {
@@ -530,7 +527,6 @@ module.exports = {
 	boardConnected: boardConnected,
 	boardDisonnected: boardDisonnected,
 	init: init,
-	reset: reset,
 	toggleFreeRound: toggleFreeRound,
 	trackLoadDone: trackLoadDone,
 	trackLoadFail: trackLoadFail,
