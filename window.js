@@ -2,24 +2,16 @@
 
 'use strict';
 
-const electron = require('electron');
+const {app, BrowserWindow, Menu} = require('electron')
 const path = require('path');
 const url = require('url');
+const isMac = process.platform === 'darwin';
 
 if (process.argv[2] == "--watch") {
 	require('electron-reload')(__dirname, {
 		electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
 	})
 }
-
-// Module to control application life.
-const app = electron.app;
-
-// Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow;
-
-// Context menu accessor.
-const Menu = electron.Menu;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -61,7 +53,7 @@ function createWindow() {
 		{ role: 'copy' },
 		{ type: 'separator' },
 		{ role: 'selectall' },
-	])
+	]);
 
 	const inputMenu = Menu.buildFromTemplate([
 		{ role: 'undo' },
@@ -72,7 +64,29 @@ function createWindow() {
 		{ role: 'paste' },
 		{ type: 'separator' },
 		{ role: 'selectall' },
-	])
+	]);
+
+	const applicationMenu = Menu.buildFromTemplate([
+		...(isMac ? [{
+			label: app.name,
+			submenu: [
+			  { role: 'about' },
+			  {type: 'separator'},
+			  { role: 'quit' }
+			]
+		}] : []),
+		{
+			label: 'File',
+			submenu: [
+				{label: 'New race'},
+				{label: 'Open race...'},
+				{label: 'Open recent race'},
+			]
+		}
+	]);
+
+	// Show application menu.
+	Menu.setApplicationMenu(applicationMenu); 
 
 	// Show context menus on right click.
 	mainWindow.webContents.on('context-menu', (e, props) => {
@@ -82,7 +96,7 @@ function createWindow() {
 		} else if (selectionText && selectionText.trim() !== '') {
 			selectionMenu.popup(mainWindow);
 		}
-	})
+	});
 }
 
 // Prevent multiple instances of this app to run.
