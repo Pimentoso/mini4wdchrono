@@ -185,6 +185,7 @@ $('.tabs a').on('click', (e) => {
 // modals
 $('.open-modal').on('click', (e) => {
 	let $this = $(e.currentTarget);
+	ui.initModal($this.data('modal'));
 	openModal($this.data('modal'));
 });
 

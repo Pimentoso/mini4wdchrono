@@ -3,6 +3,7 @@
 const serialport = require('serialport');
 const utils = require('./utils');
 const configuration = require('./configuration');
+const storage = require('./storage');
 const i18n = new (require('../i18n/i18n'))();
 
 const boardConnected = () => {
@@ -64,9 +65,17 @@ const init = () => {
 	});
 };
 
-const initLoadModal = () => {
-	// TODO refresh recent files
-	// call this when open button is pressed
+const initModal = (modalId) => {
+	if (modalId == 'modal-open') {
+		storage.getRecent(10, (error, files) => {
+			if (error) {
+				$('#modal-open-files').append(`<li>${error}</li>`);
+			}
+			files.forEach((file) => {
+				$('#modal-open-files').append(`<li>${file}</li>`);
+			});
+		});
+	}
 };
 
 const toggleFreeRound = (freeRound) => {
@@ -532,6 +541,7 @@ module.exports = {
 	boardConnected: boardConnected,
 	boardDisonnected: boardDisonnected,
 	init: init,
+	initModal: initModal,
 	toggleFreeRound: toggleFreeRound,
 	trackLoadDone: trackLoadDone,
 	trackLoadFail: trackLoadFail,

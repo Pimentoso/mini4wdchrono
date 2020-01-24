@@ -41,7 +41,7 @@ const getRecent = (num, callback) => {
 	num = num || 10
 	let userdir = app.getPath('userData');
 	let storagedir = path.join(userdir, 'races');
-	fs.readdir(directoryPath, callback);
+	fs.readdir(storagedir, callback);
 };
 
 const set = (key, value) => {
@@ -77,6 +77,7 @@ const getManches = () => {
 
 module.exports = {
 	newRace: newRace,
+	getRecent: getRecent,
 	set: set,
 	get: get,
 	saveRound: saveRound,

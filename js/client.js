@@ -3,7 +3,6 @@
 const { dialog } = require('electron').remote;
 const ui = require('./ui');
 const utils = require('./utils');
-const configuration = require('./configuration');
 const storage = require('./storage');
 const chrono = require('./chrono');
 const xls = require('./export');
