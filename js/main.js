@@ -182,6 +182,23 @@ $('.tabs a').on('click', (e) => {
 	$(`div[data-tab=${tab}]`).show();
 });
 
+// modals
+$('.open-modal').on('click', (e) => {
+	let $this = $(e.currentTarget);
+	openModal($this.data('modal'));
+});
+
+const openModal = (modal) => {
+	$(`#${modal}`).addClass('is-active');
+	$(document.documentElement).addClass('is-clipped');
+};
+
+$('.close-modal').on('click', (e) => {
+	$('.modal').removeClass('is-active');
+	$(document.documentElement).removeClass('is-clipped');
+});
+
+// keydown
 document.onkeydown = (e) => {
 	if (!debugMode) {
 		return;
@@ -189,6 +206,7 @@ document.onkeydown = (e) => {
 	client.keydown(e.keyCode);
 };
 
+// ui observers
 $('#js-load-track').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
@@ -223,10 +241,9 @@ $('#js-load-tournament').on('click', (e) => {
 	client.loadTournament(code);
 });
 
-$('#button-reset').on('click', (e) => {
-	if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-new-race'), buttons: ['Ok', 'Cancel'] }) == 0) {
-		client.reset();
-	}
+$('#button-new-race').on('click', (e) => {
+	// TODO set race name
+	client.reset();
 });
 
 $('#button-start').on('click', (e) => {

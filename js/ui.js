@@ -64,6 +64,11 @@ const init = () => {
 	});
 };
 
+const initLoadModal = () => {
+	// TODO refresh recent files
+	// call this when open button is pressed
+};
+
 const toggleFreeRound = (freeRound) => {
 	if (freeRound) {
 		$('#button-toggle-free-round').text(i18n.__('button-goto-race'));

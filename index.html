@@ -90,10 +90,10 @@
 		<!-- SETUP TAB -->
 		<div class="container" data-tab="setup">
 			<p class="has-text-centered">
-				<a id="button-reset" href="#" class="button is-info tn" data-tn="button-new-race" style="width: 200px;">
+				<a href="#" class="button is-info tn open-modal" data-tn="button-new-race" data-modal="modal-new" style="width: 200px;">
 					New race
 				</a>
-				<a id="button-load" href="#" class="button is-warning tn" data-tn="button-open-race" style="width: 200px;">
+				<a href="#" class="button is-warning tn open-modal" data-tn="button-open-race" data-modal="modal-open" style="width: 200px;">
 					Open race
 				</a>
 			</p>
@@ -547,6 +547,51 @@
 			</div>
 		</div>
 
+	</div>
+
+	<div id="modal-new" class="modal">
+		<div class="modal-background"></div>
+		<div class="modal-card">
+			<header class="modal-card-head">
+				<p class="modal-card-title">Create new race</p>
+				<button class="delete close-modal" aria-label="close"></button>
+			</header>
+			<section class="modal-card-body">
+				<div class="content">
+					<div class="field">
+						<label class="label tn" data-tn="label-new-race">What's the name of this race?</label>
+						<div class="control" style="width: 100%;">
+							<input id="modal-new-name" class="input" type="text" placeholder="diobubbu" value="">
+						</div>
+					</div>
+				</div>
+			</section>
+			<footer class="modal-card-foot" style="justify-content: flex-end;">
+				<button class="button close-modal">Cancel</button>
+				<button id="button-new-race" class="button is-success close-modal">Create race</button>
+			</footer>
+		</div>
+	</div>
+
+	<div id="modal-open" class="modal">
+		<div class="modal-background"></div>
+		<div class="modal-card">
+			<header class="modal-card-head">
+				<p class="modal-card-title">Open existing race</p>
+				<button class="delete close-modal" aria-label="close"></button>
+			</header>
+			<section class="modal-card-body">
+				<div class="content">
+					<ul id="modal-open-files">
+						
+					</ul>
+				</div>
+			</section>
+			<footer class="modal-card-foot" style="justify-content: flex-end;">
+				<button class="button close-modal">Cancel</button>
+				<button class="button is-success close-modal">Load race</button>
+			</footer>
+		</div>
 	</div>
 
 </body>
