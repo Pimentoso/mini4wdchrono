@@ -70,17 +70,16 @@ function createWindow() {
 		...(isMac ? [{
 			label: app.name,
 			submenu: [
-			  { role: 'about' },
+			  {role: 'about'},
 			  {type: 'separator'},
-			  { role: 'quit' }
+			  {role: 'quit'}
 			]
 		}] : []),
 		{
 			label: 'File',
 			submenu: [
 				{label: 'New race'},
-				{label: 'Open race...'},
-				{label: 'Open recent race'},
+				{label: 'Open race...'}
 			]
 		}
 	]);

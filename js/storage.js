@@ -8,7 +8,6 @@ const configuration = require('./configuration');
 
 const newRace = () => {
 	let userdir = app.getPath('userData');
-
 	let storagedir = path.join(userdir, 'races');
 	if (!fs.existsSync(storagedir)) {
 		fs.mkdirSync(storagedir);
@@ -36,6 +35,14 @@ if (filepath) {
 else {
 	newRace();
 }
+
+// @param callback: function(error, files)
+const getRecent = (num, callback) => {
+	num = num || 10
+	let userdir = app.getPath('userData');
+	let storagedir = path.join(userdir, 'races');
+	fs.readdir(directoryPath, callback);
+};
 
 const set = (key, value) => {
 	storage.set(key, value);

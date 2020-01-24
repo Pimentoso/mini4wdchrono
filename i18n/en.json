@@ -14,6 +14,7 @@
     "tab-configuration": "Configuration",
     "tab-about": "About",
     "button-new-race": "New race",
+    "button-open-race": "Open race...",
     "label-track-info": "1) Load track",
     "label-load-track": "Load track from Track Editor link",
     "label-track-length": "Length",
