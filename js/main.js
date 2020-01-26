@@ -243,8 +243,10 @@ $('#js-load-tournament').on('click', (e) => {
 });
 
 $('#button-new-race').on('click', (e) => {
-	// TODO set race name
-	client.reset();
+	// TODO do not close dialog if name is empty
+	let name = $('#modal-new-name').val().trim();
+	if (name == '') return false;
+	client.reset(name);
 });
 
 $('#button-start').on('click', (e) => {

@@ -66,27 +66,6 @@ function createWindow() {
 		{ role: 'selectall' },
 	]);
 
-	const applicationMenu = Menu.buildFromTemplate([
-		...(isMac ? [{
-			label: app.name,
-			submenu: [
-			  {role: 'about'},
-			  {type: 'separator'},
-			  {role: 'quit'}
-			]
-		}] : []),
-		{
-			label: 'File',
-			submenu: [
-				{label: 'New race'},
-				{label: 'Open race...'}
-			]
-		}
-	]);
-
-	// Show application menu.
-	Menu.setApplicationMenu(applicationMenu); 
-
 	// Show context menus on right click.
 	mainWindow.webContents.on('context-menu', (e, props) => {
 		const { selectionText, isEditable } = props;

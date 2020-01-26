@@ -51,7 +51,7 @@ const init = () => {
 	raceRunning = false;
 };
 
-const reset = () => {
+const reset = (name) => {
 	console.log('client.reset called');
 
 	playerTimes = [];
@@ -63,7 +63,7 @@ const reset = () => {
 	currTournament = null;
 	raceRunning = false;
 
-	storage.newRace();
+	storage.newRace(name);
 	ui.init();
 
 	initTimeList();

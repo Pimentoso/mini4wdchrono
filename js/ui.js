@@ -20,6 +20,8 @@ const boardDisonnected = () => {
 
 const init = () => {
 	$('#js-title').text(configuration.get('title'));
+	$('#js-race-name').text(storage.get('name'));
+	$('#js-race-created').text(utils.strftime('%Y-%m-%d, %H:%M', storage.get('created')));
 	$(`#js-race-mode-${storage.get('raceMode')}`).click();
 	$('#js-settings-time-threshold').val(storage.get('timeThreshold'));
 	$('#js-settings-speed-threshold').val(storage.get('speedThreshold'));
@@ -67,13 +69,9 @@ const init = () => {
 
 const initModal = (modalId) => {
 	if (modalId == 'modal-open') {
-		storage.getRecent(10, (error, files) => {
-			if (error) {
-				$('#modal-open-files').append(`<li>${error}</li>`);
-			}
-			files.forEach((file) => {
-				$('#modal-open-files').append(`<li>${file}</li>`);
-			});
+		let data = storage.getRecent(10);
+		data.forEach((race) => {
+			$('#modal-open-files').append(`<li>${race.name} (${race.created})</li>`);
 		});
 	}
 };
