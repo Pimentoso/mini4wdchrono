@@ -543,5 +543,4 @@ module.exports = {
 	getSortedPlayerList: getSortedPlayerList,
 	initRace: initRace,
 	drawRace: drawRace
-
 };
