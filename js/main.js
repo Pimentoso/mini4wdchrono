@@ -35,6 +35,9 @@ const ui = require('./js/ui');
 const utils = require('./js/utils');
 const i18n = new (require('./i18n/i18n'));
 
+// load race from file
+storage.loadRace();
+
 // Show version in about tab
 $('#js-about-version').text(`Version ${app.getVersion()}`);
 
@@ -208,6 +211,16 @@ document.onkeydown = (e) => {
 };
 
 // ui observers
+$(document).on('click', '.js-load-race', (e) => {
+	let $this = $(e.currentTarget);
+	debugger;
+	if ($this.attr('disabled')) return;
+	let filename = $this.data('filename');
+	storage.loadRace(filename);
+	client.init();
+	$('.close-modal').click();
+});
+
 $('#js-load-track').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;

@@ -17,7 +17,7 @@ const newRace = (raceName) => {
 	let timestamp = parseInt(new Date().getTime() / 1000);
 	let filename = `${timestamp}.json`;
 	let filepath = path.join(userdir, 'races', filename);
-	configuration.set('raceFile', filepath);
+	configuration.set('raceFile', filename);
 	fs.closeSync(fs.openSync(filepath, 'w')); // create empty file
 	storage.setPath(filepath);
 
@@ -32,13 +32,18 @@ const newRace = (raceName) => {
 	storage.set('startDelay', 3);
 };
 
-var filepath = configuration.get('raceFile');
-if (filepath) {
-	storage.setPath(filepath);
-}
-else {
-	newRace();
-}
+const loadRace = (filename) => {
+	filename = filename || configuration.get('raceFile');
+	if (filename) {
+		let userdir = app.getPath('userData');
+		let filepath = path.join(userdir, 'races', filename);
+		configuration.set('raceFile', filename);
+		storage.setPath(filepath);
+	}
+	else {
+		newRace();
+	}
+};
 
 const extension = (element) => {
   var extName = path.extname(element);
@@ -98,6 +103,7 @@ const getManches = () => {
 
 module.exports = {
 	newRace: newRace,
+	loadRace:	loadRace,
 	getRecent: getRecent,
 	set: set,
 	get: get,

@@ -72,7 +72,7 @@ const initModal = (modalId) => {
 		$('#modal-open-files').empty();
 		let data = storage.getRecent(10);
 		data.forEach((race) => {
-			$('#modal-open-files').append(`<li>${race.name || 'untitled'} (${race.created})</li>`);
+			$('#modal-open-files').append(`<li><a href="javascript:void(0)" class="js-load-race" data-filename="${race.filename}">${race.name || 'untitled'}</a> (${race.created})</li>`);
 		});
 	}
 };
