@@ -40,22 +40,29 @@ else {
 	newRace();
 }
 
+const extension = (element) => {
+  var extName = path.extname(element);
+  return extName === '.json'; // change to whatever extensions you want
+};
+
 const getRecent = (num) => {
 	num = num || 10
 	let userdir = app.getPath('userData');
 	let storagedir = path.join(userdir, 'races');
 	let files = fs.readdirSync(storagedir);
-	files = files.slice(0, num);
+	files = files.filter(extension).slice(0, num);
 	let recent = [];
 	files.forEach((filename) => {
 		let data = jsonfile.readFileSync(path.join(storagedir, filename));
-		recent.push({
-			filename: filename,
-			name: data.name,
-			created: data.created
-		})
+		if (data.name) {
+			recent.push({
+				filename: filename,
+				name: data.name,
+				created: utils.strftime('%Y-%m-%d, %H:%M', data.created)
+			});
+		}
 	});
-	return recent;
+	return recent.reverse();
 };
 
 const set = (key, value) => {
