@@ -336,7 +336,7 @@ $('.js-led-type').on('click', (e) => {
 	$('.js-led-type').removeClass('is-primary');
 	$this.addClass('is-primary');
 	let type = $this.data('led-type');
-	configuration.saveSettings('ledType', type);
+	configuration.set('ledType', type);
 });
 
 $('.js-race-mode').on('click', (e) => {

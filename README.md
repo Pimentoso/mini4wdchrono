@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.11.8-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
+[![Version](https://img.shields.io/badge/version-0.12.2-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
 
 Mini4wdChrono is a fully free and open source project to make a functional 3-lane lap timer for Mini4WD Japan Cup tracks.
 The hardware has been chosen to be as simple and cheap as possible, while still maintain accuracy.
@@ -11,11 +11,11 @@ so you are required to create your track and player list using those websites.
 
 **Quick start guide:**
 
-- Launch the program and go to the "configuration" tab. 
+- Launch the program and go to the "configuration" tab.
     - Change the arduino pins to match your setup.
-    - Change the USB port if needed. 
+    - Change the USB port if needed.
     - Save and reboot the program.
-    - Make sure the 3 colored squares read "1". This mean the light source is correctly pointed at the sensors. 
+    - Make sure the 3 colored squares read "1". This mean the light source is correctly pointed at the sensors.
 - Draw the track in the https://mini4wd-track-editor.pimentoso.com/ website, and save it. Copy the 6-letter code or just copy the link.
 - Import the track in the "race setup" screen. This is important because the program needs to know the length of the track and the lane changes.
 - You can now already go to the "race view" screen and start a race.

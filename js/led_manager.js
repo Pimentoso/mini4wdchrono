@@ -92,24 +92,27 @@ class LedManagerLilypad extends LedManager {
 	}
 
 	roundStart(startTimerCallback) {
-		this.led1.on(); this.led2.on(); this.led3.on(); beep(1500);
+		this.led1.on(); this.led2.on(); this.led3.on(); this.beep(1500);
 		utils
 			.delay(() => { this.led1.off(); this.led2.off(); this.led3.off(); }, 1500)
-			.delay(() => { this.led1.on(); beep(500); }, 1000)
-			.delay(() => { this.led1.off(); this.led2.on(); beep(500); }, 1000)
-			.delay(() => { this.led2.off(); this.led3.on(); beep(500); }, 1000)
+			.delay(() => { this.led1.on(); this.beep(500); }, 1000)
+			.delay(() => { this.led1.off(); this.led2.on(); this.beep(500); }, 1000)
+			.delay(() => { this.led2.off(); this.led3.on(); this.beep(500); }, 1000)
 			.delay(() => { this.led3.off(); }, 1000)
-			.delay(() => { this.led1.on(); this.led2.on(); this.led3.on(); beep(1000); startTimerCallback(); }, 1500)
+			.delay(() => { this.led1.on(); this.led2.on(); this.led3.on(); this.beep(1000); startTimerCallback(); }, 1500)
 			.delay(() => { this.led1.off(); this.led2.off(); this.led3.off(); }, 2500);
 	}
 
 	roundFinish(cars) {
 		// turn on winner car led
-		let winnerCar = _.filter(cars, (c) => { return !c.outOfBounds && c.lapCount == 4 && c.position == 1; });
-		if (winnerCar) {
-			let winnerLane = winnerCar.startLane;
-			this.leds[winnerLane].on();
-		}
+		let finishCars = _.filter(cars, (c) => { return !c.outOfBounds && c.lapCount == 4 });
+		utils.delay(() => {
+			_.each(finishCars, (c) => {
+				if (c.position == 1) {
+					this.leds[c.startLane].on();
+				}
+			})
+		}, 1500);
 	}
 
 	lap(lane) {
@@ -175,7 +178,7 @@ class LedManagerRgbStrip extends LedManager {
 	}
 
 	roundFinish(cars) {
-		// turn on winner car led
+		// color lanes based on positions
 		let finishCars = _.filter(cars, (c) => { return !c.outOfBounds && c.lapCount == 4 });
 		utils.delay(() => {
 			_.each(finishCars, (c) => {
