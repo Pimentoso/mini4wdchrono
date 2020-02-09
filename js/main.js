@@ -29,6 +29,7 @@ log.catchErrors();
 const j5 = require('johnny-five');
 const xls = require('./js/export');
 const configuration = require('./js/configuration');
+const storage = require('./js/storage');
 const client = require('./js/client');
 const ui = require('./js/ui');
 const utils = require('./js/utils');
@@ -46,7 +47,7 @@ $(document).on('click', 'a[href^="http"]', function (event) {
 
 // Johnny-Five initialize
 const board = new j5.Board({
-	port: configuration.readSettings('usbPort'),
+	port: configuration.get('usbPort'),
 	timeout: 1e5,
 	repl: false // does not work with browser console
 });
@@ -55,20 +56,20 @@ var sensorPin1, sensorPin2, sensorPin3;
 var tag1, tag2, tag3;
 var val1 = 0, val2 = 0, val3 = 0;
 
-if (configuration.readSettings('ledType') == 0) {
+if (configuration.get('ledType') == 0) {
 	var ledManager = new ledManagers.LedManagerLilypad(board, [
-			configuration.readSettings('ledPin1'),
-			configuration.readSettings('ledPin2'),
-			configuration.readSettings('ledPin3')
+			configuration.get('ledPin1'),
+			configuration.get('ledPin2'),
+			configuration.get('ledPin3')
 		],
-		configuration.readSettings('piezoPin')
+		configuration.get('piezoPin')
 	)
 }
-else if (configuration.readSettings('ledType') == 1) {
+else if (configuration.get('ledType') == 1) {
 	var ledManager = new ledManagers.LedManagerRgbStrip(
 		board,
-		configuration.readSettings('ledPin1'),
-		configuration.readSettings('piezoPin')
+		configuration.get('ledPin1'),
+		configuration.get('piezoPin')
 	);
 }
 
@@ -81,9 +82,9 @@ board.on('ready', function () {
 	tag3 = $('#sensor-reading-3');
 
 	// raw reading from digital pins because it's faster
-	sensorPin1 = configuration.readSettings('sensorPin1');
-	sensorPin2 = configuration.readSettings('sensorPin2');
-	sensorPin3 = configuration.readSettings('sensorPin3');
+	sensorPin1 = configuration.get('sensorPin1');
+	sensorPin2 = configuration.get('sensorPin2');
+	sensorPin3 = configuration.get('sensorPin3');
 
 	this.samplingInterval(1);
 	this.pinMode(sensorPin1, j5.Pin.INPUT);
@@ -197,11 +198,15 @@ document.onkeydown = (e) => {
 };
 
 $('#js-load-track').on('click', (e) => {
+	let $this = $(e.currentTarget);
+	if ($this.attr('disabled')) return;
 	let code = $('#js-input-track-code').val().slice(-6);
 	client.loadTrack(code);
 });
 
 $('#js-track-save-manual').on('click', (e) => {
+	let $this = $(e.currentTarget);
+	if ($this.attr('disabled')) return;
 	if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-save-track'), buttons: ['Ok', 'Cancel'] }) == 0) {
 		$('#js-track-length-manual').removeClass('is-danger');
 		$('#js-track-order-manual').removeClass('is-danger');
@@ -220,6 +225,8 @@ $('#js-track-save-manual').on('click', (e) => {
 });
 
 $('#js-load-tournament').on('click', (e) => {
+	let $this = $(e.currentTarget);
+	if ($this.attr('disabled')) return;
 	let code = $('#js-input-tournament-code').val().slice(-6);
 	client.loadTournament(code);
 });
@@ -235,7 +242,7 @@ $('#button-start').on('click', (e) => {
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-disconnected') });
 		return;
 	}
-	if (configuration.loadTrack() == null) {
+	if (!storage.get('track')) {
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-track-not-loaded') });
 		return;
 	}
@@ -248,9 +255,7 @@ $('#button-start').on('click', (e) => {
 	}
 	else {
 		// production mode
-		if (!client.isFreeRound() && configuration.loadTournament() && configuration.loadRound()) {
-			// TODO MODAL SPAREGGIO
-
+		if (!client.isFreeRound() && storage.get('tournament') && storage.loadRound()) {
 			if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-replay-round'), buttons: ['Ok', 'Cancel'] }) == 1) {
 				return;
 			}
@@ -296,23 +301,23 @@ $('#button-log-file').on('click', (e) => {
 });
 
 $('#button-save-settings').on('click', (e) => {
-	configuration.saveSettings('timeThreshold', parseFloat($('#js-settings-time-threshold').val().replace(',', '.')));
-	configuration.saveSettings('speedThreshold', parseFloat($('#js-settings-speed-threshold').val().replace(',', '.')));
-	configuration.saveSettings('startDelay', parseFloat($('#js-settings-start-delay').val().replace(',', '.')));
+	storage.set('timeThreshold', parseFloat($('#js-settings-time-threshold').val().replace(',', '.')));
+	storage.set('speedThreshold', parseFloat($('#js-settings-speed-threshold').val().replace(',', '.')));
+	storage.set('startDelay', parseFloat($('#js-settings-start-delay').val().replace(',', '.')));
 	ui.showThresholds();
 	e.preventDefault();
 });
 
 $('#button-save-config').on('click', (e) => {
-	configuration.saveSettings('sensorPin1', $('#js-config-sensor-pin-1').val());
-	configuration.saveSettings('sensorPin2', $('#js-config-sensor-pin-2').val());
-	configuration.saveSettings('sensorPin3', $('#js-config-sensor-pin-3').val());
-	configuration.saveSettings('ledPin1', parseInt($('#js-config-led-pin-1').val()));
-	configuration.saveSettings('ledPin2', parseInt($('#js-config-led-pin-2').val()));
-	configuration.saveSettings('ledPin3', parseInt($('#js-config-led-pin-3').val()));
-	configuration.saveSettings('piezoPin', parseInt($('#js-config-piezo-pin').val()));
-	configuration.saveSettings('title', $('#js-config-title').val());
-	configuration.saveSettings('usbPort', $('#js-config-usb-port').val());
+	configuration.set('sensorPin1', parseInt($('#js-config-sensor-pin-1').val()));
+	configuration.set('sensorPin2', parseInt($('#js-config-sensor-pin-2').val()));
+	configuration.set('sensorPin3', parseInt($('#js-config-sensor-pin-3').val()));
+	configuration.set('ledPin1', parseInt($('#js-config-led-pin-1').val()));
+	configuration.set('ledPin2', parseInt($('#js-config-led-pin-2').val()));
+	configuration.set('ledPin3', parseInt($('#js-config-led-pin-3').val()));
+	configuration.set('piezoPin', parseInt($('#js-config-piezo-pin').val()));
+	configuration.set('title', $('#js-config-title').val());
+	configuration.set('usbPort', $('#js-config-usb-port').val());
 	dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-restart') });
 	e.preventDefault();
 });
@@ -340,7 +345,7 @@ $('.js-race-mode').on('click', (e) => {
 	$('.js-race-mode').removeClass('is-primary');
 	$this.addClass('is-primary');
 	let mode = $this.data('race-mode');
-	configuration.saveSettings('raceMode', mode);
+	storage.set('raceMode', mode);
 	switch (mode) {
 		case 0:
 			$('#js-race-mode-description').text(i18n.__('button-race-mode-time-attack-description'));
