@@ -63,7 +63,7 @@ const getRecent = (num) => {
 			recent.push({
 				filename: filename,
 				name: data.name,
-				created: utils.strftime('%Y-%m-%d, %H:%M', data.created)
+				created: data.created
 			});
 		}
 	});

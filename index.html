@@ -555,22 +555,22 @@
 		<div class="modal-background"></div>
 		<div class="modal-card">
 			<header class="modal-card-head">
-				<p class="modal-card-title">Create new race</p>
+				<p class="modal-card-title tn" data-tn="label-new-race">Create new race</p>
 				<button class="delete close-modal" aria-label="close"></button>
 			</header>
 			<section class="modal-card-body">
 				<div class="content">
 					<div class="field">
-						<label class="label tn" data-tn="label-new-race">What's the name of this race?</label>
+						<label class="label tn" data-tn="label-new-race-name">What's the name of this race?</label>
 						<div class="control" style="width: 100%;">
-							<input id="modal-new-name" class="input" type="text" placeholder="diobubbu" value="">
+							<input id="modal-new-name" class="input" type="text" placeholder="" value="" maxlength="40" />
 						</div>
 					</div>
 				</div>
 			</section>
 			<footer class="modal-card-foot" style="justify-content: flex-end;">
-				<button class="button close-modal">Cancel</button>
-				<button id="button-new-race" class="button is-success close-modal">Create race</button>
+				<button class="button close-modal tn" data-tn="button-cancel">Cancel</button>
+				<button id="button-new-race" class="button is-success tn" data-tn="button-create-race">Create race</button>
 			</footer>
 		</div>
 	</div>
@@ -579,18 +579,18 @@
 		<div class="modal-background"></div>
 		<div class="modal-card">
 			<header class="modal-card-head">
-				<p class="modal-card-title">Open existing race</p>
+				<p class="modal-card-title tn" data-tn="label-open-race">Open existing race</p>
 				<button class="delete close-modal" aria-label="close"></button>
 			</header>
-			<section class="modal-card-body">
-				<div class="content is-uppercase">
-					<ul id="modal-open-files">
+			<section class="modal-card-body" style="padding: 0;">
+				<table class="table is-striped" style="width: 100%;">
+					<tbody id="modal-open-files">
+					</tbody>
+				</table>
 
-					</ul>
-				</div>
 			</section>
 			<footer class="modal-card-foot" style="justify-content: flex-end;">
-				<button class="button close-modal">Cancel</button>
+				<button class="button close-modal tn" data-tn="button-cancel">Cancel</button>
 			</footer>
 		</div>
 	</div>

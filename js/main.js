@@ -186,21 +186,23 @@ $('.tabs a').on('click', (e) => {
 });
 
 // modals
+const openModal = (modal) => {
+	$(`#${modal}`).addClass('is-active');
+	$(document.documentElement).addClass('is-clipped');
+};
+
+const closeAllModals = () => {
+	$('.modal').removeClass('is-active');
+	$(document.documentElement).removeClass('is-clipped');
+};
+
 $('.open-modal').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	ui.initModal($this.data('modal'));
 	openModal($this.data('modal'));
 });
 
-const openModal = (modal) => {
-	$(`#${modal}`).addClass('is-active');
-	$(document.documentElement).addClass('is-clipped');
-};
-
-$('.close-modal').on('click', (e) => {
-	$('.modal').removeClass('is-active');
-	$(document.documentElement).removeClass('is-clipped');
-});
+$('.close-modal').on('click', closeAllModals);
 
 // keydown
 document.onkeydown = (e) => {
@@ -213,7 +215,6 @@ document.onkeydown = (e) => {
 // ui observers
 $(document).on('click', '.js-load-race', (e) => {
 	let $this = $(e.currentTarget);
-	debugger;
 	if ($this.attr('disabled')) return;
 	let filename = $this.data('filename');
 	storage.loadRace(filename);
@@ -256,10 +257,10 @@ $('#js-load-tournament').on('click', (e) => {
 });
 
 $('#button-new-race').on('click', (e) => {
-	// TODO do not close dialog if name is empty
 	let name = $('#modal-new-name').val().trim();
 	if (name == '') return false;
 	client.reset(name);
+	closeAllModals();
 });
 
 $('#button-start').on('click', (e) => {
