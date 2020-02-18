@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.11.8-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
+[![Version](https://img.shields.io/badge/version-0.12.2-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
 
 Mini4wdChrono is a fully free and open source project to make a functional 3-lane lap timer for Mini4WD Japan Cup tracks.
 The hardware has been chosen to be as simple and cheap as possible, while still maintain accuracy.
@@ -11,11 +11,11 @@ so you are required to create your track and player list using those websites.
 
 **Quick start guide:**
 
-- Launch the program and go to the "configuration" tab. 
+- Launch the program and go to the "configuration" tab.
     - Change the arduino pins to match your setup.
-    - Change the USB port if needed. 
+    - Change the USB port if needed.
     - Save and reboot the program.
-    - Make sure the 3 colored squares read "1". This mean the light source is correctly pointed at the sensors. 
+    - Make sure the 3 colored squares read "1". This mean the light source is correctly pointed at the sensors.
 - Draw the track in the https://mini4wd-track-editor.pimentoso.com/ website, and save it. Copy the 6-letter code or just copy the link.
 - Import the track in the "race setup" screen. This is important because the program needs to know the length of the track and the lane changes.
 - You can now already go to the "race view" screen and start a race.
@@ -49,11 +49,7 @@ Unzip the program anywhere on your computer, connect the lap timer to the comput
 
 https://www.aliexpress.com/item/32341832857.html
 
-- A white LED strip, 50cm is enough. You can get a 5v USB-powered one, but any strip is ok, more light = better.
-
-https://www.aliexpress.com/item/33000619572.html
-
-- Alternatively, you can use 3 cheap laser diodes. They are more reliable than a LED strip.
+- 3x laser diodes.
 
 https://www.aliexpress.com/item/32822976597.html
 
@@ -61,9 +57,13 @@ https://www.aliexpress.com/item/32822976597.html
 
 https://www.aliexpress.com/item/32583469115.html
 
-- 3x green 5v LEDs, or lilypad boards
+- 3x green 5v LEDs, or lilypad boards.
 
 https://www.aliexpress.com/item/32962136265.html
+
+- Alternatively, you can use a WS2812b LED strip with 9 LEDs (3 for each lane). The ones with 30 LEDS/meter are best so 9 LEDS are 30cm long.
+
+https://www.aliexpress.com/item/2036819167.html
 
 - A magnetic (active) buzzer.
 
@@ -71,9 +71,13 @@ https://www.aliexpress.com/item/32666789405.html
 
 - A straight piece of 3 lane Japan Cup Mini4wd track.
 
-Diagram link: https://www.tinkercad.com/things/jGPGsdLMKwj-mini4wd-chrono
+## Diagram for LEDs/Lilypads
 
 ![diagram](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/schema.png)
+
+## Diagram for WS2812b RGB LED strip
+
+![diagram](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/schema_strip.png)
 
 ## Building the lap timer
 
@@ -81,22 +85,23 @@ Drill 3 holes in the middle of the 3 lanes of a mini4wd track piece. Put the pho
 
 ![sensors mounted](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/sensors.jpg)
 
-Build some sort of bridge-like structure to hold the electronics. Stick the LED strip underside it, so that it casts light on the sensors. If using laser diodes, make sure they are exactly pointed at the phototransistors.
+Build some sort of bridge-like structure to hold the electronics.
 Put the structure over the 3 holes on the track with the sensors. The mini4wd car passing over the phototransistors will trigger a lap.
+Attach the lasers underside the bridge, so that they are exactly pointed at the phototransistors.
 Put the 3 green leds on the front of the lap timer, one over each lane.
 
-Prototype lap timer made of wood and 3d printed joints and LED strip:
-
-![lap timer](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/semaforo2.jpg)
-
-Example lap timer made using cable ducts and laser diodes:
+Example lap timer made using cable ducts:
 
 ![lap timer](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/semaforo1.jpg)
+
+More elaborate lap timer with LED strip and polycarbonate body:
+
+[coming soon]
 
 Connection pins: every pin used is configurable inside the program, but the default are:
 
 - Light sensors: D6, D7, D8
-- LEDs: D3, D4, D5
+- LEDs: D3, D4, D5 (only D3 if using WS2812b strip)
 - Buzzer: D2
 
 Now you need to flash the StandardFirmataPlus firmware on your arduino board. This will allow the arduino to comunicate with the computer via USB. Instructions:

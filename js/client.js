@@ -9,7 +9,7 @@ const xls = require('./export');
 const i18n = new (require('../i18n/i18n'));
 const clone = require('clone');
 
-var currTrack, currTournament;
+var currTrack, currTournament, ledManager;
 var playerList, mancheList, mancheCount, playerTimes;
 var currManche = 0, currRound = 0, raceRunning = false, freeRound = true;
 
@@ -50,6 +50,10 @@ const init = () => {
 	// other init variables
 	raceRunning = false;
 };
+
+const setLedManager = (manager) => {
+	ledManager = manager;
+}
 
 const reset = (name) => {
 	console.log('client.reset called');
@@ -457,9 +461,10 @@ const raceFinished = () => {
 	// kill race check task
 	clearInterval(checkRaceTask);
 
-	if (currTournament && !freeRound) {
-		let cars = chrono.getCars();
+	let cars = chrono.getCars();
+	ledManager.roundFinish(cars);
 
+	if (currTournament && !freeRound) {
 		if (cars[0].playerId > -1) {
 			playerTimes[cars[0].playerId][currManche] = cars[0].currTime;
 		}
@@ -565,6 +570,7 @@ const addLap = (lane) => {
 module.exports = {
 	init: init,
 	reset: reset,
+	setLedManager: setLedManager,
 	sensorRead: sensorRead,
 	keydown: keydown,
 	loadTrack: loadTrack,

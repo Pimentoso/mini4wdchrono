@@ -33,6 +33,7 @@ const storage = require('./js/storage');
 const client = require('./js/client');
 const ui = require('./js/ui');
 const utils = require('./js/utils');
+const ledManagers = require('./js/led_manager');
 const i18n = new (require('./i18n/i18n'));
 
 // load race from file
@@ -54,61 +55,74 @@ const board = new j5.Board({
 	repl: false // does not work with browser console
 });
 var connected = false;
-var sensorPin1, sensorPin2, sensorPin3, buzzerPin;
-var led1, led2, led3;
+var sensorPin1, sensorPin2, sensorPin3;
 var tag1, tag2, tag3;
+var val1 = 0, val2 = 0, val3 = 0;
+
+if (configuration.get('ledType') == 0) {
+	var ledManager = new ledManagers.LedManagerLilypad(board, [
+			configuration.get('ledPin1'),
+			configuration.get('ledPin2'),
+			configuration.get('ledPin3')
+		],
+		configuration.get('piezoPin')
+	)
+}
+else if (configuration.get('ledType') == 1) {
+	var ledManager = new ledManagers.LedManagerRgbStrip(
+		board,
+		configuration.get('ledPin1'),
+		configuration.get('piezoPin')
+	);
+}
 
 board.on('ready', function () {
 	connected = true;
 	log.info(`Board READY at ${new Date()}`);
-	ui.boardConnected();
 
 	tag1 = $('#sensor-reading-1');
 	tag2 = $('#sensor-reading-2');
 	tag3 = $('#sensor-reading-3');
 
-	// ==== hardware init
-	led1 = new j5.Led(configuration.get('ledPin1'));
-	led2 = new j5.Led(configuration.get('ledPin2'));
-	led3 = new j5.Led(configuration.get('ledPin3'));
-
 	// raw reading from digital pins because it's faster
 	sensorPin1 = configuration.get('sensorPin1');
 	sensorPin2 = configuration.get('sensorPin2');
 	sensorPin3 = configuration.get('sensorPin3');
-	buzzerPin = configuration.get('piezoPin');
 
 	this.samplingInterval(1);
 	this.pinMode(sensorPin1, j5.Pin.INPUT);
 	this.pinMode(sensorPin2, j5.Pin.INPUT);
 	this.pinMode(sensorPin3, j5.Pin.INPUT);
-	this.pinMode(buzzerPin, j5.Pin.OUTPUT);
 
 	this.digitalRead(sensorPin1, function (val) {
 		tag1.text(val);
-		if (val == 0) {
+		if (val == 0 && val1 == 1) {
 			client.sensorRead(1);
-			flashLed(led1);
+			ledManager.lap(0);
 		}
+		val1 = val;
 	});
 
 	this.digitalRead(sensorPin2, function (val) {
 		tag2.text(val);
-		if (val == 0) {
+		if (val == 0 && val2 == 1) {
 			client.sensorRead(2);
-			flashLed(led2);
+			ledManager.lap(1);
 		}
+		val2 = val;
 	});
 
 	this.digitalRead(sensorPin3, function (val) {
 		tag3.text(val);
-		if (val == 0) {
+		if (val == 0 && val3 == 1) {
 			client.sensorRead(3);
-			flashLed(led3);
+			ledManager.lap(2);
 		}
+		val3 = val;
 	});
 
-	playConnect();
+	ledManager.connected();
+	ui.boardConnected();
 });
 
 board.on("info", function (event) {
@@ -123,6 +137,7 @@ board.on("fail", function (event) {
 	connected = false;
 	log.error(`Board FAIL at ${new Date()} - ${event.message}`);
 
+	ledManager.disconnected();
 	ui.boardDisonnected();
 
 	if (!debugMode) {
@@ -134,6 +149,7 @@ board.on("error", function (event) {
 	connected = false;
 	log.error(`Board ERROR at ${new Date()} - ${event.message}`);
 
+	ledManager.disconnected();
 	ui.boardDisonnected();
 
 	if (!debugMode) {
@@ -154,22 +170,14 @@ board.on("close", function (event) {
 	connected = false;
 	log.error(`Board CLOSE at ${new Date()} - ${event.message}`);
 	ui.boardDisonnected();
-
-	led1.stop().off();
-	led2.stop().off();
-	led3.stop().off();
-	board.digitalWrite(buzzerPin, 0);
+	ledManager.disconnected();
 });
 
 board.on("exit", function (event) {
 	connected = false;
 	log.error(`Board EXIT at ${new Date()} - ${event.message}`);
 	ui.boardDisonnected();
-
-	led1.stop().off();
-	led2.stop().off();
-	led3.stop().off();
-	board.digitalWrite(buzzerPin, 0);
+	ledManager.disconnected();
 });
 
 // ==========================================================================
@@ -287,7 +295,8 @@ $('#button-start').on('click', (e) => {
 			}
 		}
 		ui.raceStarted();
-		playStart();
+		client.initRound();
+		ledManager.roundStart(client.startRound);
 	}
 });
 
@@ -354,6 +363,16 @@ $('#button-manches-save').on('click', (e) => {
 	dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-saved') });
 });
 
+$('.js-led-type').on('click', (e) => {
+	debugger;
+	let $this = $(e.currentTarget);
+	if ($this.attr('disabled')) return;
+	$('.js-led-type').removeClass('is-primary');
+	$this.addClass('is-primary');
+	let type = $this.data('led-type');
+	configuration.set('ledType', type);
+});
+
 $('.js-race-mode').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
@@ -383,37 +402,7 @@ $('.js-invalidate').on('click', (e) => {
 });
 
 // ==========================================================================
-// ==== send commands to hardware
-
-const flashLed = (led) => {
-	led.on();
-	utils.delay(() => { led.off(); }, 1000);
-};
-
-const playBuzzer = (millis) => {
-	board.digitalWrite(buzzerPin, 1);
-	utils.delay(() => { board.digitalWrite(buzzerPin, 0); }, millis);
-};
-
-const playStart = () => {
-	client.initRound();
-	led1.on(); led2.on(); led3.on(); playBuzzer(1500);
-	utils
-		.delay(() => { led1.off(); led2.off(); led3.off(); }, 1500)
-		.delay(() => { led1.on(); playBuzzer(500); }, 1000)
-		.delay(() => { led1.off(); led2.on(); playBuzzer(500); }, 1000)
-		.delay(() => { led2.off(); led3.on(); playBuzzer(500); }, 1000)
-		.delay(() => { led3.off(); }, 1000)
-		.delay(() => { led1.on(); led2.on(); led3.on(); playBuzzer(1000); client.startRound(); }, 1500)
-		.delay(() => { led1.off(); led2.off(); led3.off(); }, 2500);
-};
-
-const playConnect = () => {
-	led1.blink(125); led2.blink(125); led3.blink(125);
-	utils.delay(() => { led1.stop().off(); led2.stop().off(); led3.stop().off(); }, 3000);
-};
-
-// ==========================================================================
 // ==== init client
 
 client.init();
+client.setLedManager(ledManager);
