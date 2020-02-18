@@ -1,6 +1,6 @@
 {
   "name": "Mini4wdChrono",
-  "version": "0.11.8",
+  "version": "0.12.2",
   "description": "[![WIP](https://img.shields.io/badge/status-WORK%20IN%20PROGRESS-red.svg)](https://github.com/Pimentoso/mini4wdchrono)",
   "main": "window.js",
   "dependencies": {
@@ -12,7 +12,8 @@
     "jquery": "^3.4.1",
     "nconf": "^0.10.0",
     "serialport": "^7.1.5",
-    "underscore": "^1.9.1"
+    "underscore": "^1.9.1",
+    "node-pixel": "Pimentoso/node-pixel"
   },
   "devDependencies": {
     "electron": "^5.0.6",

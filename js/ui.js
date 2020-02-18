@@ -24,6 +24,7 @@ const init = () => {
 	$('#js-settings-speed-threshold').val(storage.get('speedThreshold'));
 	$('#js-settings-start-delay').val(storage.get('startDelay'));
 
+	$(`#js-led-type-${configuration.get('ledType')}`).click();
 	$('#js-config-sensor-pin-1').val(configuration.get('sensorPin1'));
 	$('#js-config-sensor-pin-2').val(configuration.get('sensorPin2'));
 	$('#js-config-sensor-pin-3').val(configuration.get('sensorPin3'));

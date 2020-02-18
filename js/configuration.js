@@ -11,6 +11,7 @@ var filepath = path.join(dir, 'settings.json');
 const globalConf = require('nconf').file('global', { file: filepath });
 
 globalConf.defaults({
+	'ledType': 0,
 	'sensorPin1': 6,
 	'sensorPin2': 7,
 	'sensorPin3': 8,
