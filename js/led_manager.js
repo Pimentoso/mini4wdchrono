@@ -8,9 +8,9 @@ const COLOR_GREEN = '#66cc33';
 const COLOR_BLUE = '#188bc8';
 const COLOR_RED = '#ff0100';
 
-const COLOR_POS1 = '#ff0100';
-const COLOR_POS2 = '#ff7400';
-const COLOR_POS3 = '#fec101';
+const COLOR_POS1 = COLOR_GREEN;
+const COLOR_POS2 = COLOR_BLUE;
+const COLOR_POS3 = COLOR_RED;
 
 const COLOR_TAMIYA_RED = '#e62227';
 const COLOR_TAMIYA_WHITE = '#f8f8f8';
