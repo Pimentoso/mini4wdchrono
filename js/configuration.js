@@ -1,6 +1,7 @@
 'use strict';
 
-const { app } = require('electron').remote;
+const { app, dialog } = require('electron').remote;
+const fs = require('fs');
 const path = require('path');
 
 // %APPDATA% on Windows
@@ -8,20 +9,32 @@ const path = require('path');
 // ~/Library/Application Support on macOS
 var dir = app.getPath('userData');
 var filepath = path.join(dir, 'settings.json');
-const globalConf = require('nconf').file('global', { file: filepath });
+var globalConf;
 
-globalConf.defaults({
-	'ledType': 0,
-	'sensorPin1': 6,
-	'sensorPin2': 7,
-	'sensorPin3': 8,
-	'ledPin1': 3,
-	'ledPin2': 4,
-	'ledPin3': 5,
-	'piezoPin': 2,
-	// 'usbPort': 'COM3',
-	'title': 'MINI4WD CHRONO'
-});
+const init = () => {
+	globalConf = require('nconf').file('global', { file: filepath });
+
+	globalConf.defaults({
+		'ledType': 0,
+		'sensorPin1': 6,
+		'sensorPin2': 7,
+		'sensorPin3': 8,
+		'ledPin1': 3,
+		'ledPin2': 4,
+		'ledPin3': 5,
+		'piezoPin': 2,
+		// 'usbPort': 'COM3',
+		'title': 'MINI4WD CHRONO'
+	});
+};
+
+const reset = () => {
+	let backup_filepath = path.join(dir, 'settings.json.bak');
+	fs.copyFileSync(filepath, backup_filepath);
+	fs.unlinkSync(filepath);
+	init();
+	return backup_filepath;
+};
 
 const set = (settingKey, settingValue) => {
 	globalConf.set(settingKey, settingValue);
@@ -39,6 +52,8 @@ const del = (settingKey) => {
 };
 
 module.exports = {
+	init: this.init,
+	reset: reset,
 	set: set,
 	get: get,
 	del: del
