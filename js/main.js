@@ -218,8 +218,8 @@ const closeAllModals = () => {
 
 $('.open-modal').on('click', (e) => {
 	let $this = $(e.currentTarget);
-	ui.initModal($this.data('modal'));
 	openModal($this.data('modal'));
+	ui.initModal($this.data('modal'));
 });
 
 $('.close-modal').on('click', closeAllModals);
