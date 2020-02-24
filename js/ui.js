@@ -70,6 +70,9 @@ const init = () => {
 };
 
 const initModal = (modalId) => {
+	if (modalId == 'modal-new') {
+		$('#modal-new-name').focus();
+	}
 	if (modalId == 'modal-open') {
 		$('#modal-open-files').empty();
 		let data = storage.getRecent(10);

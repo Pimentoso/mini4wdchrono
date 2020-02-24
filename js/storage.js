@@ -8,6 +8,17 @@ const storage = require('electron-settings');
 const configuration = require('./configuration');
 configuration.init();
 
+const setDefaults = () => {
+	let timestamp = parseInt(new Date().getTime() / 1000);
+	storage.set('created', timestamp);
+	storage.set('currManche', 0);
+	storage.set('currRound', 0);
+	storage.set('raceMode', 0);
+	storage.set('timeThreshold', 40);
+	storage.set('speedThreshold', 5);
+	storage.set('startDelay', 3);
+};
+
 const newRace = (raceName) => {
 	let userdir = app.getPath('userData');
 	let storagedir = path.join(userdir, 'races');
@@ -21,25 +32,21 @@ const newRace = (raceName) => {
 	configuration.set('raceFile', filename);
 	fs.closeSync(fs.openSync(filepath, 'w')); // create empty file
 	storage.setPath(filepath);
-
-	// defaults
 	storage.set('name', raceName);
-	storage.set('created', timestamp);
-	storage.set('currManche', 0);
-	storage.set('currRound', 0);
-	storage.set('raceMode', 0);
-	storage.set('timeThreshold', 40);
-	storage.set('speedThreshold', 5);
-	storage.set('startDelay', 3);
+	setDefaults();
 };
 
 const loadRace = (filename) => {
 	filename = filename || configuration.get('raceFile');
 	if (filename) {
+		filename = filename.substr(filename.length - 15); // retrocompatibility
 		let userdir = app.getPath('userData');
 		let filepath = path.join(userdir, 'races', filename);
 		configuration.set('raceFile', filename);
 		storage.setPath(filepath);
+		if (storage.get('created') == null) {
+			setDefaults();
+		}
 	}
 	else {
 		newRace();
