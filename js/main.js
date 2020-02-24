@@ -28,6 +28,7 @@ log.catchErrors();
 
 const j5 = require('johnny-five');
 const configuration = require('./js/configuration');
+const i18n = new (require('./i18n/i18n'));
 
 // load conf
 try {
@@ -46,7 +47,6 @@ const client = require('./js/client');
 const ui = require('./js/ui');
 const ledManagers = require('./js/led_manager');
 const xls = require('./js/export');
-const i18n = new (require('./i18n/i18n'));
 
 // Show version in about tab
 $('#js-about-version').text(`Version ${app.getVersion()}`);
@@ -342,7 +342,6 @@ $('#button-manches-save').on('click', (e) => {
 });
 
 $('.js-led-type').on('click', (e) => {
-	debugger;
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
 	$('.js-led-type').removeClass('is-primary');

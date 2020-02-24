@@ -52,7 +52,7 @@ const del = (settingKey) => {
 };
 
 module.exports = {
-	init: this.init,
+	init: init,
 	reset: reset,
 	set: set,
 	get: get,
