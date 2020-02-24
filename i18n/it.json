@@ -96,6 +96,8 @@
 	"label-car-out": "fuori",
 	"label-car-partial": "parziale",
 	"label-car-lap": "giro",
+	"dialog-configuration-error": "Errore nella lettura del file di configurazione",
+	"dialog-configuration-error-detail": "La configurazione e' stata resettata a default. Si prega di controllare la pagina di configurazione per eventuali modifiche. Il vecchio file di configurazione e' stato copiato qui: ",
 	"dialog-connection-error": "Errore di connessione",
 	"dialog-save-track": "Salvare queste informazioni della pista?",
 	"dialog-new-race": "Iniziare una nuova gara? Tutti i dati attuali saranno persi.",

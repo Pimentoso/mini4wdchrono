@@ -3,9 +3,10 @@
 const { app } = require('electron').remote;
 const fs = require('fs');
 const path = require('path');
+const jsonfile = require('jsonfile');
 const storage = require('electron-settings');
 const configuration = require('./configuration');
-const jsonfile = require('jsonfile');
+configuration.init();
 
 const newRace = (raceName) => {
 	let userdir = app.getPath('userData');

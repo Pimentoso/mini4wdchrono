@@ -27,14 +27,26 @@ log.info(`Launched Mini4wdChrono at ${new Date()}`);
 log.catchErrors();
 
 const j5 = require('johnny-five');
-const xls = require('./js/export');
 const configuration = require('./js/configuration');
+const i18n = new (require('./i18n/i18n'));
+
+// load conf
+try {
+	configuration.init();
+}
+catch (e) {
+	// JSON parse error
+	log.error("Error loading configuration.");
+	log.error(e.message);
+	let backup_filepath = configuration.reset();
+	dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-configuration-error'), detail: `${i18n.__('dialog-configuration-error-detail')} ${backup_filepath}` });
+}
+
 const storage = require('./js/storage');
 const client = require('./js/client');
 const ui = require('./js/ui');
-const utils = require('./js/utils');
 const ledManagers = require('./js/led_manager');
-const i18n = new (require('./i18n/i18n'));
+const xls = require('./js/export');
 
 // load race from file
 storage.loadRace();
@@ -364,7 +376,6 @@ $('#button-manches-save').on('click', (e) => {
 });
 
 $('.js-led-type').on('click', (e) => {
-	debugger;
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
 	$('.js-led-type').removeClass('is-primary');

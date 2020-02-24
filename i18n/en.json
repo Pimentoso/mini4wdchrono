@@ -96,6 +96,8 @@
 	"label-car-out": "out",
 	"label-car-partial": "partial",
 	"label-car-lap": "lap",
+	"dialog-configuration-error": "Error reading the configuration file",
+	"dialog-configuration-error-detail": "The configuration has been reset to default. Please check the configuration page for any change. The old configuration file has been copied to: ",
 	"dialog-connection-error": "Connection error",
 	"dialog-save-track": "Save track values?",
 	"dialog-new-race": "Start new race? All the current data will be lost.",
