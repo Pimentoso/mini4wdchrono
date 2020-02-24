@@ -1,8 +1,7 @@
-const electron = require('electron')
+const { app } = require('electron').remote;
 const fs = require('fs');
 const path = require('path')
 let loadedLanguage;
-let app = electron.app ? electron.app : electron.remote.app
 
 module.exports = i18n;
 

@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const storage = require('electron-settings');
 const configuration = require('./configuration');
+configuration.init();
 
 const newRace = () => {
 	let userdir = app.getPath('userData');

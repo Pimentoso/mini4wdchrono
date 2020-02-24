@@ -2,8 +2,9 @@
 
 const serialport = require('serialport');
 const utils = require('./utils');
-const configuration = require('./configuration');
 const i18n = new (require('../i18n/i18n'))();
+const configuration = require('./configuration');
+configuration.init();
 
 const boardConnected = () => {
 	$('#tag-board-status').removeClass('is-danger');
