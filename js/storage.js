@@ -51,8 +51,11 @@ const saveRound = (manche, round, cars) => {
 };
 
 const loadRound = (manche, round) => {
-	manche = manche || storage.get('currManche');
-	round = round || storage.get('currRound');
+	if (manche == null)
+		manche = storage.get('currManche');
+	if (round == null)
+		round = storage.get('currRound');
+
 	return storage.get(`race.m${manche}.r${round}`);
 };
 
