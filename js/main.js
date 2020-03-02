@@ -68,14 +68,17 @@ var sensorPin1, sensorPin2, sensorPin3;
 var tag1, tag2, tag3;
 var val1 = 0, val2 = 0, val3 = 0;
 
-if (configuration.get('ledType') == 0) {
+if (debugMode) {
+	var ledManager = new ledManagers.LedManagerMock(board, configuration.get('piezoPin'));
+}
+else if (configuration.get('ledType') == 0) {
 	var ledManager = new ledManagers.LedManagerLilypad(board, [
 			configuration.get('ledPin1'),
 			configuration.get('ledPin2'),
 			configuration.get('ledPin3')
 		],
 		configuration.get('piezoPin')
-	)
+	);
 }
 else if (configuration.get('ledType') == 1) {
 	var ledManager = new ledManagers.LedManagerRgbStrip(
