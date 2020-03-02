@@ -146,6 +146,7 @@ const overrideTimes = () => {
 const initTimeList = () => {
 	console.log('client.initTimeList called');
 
+	playerTimes = [];
 	_.each(mancheList, (_manche, mindex) => {
 		_.each(playerList, (_playerId, pindex) => {
 			playerTimes[pindex] = playerTimes[pindex] || [];
