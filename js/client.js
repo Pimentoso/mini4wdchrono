@@ -145,8 +145,6 @@ const overrideTimes = () => {
 // Initializes playerTimes
 const initTimeList = () => {
 	console.log('client.initTimeList called');
-
-	playerTimes = [];
 	_.each(mancheList, (_manche, mindex) => {
 		_.each(playerList, (_playerId, pindex) => {
 			playerTimes[pindex] = playerTimes[pindex] || [];
@@ -415,6 +413,9 @@ const tournamentLoadDone = (obj) => {
 	}
 
 	storage.set('tournament', currTournament);
+
+	playerTimes = [];
+	storage.set('playerTimes', playerTimes);
 
 	freeRound = false;
 	ui.tournamentLoadDone(currTournament);
