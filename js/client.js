@@ -42,8 +42,8 @@ const init = () => {
 	// load tournament from settings
 	let savedTournament = storage.get('tournament');
 	if (savedTournament) {
-		tournamentLoadDone(savedTournament);
 		playerTimes = storage.get('playerTimes') || [];
+		tournamentLoadDone(savedTournament);
 	}
 	showTournamentDetails();
 
@@ -373,9 +373,9 @@ const loadTournament = (code) => {
 
 	$.getJSON(`https://mini4wd-tournament.pimentoso.com/api/tournament/${code}`)
 		.done((obj) => {
-			tournamentLoadDone(obj);
 			playerTimes = [];
 			storage.set('playerTimes', playerTimes);
+			tournamentLoadDone(obj);
 		})
 		.fail(tournamentLoadFail)
 		.always(() => {

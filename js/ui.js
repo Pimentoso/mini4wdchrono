@@ -412,10 +412,6 @@ const initRace = (freeRound) => {
 		$('#name-lane0').text(' ');
 		$('#name-lane1').text(' ');
 		$('#name-lane2').text(' ');
-		$('#curr-manche').text('0');
-		$('#curr-round').text('0');
-		showPlayerList();
-		showMancheList();
 	}
 	else {
 		let playerList = tournament.players;
