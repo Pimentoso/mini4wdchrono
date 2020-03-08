@@ -45,9 +45,9 @@ Unzip the program anywhere on your computer, connect the lap timer to the comput
 
 - A computer with the Mini4WDChrono software installed.
 
-- An arduino board. The project has been tested with both Arduino UNO, Arduino Nano and Pro Micro.
+- An arduino board. The project has been tested with both Arduino UNO, Arduino Nano and Pro Micro. I recommend the Pro Micro because it's smaller, has micro-USB plug, and doesn't require drivers (get the Micro USB 3-18V version, the black one).
 
-https://www.aliexpress.com/item/32341832857.html
+https://www.aliexpress.com/item/32849563958.html
 
 - 3x laser diodes.
 
@@ -112,6 +112,13 @@ Now you need to flash the StandardFirmataPlus firmware on your arduino board. Th
 - Navigate to File > Examples > Firmata > StandardFirmataPlus
 - Upload sketch onto board.
 - Done!
+
+If you are using the LED RGB strip, you need node-pixel Firmata instead of the regular one. [Refer to the documentation here.](https://github.com/ajfisher/node-pixel/blob/master/docs/installation.md#b-node-pixel-firmata). The relevant commands are
+
+```
+npm install -g nodebots-interchange
+interchange install git+https://github.com/ajfisher/node-pixel -a nano
+```
 
 When you launch Mini4WD Chrono, the small badge on the top right will be green and say "board connected".
 If you have problems, go to the configuration tab, change the USB port, and save settings. Disconnect and reconnect the arduino board to USB, and reload the program.
