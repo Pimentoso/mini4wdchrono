@@ -96,7 +96,7 @@ Example lap timer made using cable ducts:
 
 More elaborate lap timer with LED strip and polycarbonate body:
 
-[coming soon]
+![lap timer](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/semaforo2.jpg)
 
 Connection pins: every pin used is configurable inside the program, but the default are:
 
@@ -113,7 +113,7 @@ Now you need to flash the StandardFirmataPlus firmware on your arduino board. Th
 - Upload sketch onto board.
 - Done!
 
-If you are using the LED RGB strip, you need node-pixel Firmata instead of the regular one. [Refer to the documentation here.](https://github.com/ajfisher/node-pixel/blob/master/docs/installation.md#b-node-pixel-firmata). The relevant commands are
+If you are using the LED RGB strip, you need node-pixel Firmata instead of the regular one. [Refer to the documentation here.](https://github.com/ajfisher/node-pixel/blob/master/docs/installation.md#b-node-pixel-firmata) The relevant commands are
 
 ```
 npm install -g nodebots-interchange
