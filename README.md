@@ -71,15 +71,25 @@ https://www.aliexpress.com/item/32666789405.html
 
 - A straight piece of 3 lane Japan Cup Mini4wd track.
 
-## Diagram for LEDs/Lilypads
+## Building the lap timer
+
+Connect all electronic parts like the diagrams.
+
+### Diagram for LEDs/Lilypads
 
 ![diagram](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/schema.png)
 
-## Diagram for WS2812b RGB LED strip
+### Diagram for WS2812b RGB LED strip
 
 ![diagram](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/schema_strip.png)
 
-## Building the lap timer
+Default pins used:
+
+- Light sensors: D6, D7, D8
+- LEDs: D3, D4, D5 (only D3 if using WS2812b strip)
+- Buzzer: D2
+
+Note: all arduino pins used are configurable inside the program.
 
 Drill 3 holes in the middle of the 3 lanes of a mini4wd track piece. Put the phototransistors under the holes and fix them with tape.
 
@@ -97,12 +107,6 @@ Example lap timer made using cable ducts:
 More elaborate lap timer with LED strip and polycarbonate body:
 
 ![lap timer](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/semaforo2.jpg)
-
-Connection pins: every pin used is configurable inside the program, but the default are:
-
-- Light sensors: D6, D7, D8
-- LEDs: D3, D4, D5 (only D3 if using WS2812b strip)
-- Buzzer: D2
 
 Now you need to flash the StandardFirmataPlus firmware on your arduino board. This will allow the arduino to comunicate with the computer via USB. Instructions:
 
@@ -126,7 +130,7 @@ If you have problems, go to the configuration tab, change the USB port, and save
 
 Some Arduino Nano clones may need the CH340 USB driver to be recognized. [You can download it here](https://sparks.gogo.co.nz/ch340.html).
 
-# Contributing
+# Developing and contributing
 
 ## Build on OSX
 Run ```brew install nodenv``` and follow installation instructions here. https://github.com/nodenv/nodenv

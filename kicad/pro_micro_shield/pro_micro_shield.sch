@@ -221,39 +221,13 @@ Wire Wire Line
 	5200 4550 5200 5200
 Wire Wire Line
 	5200 5200 3150 5200
-$Comp
-L Connector:Conn_01x03_Female JGND0
-U 1 1 5E645A68
-P 7200 3100
-F 0 "JGND0" H 7228 3126 50  0000 L CNN
-F 1 "Conn_01x03_Female" H 7228 3035 50  0000 L CNN
-F 2 "Connector_Wire:SolderWirePad_1x03_P3.175mm_Drill1mm" H 7200 3100 50  0001 C CNN
-F 3 "~" H 7200 3100 50  0001 C CNN
-	1    7200 3100
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:Conn_01x03_Female JVCC0
-U 1 1 5E6468D3
-P 7200 3450
-F 0 "JVCC0" H 7228 3476 50  0000 L CNN
-F 1 "Conn_01x03_Female" H 7228 3385 50  0000 L CNN
-F 2 "Connector_Wire:SolderWirePad_1x03_P3.175mm_Drill1mm" H 7200 3450 50  0001 C CNN
-F 3 "~" H 7200 3450 50  0001 C CNN
-	1    7200 3450
-	1    0    0    -1  
-$EndComp
 Text GLabel 7000 3000 0    50   Input ~ 0
 GND
 Text GLabel 7000 3100 0    50   Input ~ 0
 GND
-Text GLabel 7000 3200 0    50   Input ~ 0
-GND
 Text GLabel 7000 3350 0    50   Input ~ 0
 VCC
 Text GLabel 7000 3450 0    50   Input ~ 0
-VCC
-Text GLabel 7000 3550 0    50   Input ~ 0
 VCC
 Wire Wire Line
 	7000 3700 6800 3700
@@ -336,6 +310,65 @@ F 1 "MountingHole" H 7450 4755 50  0000 L CNN
 F 2 "MountingHole:MountingHole_2.2mm_M2" H 7350 4800 50  0001 C CNN
 F 3 "~" H 7350 4800 50  0001 C CNN
 	1    7350 4800
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x02_Female JLASER0
+U 1 1 5E661891
+P 7450 4050
+F 0 "JLASER0" H 7478 4026 50  0000 L CNN
+F 1 "Conn_01x02_Female" H 7478 3935 50  0000 L CNN
+F 2 "Connector_Wire:SolderWirePad_1x02_P3.81mm_Drill1mm" H 7450 4050 50  0001 C CNN
+F 3 "~" H 7450 4050 50  0001 C CNN
+	1    7450 4050
+	1    0    0    -1  
+$EndComp
+Text GLabel 7250 4150 0    50   Input ~ 0
+VCC
+Text GLabel 7250 4050 0    50   Input ~ 0
+GND
+$Comp
+L Connector:Conn_01x01_Female JGND0
+U 1 1 5E666EF2
+P 7200 3000
+F 0 "JGND0" H 7228 3026 50  0000 L CNN
+F 1 "Conn_01x01_Female" H 7228 2935 50  0000 L CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 7200 3000 50  0001 C CNN
+F 3 "~" H 7200 3000 50  0001 C CNN
+	1    7200 3000
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x01_Female JGND1
+U 1 1 5E667A92
+P 7200 3100
+F 0 "JGND1" H 7228 3126 50  0000 L CNN
+F 1 "Conn_01x01_Female" H 7228 3035 50  0000 L CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 7200 3100 50  0001 C CNN
+F 3 "~" H 7200 3100 50  0001 C CNN
+	1    7200 3100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x01_Female JVCC0
+U 1 1 5E6684FC
+P 7200 3350
+F 0 "JVCC0" H 7228 3376 50  0000 L CNN
+F 1 "Conn_01x01_Female" H 7228 3285 50  0000 L CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 7200 3350 50  0001 C CNN
+F 3 "~" H 7200 3350 50  0001 C CNN
+	1    7200 3350
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x01_Female JVCC1
+U 1 1 5E6689E2
+P 7200 3450
+F 0 "JVCC1" H 7228 3476 50  0000 L CNN
+F 1 "Conn_01x01_Female" H 7228 3385 50  0000 L CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 7200 3450 50  0001 C CNN
+F 3 "~" H 7200 3450 50  0001 C CNN
+	1    7200 3450
 	1    0    0    -1  
 $EndComp
 $EndSCHEMATC
