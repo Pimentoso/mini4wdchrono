@@ -29,7 +29,6 @@ const init = () => {
 	$('#main').show();
 
 	// read stuff from settings
-	playerTimes = storage.get('playerTimes') || [];
 	currManche = storage.get('currManche') || 0;
 	currRound = storage.get('currRound') || 0;
 
@@ -43,6 +42,7 @@ const init = () => {
 	// load tournament from settings
 	let savedTournament = storage.get('tournament');
 	if (savedTournament) {
+		playerTimes = storage.get('playerTimes') || [];
 		tournamentLoadDone(savedTournament);
 	}
 	showTournamentDetails();
@@ -145,7 +145,6 @@ const overrideTimes = () => {
 // Initializes playerTimes
 const initTimeList = () => {
 	console.log('client.initTimeList called');
-
 	_.each(mancheList, (_manche, mindex) => {
 		_.each(playerList, (_playerId, pindex) => {
 			playerTimes[pindex] = playerTimes[pindex] || [];
@@ -374,6 +373,8 @@ const loadTournament = (code) => {
 
 	$.getJSON(`https://mini4wd-tournament.pimentoso.com/api/tournament/${code}`)
 		.done((obj) => {
+			playerTimes = [];
+			storage.set('playerTimes', playerTimes);
 			tournamentLoadDone(obj);
 		})
 		.fail(tournamentLoadFail)
@@ -406,6 +407,7 @@ const tournamentLoadDone = (obj) => {
 	currTournament = obj;
 	playerList = clone(obj.players);
 	mancheList = clone(obj.manches);
+
 	mancheCount = mancheList.length; // save original manche count, without finals
 	currTournament.mancheCount = mancheCount;
 

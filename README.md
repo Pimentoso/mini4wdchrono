@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.12.2-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
+[![Version](https://img.shields.io/badge/version-0.12.3-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
 
 Mini4wdChrono is a fully free and open source project to make a functional 3-lane lap timer for Mini4WD Japan Cup tracks.
 The hardware has been chosen to be as simple and cheap as possible, while still maintain accuracy.
@@ -45,9 +45,9 @@ Unzip the program anywhere on your computer, connect the lap timer to the comput
 
 - A computer with the Mini4WDChrono software installed.
 
-- An arduino board. The project has been tested with both Arduino UNO, Arduino Nano and Pro Micro.
+- An arduino board. The project has been tested with both Arduino UNO, Arduino Nano and Pro Micro. I recommend the Pro Micro because it's smaller, has micro-USB plug, and doesn't require drivers (get the Micro USB 3-18V version, the black one).
 
-https://www.aliexpress.com/item/32341832857.html
+https://www.aliexpress.com/item/32849563958.html
 
 - 3x laser diodes.
 
@@ -71,15 +71,25 @@ https://www.aliexpress.com/item/32666789405.html
 
 - A straight piece of 3 lane Japan Cup Mini4wd track.
 
-## Diagram for LEDs/Lilypads
+## Building the lap timer
+
+Connect all electronic parts like the diagrams.
+
+### Diagram for LEDs/Lilypads
 
 ![diagram](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/schema.png)
 
-## Diagram for WS2812b RGB LED strip
+### Diagram for WS2812b RGB LED strip
 
 ![diagram](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/schema_strip.png)
 
-## Building the lap timer
+Default pins used:
+
+- Light sensors: D6, D7, D8
+- LEDs: D3, D4, D5 (only D3 if using WS2812b strip)
+- Buzzer: D2
+
+Note: all arduino pins used are configurable inside the program.
 
 Drill 3 holes in the middle of the 3 lanes of a mini4wd track piece. Put the phototransistors under the holes and fix them with tape.
 
@@ -96,13 +106,7 @@ Example lap timer made using cable ducts:
 
 More elaborate lap timer with LED strip and polycarbonate body:
 
-[coming soon]
-
-Connection pins: every pin used is configurable inside the program, but the default are:
-
-- Light sensors: D6, D7, D8
-- LEDs: D3, D4, D5 (only D3 if using WS2812b strip)
-- Buzzer: D2
+![lap timer](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/semaforo2.jpg)
 
 Now you need to flash the StandardFirmataPlus firmware on your arduino board. This will allow the arduino to comunicate with the computer via USB. Instructions:
 
@@ -113,13 +117,20 @@ Now you need to flash the StandardFirmataPlus firmware on your arduino board. Th
 - Upload sketch onto board.
 - Done!
 
+If you are using the LED RGB strip, you need node-pixel Firmata instead of the regular one. [Refer to the documentation here.](https://github.com/ajfisher/node-pixel/blob/master/docs/installation.md#b-node-pixel-firmata) The relevant commands are
+
+```
+npm install -g nodebots-interchange
+interchange install git+https://github.com/ajfisher/node-pixel -a nano
+```
+
 When you launch Mini4WD Chrono, the small badge on the top right will be green and say "board connected".
 If you have problems, go to the configuration tab, change the USB port, and save settings. Disconnect and reconnect the arduino board to USB, and reload the program.
 **NOTE: the arduino board must be connected to the computer USB BEFORE launching the program.**
 
 Some Arduino Nano clones may need the CH340 USB driver to be recognized. [You can download it here](https://sparks.gogo.co.nz/ch340.html).
 
-# Contributing
+# Developing and contributing
 
 ## Build on OSX
 Run ```brew install nodenv``` and follow installation instructions here. https://github.com/nodenv/nodenv

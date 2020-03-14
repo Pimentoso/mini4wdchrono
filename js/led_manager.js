@@ -51,6 +51,19 @@ class LedManager {
 	}
 }
 
+// Mock manager. Does nothing.
+class LedManagerMock extends LedManager {
+	constructor(board, pinBuzzer) {
+		super(board, pinBuzzer);
+	}
+
+	roundStart(startTimerCallback) { }
+
+	roundFinish(cars) { }
+
+	lap(lane) { }
+}
+
 // Simple manager for 3 green LEDs and a buzzer.
 class LedManagerLilypad extends LedManager {
 	constructor(board, pinLeds, pinBuzzer) {
@@ -277,5 +290,6 @@ class LedManagerRgbStrip extends LedManager {
 
 module.exports = {
 	LedManagerLilypad: LedManagerLilypad,
-	LedManagerRgbStrip: LedManagerRgbStrip
+	LedManagerRgbStrip: LedManagerRgbStrip,
+	LedManagerMock: LedManagerMock
 }
