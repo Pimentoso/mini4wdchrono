@@ -242,7 +242,7 @@ $(document).on('click', '.js-load-race', (e) => {
 	let filename = $this.data('filename');
 	storage.loadRace(filename);
 	client.init();
-	$('.close-modal').click();
+	closeAllModals();
 });
 
 $('#js-load-track').on('click', (e) => {

@@ -67,13 +67,11 @@ const getRecent = (num) => {
 	let recent = [];
 	files.forEach((filename) => {
 		let data = jsonfile.readFileSync(path.join(storagedir, filename));
-		if (data.name) {
-			recent.push({
-				filename: filename,
-				name: data.name,
-				created: data.created
-			});
-		}
+		recent.push({
+			filename: filename,
+			name: data.name,
+			created: data.created
+		});
 	});
 	return recent.reverse();
 };

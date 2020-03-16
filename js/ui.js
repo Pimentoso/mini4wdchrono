@@ -76,9 +76,19 @@ const initModal = (modalId) => {
 	if (modalId == 'modal-open') {
 		$('#modal-open-files').empty();
 		let data = storage.getRecent(10);
-		data.forEach((race) => {
-			$('#modal-open-files').append(`<tr><td>${utils.strftime('%Y-%m-%d, %H:%M', new Date(race.created * 1000))}</td><td><a href="javascript:void(0)" class="js-load-race" data-filename="${race.filename}">${race.name || 'untitled'}</a></td><tr>`);
-		});
+		if (data.length) {
+			data.forEach((race) => {
+				if (race.filename == configuration.get('raceFile')) {
+					$('#modal-open-files').append(`<tr><td style="width:180px;">${utils.strftime('%Y-%m-%d, %H:%M', new Date(race.created * 1000))}</td><td><span class="is-uppercase has-text-grey">${race.name || i18n.__('label-untitled')}</span></td><tr>`);
+				}
+				else {
+					$('#modal-open-files').append(`<tr><td style="width:180px;">${utils.strftime('%Y-%m-%d, %H:%M', new Date(race.created * 1000))}</td><td><a href="javascript:void(0)" class="js-load-race is-uppercase" data-filename="${race.filename}">${race.name || i18n.__('label-untitled')}</a></td><tr>`);
+				}
+			});
+		}
+		else {
+			$('#modal-open-files').append(`<tr><td><span class="is-uppercase has-text-grey">No files</span></td><tr>`);
+		}
 	}
 };
 
