@@ -1,29 +1,30 @@
 [![Version](https://img.shields.io/badge/version-0.12.3-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
 
 Mini4wdChrono is a fully free and open source project to make a functional 3-lane lap timer for Mini4WD Japan Cup tracks.
+
+# The hardware
+
 The hardware has been chosen to be as simple and cheap as possible, while still maintain accuracy.
-The software has been built to ease the work of race organizers, while still having a clean interface that can be shown on a big TV screen during the race.
+
+* [Hardware parts needed](https://github.com/Pimentoso/mini4wdchrono/wiki/Hardware-parts-needed)
+* [Hardware diagrams](https://github.com/Pimentoso/mini4wdchrono/wiki/Hardware-diagrams)
+* [Flashing the arduino board](https://github.com/Pimentoso/mini4wdchrono/wiki/Flashing-the-arduino-board)
+* [Lap timer building](https://github.com/Pimentoso/mini4wdchrono/wiki/Lap-timer-building)
+* [Launching the software](https://github.com/Pimentoso/mini4wdchrono/wiki/Launching-the-software)
 
 # The software
 
-The program reads data from the "Mini4WD Track Editor" and "Mini4WD Tournament Generator" websites to access track length and player names,
+The software has been built to ease the work of race organizers, while still having a clean interface that can be shown on a big TV screen during the race.
+
+Note: the program reads data from the "Mini4WD Track Editor" and "Mini4WD Tournament Generator" websites to access track length and player names,
 so you are required to create your track and player list using those websites.
 
-**Quick start guide:**
+* [Software quick start guide](https://github.com/Pimentoso/mini4wdchrono/wiki/Software-quick-start-guide)
+* [Software tournament rules](https://github.com/Pimentoso/mini4wdchrono/wiki/Software-tournament-rules)
 
-- Launch the program and go to the "configuration" tab.
-    - Change the arduino pins to match your setup.
-    - Change the USB port if needed.
-    - Save and reboot the program.
-    - Make sure the 3 colored squares read "1". This mean the light source is correctly pointed at the sensors.
-- Draw the track in the https://mini4wd-track-editor.pimentoso.com/ website, and save it. Copy the 6-letter code or just copy the link.
-- Import the track in the "race setup" screen. This is important because the program needs to know the length of the track and the lane changes.
-- You can now already go to the "race view" screen and start a race.
-- Insert the player names in the https://mini4wd-tournament.pimentoso.com/ website, generate the tournament, and save it. Copy the 6-letter code or just copy the link.
-- Import the tournament in the "race setup" screen.
-- Now in the "race view" screen you can start the actual rounds of the race. The times will be recorded and assigned to the correct players.
-- You can also go to the "racers list" and "manches list" screens to check the current race rankings.
-- Enjoy the race.
+## Download the software
+
+You can download the latest releases for Windows 10 (64-bit) or Mac OS (64-bit) from [the releases page](https://github.com/Pimentoso/mini4wdchrono/releases).
 
 ## Screenshots
 
@@ -32,117 +33,6 @@ so you are required to create your track and player list using those websites.
 ![players view](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/screen-players.png)
 
 ![manches view](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/screen-manches.png)
-
-## Download the software
-
-You can download the latest releases for Windows 10 (64-bit) or Mac OS (64-bit) from [the releases page](https://github.com/Pimentoso/mini4wdchrono/releases).
-
-Unzip the program anywhere on your computer, connect the lap timer to the computer via USB, and then launch the program.
-
-# The hardware
-
-## Hardware needed
-
-- A computer with the Mini4WDChrono software installed.
-
-- An arduino board. The project has been tested with both Arduino UNO, Arduino Nano and Pro Micro.
-- I recommend the Pro Micro because it's smaller, has micro-USB plug, and doesn't require drivers.
-- From the following link, get the Micro USB 3-18V version (the black one)
-
-https://www.aliexpress.com/item/32849563958.html
-
-- 3x laser diodes.
-
-https://www.aliexpress.com/item/32822976597.html
-
-- 3x phototransistor sensors. I'm using TEMT6000 for their slim form factor. Do not use photoresistors, they're slow.
-
-https://www.aliexpress.com/item/32583469115.html
-
-- 3x green 5v LEDs, or lilypad boards.
-
-https://www.aliexpress.com/item/32962136265.html
-
-- Alternatively, you can use a WS2812B LED strip with 9 LEDs (3 for each lane).
-- Get the "30 IP65" one. 30 means it has 30 LEDS/meter, cut it to 9 LEDs (about 30cm). IP65 means it's silicone coated (looks better)
-- WS2812B and WS2812B-ECO are the same, ECO is slightly less bright but it's more than enough.
-
-https://www.aliexpress.com/item/2036819167.html
-
-- A magnetic (active) buzzer.
-
-https://www.aliexpress.com/item/32666789405.html
-
-- A straight piece of 3 lane Japan Cup Mini4wd track.
-
-## Building the lap timer
-
-Connect all electronic parts like the diagrams.
-
-### Diagram for LEDs/Lilypads
-
-![diagram](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/schema.png)
-
-### Diagram for WS2812b RGB LED strip
-
-Note: the program only handles a single strip with 9 LEDs. If your strip has more than 9, you need to cut it.
-
-![diagram](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/schema_strip.png)
-
-Default pins used:
-
-- Light sensors: D6, D7, D8
-- LEDs: D3, D4, D5 (only D3 if using WS2812b strip)
-- Buzzer: D2
-
-Note: all arduino pins used are configurable inside the program.
-
-### Building examples
-
-Drill 3 holes in the middle of the 3 lanes of a mini4wd track piece. Put the phototransistors under the holes and fix them with tape.
-
-![sensors mounted](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/sensors.jpg)
-
-Build some sort of bridge-like structure to hold the electronics.
-Put the structure over the 3 holes on the track with the sensors. The mini4wd car passing over the phototransistors will trigger a lap.
-Attach the lasers underside the bridge, so that they are exactly pointed at the phototransistors.
-Put the 3 green leds on the front of the lap timer, one over each lane.
-
-Example lap timer made using cable ducts:
-
-![lap timer](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/semaforo1.jpg)
-
-More elaborate lap timer with LED strip and polycarbonate body:
-
-![lap timer](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/semaforo2.jpg)
-
-### Flashing the firmware
-
-Now you need to flash the StandardFirmataPlus firmware on your arduino board. This will allow the arduino to comunicate with the computer via USB. Instructions:
-
-- Install Arduino IDE from https://www.arduino.cc/en/Main/Software
-- Open Arduino IDE
-- Verify correct port and board
-- Navigate to File > Examples > Firmata > StandardFirmataPlus
-- Upload sketch onto board.
-- Done!
-
-### Flashing the firmware (RGB strip)
-
-If you are using the LED RGB strip, you need node-pixel Firmata instead of the regular one. [Refer to the documentation here.](https://github.com/ajfisher/node-pixel/blob/master/docs/installation.md#b-node-pixel-firmata) The relevant commands are
-
-```
-npm install -g nodebots-interchange
-interchange install git+https://github.com/ajfisher/node-pixel -a nano
-```
-
-### Launching the program
-
-After flashing the firmware, connect the Arduino board to the computer via USB. When you launch Mini4WD Chrono, the small badge on the top right will be green and say "board connected".
-If you have problems, go to the configuration tab, change the USB port, and save settings. Disconnect and reconnect the arduino board to USB, and reload the program.
-**NOTE: the arduino board must be connected to the computer USB BEFORE launching the program.**
-
-Some Arduino Nano clones may need the CH340 USB driver to be recognized. [You can download it here](https://sparks.gogo.co.nz/ch340.html).
 
 # Developing and contributing
 
