@@ -101,6 +101,7 @@
 	"dialog-connection-error": "Errore di connessione",
 	"dialog-save-track": "Salvare queste informazioni della pista?",
 	"dialog-new-race": "Iniziare una nuova gara? Tutti i dati attuali saranno persi.",
+	"dialog-delete-race": "Eliminare questa gara?",
 	"dialog-disconnected": "Semaforo non connesso! Controlla il cavo USB.",
 	"dialog-track-not-loaded": "Pista non caricata!",
 	"dialog-tournament-not-loaded": "Torneo non caricato!",

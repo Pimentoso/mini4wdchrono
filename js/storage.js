@@ -53,6 +53,12 @@ const loadRace = (filename) => {
 	}
 };
 
+const deleteRace = (filename) => {
+	let userdir = app.getPath('userData');
+	let filepath = path.join(userdir, 'races', filename);
+	fs.unlinkSync(filepath);
+};
+
 const extension = (element) => {
   var extName = path.extname(element);
   return extName === '.json'; // change to whatever extensions you want
@@ -113,6 +119,7 @@ const getManches = () => {
 module.exports = {
 	newRace: newRace,
 	loadRace:	loadRace,
+	deleteRace:	deleteRace,
 	getRecent: getRecent,
 	set: set,
 	get: get,

@@ -245,6 +245,16 @@ $(document).on('click', '.js-load-race', (e) => {
 	closeAllModals();
 });
 
+$(document).on('click', '.js-delete-race', (e) => {
+	let $this = $(e.currentTarget);
+	if ($this.attr('disabled')) return;
+	if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-delete-race'), buttons: ['Ok', 'Cancel'] }) == 0) {
+		let filename = $this.data('filename');
+		storage.deleteRace(filename);
+		closeAllModals();
+	}
+});
+
 $('#js-load-track').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;

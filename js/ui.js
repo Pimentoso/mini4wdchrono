@@ -75,14 +75,24 @@ const initModal = (modalId) => {
 	}
 	if (modalId == 'modal-open') {
 		$('#modal-open-files').empty();
-		let data = storage.getRecent(10);
+		let data = storage.getRecent(25);
 		if (data.length) {
 			data.forEach((race) => {
 				if (race.filename == configuration.get('raceFile')) {
-					$('#modal-open-files').append(`<tr><td style="width:180px;">${utils.strftime('%Y-%m-%d, %H:%M', new Date(race.created * 1000))}</td><td><span class="is-uppercase has-text-grey">${race.name || i18n.__('label-untitled')}</span></td><tr>`);
+					$('#modal-open-files').append(`
+					<tr>
+						<td style="width:165px;">${utils.strftime('%Y-%m-%d, %H:%M', new Date(race.created * 1000))}</td>
+						<td><span class="is-uppercase has-text-grey">${race.name || i18n.__('label-untitled')}</span></td>
+						<td style="width:52px;"></td>
+					<tr>`);
 				}
 				else {
-					$('#modal-open-files').append(`<tr><td style="width:180px;">${utils.strftime('%Y-%m-%d, %H:%M', new Date(race.created * 1000))}</td><td><a href="javascript:void(0)" class="js-load-race is-uppercase" data-filename="${race.filename}">${race.name || i18n.__('label-untitled')}</a></td><tr>`);
+					$('#modal-open-files').append(`
+					<tr>
+						<td style="width:165px;">${utils.strftime('%Y-%m-%d, %H:%M', new Date(race.created * 1000))}</td>
+						<td><a href="javascript:void(0)" class="js-load-race is-uppercase" data-filename="${race.filename}">${race.name || i18n.__('label-untitled')}</a></td>
+						<td style="width:52px;"><a class="button is-small is-danger is-pulled-right js-delete-race is-uppercase" data-filename="${race.filename}">X</a></td>
+					<tr>`);
 				}
 			});
 		}
