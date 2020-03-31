@@ -28,10 +28,6 @@ const init = () => {
 	});
 	$('#main').show();
 
-	// read stuff from settings
-	currManche = storage.get('currManche') || 0;
-	currRound = storage.get('currRound') || 0;
-
 	// load track from settings (do this before tournament)
 	let savedTrack = storage.get('track');
 	if (savedTrack) {
@@ -47,7 +43,14 @@ const init = () => {
 	}
 	showTournamentDetails();
 
-	// other init variables
+	// init variables
+	playerTimes = [];
+	playerList = [];
+	mancheList = [];
+	currManche = storage.get('currManche') || 0;
+	currRound = storage.get('currRound') || 0;
+	currTrack = null;
+	currTournament = null;
 	raceRunning = false;
 };
 
