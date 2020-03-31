@@ -22,11 +22,15 @@ const init = () => {
 
 	ui.init();
 
-	// translate ui
-	$('.tn').each(function () {
-		$(this).text(i18n.__($(this).data('tn')));
-	});
-	$('#main').show();
+	// init variables
+	playerTimes = [];
+	playerList = [];
+	mancheList = [];
+	currManche = storage.get('currManche') || 0;
+	currRound = storage.get('currRound') || 0;
+	currTrack = null;
+	currTournament = null;
+	raceRunning = false;
 
 	// load track from settings (do this before tournament)
 	let savedTrack = storage.get('track');
@@ -42,16 +46,6 @@ const init = () => {
 		tournamentLoadDone(savedTournament);
 	}
 	showTournamentDetails();
-
-	// init variables
-	playerTimes = [];
-	playerList = [];
-	mancheList = [];
-	currManche = storage.get('currManche') || 0;
-	currRound = storage.get('currRound') || 0;
-	currTrack = null;
-	currTournament = null;
-	raceRunning = false;
 };
 
 const setLedManager = (manager) => {

@@ -71,6 +71,7 @@ var sensorPin1, sensorPin2, sensorPin3;
 var tag1, tag2, tag3;
 var val1 = 0, val2 = 0, val3 = 0;
 
+// led manager instance
 if (debugMode) {
 	var ledManager = new ledManagers.LedManagerMock(board, configuration.get('piezoPin'));
 }
@@ -90,7 +91,18 @@ else if (configuration.get('ledType') == 1) {
 		configuration.get('piezoPin')
 	);
 }
+client.setLedManager(ledManager);
 
+// translate ui
+$('.tn').each(function () {
+	$(this).text(i18n.__($(this).data('tn')));
+});
+$('#main').show();
+
+// init client
+client.init();
+
+// board events
 board.on('ready', function () {
 	connected = true;
 	log.info(`Board READY at ${new Date()}`);
@@ -424,9 +436,3 @@ $('.js-invalidate').on('click', (e) => {
 		client.disqualify(null, null, parseInt($this.data('lane')));
 	}
 });
-
-// ==========================================================================
-// ==== init client
-
-client.init();
-client.setLedManager(ledManager);
