@@ -22,15 +22,15 @@ const init = () => {
 
 	ui.init();
 
-	// translate ui
-	$('.tn').each(function () {
-		$(this).text(i18n.__($(this).data('tn')));
-	});
-	$('#main').show();
-
-	// read stuff from settings
+	// init variables
+	playerTimes = [];
+	playerList = [];
+	mancheList = [];
 	currManche = storage.get('currManche') || 0;
 	currRound = storage.get('currRound') || 0;
+	currTrack = null;
+	currTournament = null;
+	raceRunning = false;
 
 	// load track from settings (do this before tournament)
 	let savedTrack = storage.get('track');
@@ -46,16 +46,13 @@ const init = () => {
 		tournamentLoadDone(savedTournament);
 	}
 	showTournamentDetails();
-
-	// other init variables
-	raceRunning = false;
 };
 
 const setLedManager = (manager) => {
 	ledManager = manager;
 }
 
-const reset = () => {
+const reset = (name) => {
 	console.log('client.reset called');
 
 	playerTimes = [];
@@ -67,7 +64,7 @@ const reset = () => {
 	currTournament = null;
 	raceRunning = false;
 
-	storage.newRace();
+	storage.newRace(name);
 	ui.init();
 
 	initTimeList();

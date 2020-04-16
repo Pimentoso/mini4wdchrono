@@ -5,6 +5,7 @@ const utils = require('./utils');
 const i18n = new (require('../i18n/i18n'))();
 const configuration = require('./configuration');
 configuration.init();
+const storage = require('./storage');
 
 const boardConnected = () => {
 	$('#tag-board-status').removeClass('is-danger');
@@ -20,6 +21,8 @@ const boardDisonnected = () => {
 
 const init = () => {
 	$('#js-title').text(configuration.get('title'));
+	$('#js-race-name').text(storage.get('name') || i18n.__('label-untitled'));
+	$('#js-race-created').text(`${i18n.__('label-created')} ${utils.strftime('%Y-%m-%d, %H:%M', new Date(storage.get('created') * 1000))}`);
 	$(`#js-race-mode-${storage.get('raceMode')}`).click();
 	$('#js-settings-time-threshold').val(storage.get('timeThreshold'));
 	$('#js-settings-speed-threshold').val(storage.get('speedThreshold'));
@@ -64,6 +67,39 @@ const init = () => {
 		});
 		$('#js-config-usb-port').val(configuration.get('usbPort'));
 	});
+};
+
+const initModal = (modalId) => {
+	if (modalId == 'modal-new') {
+		$('#modal-new-name').focus();
+	}
+	if (modalId == 'modal-open') {
+		$('#modal-open-files').empty();
+		let data = storage.getRecent(25);
+		if (data.length) {
+			data.forEach((race) => {
+				if (race.filename == configuration.get('raceFile')) {
+					$('#modal-open-files').append(`
+					<tr>
+						<td style="width:165px;">${utils.strftime('%Y-%m-%d, %H:%M', new Date(race.created * 1000))}</td>
+						<td><span class="is-uppercase has-text-grey">${race.name || i18n.__('label-untitled')}</span></td>
+						<td style="width:52px;"></td>
+					<tr>`);
+				}
+				else {
+					$('#modal-open-files').append(`
+					<tr>
+						<td style="width:165px;">${utils.strftime('%Y-%m-%d, %H:%M', new Date(race.created * 1000))}</td>
+						<td><a href="javascript:void(0)" class="js-load-race is-uppercase" data-filename="${race.filename}">${race.name || i18n.__('label-untitled')}</a></td>
+						<td style="width:52px;"><a class="button is-small is-danger is-pulled-right js-delete-race is-uppercase" data-filename="${race.filename}">X</a></td>
+					<tr>`);
+				}
+			});
+		}
+		else {
+			$('#modal-open-files').append(`<tr><td><span class="is-uppercase has-text-grey">No files</span></td><tr>`);
+		}
+	}
 };
 
 const toggleFreeRound = (freeRound) => {
@@ -525,6 +561,7 @@ module.exports = {
 	boardConnected: boardConnected,
 	boardDisonnected: boardDisonnected,
 	init: init,
+	initModal: initModal,
 	toggleFreeRound: toggleFreeRound,
 	trackLoadDone: trackLoadDone,
 	trackLoadFail: trackLoadFail,

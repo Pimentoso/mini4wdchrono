@@ -48,6 +48,9 @@ const ui = require('./js/ui');
 const ledManagers = require('./js/led_manager');
 const xls = require('./js/export');
 
+// load race from file
+storage.loadRace();
+
 // Show version in about tab
 $('#js-about-version').text(`Version ${app.getVersion()}`);
 
@@ -68,6 +71,7 @@ var sensorPin1, sensorPin2, sensorPin3;
 var tag1, tag2, tag3;
 var val1 = 0, val2 = 0, val3 = 0;
 
+// led manager instance
 if (debugMode) {
 	var ledManager = new ledManagers.LedManagerMock(board, configuration.get('piezoPin'));
 }
@@ -87,7 +91,18 @@ else if (configuration.get('ledType') == 1) {
 		configuration.get('piezoPin')
 	);
 }
+client.setLedManager(ledManager);
 
+// translate ui
+$('.tn').each(function () {
+	$(this).text(i18n.__($(this).data('tn')));
+});
+$('#main').show();
+
+// init client
+client.init();
+
+// board events
 board.on('ready', function () {
 	connected = true;
 	log.info(`Board READY at ${new Date()}`);
@@ -205,12 +220,52 @@ $('.tabs a').on('click', (e) => {
 	$(`div[data-tab=${tab}]`).show();
 });
 
+// modals
+const openModal = (modal) => {
+	$(`#${modal}`).addClass('is-active');
+	$(document.documentElement).addClass('is-clipped');
+};
+
+const closeAllModals = () => {
+	$('.modal').removeClass('is-active');
+	$(document.documentElement).removeClass('is-clipped');
+};
+
+$('.open-modal').on('click', (e) => {
+	let $this = $(e.currentTarget);
+	openModal($this.data('modal'));
+	ui.initModal($this.data('modal'));
+});
+
+$('.close-modal').on('click', closeAllModals);
+
+// keydown
 document.onkeydown = (e) => {
 	if (!debugMode) {
 		return;
 	}
 	client.keydown(e.keyCode);
 };
+
+// ui observers
+$(document).on('click', '.js-load-race', (e) => {
+	let $this = $(e.currentTarget);
+	if ($this.attr('disabled')) return;
+	let filename = $this.data('filename');
+	storage.loadRace(filename);
+	client.init();
+	closeAllModals();
+});
+
+$(document).on('click', '.js-delete-race', (e) => {
+	let $this = $(e.currentTarget);
+	if ($this.attr('disabled')) return;
+	if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-delete-race'), buttons: ['Ok', 'Cancel'] }) == 0) {
+		let filename = $this.data('filename');
+		storage.deleteRace(filename);
+		closeAllModals();
+	}
+});
 
 $('#js-load-track').on('click', (e) => {
 	let $this = $(e.currentTarget);
@@ -246,10 +301,11 @@ $('#js-load-tournament').on('click', (e) => {
 	client.loadTournament(code);
 });
 
-$('#button-reset').on('click', (e) => {
-	if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-new-race'), buttons: ['Ok', 'Cancel'] }) == 0) {
-		client.reset();
-	}
+$('#button-new-race').on('click', (e) => {
+	let name = $('#modal-new-name').val().trim();
+	if (name == '') return false;
+	client.reset(name);
+	closeAllModals();
 });
 
 $('#button-start').on('click', (e) => {
@@ -380,9 +436,3 @@ $('.js-invalidate').on('click', (e) => {
 		client.disqualify(null, null, parseInt($this.data('lane')));
 	}
 });
-
-// ==========================================================================
-// ==== init client
-
-client.init();
-client.setLedManager(ledManager);

@@ -17,7 +17,7 @@
 		<!-- NAVBAR -->
 		<nav class="navbar is-transparent">
 			<div class="navbar-brand">
-				<a class="navbar-item" href="https://github.com/Pimentoso/mini4wdchrono" target="_blank">
+				<a class="navbar-item" href="https://github.com/Pimentoso/mini4wdchrono/wiki" target="_blank">
 					<img src="images/pimentoso.png" width="60" height="60">
 				</a>
 				<p id="js-title" class="navbar-item title is-2 is-uppercase"></p>
@@ -90,11 +90,15 @@
 		<!-- SETUP TAB -->
 		<div class="container" data-tab="setup">
 			<p class="has-text-centered">
-				<a id="button-reset" href="#" class="button is-info tn" data-tn="button-new-race" style="width: 200px;">
+				<a href="#" class="button is-info tn open-modal" data-tn="button-new-race" data-modal="modal-new" style="width: 200px;">
 					New race
 				</a>
+				<a href="#" class="button is-warning tn open-modal" data-tn="button-open-race" data-modal="modal-open" style="width: 200px;">
+					Open race
+				</a>
 			</p>
-
+			<p id="js-race-name" class="title is-uppercase has-text-centered" style="margin-top: 10px;"></p>
+			<p id="js-race-created" class="subtitle has-text-centered"></p>
 			<hr />
 
 			<p class="title is-4 tn" data-tn="label-track-info">Track informations</p>
@@ -552,10 +556,56 @@
 				<p class="title is-4 tn" data-tn="label-external-tools">External tools</p>
 				<p><a href="https://mini4wd-track-editor.pimentoso.com/" class="button is-success is-outlined">Mini4WD Track Editor</a></p>
 				<p><a href="https://mini4wd-tournament.pimentoso.com/" class="button is-link is-outlined">Mini4WD Tournament Generator</a></p>
+				<p><a href="https://github.com/Pimentoso/mini4wdchrono/wiki" class="button is-outlined">Mini4wdChrono Wiki</a></p>
 				<p><a href="https://github.com/Pimentoso/mini4wdchrono" class="button is-outlined">Project page on Github</a></p>
 			</div>
 		</div>
 
+	</div>
+
+	<!-- MODALS -->
+	<div id="modal-new" class="modal">
+		<div class="modal-background"></div>
+		<div class="modal-card">
+			<header class="modal-card-head">
+				<p class="modal-card-title tn" data-tn="label-new-race">Create new race</p>
+				<button class="delete close-modal" aria-label="close"></button>
+			</header>
+			<section class="modal-card-body">
+				<div class="content">
+					<div class="field">
+						<label class="label tn" data-tn="label-new-race-name">What's the name of this race?</label>
+						<div class="control" style="width: 100%;">
+							<input id="modal-new-name" class="input" type="text" placeholder="" value="" maxlength="40" />
+						</div>
+					</div>
+				</div>
+			</section>
+			<footer class="modal-card-foot" style="justify-content: flex-end;">
+				<button class="button close-modal tn" data-tn="button-cancel">Cancel</button>
+				<button id="button-new-race" class="button is-success tn" data-tn="button-create-race">Create race</button>
+			</footer>
+		</div>
+	</div>
+
+	<div id="modal-open" class="modal">
+		<div class="modal-background"></div>
+		<div class="modal-card">
+			<header class="modal-card-head">
+				<p class="modal-card-title tn" data-tn="label-open-race">Open existing race</p>
+				<button class="delete close-modal" aria-label="close"></button>
+			</header>
+			<section class="modal-card-body" style="padding: 0;">
+				<table class="table is-striped" style="width: 100%;">
+					<tbody id="modal-open-files">
+					</tbody>
+				</table>
+
+			</section>
+			<footer class="modal-card-foot" style="justify-content: flex-end;">
+				<button class="button close-modal tn" data-tn="button-cancel">Cancel</button>
+			</footer>
+		</div>
 	</div>
 
 </body>
