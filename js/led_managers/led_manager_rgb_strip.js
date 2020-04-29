@@ -1,8 +1,8 @@
 'use strict';
 
-const j5 = require('johnny-five');
-const utils = require('./utils');
 const pixel = require('node-pixel');
+const LedManager = require('./led_manager');
+const utils = require('../utils');
 
 const COLOR_GREEN = '#66cc33';
 const COLOR_BLUE = '#188bc8';
@@ -15,128 +15,6 @@ const COLOR_POS3 = COLOR_RED;
 const COLOR_TAMIYA_RED = '#e62227';
 const COLOR_TAMIYA_WHITE = '#f8f8f8';
 const COLOR_TAMIYA_BLUE = COLOR_BLUE;
-
-class LedManager {
-	constructor(board, pinBuzzer) {
-		this.board = board;
-		this.pinBuzzer = pinBuzzer;
-	}
-
-	connected() {
-		this.board.pinMode(this.pinBuzzer, j5.Pin.OUTPUT);
-		this.beep(100);
-	}
-
-	disconnected() {
-		try {
-			this.board.digitalWrite(this.pinBuzzer, 0);
-		} catch (e) { }
-	}
-
-	roundStart() {
-		throw 'not implemented';
-	}
-
-	roundFinish(cars) {
-		throw 'not implemented';
-	}
-
-	lap(lane) {
-		throw 'not implemented';
-	}
-
-	beep(millis) {
-		this.board.digitalWrite(this.pinBuzzer, 1);
-		utils.delay(() => { this.board.digitalWrite(this.pinBuzzer, 0); }, millis);
-	}
-}
-
-// Mock manager. Does nothing.
-class LedManagerMock extends LedManager {
-	constructor(board, pinBuzzer) {
-		super(board, pinBuzzer);
-	}
-
-	roundStart(startTimerCallback) { }
-
-	roundFinish(cars) { }
-
-	lap(lane) { }
-}
-
-// Simple manager for 3 green LEDs and a buzzer.
-class LedManagerLilypad extends LedManager {
-	constructor(board, pinLeds, pinBuzzer) {
-		super(board, pinBuzzer);
-		this.pinLeds = pinLeds;
-		this.ready = false;
-	}
-
-	connected() {
-		super.connected();
-
-		// board is connected, init hardware
-		this.led1 = new j5.Led({
-			board: this.board,
-			pin: this.pinLeds[0]
-		});
-		this.led2 = new j5.Led({
-			board: this.board,
-			pin: this.pinLeds[1]
-		});
-		this.led3 = new j5.Led({
-			board: this.board,
-			pin: this.pinLeds[2]
-		});
-		this.leds = [this.led1, this.led2, this.led3];
-
-		// blink all leds for 3 sec
-		this.led1.blink(125); this.led2.blink(125); this.led3.blink(125);
-		utils.delay(() => { this.led1.stop().off(); this.led2.stop().off(); this.led3.stop().off(); this.ready = true; }, 3000);
-	}
-
-	disconnected() {
-		super.disconnected();
-		try {
-			this.led1.stop().off();
-			this.led2.stop().off();
-			this.led3.stop().off();
-		} catch (e) { }
-	}
-
-	roundStart(startTimerCallback) {
-		this.led1.on(); this.led2.on(); this.led3.on(); this.beep(1500);
-		utils
-			.delay(() => { this.led1.off(); this.led2.off(); this.led3.off(); }, 1500)
-			.delay(() => { this.led1.on(); this.beep(500); }, 1000)
-			.delay(() => { this.led1.off(); this.led2.on(); this.beep(500); }, 1000)
-			.delay(() => { this.led2.off(); this.led3.on(); this.beep(500); }, 1000)
-			.delay(() => { this.led3.off(); }, 1000)
-			.delay(() => { this.led1.on(); this.led2.on(); this.led3.on(); this.beep(1000); startTimerCallback(); }, 1500)
-			.delay(() => { this.led1.off(); this.led2.off(); this.led3.off(); }, 2500);
-	}
-
-	roundFinish(cars) {
-		// turn on winner car led
-		let finishCars = _.filter(cars, (c) => { return !c.outOfBounds && c.lapCount == 4 });
-		utils.delay(() => {
-			_.each(finishCars, (c) => {
-				if (c.position == 1) {
-					this.leds[c.startLane].on();
-				}
-			})
-		}, 1500);
-	}
-
-	lap(lane) {
-		// flash lane led for 1 sec
-		if (this.ready) {
-			let led = this.leds[lane];
-			led.on();
-			utils.delay(() => { led.off(); }, 1000);
-		}
-	}
-}
 
 // Manager for a 9 LEDs WS2812b strip and a buzzer.
 class LedManagerRgbStrip extends LedManager {
@@ -266,7 +144,7 @@ class LedManagerRgbStrip extends LedManager {
 
 	tamiyaSlide() {
 		var manager = this;
-		let millis = 75;
+		let millis = 100;
 		manager.strip.pixel(0).color(COLOR_TAMIYA_BLUE);
 		manager.strip.pixel(1).color(COLOR_TAMIYA_BLUE);
 		manager.strip.pixel(2).color(COLOR_TAMIYA_BLUE);
@@ -288,8 +166,4 @@ class LedManagerRgbStrip extends LedManager {
 	}
 }
 
-module.exports = {
-	LedManagerLilypad: LedManagerLilypad,
-	LedManagerRgbStrip: LedManagerRgbStrip,
-	LedManagerMock: LedManagerMock
-}
+module.exports = LedManagerRgbStrip;

@@ -45,7 +45,6 @@ catch (e) {
 const storage = require('./js/storage');
 const client = require('./js/client');
 const ui = require('./js/ui');
-const ledManagers = require('./js/led_manager');
 const xls = require('./js/export');
 
 // load race from file
@@ -73,10 +72,12 @@ var val1 = 0, val2 = 0, val3 = 0;
 
 // led manager instance
 if (debugMode) {
-	var ledManager = new ledManagers.LedManagerMock(board, configuration.get('piezoPin'));
+	const LedManagerMock = require('./js/led_managers/led_manager_mock');
+	var ledManager = new LedManagerMock(board, configuration.get('piezoPin'));
 }
 else if (configuration.get('ledType') == 0) {
-	var ledManager = new ledManagers.LedManagerLilypad(board, [
+	const LedManagerLilypad = require('./js/led_managers/led_manager_lilypad');
+	var ledManager = new LedManagerLilypad(board, [
 			configuration.get('ledPin1'),
 			configuration.get('ledPin2'),
 			configuration.get('ledPin3')
@@ -85,7 +86,8 @@ else if (configuration.get('ledType') == 0) {
 	);
 }
 else if (configuration.get('ledType') == 1) {
-	var ledManager = new ledManagers.LedManagerRgbStrip(
+	var LedManagerRgbStrip = require('./js/led_managers/led_manager_rgb_strip');
+	var ledManager = new LedManagerRgbStrip(
 		board,
 		configuration.get('ledPin1'),
 		configuration.get('piezoPin')
