@@ -9,7 +9,7 @@
     "electron-settings": "^3.2.0",
     "exceljs": "^1.10.0",
     "johnny-five": "^1.1.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "nconf": "^0.10.0",
     "serialport": "^7.1.5",
     "underscore": "^1.9.1",
