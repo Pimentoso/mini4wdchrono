@@ -4,6 +4,10 @@ const { app, dialog } = require('electron').remote;
 const fs = require('fs');
 const path = require('path');
 
+const LedManagerMock = require('./led_managers/led_manager_mock');
+const LedManagerRgbStrip = require('./led_managers/led_manager_rgb_strip');
+const LedManagerLilypad = require('./led_managers/led_manager_lilypad');
+
 // %APPDATA% on Windows
 // $XDG_CONFIG_HOME or ~/.config on Linux
 // ~/Library/Application Support on macOS
@@ -51,10 +55,25 @@ const del = (settingKey) => {
 	globalConf.save();
 };
 
+// Get the right LedManager instance.
+// Doesn't set anything, so it only works if it's been instantiated before.
+const ledManager = () => {
+	if (get('ledType') == 0) {
+		return LedManagerLilypad.getInstance();
+	}
+	else if (get('ledType') == 1) {
+		return LedManagerRgbStrip.getInstance();
+	}
+	else {
+		return LedManagerMock.getInstance();
+	}
+};
+
 module.exports = {
 	init: init,
 	reset: reset,
 	set: set,
 	get: get,
-	del: del
+	del: del,
+	ledManager: ledManager
 };
