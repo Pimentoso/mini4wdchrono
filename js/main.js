@@ -418,17 +418,6 @@ $('.js-race-mode').on('click', (e) => {
 	$this.addClass('is-primary');
 	let mode = $this.data('race-mode');
 	storage.set('raceMode', mode);
-	switch (mode) {
-		case 0:
-			$('#js-race-mode-description').text(i18n.__('button-race-mode-time-attack-description'));
-			break;
-		case 1:
-			$('#js-race-mode-description').text(i18n.__('button-race-mode-final-description'));
-			break;
-		case 2:
-			$('#js-race-mode-description').text(i18n.__('button-race-mode-endurance-description'));
-			break;
-	}
 });
 
 $('.js-invalidate').on('click', (e) => {
