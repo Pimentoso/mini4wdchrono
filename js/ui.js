@@ -26,21 +26,7 @@ const init = () => {
 	$('#js-settings-time-threshold').val(storage.get('timeThreshold'));
 	$('#js-settings-speed-threshold').val(storage.get('speedThreshold'));
 	$('#js-settings-start-delay').val(storage.get('startDelay'));
-
-	let race_mode = storage.get('raceMode')
-	$('.js-race-mode').removeClass('is-primary');
-	$(`#js-race-mode-${race_mode}`).addClass('is-primary');
-	switch (race_mode) {
-		case 0:
-			$('#js-race-mode-description').text(i18n.__('button-race-mode-time-attack-description'));
-			break;
-		case 1:
-			$('#js-race-mode-description').text(i18n.__('button-race-mode-final-description'));
-			break;
-		case 2:
-			$('#js-race-mode-description').text(i18n.__('button-race-mode-endurance-description'));
-			break;
-	}
+	showRaceModeDetails();
 
 	$('.js-led-type').removeClass('is-primary');
 	$(`#js-led-type-${configuration.get('ledType')}`).addClass('is-primary');
@@ -248,6 +234,23 @@ const showThresholds = () => {
 	else {
 		$('#js-settings-estimated-time').hide();
 		$('#js-settings-estimated-cutoff').hide();
+	}
+};
+
+const showRaceModeDetails = () => {
+	let race_mode = storage.get('raceMode');
+	$('.js-race-mode').removeClass('is-primary');
+	$(`#js-race-mode-${race_mode}`).addClass('is-primary');
+	switch (race_mode) {
+		case 0:
+			$('#js-race-mode-description').text(i18n.__('button-race-mode-time-attack-description'));
+			break;
+		case 1:
+			$('#js-race-mode-description').text(i18n.__('button-race-mode-final-description'));
+			break;
+		case 2:
+			$('#js-race-mode-description').text(i18n.__('button-race-mode-endurance-description'));
+			break;
 	}
 };
 
@@ -587,6 +590,7 @@ module.exports = {
 	showTrackDetails: showTrackDetails,
 	showTournamentDetails: showTournamentDetails,
 	showThresholds: showThresholds,
+	showRaceModeDetails: showRaceModeDetails,
 	showPlayerList: showPlayerList,
 	showMancheList: showMancheList,
 	showNextRoundNames: showNextRoundNames,

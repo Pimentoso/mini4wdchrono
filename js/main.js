@@ -418,6 +418,7 @@ $('.js-race-mode').on('click', (e) => {
 	$this.addClass('is-primary');
 	let mode = $this.data('race-mode');
 	storage.set('raceMode', mode);
+	ui.showRaceModeDetails();
 });
 
 $('.js-invalidate').on('click', (e) => {
