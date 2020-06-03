@@ -24,6 +24,15 @@ class LedManagerRgbStrip extends LedManager {
 		this.ready = false;
 	}
 
+	static getInstance(board, pin, pinBuzzer) {
+		if (!!LedManagerRgbStrip.instance) {
+      return LedManagerRgbStrip.instance;
+    }
+
+		LedManagerRgbStrip.instance = new LedManagerRgbStrip(board, pin, pinBuzzer);
+		return LedManagerRgbStrip.instance;
+	}
+
 	connected() {
 		super.connected();
 

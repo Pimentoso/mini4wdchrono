@@ -20,6 +20,7 @@ var checkRaceTask;
 const init = () => {
 	console.log('client.init called');
 
+	ledManager = configuration.ledManager();
 	ui.init();
 
 	// init variables
@@ -47,10 +48,6 @@ const init = () => {
 	}
 	showTournamentDetails();
 };
-
-const setLedManager = (manager) => {
-	ledManager = manager;
-}
 
 const reset = (name) => {
 	console.log('client.reset called');
@@ -458,7 +455,6 @@ const addLap = (lane) => {
 module.exports = {
 	init: init,
 	reset: reset,
-	setLedManager: setLedManager,
 	sensorRead: sensorRead,
 	keydown: keydown,
 	loadTrack: loadTrack,

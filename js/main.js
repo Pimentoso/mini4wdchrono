@@ -66,6 +66,7 @@ const board = new j5.Board({
 	repl: false // does not work with browser console
 });
 var connected = false;
+var ledManager;
 var sensorPin1, sensorPin2, sensorPin3;
 var tag1, tag2, tag3;
 var val1 = 0, val2 = 0, val3 = 0;
@@ -73,11 +74,11 @@ var val1 = 0, val2 = 0, val3 = 0;
 // led manager instance
 if (debugMode) {
 	const LedManagerMock = require('./js/led_managers/led_manager_mock');
-	var ledManager = new LedManagerMock(board, configuration.get('piezoPin'));
+	ledManager = LedManagerMock.getInstance(board, configuration.get('piezoPin'));
 }
 else if (configuration.get('ledType') == 0) {
 	const LedManagerLilypad = require('./js/led_managers/led_manager_lilypad');
-	var ledManager = new LedManagerLilypad(board, [
+	ledManager = LedManagerLilypad.getInstance(board, [
 			configuration.get('ledPin1'),
 			configuration.get('ledPin2'),
 			configuration.get('ledPin3')
@@ -87,13 +88,12 @@ else if (configuration.get('ledType') == 0) {
 }
 else if (configuration.get('ledType') == 1) {
 	var LedManagerRgbStrip = require('./js/led_managers/led_manager_rgb_strip');
-	var ledManager = new LedManagerRgbStrip(
+	ledManager = LedManagerRgbStrip.getInstance(
 		board,
 		configuration.get('ledPin1'),
 		configuration.get('piezoPin')
 	);
 }
-client.setLedManager(ledManager);
 
 // translate ui
 $('.tn').each(function () {

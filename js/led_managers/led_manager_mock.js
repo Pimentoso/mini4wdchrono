@@ -8,6 +8,15 @@ class LedManagerMock extends LedManager {
 		super(board, pinBuzzer);
 	}
 
+	static getInstance(board, pinBuzzer) {
+		if (!!LedManagerMock.instance) {
+      return LedManagerMock.instance;
+    }
+
+		LedManagerMock.instance = new LedManagerMock(board, pinBuzzer);
+		return LedManagerMock.instance;
+	}
+
 	roundStart(startTimerCallback) { }
 
 	roundFinish(cars) { }
