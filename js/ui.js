@@ -72,6 +72,7 @@ const init = () => {
 
 const initModal = (modalId) => {
 	if (modalId == 'modal-new') {
+		$('#modal-new-name').val('');
 		$('#modal-new-name').focus();
 	}
 	if (modalId == 'modal-open') {
@@ -493,7 +494,7 @@ const drawRace = (cars, running) => {
 		// delay + speed
 		if (car.outOfBounds) {
 			$(`#delay-lane${i}`).text('+99.999');
-			$(`#speed-lane${i}`).text('0.00 m/s');
+			// $(`#speed-lane${i}`).text('0.00 m/s');
 		}
 		else {
 			$(`#delay-lane${i}`).text(`+${car.delayFromFirst / 1000}`);
