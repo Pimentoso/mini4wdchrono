@@ -20,7 +20,9 @@ const boardDisonnected = () => {
 };
 
 const init = () => {
-	$('#js-title').text(configuration.get('title'));
+	let title_text = _.compact([configuration.get('title'), storage.get('name')]).join(' - ');
+	$('#js-title').text(title_text);
+
 	$('#js-race-name').text(storage.get('name') || i18n.__('label-untitled'));
 	$('#js-race-created').text(`${i18n.__('label-created')} ${utils.strftime('%Y-%m-%d, %H:%M', new Date(storage.get('created') * 1000))}`);
 	$('#js-settings-time-threshold').val(storage.get('timeThreshold'));
