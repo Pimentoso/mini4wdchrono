@@ -21,6 +21,9 @@
     "electron-builder": "22.7.0",
     "electron-reload": "^1.4.0"
   },
+  "build": {
+    "buildDependenciesFromSource": true
+  },
   "scripts": {
     "start": "./node_modules/.bin/electron .",
     "build": "electron-builder build --mac --win --publish never",
