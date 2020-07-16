@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.13.1-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
+[![Version](https://img.shields.io/badge/version-0.14.1-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
 
 Mini4wdChrono is a fully free and open source project to make a functional 3-lane lap timer for Mini4WD Japan Cup tracks.
 
@@ -39,59 +39,33 @@ You can download the latest releases for Windows 10 (64-bit) or Mac OS (64-bit) 
 ## Build on OSX
 Run ```brew install nodenv``` and follow installation instructions here. https://github.com/nodenv/nodenv
 
-```
+```bash
 brew cask install arduino
-// now open the arduino IDE, and use it to upload the StandardFirmataPlus firmware on the board
+# now open the arduino IDE, and use it to upload the StandardFirmataPlus firmware on the board
 
 nodenv install 10.16.3
 cd mini4wdchrono
 npm install
+npm run build
 
-// make sure the arduino board is connected via USB, then
+# make sure the arduino board is connected via USB, then
 npm start
-```
-
-To package the project run utils/build_darwin.sh, or
-
-```
-electron-packager . Mini4wdChrono --overwrite --icon=images/ic_launcher_web.icns --prune=true --out=release-builds
 ```
 
 ## Build on Windows
 
 Make sure you are running a Powershell with administrator permissions, and Chocolatey is installed.
 
-```
+```bash
 choco install python2
 choco install arduino
-// now open the arduino IDE, and use it to upload the StandardFirmataPlus firmware on the board
+# now open the arduino IDE, and use it to upload the StandardFirmataPlus firmware on the board
 
 choco install nodejs --version=10.16.3
 npm install -g windows-build-tools
 cd mini4wdchrono
 npm install
 
-// make sure the arduino board is connected via USB, then
+# make sure the arduino board is connected via USB, then
 npm start
 ```
-
-To package the project run utils/build_win64.ps1, or
-
-```
-electron-packager . Mini4wdChrono --overwrite --asar --icon=images/ic_launcher_web.ico --prune=true --out=release-builds
-```
-
-## Errors
-
-If you get an error when running the program like
-
-```
-Serialport was compiled against a different Node.js version using NODE_MODULE_VERSION 72. This version of Node.js requires NODE_MODULE_VERSION 70. Please try re-compiling or re-installing the module (for instance, using npm rebuild or npm install).
-```
-
-- Remove from the node-modules folder the serialport and @serialport folders.
-- Remove the file packages-lock.json
-- Run `npm install` to install non-installed modules
-- And finally run `./node_modules/.bin/electron-rebuild`
-
-Related issue: https://github.com/serialport/node-serialport/issues/1910

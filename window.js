@@ -2,16 +2,11 @@
 
 'use strict';
 
-const {app, BrowserWindow, Menu} = require('electron')
+const {app, ipcMain, BrowserWindow, Menu} = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const url = require('url');
 const isMac = process.platform === 'darwin';
-
-if (process.argv[2] == "--watch") {
-	require('electron-reload')(__dirname, {
-		electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
-	})
-}
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -75,6 +70,11 @@ function createWindow() {
 			selectionMenu.popup(mainWindow);
 		}
 	});
+
+	// Check for auto updates.
+	mainWindow.once('ready-to-show', () => {
+		autoUpdater.checkForUpdatesAndNotify();
+	});
 }
 
 // Prevent multiple instances of this app to run.
@@ -112,4 +112,17 @@ app.on('activate', function () {
 	if (mainWindow === null) {
 		createWindow();
 	}
+});
+
+// Autoupdater stuff
+autoUpdater.on('update-available', () => {
+  mainWindow.webContents.send('update_available');
+});
+
+autoUpdater.on('update-downloaded', () => {
+  mainWindow.webContents.send('update_downloaded');
+});
+
+ipcMain.on('restart_app', () => {
+  autoUpdater.quitAndInstall();
 });
