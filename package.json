@@ -9,23 +9,23 @@
     "electron-settings": "^3.2.0",
     "electron-updater": "4.3.1",
     "exceljs": "^1.10.0",
-    "johnny-five": "^1.1.0",
+    "johnny-five": "1.5.0",
     "jquery": "^3.5.0",
     "nconf": "^0.10.0",
     "node-pixel": "Pimentoso/node-pixel",
-    "serialport": "^7.1.5",
+    "serialport": "^8.0.8",
     "underscore": "^1.9.1"
   },
   "devDependencies": {
     "electron": "5.0.13",
     "electron-builder": "22.7.0",
-    "electron-rebuild": "^1.8.4",
     "electron-reload": "^1.4.0"
+  },
+  "build": {
+    "buildDependenciesFromSource": true
   },
   "scripts": {
     "start": "./node_modules/.bin/electron .",
-    "watch": "./node_modules/.bin/electron . --watch",
-    "postinstall": "node ./scripts/postinstall.js",
     "build": "electron-builder build --mac --win --publish never",
     "deploy": "electron-builder build --mac --win --publish always"
   },
