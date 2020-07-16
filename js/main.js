@@ -213,16 +213,20 @@ board.on("exit", function (event) {
 // ==========================================================================
 // ==== listen to ipcRenderer
 
-ipcRenderer.on('update_available', () => {
-	ipcRenderer.removeAllListeners('update_available');
-	openModal('modal-update');
-  $('#update-text').text('A new update is available. Downloading now...');
-});
-
 ipcRenderer.on('update_downloaded', () => {
 	ipcRenderer.removeAllListeners('update_downloaded');
-	openModal('modal-update');
-  $('#update-text').text('Update Downloaded. It will be installed on restart. Restart now?');
+	let dialogOpts = {
+    type: 'info',
+    buttons: [i18n.__('button-restart'), i18n.__('button-cancel')],
+    title: 'Application Update',
+    message: i18n.__('dialog-update-done')
+  }
+
+  dialog.showMessageBox(dialogOpts).then((returnValue) => {
+    if (returnValue.response === 0) {
+			ipcRenderer.send('restart_app');
+		}
+  });
 });
 
 // ==========================================================================
@@ -283,11 +287,6 @@ $(document).on('click', '.js-delete-race', (e) => {
 		storage.deleteRace(filename);
 		closeAllModals();
 	}
-});
-
-$('#button-update-restart').on('click', (e) => {
-  ipcRenderer.send('restart_app');
-	closeAllModals();
 });
 
 $('#js-load-track').on('click', (e) => {
