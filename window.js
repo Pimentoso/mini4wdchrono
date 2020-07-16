@@ -2,7 +2,8 @@
 
 'use strict';
 
-const {app, BrowserWindow, Menu} = require('electron')
+const {app, ipcMain, BrowserWindow, Menu} = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const url = require('url');
 const isMac = process.platform === 'darwin';
@@ -75,6 +76,11 @@ function createWindow() {
 			selectionMenu.popup(mainWindow);
 		}
 	});
+
+	// Check for auto updates.
+	mainWindow.once('ready-to-show', () => {
+		autoUpdater.checkForUpdatesAndNotify();
+	});
 }
 
 // Prevent multiple instances of this app to run.
@@ -112,4 +118,17 @@ app.on('activate', function () {
 	if (mainWindow === null) {
 		createWindow();
 	}
+});
+
+// Autoupdater stuff
+autoUpdater.on('update-available', () => {
+  mainWindow.webContents.send('update_available');
+});
+
+autoUpdater.on('update-downloaded', () => {
+  mainWindow.webContents.send('update_downloaded');
+});
+
+ipcMain.on('restart_app', () => {
+  autoUpdater.quitAndInstall();
 });

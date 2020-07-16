@@ -20,6 +20,7 @@ process.__defineGetter__("stdin", function () {
 const debugMode = false;
 ////////////////////////
 
+const { ipcRenderer } = require('electron');
 const { dialog, shell, app, webContents } = require('electron').remote;
 
 const log = require('electron-log');
@@ -210,6 +211,21 @@ board.on("exit", function (event) {
 });
 
 // ==========================================================================
+// ==== listen to ipcRenderer
+
+ipcRenderer.on('update_available', () => {
+	ipcRenderer.removeAllListeners('update_available');
+	openModal('modal-update');
+  $('#update-text').text('A new update is available. Downloading now...');
+});
+
+ipcRenderer.on('update_downloaded', () => {
+	ipcRenderer.removeAllListeners('update_downloaded');
+	openModal('modal-update');
+  $('#update-text').text('Update Downloaded. It will be installed on restart. Restart now?');
+});
+
+// ==========================================================================
 // ==== listen to interface events and propagate to client
 
 // tabs
@@ -267,6 +283,11 @@ $(document).on('click', '.js-delete-race', (e) => {
 		storage.deleteRace(filename);
 		closeAllModals();
 	}
+});
+
+$('#button-update-restart').on('click', (e) => {
+  ipcRenderer.send('restart_app');
+	closeAllModals();
 });
 
 $('#js-load-track').on('click', (e) => {
