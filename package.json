@@ -26,8 +26,8 @@
   },
   "scripts": {
     "start": "./node_modules/.bin/electron .",
-    "build": "electron-builder build --mac --win --x64 --publish never",
-    "deploy": "electron-builder build --mac --win --x64 --publish always"
+    "build": "electron-builder build --x64 --publish never",
+    "deploy": "electron-builder build --x64 --publish always"
   },
   "repository": {
     "type": "git",
