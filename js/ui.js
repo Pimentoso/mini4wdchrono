@@ -60,7 +60,7 @@ const init = () => {
 		disableRaceInput(true);
 	}
 
-	serialport.list(function (_err, ports) {
+	serialport.list().then(ports => {
 		ports.forEach(function (port) {
 			$('#js-config-usb-port').append($('<option>', {
 				value: port.comName,

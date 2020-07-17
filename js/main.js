@@ -20,6 +20,7 @@ process.__defineGetter__("stdin", function () {
 const debugMode = false;
 ////////////////////////
 
+const { ipcRenderer } = require('electron');
 const { dialog, shell, app, webContents } = require('electron').remote;
 
 const log = require('electron-log');
@@ -207,6 +208,25 @@ board.on("exit", function (event) {
 	log.error(`Board EXIT at ${new Date()} - ${event.message}`);
 	ui.boardDisonnected();
 	ledManager.disconnected();
+});
+
+// ==========================================================================
+// ==== listen to ipcRenderer
+
+ipcRenderer.on('update_downloaded', () => {
+	ipcRenderer.removeAllListeners('update_downloaded');
+	let dialogOpts = {
+    type: 'info',
+    buttons: [i18n.__('button-restart'), i18n.__('button-cancel')],
+    title: 'Application Update',
+    message: i18n.__('dialog-update-done')
+  }
+
+  dialog.showMessageBox(dialogOpts).then((returnValue) => {
+    if (returnValue.response === 0) {
+			ipcRenderer.send('restart_app');
+		}
+  });
 });
 
 // ==========================================================================

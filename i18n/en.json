@@ -13,6 +13,8 @@
 	"tab-manches-list": "Manches list",
 	"tab-configuration": "Configuration",
 	"tab-about": "About",
+	"dialog-update-done": "Download completed. The update will be installed on restart. Restart now?",
+	"button-restart": "Restart",
 	"button-new-race": "New race",
 	"button-open-race": "Open race...",
 	"button-create-race": "Create race",
