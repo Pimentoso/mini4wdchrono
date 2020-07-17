@@ -24,11 +24,12 @@
   "scripts": {
     "postinstall": "node ./scripts/postinstall.js",
     "start": "./node_modules/.bin/electron .",
-    "watch": "./node_modules/.bin/electron . --watch"
+    "build": "electron-builder build --mac --win --x64 --publish never",
+    "deploy": "electron-builder build --mac --win --x64 --publish always"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://Pimentoso@github.com/Pimentoso/mini4wdchrono.git"
+    "url": "https://github.com/Pimentoso/mini4wdchrono.git"
   },
   "author": "",
   "license": "ISC",
