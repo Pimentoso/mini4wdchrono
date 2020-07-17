@@ -3,10 +3,14 @@
 'use strict';
 
 const {app, ipcMain, BrowserWindow, Menu} = require('electron');
+const log = require('electron-log');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const url = require('url');
 const isMac = process.platform === 'darwin';
+
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -72,9 +76,7 @@ function createWindow() {
 	});
 
 	// Check for auto updates.
-	mainWindow.once('ready-to-show', () => {
-		autoUpdater.checkForUpdatesAndNotify();
-	});
+	autoUpdater.checkForUpdatesAndNotify();
 }
 
 // Prevent multiple instances of this app to run.
@@ -115,11 +117,20 @@ app.on('activate', function () {
 });
 
 // Autoupdater stuff
-autoUpdater.on('update-available', () => {
-  mainWindow.webContents.send('update_available');
-});
-
-autoUpdater.on('update-downloaded', () => {
+autoUpdater.on('checking-for-update', () => {
+  log.info('Autoupdater: checking for update...');
+})
+autoUpdater.on('update-available', (info) => {
+  log.info('Autoupdater: update available.');
+})
+autoUpdater.on('update-not-available', (info) => {
+  log.info('Autoupdater: update not available.');
+})
+autoUpdater.on('error', (err) => {
+  log.info('Autoupdater: error. ' + err);
+})
+autoUpdater.on('update-downloaded', (info) => {
+  log.info('Autoupdater: update downloaded.');
   mainWindow.webContents.send('update_downloaded');
 });
 
