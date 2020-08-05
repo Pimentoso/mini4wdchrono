@@ -3,3 +3,4 @@
 /release-builds
 /logs/*.log
 .DS_Store
+electron-builder.yml

@@ -2,16 +2,15 @@
 
 'use strict';
 
-const {app, BrowserWindow, Menu} = require('electron')
+const {app, ipcMain, BrowserWindow, Menu} = require('electron');
+const log = require('electron-log');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const url = require('url');
 const isMac = process.platform === 'darwin';
 
-if (process.argv[2] == "--watch") {
-	require('electron-reload')(__dirname, {
-		electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
-	})
-}
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -75,6 +74,9 @@ function createWindow() {
 			selectionMenu.popup(mainWindow);
 		}
 	});
+
+	// Check for auto updates.
+	autoUpdater.checkForUpdatesAndNotify();
 }
 
 // Prevent multiple instances of this app to run.
@@ -112,4 +114,26 @@ app.on('activate', function () {
 	if (mainWindow === null) {
 		createWindow();
 	}
+});
+
+// Autoupdater stuff
+autoUpdater.on('checking-for-update', () => {
+  log.info('Autoupdater: checking for update...');
+})
+autoUpdater.on('update-available', (info) => {
+  log.info('Autoupdater: update available.');
+})
+autoUpdater.on('update-not-available', (info) => {
+  log.info('Autoupdater: update not available.');
+})
+autoUpdater.on('error', (err) => {
+  log.info('Autoupdater: error. ' + err);
+})
+autoUpdater.on('update-downloaded', (info) => {
+  log.info('Autoupdater: update downloaded.');
+  mainWindow.webContents.send('update_downloaded');
+});
+
+ipcMain.on('restart_app', () => {
+  autoUpdater.quitAndInstall();
 });

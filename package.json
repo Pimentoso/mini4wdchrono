@@ -1,34 +1,37 @@
 {
   "name": "Mini4wdChrono",
-  "version": "0.13.0",
+  "version": "0.14.4",
   "description": "[![WIP](https://img.shields.io/badge/status-WORK%20IN%20PROGRESS-red.svg)](https://github.com/Pimentoso/mini4wdchrono)",
   "main": "window.js",
   "dependencies": {
     "clone": "^2.1.2",
     "electron-log": "^3.0.5",
     "electron-settings": "^3.2.0",
+    "electron-updater": "4.3.1",
     "exceljs": "^1.10.0",
-    "johnny-five": "^1.1.0",
-    "jquery": "^3.4.1",
+    "johnny-five": "1.5.0",
+    "jquery": "^3.5.0",
     "nconf": "^0.10.0",
-    "serialport": "^7.1.5",
-    "underscore": "^1.9.1",
-    "node-pixel": "Pimentoso/node-pixel"
+    "node-pixel": "Pimentoso/node-pixel",
+    "serialport": "^8.0.8",
+    "underscore": "^1.9.1"
   },
   "devDependencies": {
-    "electron": "^5.0.6",
-    "electron-packager": "^14.0.1",
-    "electron-rebuild": "^1.8.4",
+    "electron": "5.0.13",
+    "electron-builder": "22.7.0",
     "electron-reload": "^1.4.0"
   },
+  "build": {
+    "buildDependenciesFromSource": true
+  },
   "scripts": {
-    "postinstall": "node ./scripts/postinstall.js",
     "start": "./node_modules/.bin/electron .",
-    "watch": "./node_modules/.bin/electron . --watch"
+    "build": "electron-builder build --x64 --publish never",
+    "deploy": "electron-builder build --x64 --publish always"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://Pimentoso@github.com/Pimentoso/mini4wdchrono.git"
+    "url": "https://github.com/Pimentoso/mini4wdchrono.git"
   },
   "author": "",
   "license": "ISC",

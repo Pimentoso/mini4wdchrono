@@ -13,6 +13,8 @@
 	"tab-manches-list": "Tabella manche",
 	"tab-configuration": "Configurazione",
 	"tab-about": "Informazioni",
+	"dialog-update-done": "Download completato. L'aggiornamento sara' installato al prossimo riavvio del programma. Riavviare adesso?",
+	"button-restart": "Riavvia",
 	"button-new-race": "Nuova gara",
 	"button-open-race": "Apri gara...",
 	"button-create-race": "Crea gara",
@@ -29,7 +31,7 @@
 	"button-open-track-editor": "Apri Mini4WD Track Editor >",
 	"label-manual-input": "Input manuale",
 	"button-save": "Salva",
-	"label-tournament-info": "2) Carica torneo",
+	"label-tournament-info": "2) Carica torneo (opzionale)",
 	"label-load-tournament": "Carica torneo da link Tournament Generator",
 	"button-open-tournament-editor": "Apri Mini4WD Tournament Generator >",
 	"label-tournament-players": "Racers",
@@ -111,6 +113,5 @@
 	"dialog-disqualify": "Squalificare questo tempo? Sara' cambiato in 99.999.",
 	"dialog-replay-round": "Giocare di nuovo questo round? I dati attuali saranno persi.",
 	"dialog-saved": "Modifiche salvate correttamente.",
-	"label-check-updates": "Controlla aggiornamenti",
 	"option-lane-order": "Seleziona ordine corsie"
 }

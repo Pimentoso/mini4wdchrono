@@ -13,6 +13,8 @@
 	"tab-manches-list": "Manches list",
 	"tab-configuration": "Configuration",
 	"tab-about": "About",
+	"dialog-update-done": "Download completed. The update will be installed on restart. Restart now?",
+	"button-restart": "Restart",
 	"button-new-race": "New race",
 	"button-open-race": "Open race...",
 	"button-create-race": "Create race",
@@ -29,7 +31,7 @@
 	"button-open-track-editor": "Open Mini4WD Track Editor >",
 	"label-manual-input": "Or manual input",
 	"button-save": "Save",
-	"label-tournament-info": "2) Load tournament",
+	"label-tournament-info": "2) Load tournament (optional)",
 	"label-load-tournament": "Load tournament from Tournament Generator link",
 	"button-open-tournament-editor": "Open Mini4WD Tournament Generator >",
 	"label-tournament-players": "Players",
@@ -111,6 +113,5 @@
 	"dialog-disqualify": "Disqualify this time? It will be set to 99.999.",
 	"dialog-replay-round": "Play this round again? The current data will be lost.",
 	"dialog-saved": "Changes saved correctly.",
-	"label-check-updates": "Check for updates",
 	"option-lane-order": "Select lane order"
 }
