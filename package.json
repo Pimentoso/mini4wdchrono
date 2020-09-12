@@ -12,13 +12,14 @@
     "johnny-five": "1.5.0",
     "jquery": "^3.5.0",
     "nconf": "^0.10.0",
-    "node-pixel": "Pimentoso/node-pixel",
     "serialport": "^8.0.8",
-    "underscore": "^1.9.1"
+    "underscore": "^1.9.1",
+    "node-pixel": "Pimentoso/node-pixel"
   },
   "devDependencies": {
     "electron": "5.0.13",
-    "electron-builder": "22.7.0",
+    "electron-packager": "^14.0.1",
+    "electron-rebuild": "^1.8.4",
     "electron-reload": "^1.4.0"
   },
   "build": {
