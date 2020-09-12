@@ -1,0 +1,4 @@
+appId: com.pimentoso.Mini4wdChrono
+publish:
+  provider: github
+  token: [YOUR GITHUB ACCESS TOKEN]

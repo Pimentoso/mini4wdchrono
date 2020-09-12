@@ -13,6 +13,8 @@
 	"tab-manches-list": "Tabella manche",
 	"tab-configuration": "Configurazione",
 	"tab-about": "Informazioni",
+	"dialog-update-done": "Download completato. L'aggiornamento sara' installato al prossimo riavvio del programma. Riavviare adesso?",
+	"button-restart": "Riavvia",
 	"button-new-race": "Nuova gara",
 	"button-open-race": "Apri gara...",
 	"button-create-race": "Crea gara",
@@ -111,6 +113,5 @@
 	"dialog-disqualify": "Squalificare questo tempo? Sara' cambiato in 99.999.",
 	"dialog-replay-round": "Giocare di nuovo questo round? I dati attuali saranno persi.",
 	"dialog-saved": "Modifiche salvate correttamente.",
-	"label-check-updates": "Controlla aggiornamenti",
 	"option-lane-order": "Seleziona ordine corsie"
 }

@@ -1,12 +1,13 @@
 {
   "name": "Mini4wdChrono",
-  "version": "0.13.1",
+  "version": "0.14.4",
   "description": "[![WIP](https://img.shields.io/badge/status-WORK%20IN%20PROGRESS-red.svg)](https://github.com/Pimentoso/mini4wdchrono)",
   "main": "window.js",
   "dependencies": {
     "clone": "^2.1.2",
     "electron-log": "^3.0.5",
     "electron-settings": "^3.2.0",
+    "electron-updater": "4.3.1",
     "exceljs": "^1.10.0",
     "johnny-five": "1.5.0",
     "jquery": "^3.5.0",
@@ -21,10 +22,13 @@
     "electron-rebuild": "^1.8.4",
     "electron-reload": "^1.4.0"
   },
+  "build": {
+    "buildDependenciesFromSource": true
+  },
   "scripts": {
-    "postinstall": "node ./scripts/postinstall.js",
     "start": "./node_modules/.bin/electron .",
-    "watch": "./node_modules/.bin/electron . --watch"
+    "build": "electron-builder build --x64 --publish never",
+    "deploy": "electron-builder build --x64 --publish always"
   },
   "repository": {
     "type": "git",
