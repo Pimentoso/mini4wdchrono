@@ -39,21 +39,21 @@ You can download the latest releases for Windows 10 (64-bit) or Mac OS (64-bit) 
 ## Build on OSX
 Run ```brew install nodenv``` and follow installation instructions here. https://github.com/nodenv/nodenv
 
-```
+```bash
 brew cask install arduino
-// now open the arduino IDE, and use it to upload the StandardFirmataPlus firmware on the board
+# now open the arduino IDE, and use it to upload the StandardFirmataPlus firmware on the board
 
 nodenv install 10.16.3
 cd mini4wdchrono
 npm install
 
-// make sure the arduino board is connected via USB, then
+# make sure the arduino board is connected via USB, then
 npm start
 ```
 
 To package the project run utils/build_darwin.sh, or
 
-```
+```bash
 electron-packager . Mini4wdChrono --overwrite --icon=images/ic_launcher_web.icns --prune=true --out=release-builds
 ```
 
@@ -61,23 +61,23 @@ electron-packager . Mini4wdChrono --overwrite --icon=images/ic_launcher_web.icns
 
 Make sure you are running a Powershell with administrator permissions, and Chocolatey is installed.
 
-```
+```bash
 choco install python2
 choco install arduino
-// now open the arduino IDE, and use it to upload the StandardFirmataPlus firmware on the board
+# now open the arduino IDE, and use it to upload the StandardFirmataPlus firmware on the board
 
 choco install nodejs --version=10.16.3
 npm install -g windows-build-tools
 cd mini4wdchrono
 npm install
 
-// make sure the arduino board is connected via USB, then
+# make sure the arduino board is connected via USB, then
 npm start
 ```
 
 To package the project run utils/build_win64.ps1, or
 
-```
+```bash
 electron-packager . Mini4wdChrono --overwrite --asar --icon=images/ic_launcher_web.ico --prune=true --out=release-builds
 ```
 
@@ -85,7 +85,7 @@ electron-packager . Mini4wdChrono --overwrite --asar --icon=images/ic_launcher_w
 
 If you get an error when running the program like
 
-```
+```bash
 Serialport was compiled against a different Node.js version using NODE_MODULE_VERSION 72. This version of Node.js requires NODE_MODULE_VERSION 70. Please try re-compiling or re-installing the module (for instance, using npm rebuild or npm install).
 ```
 

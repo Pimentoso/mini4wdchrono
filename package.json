@@ -8,15 +8,15 @@
     "electron-log": "^3.0.5",
     "electron-settings": "^3.2.0",
     "exceljs": "^1.10.0",
-    "johnny-five": "^1.1.0",
+    "johnny-five": "1.5.0",
     "jquery": "^3.5.0",
     "nconf": "^0.10.0",
-    "serialport": "^7.1.5",
+    "serialport": "^8.0.8",
     "underscore": "^1.9.1",
     "node-pixel": "Pimentoso/node-pixel"
   },
   "devDependencies": {
-    "electron": "^5.0.6",
+    "electron": "5.0.13",
     "electron-packager": "^14.0.1",
     "electron-rebuild": "^1.8.4",
     "electron-reload": "^1.4.0"
@@ -28,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://Pimentoso@github.com/Pimentoso/mini4wdchrono.git"
+    "url": "https://github.com/Pimentoso/mini4wdchrono.git"
   },
   "author": "",
   "license": "ISC",
