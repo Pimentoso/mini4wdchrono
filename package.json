@@ -4,16 +4,18 @@
   "description": "[![WIP](https://img.shields.io/badge/status-WORK%20IN%20PROGRESS-red.svg)](https://github.com/Pimentoso/mini4wdchrono)",
   "main": "window.js",
   "dependencies": {
+    "@getstation/electron-google-oauth2": "2.1.0",
     "clone": "^2.1.2",
     "electron-log": "^3.0.5",
     "electron-settings": "^3.2.0",
     "exceljs": "^1.10.0",
+    "googleapis": "39.2.0",
     "johnny-five": "1.5.0",
     "jquery": "^3.5.0",
     "nconf": "^0.10.0",
+    "node-pixel": "Pimentoso/node-pixel",
     "serialport": "^8.0.8",
-    "underscore": "^1.9.1",
-    "node-pixel": "Pimentoso/node-pixel"
+    "underscore": "^1.9.1"
   },
   "devDependencies": {
     "electron": "5.0.13",
