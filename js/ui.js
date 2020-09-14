@@ -64,7 +64,7 @@ const init = () => {
 		ports.forEach(function (port) {
 			$('#js-config-usb-port').append($('<option>', {
 				value: port.comName,
-				text: port.comName
+				text: port.manufacturer ? `${port.comName} (${port.manufacturer})` : port.comName
 			}));
 			console.log(port.comName);
 		});
