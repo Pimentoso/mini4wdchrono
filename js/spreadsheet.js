@@ -1,20 +1,20 @@
 'use strict';
 
 const fs = require('fs');
-const readline = require('readline');
 const { google } = require('googleapis');
-const ElectronGoogleOAuth2 = require('@getstation/electron-google-oauth2');
+const ElectronGoogleOAuth2 = require('@getstation/electron-google-oauth2').default;
 const configuration = require('./configuration');
 configuration.init();
 
+const CREDENTIALS_FILE_PATH = 'config/credentials.json';
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 
 // Load the app credentials file.
 const loadCredentials = () => {
-	if (!fs.existsSync(tnpath)) {
+	if (!fs.existsSync(CREDENTIALS_FILE_PATH)) {
 		return console.log('Error loading application credentials.');
 	}
-	return JSON.parse(fs.readFileSync('credentials.json'));
+	return JSON.parse(fs.readFileSync(CREDENTIALS_FILE_PATH));
 };
 
 // Use stored access token and create an API client.
@@ -36,7 +36,7 @@ const getNewToken = () => {
 	let credentials = loadCredentials();
 	const {client_secret, client_id, redirect_uris} = credentials.installed;
 	// Authorize a client with credentials, then call the Google Sheets API.
-	const myApiOauth = new ElectronGoogleOAuth2(client_id, client_secret, redirect_uris[0]);
+	const myApiOauth = new ElectronGoogleOAuth2(client_id, client_secret, SCOPES);
 	myApiOauth.openAuthWindowAndGetTokens()
 		.then(token => {
 			// Store the token to disk for later program executions.
@@ -46,11 +46,15 @@ const getNewToken = () => {
 
 const create = (title) => {
 	const client = getClient();
-	client.sheetsService.spreadsheets.create({
-		properties: {
-			title,
-		},
-		fields: 'spreadsheetId',
+	const sheets = google.sheets({version: 'v4'});
+
+	sheets.spreadsheets.create({
+		auth: client,
+		resource: {
+			properties: {
+				title: title,
+			}
+		}
 	}, (err, spreadsheet) =>{
 		if (err) {
 			// Handle error.
@@ -86,4 +90,9 @@ const write = () => {
 			console.log('%d cells updated.', result.updatedCells);
 		}
 	});
+};
+
+module.exports = {
+	getNewToken: getNewToken,
+	create: create
 };
