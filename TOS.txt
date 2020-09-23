@@ -1,0 +1,6 @@
+The Mini4WD Chrono app doesn't collect or store your personal data.
+
+If you enable the Google Spreadsheet function, a "mini4wdchrono" folder will
+be created in your Google Sheets account, and spreadsheet files will be
+created inside that folder, containing race data. The spreadsheets will not
+be shared or stored in other places, just your account.
