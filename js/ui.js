@@ -219,24 +219,27 @@ const showTournamentDetails = (tournament) => {
 	}
 };
 
-const showThresholds = () => {
+const showThresholds = (timeThreshold, speedThreshold) => {
 	let track = storage.get('track');
 	if (track) {
 		let rTrackLength = track.length;
-		let rSpeedThreshold = storage.get('speedThreshold');
-		let rTimeThreshold = storage.get('timeThreshold') / 100;
+		let rTimeThreshold = (timeThreshold || storage.get('timeThreshold')) / 100;
+		let rSpeedThreshold = speedThreshold || storage.get('speedThreshold');
 		let estimatedTime = rTrackLength / rSpeedThreshold;
 		let estimatedCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold);
 		if (estimatedCutoffMin < 1) estimatedCutoffMin = 1;
 		let estimatedCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold);
 		$('#js-settings-estimated-time').show();
 		$('#js-settings-estimated-time').text(`${i18n.__('label-time-estimated')}: ${estimatedTime.toFixed(3)} sec`);
-		$('#js-settings-estimated-cutoff').show();
-		$('#js-settings-estimated-cutoff').text(`${i18n.__('label-time-estimated-cutoff')}: min ${estimatedCutoffMin.toFixed(3)} sec, max ${estimatedCutoffMax.toFixed(3)} sec`);
+		$('#js-settings-estimated-cutoff-min').show();
+		$('#js-settings-estimated-cutoff-max').show();
+		$('#js-settings-estimated-cutoff-min').text(`${i18n.__('label-time-estimated-cutoff-min')} ${estimatedCutoffMin.toFixed(3)} sec`);
+		$('#js-settings-estimated-cutoff-max').text(`${i18n.__('label-time-estimated-cutoff-max')} ${estimatedCutoffMax.toFixed(3)} sec`);
 	}
 	else {
 		$('#js-settings-estimated-time').hide();
-		$('#js-settings-estimated-cutoff').hide();
+		$('#js-settings-estimated-cutoff-min').hide();
+		$('#js-settings-estimated-cutoff-max').hide();
 	}
 };
 

@@ -373,10 +373,27 @@ $('#button-log-file').on('click', (e) => {
 	shell.openItem(log.transports.file.findLogPath());
 });
 
+$('#js-settings-speed-threshold').on('keyup', (e) => {
+	let timeThreshold = parseFloat($('#js-settings-time-threshold').val().replace(',', '.'));
+	let speedThreshold = parseFloat($('#js-settings-speed-threshold').val().replace(',', '.'));
+	if (isNaN(timeThreshold) || isNaN(speedThreshold)) return;
+	ui.showThresholds(timeThreshold, speedThreshold);
+});
+
+$('#js-settings-time-threshold').on('keyup', (e) => {
+	let timeThreshold = parseFloat($('#js-settings-time-threshold').val().replace(',', '.'));
+	let speedThreshold = parseFloat($('#js-settings-speed-threshold').val().replace(',', '.'));
+	if (isNaN(timeThreshold) || isNaN(speedThreshold)) return;
+	ui.showThresholds(timeThreshold, speedThreshold);
+});
+
 $('#button-save-settings').on('click', (e) => {
-	storage.set('timeThreshold', parseFloat($('#js-settings-time-threshold').val().replace(',', '.')));
-	storage.set('speedThreshold', parseFloat($('#js-settings-speed-threshold').val().replace(',', '.')));
-	storage.set('startDelay', parseFloat($('#js-settings-start-delay').val().replace(',', '.')));
+	let timeThreshold = parseFloat($('#js-settings-time-threshold').val().replace(',', '.'));
+	let speedThreshold = parseFloat($('#js-settings-speed-threshold').val().replace(',', '.'));
+	let startDelay = parseFloat($('#js-settings-start-delay').val().replace(',', '.'));
+	storage.set('timeThreshold', timeThreshold);
+	storage.set('speedThreshold', speedThreshold);
+	storage.set('startDelay', startDelay);
 	ui.showThresholds();
 	e.preventDefault();
 });
