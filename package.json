@@ -1,6 +1,6 @@
 {
   "name": "Mini4wdChrono",
-  "version": "0.13.2",
+  "version": "0.13.3",
   "description": "[![WIP](https://img.shields.io/badge/status-WORK%20IN%20PROGRESS-red.svg)](https://github.com/Pimentoso/mini4wdchrono)",
   "main": "window.js",
   "dependencies": {
