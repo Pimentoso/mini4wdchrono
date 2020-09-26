@@ -568,6 +568,11 @@ const drawRace = (cars, running) => {
 			$(`#timer-lane${i}`).addClass('is-success');
 			$(`#timer-lane${i}`).text(utils.prettyTime(car.currTime));
 		}
+
+		// scroll to bottom
+		if (running) {
+			window.scrollTo(0, document.body.scrollHeight);
+		}
 	});
 };
 

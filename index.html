@@ -212,7 +212,7 @@
 				<div class="container">
 					<label class="label tn" data-tn="label-average-speed">Average speed</label>
 					<div class="field has-addons">
-						<p class="control">
+						<p class="control" style="width: 100%;">
 							<input id="js-settings-speed-threshold" class="input" type="text" placeholder="Text input" value="5">
 						</p>
 						<p class="control">
@@ -228,7 +228,7 @@
 				<div class="container">
 					<label class="label tn" data-tn="label-time-threshold">Lap time threshold</label>
 					<div class="field has-addons">
-						<p class="control">
+						<p class="control" style="width: 100%;">
 							<input id="js-settings-time-threshold" class="input" type="text" placeholder="Text input" value="40">
 						</p>
 						<p class="control">
@@ -245,7 +245,7 @@
 				<div class="container">
 					<label class="label tn" data-tn="label-start-delay">Max start delay</label>
 					<div class="field has-addons">
-						<p class="control">
+						<p class="control" style="width: 100%;">
 							<input id="js-settings-start-delay" class="input" type="text" placeholder="Text input" value="3">
 						</p>
 						<p class="control">
@@ -346,72 +346,63 @@
 			</div>
 
 			<div class="columns js-hide-on-no-track">
-				<div class="column box-lane0">
-					<p class="has-background-primary has-text-white is-block is-size-4 has-text-centered has-text-weight-bold has-margin-vertical tn" data-tn="label-lane-1">LANE 1</p>
-					<div class="card has-text-centered">
-						<header class="card-header">
-							<p id="name-lane0" class="card-header-title is-size-3 is-block has-text-grey-dark is-uppercase"></p>
-						</header>
-						<div class="card-content">
-							<div class="content">
-								<span id="place-lane0" class="tag is-size-6 is-uppercase is-light js-place">stopped</span>
-								&nbsp;
-								<span id="delay-lane0" class="tag is-size-6 is-light js-delay">+0.000 sec</span>
-								<span id="timer-lane0" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
-								<span id="lap-lane0" class="tag is-size-6 is-uppercase is-light js-lap">lap 0</span>
-								&nbsp;
-								<span id="speed-lane0" class="tag is-size-6 is-light js-speed">0.00 m/s</span>
+				<!-- BOX LANE 1 -->
+				<div class="box column box-lane0" style="margin: 0.5rem;">
+					<p class="has-background-primary has-text-white is-block is-size-4 has-text-centered has-text-weight-bold has-margin-vertical tn" style="margin: -0.75rem; padding: 0.75rem;" data-tn="label-lane-1">LANE 1</p>
+					<div class="has-text-centered" style="margin-top: 2rem;">
+						<p id="name-lane0" class="title is-block has-text-grey-dark has-text-weight-bold is-uppercase"></p>
+						<div class="content">
+							<span id="place-lane0" class="tag is-size-6 is-uppercase is-light js-place">stopped</span>
+							&nbsp;
+							<span id="delay-lane0" class="tag is-size-6 is-light js-delay">+0.000 sec</span>
+							<span id="timer-lane0" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
+							<span id="lap-lane0" class="tag is-size-6 is-uppercase is-light js-lap">lap 0</span>
+							&nbsp;
+							<span id="speed-lane0" class="tag is-size-6 is-light js-speed">0.00 m/s</span>
 
-								<ul id="laps-lane0"></ul>
+							<ul id="laps-lane0"></ul>
 
-								<a id="invalidate-0" href="#" class="button is-small is-danger js-invalidate js-disable-on-race-started tn" data-lane="0" data-tn="button-invalidate">invalidate</a>
-							</div>
+							<a id="invalidate-0" href="#" class="button is-small is-danger js-invalidate js-disable-on-race-started tn" data-lane="0" data-tn="button-invalidate">invalidate</a>
 						</div>
 					</div>
 				</div>
-				<div class="column box-lane1">
-					<p class="has-background-warning has-text-white is-block is-size-4 has-text-centered has-text-weight-bold has-margin-vertical tn" data-tn="label-lane-2">LANE 2</p>
-					<div class="card has-text-centered">
-						<header class="card-header">
-							<p id="name-lane1" class="card-header-title is-size-3 is-block has-text-grey-dark is-uppercase"></p>
-						</header>
-						<div class="card-content">
-							<div class="content">
-								<span id="place-lane1" class="tag is-size-6 is-uppercase is-light js-place">stopped</span>
-								&nbsp;
-								<span id="delay-lane1" class="tag is-size-6 is-light js-delay">+0.000 sec</span>
-								<span id="timer-lane1" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
-								<span id="lap-lane1" class="tag is-size-6 is-uppercase is-light js-lap">lap 0</span>
-								&nbsp;
-								<span id="speed-lane1" class="tag is-size-6 is-light js-speed">0.00 m/s</span>
+				<!-- BOX LANE 2 -->
+				<div class="box column box-lane1" style="margin: 0.5rem;">
+					<p class="has-background-warning has-text-white is-block is-size-4 has-text-centered has-text-weight-bold has-margin-vertical tn" style="margin: -0.75rem; padding: 0.75rem;" data-tn="label-lane-2">LANE 2</p>
+					<div class="has-text-centered" style="margin-top: 2rem;">
+						<p id="name-lane1" class="title is-block has-text-grey-dark has-text-weight-bold is-uppercase"></p>
+						<div class="content">
+							<span id="place-lane1" class="tag is-size-6 is-uppercase is-light js-place">stopped</span>
+							&nbsp;
+							<span id="delay-lane1" class="tag is-size-6 is-light js-delay">+0.000 sec</span>
+							<span id="timer-lane1" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
+							<span id="lap-lane1" class="tag is-size-6 is-uppercase is-light js-lap">lap 0</span>
+							&nbsp;
+							<span id="speed-lane1" class="tag is-size-6 is-light js-speed">0.00 m/s</span>
 
-								<ul id="laps-lane1"></ul>
+							<ul id="laps-lane1"></ul>
 
-								<a id="invalidate-1" href="#" class="button is-small is-danger js-invalidate js-disable-on-race-started tn" data-lane="1" data-tn="button-invalidate">invalidate</a>
-							</div>
+							<a id="invalidate-1" href="#" class="button is-small is-danger js-invalidate js-disable-on-race-started tn" data-lane="1" data-tn="button-invalidate">invalidate</a>
 						</div>
 					</div>
 				</div>
-				<div class="column box-lane2">
-					<p class="has-background-danger has-text-white is-block is-size-4 has-text-centered has-text-weight-bold has-margin-vertical tn" data-tn="label-lane-3">LANE 3</p>
-					<div class="card has-text-centered">
-						<header class="card-header">
-							<p id="name-lane2" class="card-header-title is-size-3 is-block has-text-grey-dark is-uppercase"></p>
-						</header>
-						<div class="card-content">
-							<div class="content">
-								<span id="place-lane2" class="tag is-size-6 is-uppercase is-light js-place">stopped</span>
-								&nbsp;
-								<span id="delay-lane2" class="tag is-size-6 is-light js-delay">+0.000 sec</span>
-								<span id="timer-lane2" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
-								<span id="lap-lane2" class="tag is-size-6 is-uppercase is-light js-lap">lap 0</span>
-								&nbsp;
-								<span id="speed-lane2" class="tag is-size-6 is-light js-speed">0.00 m/s</span>
+				<!-- BOX LANE 3 -->
+				<div class="box column box-lane2" style="margin: 0.5rem;">
+					<p class="has-background-danger has-text-white is-block is-size-4 has-text-centered has-text-weight-bold has-margin-vertical tn" style="margin: -0.75rem; padding: 0.75rem;" data-tn="label-lane-3">LANE 3</p>
+					<div class="has-text-centered" style="margin-top: 2rem;">
+						<p id="name-lane2" class="title is-block has-text-grey-dark has-text-weight-bold is-uppercase"></p>
+						<div class="content">
+							<span id="place-lane2" class="tag is-size-6 is-uppercase is-light js-place">stopped</span>
+							&nbsp;
+							<span id="delay-lane2" class="tag is-size-6 is-light js-delay">+0.000 sec</span>
+							<span id="timer-lane2" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
+							<span id="lap-lane2" class="tag is-size-6 is-uppercase is-light js-lap">lap 0</span>
+							&nbsp;
+							<span id="speed-lane2" class="tag is-size-6 is-light js-speed">0.00 m/s</span>
 
-								<ul id="laps-lane2"></ul>
+							<ul id="laps-lane2"></ul>
 
-								<a id="invalidate-2" href="#" class="button is-small is-danger js-invalidate js-disable-on-race-started tn" data-lane="2" data-tn="button-invalidate">invalidate</a>
-							</div>
+							<a id="invalidate-2" href="#" class="button is-small is-danger js-invalidate js-disable-on-race-started tn" data-lane="2" data-tn="button-invalidate">invalidate</a>
 						</div>
 					</div>
 				</div>
@@ -486,49 +477,49 @@
 
 					<div class="field">
 						<label class="label tn" data-tn="label-sensor-1">Sensor 1 pin</label>
-						<div class="control" style="width: 100%;">
+						<div class="control">
 							<input id="js-config-sensor-pin-1" class="input" type="text" placeholder="example: A0" value="">
 						</div>
 					</div>
 
 					<div class="field">
 						<label class="label tn" data-tn="label-sensor-2">Sensor 2 pin</label>
-						<div class="control" style="width: 100%;">
+						<div class="control">
 							<input id="js-config-sensor-pin-2" class="input" type="text" placeholder="example: A1" value="">
 						</div>
 					</div>
 
 					<div class="field">
 						<label class="label tn" data-tn="label-sensor-3">Sensor 3 pin</label>
-						<div class="control" style="width: 100%;">
+						<div class="control">
 							<input id="js-config-sensor-pin-3" class="input" type="text" placeholder="example: A2" value="">
 						</div>
 					</div>
 
 					<div class="field">
 						<label class="label tn" data-tn="label-led-1">LED 1 pin</label>
-						<div class="control" style="width: 100%;">
+						<div class="control">
 							<input id="js-config-led-pin-1" class="input" type="text" placeholder="example: 0" value="">
 						</div>
 					</div>
 
 					<div class="field">
 						<label class="label tn" data-tn="label-led-2">LED 2 pin</label>
-						<div class="control" style="width: 100%;">
+						<div class="control">
 							<input id="js-config-led-pin-2" class="input" type="text" placeholder="example: 1" value="">
 						</div>
 					</div>
 
 					<div class="field">
 						<label class="label tn" data-tn="label-led-3">LED 3 pin</label>
-						<div class="control" style="width: 100%;">
+						<div class="control">
 							<input id="js-config-led-pin-3" class="input" type="text" placeholder="example: 2" value="">
 						</div>
 					</div>
 
 					<div class="field">
 						<label class="label tn" data-tn="label-speaker">Speaker pin</label>
-						<div class="control" style="width: 100%;">
+						<div class="control">
 							<input id="js-config-piezo-pin" class="input" type="text" placeholder="example: 4" value="">
 						</div>
 					</div>
