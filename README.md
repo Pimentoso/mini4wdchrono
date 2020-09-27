@@ -34,6 +34,8 @@ You can download the latest releases for Windows 10 (64-bit) or Mac OS (64-bit) 
 
 ![manches view](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/screen-manches.png)
 
+![setup view](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/screen-setup.png)
+
 # Developing and contributing
 
 ## Build on OSX
