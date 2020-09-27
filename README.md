@@ -28,11 +28,25 @@ You can download the latest releases for Windows 10 (64-bit) or Mac OS (64-bit) 
 
 ## Screenshots
 
+*Main lap timer view, with position, delay from first place, average speed and split times.*
+
 ![race view](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/screen-race.png)
+
+---
+
+*Player roster view, sorted, showing best time of each player in red.*
 
 ![players view](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/screen-players.png)
 
+---
+
+*Tournament view with all rounds. Times are editable.*
+
 ![manches view](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/screen-manches.png)
+
+---
+
+*Race setup screen. You can import data from Mini4WD Track Editor.*
 
 ![setup view](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/screen-setup.png)
 
