@@ -311,9 +311,23 @@ $('#button-new-race').on('click', (e) => {
 });
 
 $('#button-start').on('click', (e) => {
-	if (!connected && !debugMode) {
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-disconnected') });
-		return;
+	if (!debugMode) {
+		if (!connected) {
+			dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-disconnected') });
+			return;
+		}
+		else if (tag1.text() != '1') {
+			dialog.showMessageBox({ type: 'error', title: 'Error', message: `${i18n.__('dialog-sensor-error')} 1` });
+			return;
+		}
+		else if (tag2.text() != '1') {
+			dialog.showMessageBox({ type: 'error', title: 'Error', message: `${i18n.__('dialog-sensor-error')} 2` });
+			return;
+		}
+		else if (tag3.text() != '1') {
+			dialog.showMessageBox({ type: 'error', title: 'Error', message: `${i18n.__('dialog-sensor-error')} 3` });
+			return;
+		}
 	}
 	if (!storage.get('track')) {
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-track-not-loaded') });
