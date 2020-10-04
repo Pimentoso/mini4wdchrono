@@ -175,8 +175,9 @@ const raceFinished = (freeRound) => {
 		$('.js-show-on-no-tournament').show();
 		$('.js-hide-on-no-tournament').hide();
 	}
-
-	disableRaceInput(true);
+	else {
+		disableRaceInput(true);
+	}
 };
 
 const showTrackDetails = (track) => {

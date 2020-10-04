@@ -72,14 +72,14 @@ const reset = (name) => {
 const chronoInit = (reset) => {
 	console.log('client.chronoInit called');
 
-	if (reset) {
+	if (currTournament == null || freeRound) {
+		// free round
+		chrono.init(currTrack);
+	}
+	else if (reset) {
 		// new blank round, or replay a past round
 		storage.deleteRound(currManche, currRound);
 		chrono.init(currTrack, mancheList[currManche][currRound]);
-	}
-	else if (currTournament == null || freeRound) {
-		// free round
-		chrono.init(currTrack);
 	}
 	else {
 		// load existing round
@@ -132,6 +132,8 @@ const overrideTimes = () => {
 	});
 
 	rebuildTimeList();
+	ui.showPlayerList();
+	ui.showMancheList();
 	ui.initRace(freeRound);
 	updateRace();
 };
