@@ -125,22 +125,8 @@ board.on('ready', function () {
 	tag3 = $('#sensor-reading-3');
 
 	// init start button if present
-	button1 = new j5.Button({
-		pin: 9, 
-		invert: true
-	});
-	// button1.on("release", startRace);
-	button1.on("hold", function() {
-		console.log( "Button held" );
-	});
-
-	button1.on("press", function() {
-		console.log( "Button pressed" );
-	});
-
-	button1.on("release", function() {
-		console.log( "Button released" );
-	});
+	button1 = new j5.Button(configuration.get('startButtonPin'));
+	button1.on("release", startRace);
 
 	// raw reading from digital pins because it's faster
 	sensorPin1 = configuration.get('sensorPin1');
@@ -199,7 +185,7 @@ board.on("fail", function (event) {
 	ui.boardDisonnected();
 
 	if (!debugMode) {
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message });
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message, buttons: ['Ok'] });
 	}
 });
 
@@ -408,6 +394,7 @@ $('#button-save-config').on('click', (e) => {
 	configuration.set('ledPin2', parseInt($('#js-config-led-pin-2').val()));
 	configuration.set('ledPin3', parseInt($('#js-config-led-pin-3').val()));
 	configuration.set('piezoPin', parseInt($('#js-config-piezo-pin').val()));
+	configuration.set('startButtonPin', parseInt($('#js-config-start-button-pin').val()));
 	configuration.set('title', $('#js-config-title').val());
 	configuration.set('usbPort', $('#js-config-usb-port').val());
 	dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-restart') });
