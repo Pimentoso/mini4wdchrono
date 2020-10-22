@@ -39,7 +39,7 @@ catch (e) {
 	log.error("Error loading configuration.");
 	log.error(e.message);
 	let backup_filepath = configuration.reset();
-	dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-configuration-error'), detail: `${i18n.__('dialog-configuration-error-detail')} ${backup_filepath}` });
+	dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-configuration-error'), detail: `${i18n.__('dialog-configuration-error-detail')} ${backup_filepath}`, buttons: ['Ok'] });
 }
 
 const storage = require('./js/storage');
@@ -170,7 +170,7 @@ board.on("fail", function (event) {
 	ui.boardDisonnected();
 
 	if (!debugMode) {
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message });
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message, buttons: ['Ok'] });
 	}
 });
 
@@ -182,7 +182,7 @@ board.on("error", function (event) {
 	ui.boardDisonnected();
 
 	if (!debugMode) {
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message });
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message, buttons: ['Ok'] });
 	}
 });
 
@@ -312,11 +312,11 @@ $('#button-new-race').on('click', (e) => {
 
 $('#button-start').on('click', (e) => {
 	if (!connected && !debugMode) {
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-disconnected') });
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-disconnected'), buttons: ['Ok'] });
 		return;
 	}
 	if (!storage.get('track')) {
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-track-not-loaded') });
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-track-not-loaded'), buttons: ['Ok'] });
 		return;
 	}
 
@@ -408,7 +408,7 @@ $('#button-save-config').on('click', (e) => {
 	configuration.set('piezoPin', parseInt($('#js-config-piezo-pin').val()));
 	configuration.set('title', $('#js-config-title').val());
 	configuration.set('usbPort', $('#js-config-usb-port').val());
-	dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-restart') });
+	dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-restart'), buttons: ['Ok'] });
 	e.preventDefault();
 });
 
@@ -416,7 +416,7 @@ $('#button-manches-save').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
 	client.overrideTimes();
-	dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-saved') });
+	dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-saved'), buttons: ['Ok'] });
 });
 
 $('.js-led-type').on('click', (e) => {
