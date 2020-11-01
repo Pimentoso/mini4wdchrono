@@ -122,8 +122,6 @@ Wire Wire Line
 Wire Wire Line
 	3150 3700 3300 3700
 Wire Wire Line
-	3100 3800 3300 3800
-Wire Wire Line
 	5650 3250 5000 3250
 Wire Wire Line
 	5000 3250 5000 4400
@@ -168,8 +166,6 @@ NoConn ~ 4700 4000
 NoConn ~ 4700 4100
 NoConn ~ 3300 3100
 NoConn ~ 3300 3200
-Wire Wire Line
-	3100 3800 3100 5550
 Wire Wire Line
 	3000 3500 3000 5800
 $Comp
@@ -228,10 +224,10 @@ Connection ~ 5300 4550
 Wire Wire Line
 	5300 4550 5300 4950
 $Comp
-L Connector:Conn_01x03_Female JEX0
+L Connector:Conn_01x03_Female JBTN0
 U 1 1 5F92E86A
 P 5850 5450
-F 0 "JEX0" H 5878 5476 50  0000 L CNN
+F 0 "JBTN0" H 5878 5476 50  0000 L CNN
 F 1 "Conn_01x03_Female" H 5878 5385 50  0000 L CNN
 F 2 "Connector_Wire:SolderWirePad_1x03_P3.175mm_Drill1mm" H 5850 5450 50  0001 C CNN
 F 3 "~" H 5850 5450 50  0001 C CNN
@@ -243,10 +239,10 @@ VCC
 Text GLabel 5650 5450 0    50   Input ~ 0
 GND
 $Comp
-L Connector:Conn_01x03_Female JEX1
+L Connector:Conn_01x03_Female JEX0
 U 1 1 5F930EE7
 P 5850 5100
-F 0 "JEX1" H 5878 5126 50  0000 L CNN
+F 0 "JEX0" H 5878 5126 50  0000 L CNN
 F 1 "Conn_01x03_Female" H 5878 5035 50  0000 L CNN
 F 2 "Connector_Wire:SolderWirePad_1x03_P3.175mm_Drill1mm" H 5850 5100 50  0001 C CNN
 F 3 "~" H 5850 5100 50  0001 C CNN
@@ -262,5 +258,9 @@ Wire Wire Line
 Wire Wire Line
 	3100 5550 5650 5550
 NoConn ~ 4700 4200
-NoConn ~ 3300 4200
+Wire Wire Line
+	3100 5550 3100 4200
+Wire Wire Line
+	3100 4200 3300 4200
+NoConn ~ 3300 3800
 $EndSCHEMATC
