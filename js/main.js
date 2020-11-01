@@ -67,6 +67,7 @@ const board = new j5.Board({
 });
 var connected = false;
 var ledManager;
+var button1;
 var sensorPin1, sensorPin2, sensorPin3;
 var tag1, tag2, tag3;
 var val1 = 0, val2 = 0, val3 = 0;
@@ -104,6 +105,16 @@ $('#main').show();
 // init client
 client.init();
 
+// Start race function. Handles all hardware checks.
+const startRace = () => {
+	log.info(`Starting race at ${new Date()}`);
+	if (!connected && !debugMode) {
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-disconnected'), buttons: ['Ok'] });
+		return;
+	}
+	client.startRace(debugMode);
+}
+
 // board events
 board.on('ready', function () {
 	connected = true;
@@ -112,6 +123,10 @@ board.on('ready', function () {
 	tag1 = $('#sensor-reading-1');
 	tag2 = $('#sensor-reading-2');
 	tag3 = $('#sensor-reading-3');
+
+	// init start button if present
+	button1 = new j5.Button(configuration.get('startButtonPin'));
+	button1.on("release", startRace);
 
 	// raw reading from digital pins because it's faster
 	sensorPin1 = configuration.get('sensorPin1');
@@ -310,37 +325,10 @@ $('#button-new-race').on('click', (e) => {
 	closeAllModals();
 });
 
-$('#button-start').on('click', (e) => {
-	if (!connected && !debugMode) {
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-disconnected'), buttons: ['Ok'] });
-		return;
-	}
-	if (!storage.get('track')) {
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-track-not-loaded'), buttons: ['Ok'] });
-		return;
-	}
-
-	if (debugMode) {
-		// debug mode
-		ui.raceStarted();
-		client.initRound();
-		client.startRound();
-	}
-	else {
-		// production mode
-		if (!client.isFreeRound() && storage.get('tournament') && storage.loadRound()) {
-			if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-replay-round'), buttons: ['Ok', 'Cancel'] }) == 1) {
-				return;
-			}
-		}
-		ui.raceStarted();
-		client.initRound();
-		ledManager.roundStart(client.startRound);
-	}
-});
+$('#button-start').on('click', startRace);
 
 $('#button-stop').on('click', (e) => {
-	client.stopRound();
+	client.stopRace();
 });
 
 $('#button-prev').on('click', (e) => {
@@ -406,6 +394,7 @@ $('#button-save-config').on('click', (e) => {
 	configuration.set('ledPin2', parseInt($('#js-config-led-pin-2').val()));
 	configuration.set('ledPin3', parseInt($('#js-config-led-pin-3').val()));
 	configuration.set('piezoPin', parseInt($('#js-config-piezo-pin').val()));
+	configuration.set('startButtonPin', parseInt($('#js-config-start-button-pin').val()));
 	configuration.set('title', $('#js-config-title').val());
 	configuration.set('usbPort', $('#js-config-usb-port').val());
 	dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-restart'), buttons: ['Ok'] });
