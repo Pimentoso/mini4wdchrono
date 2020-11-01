@@ -212,7 +212,7 @@ const startRace = (debugMode) => {
 	console.log('client.startRace called');
 
 	if (!storage.get('track')) {
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-track-not-loaded') });
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-track-not-loaded'), buttons: ['Ok'] });
 		return;
 	}
 	if ($(`div[data-tab=race]`).is(":hidden")) {
@@ -284,7 +284,7 @@ const prevRound = () => {
 
 	if (currTournament == null || currTrack == null) {
 		// tournament not loaded
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded') });
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
 		return;
 	}
 	if (currManche == 0 && currRound == 0) {
@@ -312,7 +312,7 @@ const nextRound = () => {
 
 	if (currTournament == null || currTrack == null) {
 		// tournament not loaded
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded') });
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
 		return;
 	}
 
