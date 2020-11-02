@@ -46,6 +46,7 @@ const storage = require('./js/storage');
 const client = require('./js/client');
 const ui = require('./js/ui');
 const xls = require('./js/export');
+const tournament = require('./js/tournament');
 
 // load race from file
 storage.loadRace();
@@ -269,14 +270,14 @@ $(document).on('click', '.js-delete-race', (e) => {
 	}
 });
 
-$('#js-load-track').on('click', (e) => {
+$('#button-load-track').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
 	let code = $('#js-input-track-code').val().slice(-6);
 	client.loadTrack(code);
 });
 
-$('#js-track-save-manual').on('click', (e) => {
+$('#button-save-track-manual').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
 	if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-save-track'), buttons: ['Ok', 'Cancel'] }) == 0) {
@@ -296,7 +297,22 @@ $('#js-track-save-manual').on('click', (e) => {
 	}
 });
 
-$('#js-load-tournament').on('click', (e) => {
+$('#button-save-tournament').on('click', (e) => {
+	if (playerNames.length < 3) return false;
+	// tournament.generate(playerNames, numManches);
+	closeAllModals();
+});
+
+$('#button-add-player').on('click', (e) => {
+	let name = $('#tournament-player-name').val().trim();
+	if (name == '') return false;
+	tournament.addPlayer(name);
+	tournament.renderPlayerList($('#tournament-player-table'));
+	$('#tournament-player-name').val('');
+	$('#tournament-player-name').focus();
+});
+
+$('#button-load-tournament').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
 	let code = $('#js-input-tournament-code').val().slice(-6);

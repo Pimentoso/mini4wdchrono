@@ -579,12 +579,12 @@ const drawRace = (cars, running) => {
 
 const disableRaceInput = (disabled) => {
 	$('#js-input-tournament-code').prop('disabled', disabled);
-	$('#js-load-tournament').prop('disabled', disabled);
+	$('#button-load-tournament').prop('disabled', disabled);
 	$('#js-input-track-code').prop('disabled', disabled);
-	$('#js-load-track').prop('disabled', disabled);
+	$('#button-load-track').prop('disabled', disabled);
 	$('#js-track-length-manual').prop('disabled', disabled);
 	$('#js-track-order-manual').prop('disabled', disabled);
-	$('#js-track-save-manual').prop('disabled', disabled);
+	$('#button-save-track-manual').prop('disabled', disabled);
 };
 
 module.exports = {

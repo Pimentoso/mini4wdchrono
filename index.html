@@ -109,7 +109,7 @@
 						<input id="js-input-track-code" class="input" type="text" placeholder="example: https://mini4wd-track-editor.pimentoso.com/4QT8GM" value="">
 					</div>
 					<div class="control">
-						<button id="js-load-track" class="button is-info tn" data-tn="button-load">
+						<button id="button-load-track" class="button is-info tn" data-tn="button-load">
 							Load
 						</button>
 					</div>
@@ -159,7 +159,7 @@
 				<div class="level">
 					<div class="level-left"></div>
 					<div class="level-right">
-						<button id="js-track-save-manual" href="#" class="button tn" data-tn="button-save">
+						<button id="button-save-track-manual" href="#" class="button tn" data-tn="button-save">
 							Save
 						</button>
 					</div>
@@ -175,7 +175,7 @@
 						<input id="js-input-tournament-code" class="input" type="text" placeholder="example: https://mini4wd-tournament.pimentoso.com/49PMRU" value="">
 					</div>
 					<div class="control">
-						<button id="js-load-tournament" class="button is-info tn" data-tn="button-load">
+						<button id="button-load-tournament" class="button is-info tn" data-tn="button-load">
 							Load
 						</button>
 					</div>
@@ -194,6 +194,12 @@
 						</a>
 					</div>
 				</div>
+
+				<label class="label tn" data-tn="label-manual-input">Or manual input</label>
+				<a href="#" class="button is-warning tn open-modal" data-tn="button-tournament" data-modal="modal-tournament" style="width: 200px;">
+					Insert player names
+				</a>
+
 			</div>
 
 			<div class="box">
@@ -562,7 +568,7 @@
 
 	</div>
 
-	<!-- MODALS -->
+	<!-- NEW RACE MODAL -->
 	<div id="modal-new" class="modal">
 		<div class="modal-background"></div>
 		<div class="modal-card">
@@ -587,6 +593,7 @@
 		</div>
 	</div>
 
+	<!-- OPEN RACE MODAL -->
 	<div id="modal-open" class="modal">
 		<div class="modal-background"></div>
 		<div class="modal-card">
@@ -603,6 +610,35 @@
 			</section>
 			<footer class="modal-card-foot" style="justify-content: flex-end;">
 				<button class="button close-modal tn" data-tn="button-cancel">Cancel</button>
+			</footer>
+		</div>
+	</div>
+
+	<!-- CREATE TOURNAMENT MODAL -->
+	<div id="modal-tournament" class="modal">
+		<div class="modal-background"></div>
+		<div class="modal-card">
+			<header class="modal-card-head">
+				<p class="modal-card-title tn" data-tn="label-tournament-create">Create tournament</p>
+				<button class="delete close-modal" aria-label="close"></button>
+			</header>
+			<section class="modal-card-body" style="padding: 0;">
+
+				<div class="content">
+					<div class="field">
+						<label class="label tn" data-tn="label-tournament-add-player">Add player names and press add.</label>
+						<div class="control" style="width: 100%;">
+							<input type="text" class="form-control" style="width:100%;" id="tournament-player-name" placeholder="player name" maxlength="20" />
+							<a href="javascript:void(0);" class="btn btn-primary" style="width:100%;" id="button-add-player"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add</a>
+						</div>
+					</div>
+				</div>
+
+				<table class="table table-bordered text-uppercase" id="tournament-player-table"></table>
+			</section>
+			<footer class="modal-card-foot" style="justify-content: flex-end;">
+				<button class="button close-modal tn" data-tn="button-cancel">Cancel</button>
+				<button id="button-save-tournament" class="button is-success tn" data-tn="button-save-tournament">Create tournament</button>
 			</footer>
 		</div>
 	</div>
