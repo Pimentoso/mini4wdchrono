@@ -297,19 +297,24 @@ $('#button-save-track-manual').on('click', (e) => {
 	}
 });
 
-$('#button-save-tournament').on('click', (e) => {
-	if (playerNames.length < 3) return false;
-	// tournament.generate(playerNames, numManches);
-	closeAllModals();
-});
-
-$('#button-add-player').on('click', (e) => {
-	let name = $('#tournament-player-name').val().trim();
+$(document).on('click', '.js-add-player', (e) => {
+	let name = $('#js-tournament-player-name').val().trim();
 	if (name == '') return false;
 	tournament.addPlayer(name);
 	tournament.renderPlayerList($('#tournament-player-table'));
-	$('#tournament-player-name').val('');
-	$('#tournament-player-name').focus();
+	$('#js-tournament-player-name').val('');
+	$('#js-tournament-player-name').focus();
+});
+
+$(document).on('click', '.js-delete-player', (e) => {
+	let id = $this.data('player-id');
+	tournament.deletePlayer(id);
+	tournament.renderPlayerList($('#tournament-player-table'));
+});
+
+$('#button-save-tournament').on('click', (e) => {
+	tournament.generate(6); // TODO numero manche
+	closeAllModals();
 });
 
 $('#button-load-tournament').on('click', (e) => {

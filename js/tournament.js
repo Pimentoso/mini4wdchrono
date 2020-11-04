@@ -7,28 +7,31 @@ var best_manches = [];
 const addPlayer = (name) => {
 	if (name.length == 0)
 			return;
-	player_names.push(escapeHtml(name));
-	$('#inputPlayerName').val('');
-	renderPlayerList();
-	$('#inputPlayerName').focus();
+	player_names.unshift(escapeHtml(name)); // add to head of array
 };
 
-const removePlayer = (id) => {
+const deletePlayer = (id) => {
 	player_names.splice(id, 1);
-	renderPlayerList();
 };
 
 function renderPlayerList(domElem) {
 	domElem.empty();
-	if (player_names.length > 0) {
-		domElem.append('<tr class="active"><td colspan="3"><strong>' + player_names.length + ' RACERS</strong></td></tr>');
+	if (player_names.length) {
+		domElem.append(`
+		<tr class="active">
+			<td colspan="3"><strong>${player_names.length} RACERS</strong></td>
+		</tr>`);
+		_.each(player_names, function (value, index) {
+			domElem.append(`
+			<tr>
+				<td>${index + 1} ${value}</td>
+				<td style="width:52px;"><a class="button is-small is-danger is-pulled-right js-delete-player is-uppercase" data-player-id="${index}">X</a></td>
+			</tr>`);
+		});
 	}
-	_.each(player_names, function (value, index) {
-		domElem.append('<tr><td class="text-center col-xs-1 col-print-sm"><strong>' + (index + 1) + '</strong></td><td class="col-xs-10">' + value + '</td><td class="text-center col-xs-1 col-print-sm"><span class="glyphicon glyphicon-remove button-remove-player" data-remove-player="' + index + '" aria-hidden="true"></span></td></tr>');
-	});
 }
 
-const generate = (playerNames, manches) => {
+const generate = (manches) => {
 	player_ids = _.map(player_names, function (n, index) {
 		return index
 	});
@@ -186,7 +189,7 @@ function escapeHtml(string) {
 
 module.exports = {
 	addPlayer: addPlayer,
-	removePlayer: removePlayer,
+	deletePlayer: deletePlayer,
 	renderPlayerList: renderPlayerList,
 	generate: generate
 }

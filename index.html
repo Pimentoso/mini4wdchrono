@@ -102,104 +102,26 @@
 
 			<div class="box">
 				<p class="title is-4 tn" data-tn="label-track-info">Track informations</p>
-
-				<label class="label tn" data-tn="label-load-track">Load track from Track Editor link</label>
-				<div class="field has-addons">
-					<div class="control" style="width: 100%;">
-						<input id="js-input-track-code" class="input" type="text" placeholder="example: https://mini4wd-track-editor.pimentoso.com/4QT8GM" value="">
-					</div>
-					<div class="control">
-						<button id="button-load-track" class="button is-info tn" data-tn="button-load">
-							Load
-						</button>
-					</div>
-				</div>
-
-				<div class="level">
-					<div class="level-left">
-						<p id="js-track-info">
-							<span id="js-track-length" class="tag is-light is-medium">-</span>
-							<span id="js-track-order" class="tag is-light is-medium">-</span>
-						</p>
-					</div>
-					<div class="level-right">
-						<a id="js-link-track" href="#" class="button tn" data-tn="button-open-track-editor">
-							See in Mini4WD Track Editor &gt;
-						</a>
-					</div>
-				</div>
-
-				<label class="label tn" data-tn="label-manual-input">Or manual input</label>
-				<div class="field is-horizontal">
-					<div class="field-body">
-						<div class="field has-addons">
-							<p class="control is-expanded">
-								<input id="js-track-length-manual" class="input" type="text" placeholder="Track length">
-							</p>
-							<p class="control">
-								<a class="button is-static">
-									m
-								</a>
-							</p>
-						</div>
-						<div class="field">
-							<p class="control">
-								<div class="select is-fullwidth">
-									<select id="js-track-order-manual">
-									<option value="" disabled selected class="tn" data-tn="option-lane-order">Select lane order</option>
-									<option value="1-2-3">1-2-3-1</option>
-									<option value="1-3-2">1-3-2-1</option>
-									</select>
-								</div>
-							</p>
-						</div>
-					</div>
-				</div>
-
-				<div class="level">
-					<div class="level-left"></div>
-					<div class="level-right">
-						<button id="button-save-track-manual" href="#" class="button tn" data-tn="button-save">
-							Save
-						</button>
-					</div>
-				</div>
+				<p class="has-text-centered">
+					<a href="#" class="button tn open-modal" data-tn="button-" data-modal="modal-track-import" style="width: 200px;">
+						Import from Mini4WD Track Editor
+					</a>
+					<a href="#" class="button tn open-modal" data-tn="button-" data-modal="modal-track-manual" data-modal="modal-open" style="width: 200px;">
+						Insert track data manually
+					</a>
+				</p>
 			</div>
 
 			<div class="box">
 				<p class="title is-4 tn" data-tn="label-tournament-info">Tournament informations</p>
-
-				<label class="label tn" data-tn="label-load-tournament">Load tournament from Tournament Generator link</label>
-				<div class="field has-addons">
-					<div class="control" style="width: 100%;">
-						<input id="js-input-tournament-code" class="input" type="text" placeholder="example: https://mini4wd-tournament.pimentoso.com/49PMRU" value="">
-					</div>
-					<div class="control">
-						<button id="button-load-tournament" class="button is-info tn" data-tn="button-load">
-							Load
-						</button>
-					</div>
-				</div>
-
-				<div class="level">
-					<div class="level-left">
-						<p id="js-tournament-info">
-							<span id="js-tournament-players" class="tag is-light is-medium">-</span>
-							<span id="js-tournament-manches" class="tag is-light is-medium">-</span>
-						</p>
-					</div>
-					<div class="level-right">
-						<a id="js-link-tournament" href="#" class="button tn" data-tn="button-open-tournament-editor">
-							See in Mini4WD Tournament Generator &gt;
-						</a>
-					</div>
-				</div>
-
-				<label class="label tn" data-tn="label-manual-input">Or manual input</label>
-				<a href="#" class="button is-warning tn open-modal" data-tn="button-tournament" data-modal="modal-tournament" style="width: 200px;">
-					Insert player names
-				</a>
-
+				<p class="has-text-centered">
+					<a href="#" class="button tn open-modal" data-tn="button-" data-modal="modal-tournament-import" style="width: 200px;">
+						Import from Mini4WD Tournament Generator
+					</a>
+					<a href="#" class="button tn open-modal" data-tn="button-" data-modal="modal-tournament-manual" data-modal="modal-open" style="width: 200px;">
+						Insert players manually
+					</a>
+				</p>
 			</div>
 
 			<div class="box">
@@ -614,22 +536,73 @@
 		</div>
 	</div>
 
+	<!-- IMPORT TRACK MODAL -->
+	<div id="modal-track-import" class="modal">
+		<div class="modal-background"></div>
+		<div class="modal-card">
+			<header class="modal-card-head">
+				<p class="modal-card-title tn" data-tn="label-import-track">Load track from Track Editor link</p>
+				<button class="delete close-modal" aria-label="close"></button>
+			</header>
+			<section class="modal-card-body">
+				<div class="content">
+					<div class="field">
+						<label class="label tn" data-tn="label-track-link">Enter Track Editor link or 6-letter code.</label>
+						<div class="control" style="width: 100%;">
+							<input id="js-input-track-code" class="input" type="text" placeholder="example: https://mini4wd-track-editor.pimentoso.com/4QT8GM" value="">
+						</div>
+					</div>
+				</div>
+			</section>
+			<footer class="modal-card-foot" style="justify-content: flex-end;">
+				<button class="button close-modal tn" data-tn="button-cancel">Cancel</button>
+				<button id="button-import-track" class="button is-success tn" data-tn="button-import-track">Load track</button>
+			</footer>
+		</div>
+	</div>
+
+	<!-- IMPORT TOURNAMENT MODAL -->
+	<div id="modal-tournament-import" class="modal">
+		<div class="modal-background"></div>
+		<div class="modal-card">
+			<header class="modal-card-head">
+				<p class="modal-card-title tn" data-tn="label-import-tournament">Load tournament from Tournament Generator link</p>
+				<button class="delete close-modal" aria-label="close"></button>
+			</header>
+			<section class="modal-card-body">
+				<div class="content">
+					<div class="field">
+						<label class="label tn" data-tn="label-tournament-link">Enter Tournament Generator link or 6-letter code.</label>
+						<div class="control" style="width: 100%;">
+							<input id="js-input-tournament-code" class="input" type="text" placeholder="example: https://mini4wd-tournament.pimentoso.com/49PMRU" value="">
+						</div>
+					</div>
+				</div>
+			</section>
+			<footer class="modal-card-foot" style="justify-content: flex-end;">
+				<button class="button close-modal tn" data-tn="button-cancel">Cancel</button>
+				<button id="button-import-tournament" class="button is-success tn" data-tn="button-import-tournament">Load tournament</button>
+			</footer>
+		</div>
+	</div>
+
 	<!-- CREATE TOURNAMENT MODAL -->
-	<div id="modal-tournament" class="modal">
+	<div id="modal-tournament-manual" class="modal">
 		<div class="modal-background"></div>
 		<div class="modal-card">
 			<header class="modal-card-head">
 				<p class="modal-card-title tn" data-tn="label-tournament-create">Create tournament</p>
 				<button class="delete close-modal" aria-label="close"></button>
 			</header>
-			<section class="modal-card-body" style="padding: 0;">
-
+			<section class="modal-card-body">
 				<div class="content">
-					<div class="field">
-						<label class="label tn" data-tn="label-tournament-add-player">Add player names and press add.</label>
+					<label class="label tn" data-tn="label-tournament-add-player">Add player names and press add.</label>
+					<div class="field has-addons">
 						<div class="control" style="width: 100%;">
-							<input type="text" class="form-control" style="width:100%;" id="tournament-player-name" placeholder="player name" maxlength="20" />
-							<a href="javascript:void(0);" class="btn btn-primary" style="width:100%;" id="button-add-player"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add</a>
+							<input id="js-tournament-player-name" class="input" type="text" placeholder="player name" maxlength="20" />
+						</div>
+						<div class="control">
+							<button id="button-add-player" class="button is-info tn" data-tn="button-add-player">Add</button>
 						</div>
 					</div>
 				</div>

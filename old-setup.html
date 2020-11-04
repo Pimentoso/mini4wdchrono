@@ -1,0 +1,104 @@
+
+				<label class="label tn" data-tn="label-load-track"></label>
+				<div class="field has-addons">
+					<div class="control" style="width: 100%;">
+						<input id="js-input-track-code" class="input" type="text" placeholder="example: https://mini4wd-track-editor.pimentoso.com/4QT8GM" value="">
+					</div>
+					<div class="control">
+						<button id="button-load-track" class="button is-info tn" data-tn="button-load">
+							Load
+						</button>
+					</div>
+				</div>
+
+				<div class="level">
+					<div class="level-left">
+						<p id="js-track-info">
+							<span id="js-track-length" class="tag is-light is-medium">-</span>
+							<span id="js-track-order" class="tag is-light is-medium">-</span>
+						</p>
+					</div>
+					<div class="level-right">
+						<a id="js-link-track" href="#" class="button tn" data-tn="button-open-track-editor">
+							See in Mini4WD Track Editor &gt;
+						</a>
+					</div>
+				</div>
+
+				<label class="label tn" data-tn="label-manual-input">Or manual input</label>
+				<div class="field is-horizontal">
+					<div class="field-body">
+						<div class="field has-addons">
+							<p class="control is-expanded">
+								<input id="js-track-length-manual" class="input" type="text" placeholder="Track length">
+							</p>
+							<p class="control">
+								<a class="button is-static">
+									m
+								</a>
+							</p>
+						</div>
+						<div class="field">
+							<p class="control">
+								<div class="select is-fullwidth">
+									<select id="js-track-order-manual">
+									<option value="" disabled selected class="tn" data-tn="option-lane-order">Select lane order</option>
+									<option value="1-2-3">1-2-3-1</option>
+									<option value="1-3-2">1-3-2-1</option>
+									</select>
+								</div>
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="level">
+					<div class="level-left"></div>
+					<div class="level-right">
+						<button id="button-save-track-manual" href="#" class="button tn" data-tn="button-save">
+							Save
+						</button>
+					</div>
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+				<label class="label tn" data-tn="label-load-tournament">Load tournament from Tournament Generator link</label>
+				<div class="field has-addons">
+					<div class="control" style="width: 100%;">
+						<input id="js-input-tournament-code" class="input" type="text" placeholder="example: https://mini4wd-tournament.pimentoso.com/49PMRU" value="">
+					</div>
+					<div class="control">
+						<button id="button-load-tournament" class="button is-info tn" data-tn="button-load">
+							Load
+						</button>
+					</div>
+				</div>
+
+				<div class="level">
+					<div class="level-left">
+						<p id="js-tournament-info">
+							<span id="js-tournament-players" class="tag is-light is-medium">-</span>
+							<span id="js-tournament-manches" class="tag is-light is-medium">-</span>
+						</p>
+					</div>
+					<div class="level-right">
+						<a id="js-link-tournament" href="#" class="button tn" data-tn="button-open-tournament-editor">
+							See in Mini4WD Tournament Generator &gt;
+						</a>
+					</div>
+				</div>
+
+				<label class="label tn" data-tn="label-manual-input">Or manual input</label>
+				<a href="#" class="button is-warning tn open-modal" data-tn="button-tournament" data-modal="modal-tournament" style="width: 200px;">
+					Insert player names
+				</a>
