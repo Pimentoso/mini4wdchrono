@@ -223,20 +223,9 @@ Wire Wire Line
 Connection ~ 5300 4550
 Wire Wire Line
 	5300 4550 5300 4950
-$Comp
-L Connector:Conn_01x03_Female JBTN0
-U 1 1 5F92E86A
-P 5850 5450
-F 0 "JBTN0" H 5878 5476 50  0000 L CNN
-F 1 "Conn_01x03_Female" H 5878 5385 50  0000 L CNN
-F 2 "Connector_Wire:SolderWirePad_1x03_P3.175mm_Drill1mm" H 5850 5450 50  0001 C CNN
-F 3 "~" H 5850 5450 50  0001 C CNN
-	1    5850 5450
-	1    0    0    -1  
-$EndComp
-Text GLabel 5650 5350 0    50   Input ~ 0
-VCC
 Text GLabel 5650 5450 0    50   Input ~ 0
+VCC
+Text GLabel 4950 5450 0    50   Input ~ 0
 GND
 $Comp
 L Connector:Conn_01x03_Female JEX0
@@ -256,11 +245,49 @@ GND
 Wire Wire Line
 	5650 5200 3150 5200
 Wire Wire Line
-	3100 5550 5650 5550
+	3100 5550 5250 5550
 NoConn ~ 4700 4200
 Wire Wire Line
 	3100 5550 3100 4200
 Wire Wire Line
 	3100 4200 3300 4200
 NoConn ~ 3300 3800
+$Comp
+L Mechanical:MountingHole H2
+U 1 1 5FD3A4F1
+P 7350 5050
+F 0 "H2" H 7450 5096 50  0000 L CNN
+F 1 "MountingHole" H 7450 5005 50  0000 L CNN
+F 2 "MountingHole:MountingHole_2.2mm_M2" H 7350 5050 50  0001 C CNN
+F 3 "~" H 7350 5050 50  0001 C CNN
+	1    7350 5050
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_US R0
+U 1 1 5FD3B002
+P 5100 5450
+F 0 "R0" V 4895 5450 50  0000 C CNN
+F 1 "R_US" V 4986 5450 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 5140 5440 50  0001 C CNN
+F 3 "~" H 5100 5450 50  0001 C CNN
+	1    5100 5450
+	0    1    1    0   
+$EndComp
+$Comp
+L Connector:Conn_01x02_Female JBUTTON0
+U 1 1 5FD41B09
+P 5850 5450
+F 0 "JBUTTON0" H 5878 5426 50  0000 L CNN
+F 1 "Conn_01x02_Female" H 5878 5335 50  0000 L CNN
+F 2 "Connector_Wire:SolderWirePad_1x02_P3.81mm_Drill1mm" H 5850 5450 50  0001 C CNN
+F 3 "~" H 5850 5450 50  0001 C CNN
+	1    5850 5450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5250 5450 5250 5550
+Connection ~ 5250 5550
+Wire Wire Line
+	5250 5550 5650 5550
 $EndSCHEMATC
