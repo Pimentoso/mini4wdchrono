@@ -55,6 +55,9 @@ const init = () => {
 	$('#tag-tournament-status').removeClass('is-success');
 	$('#tag-tournament-status').text(i18n.__('tag-not-loaded'));
 
+	$('#js-buttons-track').show();
+	$('#js-buttons-tournament').show();
+
 	disableRaceInput(false);
 	if (storage.get('race')) {
 		disableRaceInput(true);
@@ -104,6 +107,10 @@ const initModal = (modalId) => {
 			$('#modal-open-files').append(`<tr><td><span class="is-uppercase has-text-grey">No files</span></td><tr>`);
 		}
 	}
+	if (modalId == 'modal-tournament-manual') {
+		$('#js-tournament-player-name').val('');
+		$('#js-tournament-player-name').focus();
+	}
 };
 
 const toggleFreeRound = (freeRound) => {
@@ -124,6 +131,7 @@ const trackLoadDone = (track) => {
 	$('#tag-track-status').removeClass('is-danger');
 	$('#tag-track-status').addClass('is-success');
 	$('#tag-track-status').text(track.code);
+	$('#js-buttons-track').hide();
 };
 
 const trackLoadFail = () => {
@@ -140,6 +148,7 @@ const tournamentLoadDone = (tournament) => {
 	$('#tag-tournament-status').text(tournament.code);
 	$('#js-input-tournament-code').removeClass('is-danger');
 	$('#js-input-tournament-code').val(tournament.code);
+	$('#js-buttons-tournament').hide();
 };
 
 const tournamentLoadFail = () => {

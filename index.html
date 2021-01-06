@@ -102,11 +102,11 @@
 
 			<div class="box">
 				<p class="title is-4 tn" data-tn="label-track-info">Track informations</p>
-				<p class="has-text-centered">
-					<a href="#" class="button tn open-modal" data-tn="button-" data-modal="modal-track-import" style="width: 200px;">
+				<p class="has-text-centered" id="js-buttons-track">
+					<a href="#" class="button open-modal" data-tn="button-" data-modal="modal-track-import">
 						Import from Mini4WD Track Editor
 					</a>
-					<a href="#" class="button tn open-modal" data-tn="button-" data-modal="modal-track-manual" data-modal="modal-open" style="width: 200px;">
+					<a href="#" class="button open-modal" data-tn="button-" data-modal="modal-track-manual" data-modal="modal-open">
 						Insert track data manually
 					</a>
 				</p>
@@ -114,11 +114,11 @@
 
 			<div class="box">
 				<p class="title is-4 tn" data-tn="label-tournament-info">Tournament informations</p>
-				<p class="has-text-centered">
-					<a href="#" class="button tn open-modal" data-tn="button-" data-modal="modal-tournament-import" style="width: 200px;">
+				<p class="has-text-centered" id="js-buttons-tournament">
+					<a href="#" class="button open-modal" data-tn="button-" data-modal="modal-tournament-import">
 						Import from Mini4WD Tournament Generator
 					</a>
-					<a href="#" class="button tn open-modal" data-tn="button-" data-modal="modal-tournament-manual" data-modal="modal-open" style="width: 200px;">
+					<a href="#" class="button open-modal" data-tn="button-" data-modal="modal-tournament-manual" data-modal="modal-open">
 						Insert players manually
 					</a>
 				</p>
@@ -561,6 +561,46 @@
 		</div>
 	</div>
 
+	<!-- MANUAL SETUP TRACK MODAL -->
+	<div id="modal-track-manual" class="modal">
+		<div class="modal-background"></div>
+		<div class="modal-card">
+			<header class="modal-card-head">
+				<p class="modal-card-title" data-tn="label-manual-track">Manually input track data</p>
+				<button class="delete close-modal" aria-label="close"></button>
+			</header>
+			<section class="modal-card-body">
+				<div class="content">
+					<div class="field has-addons">
+						<p class="control is-expanded">
+							<input id="js-track-length-manual" class="input" type="text" placeholder="Track length">
+						</p>
+						<p class="control">
+							<a class="button is-static">
+								m
+							</a>
+						</p>
+					</div>
+					<div class="field">
+						<p class="control">
+							<div class="select is-fullwidth">
+								<select id="js-track-order-manual">
+								<option value="" disabled selected class="tn" data-tn="option-lane-order">Select lane order</option>
+								<option value="1-2-3">1-2-3-1</option>
+								<option value="1-3-2">1-3-2-1</option>
+								</select>
+							</div>
+						</p>
+					</div>
+				</div>
+			</section>
+			<footer class="modal-card-foot" style="justify-content: flex-end;">
+				<button class="button close-modal tn" data-tn="button-cancel">Cancel</button>
+				<button id="button-save-track-manual" class="button is-success tn" data-tn="button-save">Save</button>
+			</footer>
+		</div>
+	</div>
+
 	<!-- IMPORT TOURNAMENT MODAL -->
 	<div id="modal-tournament-import" class="modal">
 		<div class="modal-background"></div>
@@ -596,13 +636,13 @@
 			</header>
 			<section class="modal-card-body">
 				<div class="content">
-					<label class="label tn" data-tn="label-tournament-add-player">Add player names and press add.</label>
+					<label class="label" data-tn="label-tournament-add-player">Add player names and press add.</label>
 					<div class="field has-addons">
 						<div class="control" style="width: 100%;">
 							<input id="js-tournament-player-name" class="input" type="text" placeholder="player name" maxlength="20" />
 						</div>
 						<div class="control">
-							<button id="button-add-player" class="button is-info tn" data-tn="button-add-player">Add</button>
+							<button id="js-add-player" class="button is-info tn" data-tn="button-add-player">Add</button>
 						</div>
 					</div>
 				</div>

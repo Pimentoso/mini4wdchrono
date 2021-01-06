@@ -17,7 +17,7 @@ process.__defineGetter__("stdin", function () {
 });
 
 ////////////////////////
-const debugMode = false;
+const debugMode = true;
 ////////////////////////
 
 const { dialog, shell, app, webContents } = require('electron').remote;
@@ -213,6 +213,13 @@ board.on("exit", function (event) {
 // ==========================================================================
 // ==== listen to interface events and propagate to client
 
+// keydown
+document.onkeydown = (e) => {
+	if (debugMode) {
+		client.keydown(e.keyCode);
+	}
+};
+
 // tabs
 $('.tabs a').on('click', (e) => {
 	let $this = $(e.currentTarget);
@@ -242,15 +249,19 @@ $('.open-modal').on('click', (e) => {
 
 $('.close-modal').on('click', closeAllModals);
 
-// keydown
-document.onkeydown = (e) => {
-	if (!debugMode) {
-		return;
-	}
-	client.keydown(e.keyCode);
-};
+/*
+ * UI observer for new race modal
+ */
+$('#button-new-race').on('click', (e) => {
+	let name = $('#modal-new-name').val().trim();
+	if (name == '') return false;
+	client.reset(name);
+	closeAllModals();
+});
 
-// ui observers
+/*
+ * UI observer for load race modal - load race
+ */
 $(document).on('click', '.js-load-race', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
@@ -260,6 +271,9 @@ $(document).on('click', '.js-load-race', (e) => {
 	closeAllModals();
 });
 
+/*
+ * UI observer for load race modal - delete race
+ */
 $(document).on('click', '.js-delete-race', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
@@ -270,6 +284,9 @@ $(document).on('click', '.js-delete-race', (e) => {
 	}
 });
 
+/*
+ * UI observer for import track modal - load track
+ */
 $('#button-load-track').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
@@ -277,6 +294,9 @@ $('#button-load-track').on('click', (e) => {
 	client.loadTrack(code);
 });
 
+/*
+ * UI observer for manual track setup modal - save track
+ */
 $('#button-save-track-manual').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
@@ -297,7 +317,10 @@ $('#button-save-track-manual').on('click', (e) => {
 	}
 });
 
-$(document).on('click', '.js-add-player', (e) => {
+/*
+ * UI observer for setup tournament modal - add player
+ */
+$(document).on('click', '#js-add-player', (e) => {
 	let name = $('#js-tournament-player-name').val().trim();
 	if (name == '') return false;
 	tournament.addPlayer(name);
@@ -306,17 +329,26 @@ $(document).on('click', '.js-add-player', (e) => {
 	$('#js-tournament-player-name').focus();
 });
 
+/*
+ * UI observer for setup tournament modal - remove player
+ */
 $(document).on('click', '.js-delete-player', (e) => {
 	let id = $this.data('player-id');
 	tournament.deletePlayer(id);
 	tournament.renderPlayerList($('#tournament-player-table'));
 });
 
+/*
+ * UI observer for setup tournament modal - generate tournament
+ */
 $('#button-save-tournament').on('click', (e) => {
 	tournament.generate(6); // TODO numero manche
 	closeAllModals();
 });
 
+/*
+ * UI observer for import tournament modal - load tournament
+ */
 $('#button-load-tournament').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
@@ -324,13 +356,9 @@ $('#button-load-tournament').on('click', (e) => {
 	client.loadTournament(code);
 });
 
-$('#button-new-race').on('click', (e) => {
-	let name = $('#modal-new-name').val().trim();
-	if (name == '') return false;
-	client.reset(name);
-	closeAllModals();
-});
-
+/*
+ * UI observer for race start button
+ */
 $('#button-start').on('click', (e) => {
 	if (!connected && !debugMode) {
 		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-disconnected'), buttons: ['Ok'] });
