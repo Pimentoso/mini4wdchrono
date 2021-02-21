@@ -28,6 +28,7 @@ const init = () => {
 	$('#js-settings-time-threshold').val(storage.get('timeThreshold'));
 	$('#js-settings-speed-threshold').val(storage.get('speedThreshold'));
 	$('#js-settings-start-delay').val(storage.get('startDelay'));
+	$('#js-settings-round-laps').val(storage.get('roundLaps'));
 	showRaceModeDetails();
 
 	$('.js-led-type').removeClass('is-primary');

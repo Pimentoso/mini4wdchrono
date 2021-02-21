@@ -42,6 +42,8 @@
 	"button-race-mode-final-description": "In this mode time for all cars start at the same time, when the green lights go off.",
 	"button-race-mode-endurance": "Endurance mode",
 	"button-race-mode-endurance-description": "In this mode TODO",
+	"label-round-laps": "Laps for a single round",
+	"label-round-laps-desc": "For very short tracks you might want more laps to complete a round. Default is 3.",
 	"label-start-delay": "Max start delay",
 	"label-start-delay-desc": "Time limit at race start for a car to pass on the sensor. Default is 3 sec.",
 	"label-average-speed": "Average speed",

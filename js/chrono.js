@@ -10,6 +10,7 @@ var rTimeThreshold = 40; // percentage of single lap time to calculate cutoff
 var rSpeedThreshold = 5; // speed in m/s to calculate cutoff
 var rTimeCutoffMin = 0; // min lap cutoff
 var rTimeCutoffMax = 0; // max lap cutoff
+var rLaps = 3;
 
 // car object template
 const carObj = {
@@ -35,6 +36,7 @@ const init = (track, playerIds, cars) => {
 		rLaneOrder = _.map(track.order, (i) => { return i - 1; });
 		rTimeThreshold = storage.get('timeThreshold') / 100;
 		rSpeedThreshold = storage.get('speedThreshold');
+		rLaps = storage.get('roundLaps');
 		rTimeCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold) * 1000;
 		if (rTimeCutoffMin < 1000) rTimeCutoffMin = 1000;
 		rTimeCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold) * 1000;
@@ -102,7 +104,7 @@ const addLap = (lane) => {
 };
 
 const calculateCar = (car, timestamp) => {
-	if (car.lapCount < 4) {
+	if (car.lapCount <= rLaps) {
 		if (car.lapCount == 0) {
 			// start
 			car.startTimestamp = timestamp;
@@ -116,7 +118,7 @@ const calculateCar = (car, timestamp) => {
 		car.currTimestamp = timestamp;
 		car.currTime = timestamp - car.startTimestamp;
 		car.speed = (rTrackLength / 3) * (car.lapCount - 1) / (car.currTime / 1000);
-		if (car.lapCount == 4) {
+		if (car.lapCount == rLaps + 1) {
 			// finish
 			car.endTimestamp = timestamp;
 		}
@@ -128,10 +130,11 @@ const calculateRace = () => {
 	let bestTime = 0;
 	let bestLap = _.max(rCars, (c) => { return c.lapCount; }).lapCount;
 	let pos = 0;
+	let lapsArr = _.range(2, rLaps + 1).reverse();
 
 	// first are the cars with the highest lap count,
 	// then with same lapCount first is the one with lowest time
-	_.each([4, 3, 2], (lap) => {
+	_.each([lapsArr, (lap) => {
 		let runningCars = _.filter(rCars, (c) => { return c.lapCount == lap; });
 		_.each(_.sortBy(runningCars, 'currTime'), (c, i) => {
 			if (lap == bestLap) {
@@ -159,14 +162,14 @@ const nextLane = (lane) => {
 
 // check if round is finished (all cars out or did 3 laps)
 const isRaceFinished = () => {
-	return _.every(rCars, (c) => { return c.outOfBounds || c.lapCount == 4; });
+	return _.every(rCars, (c) => { return c.outOfBounds || c.lapCount == rLaps + 1; });
 };
 
 // forcefully stops the race. All cars still running are set to 99999.
 const stopRace = () => {
 	let dirty = false;
 	_.each(_.filter(rCars, (c) => {
-		return c.lapCount < 4;
+		return c.lapCount <= rLaps;
 	}), (c) => {
 		c.currTime = 99999;
 		c.outOfBounds = true;
@@ -184,7 +187,7 @@ const checkOutCars = () => {
 	let timestamp = new Date().getTime();
 	let dirty = false;
 	_.each(_.filter(rCars, (c) => {
-		return c.startTimestamp > 0 && !c.outOfBounds && c.lapCount < 4 && (timestamp - c.currTimestamp) > rTimeCutoffMax;
+		return c.startTimestamp > 0 && !c.outOfBounds && c.lapCount <= rLaps && (timestamp - c.currTimestamp) > rTimeCutoffMax;
 	}), (c) => {
 		c.currTime = 99999;
 		c.outOfBounds = true;

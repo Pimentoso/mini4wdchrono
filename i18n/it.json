@@ -42,6 +42,8 @@
 	"button-race-mode-final-description": "In questa modalita' il tempo di tutte le macchine parte nello stesso momento, quando le luci verdi si spengono.",
 	"button-race-mode-endurance": "Modalita' Endurance",
 	"button-race-mode-endurance-description": "In questa modalita' TODO",
+	"label-round-laps": "Giri per round",
+	"label-round-laps-desc": "In piste molto corte si possono volere piu' giri per round. Default e' 3.",
 	"label-start-delay": "Ritardo massimo partenza",
 	"label-start-delay-desc": "Tempo massimo alla partenza perche' una mini passi sul sensore. Default e' 3 sec.",
 	"label-average-speed": "Velocita' media",

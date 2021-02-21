@@ -17,6 +17,7 @@ const setDefaults = () => {
 	storage.set('timeThreshold', 40);
 	storage.set('speedThreshold', 5);
 	storage.set('startDelay', 3);
+	storage.set('roundLaps', 3);
 };
 
 const newRace = (raceName) => {
