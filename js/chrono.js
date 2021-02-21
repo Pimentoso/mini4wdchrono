@@ -134,7 +134,7 @@ const calculateRace = () => {
 
 	// first are the cars with the highest lap count,
 	// then with same lapCount first is the one with lowest time
-	_.each([lapsArr, (lap) => {
+	_.each(lapsArr, (lap) => {
 		let runningCars = _.filter(rCars, (c) => { return c.lapCount == lap; });
 		_.each(_.sortBy(runningCars, 'currTime'), (c, i) => {
 			if (lap == bestLap) {

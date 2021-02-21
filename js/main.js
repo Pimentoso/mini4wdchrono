@@ -381,7 +381,7 @@ $('#button-save-settings').on('click', (e) => {
 	let startDelay = parseFloat($('#js-settings-start-delay').val().replace(',', '.'));
 	let roundLaps = parseInt($('#js-settings-round-laps').val().replace(',', '.'));
 	storage.set('timeThreshold', timeThreshold);
-	storage.set('speedThreshold', speedThreshold);v
+	storage.set('speedThreshold', speedThreshold);
 	storage.set('startDelay', startDelay);
 	storage.set('roundLaps', roundLaps);
 	ui.showThresholds();
