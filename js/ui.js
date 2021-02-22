@@ -499,6 +499,9 @@ const drawRace = (cars, running) => {
 	$('.js-delay').removeClass('is-danger');
 	$('.js-timer').removeClass('is-danger is-success');
 
+	let track = storage.get('track');
+	let laps = storage.get('roundLaps');
+
 	_.each(cars, (car, i) => {
 		// delay + speed
 		if (car.outOfBounds) {
@@ -519,7 +522,7 @@ const drawRace = (cars, running) => {
 		}
 
 		// lap count
-		if (car.lapCount > storage.get('roundLaps')) {
+		if (car.lapCount > laps) {
 			$(`#lap-lane${i}`).text(i18n.__('label-car-finish'));
 		}
 		else {
@@ -529,7 +532,9 @@ const drawRace = (cars, running) => {
 		// split times
 		$(`#laps-lane${i}`).empty();
 		_.each(car.splitTimes, (t, ii) => {
-			$(`#laps-lane${i}`).append(`<li class="is-size-4">${i18n.__('label-car-partial')} ${ii + 1} - <strong>${utils.prettyTime(t)} s</strong></li>`);
+			let time = utils.prettyTime(t);
+			let speed = track.length / 3 / time;
+			$(`#laps-lane${i}`).append(`<li class="is-size-5">${i18n.__('label-car-lap')} ${ii + 1} - <strong>${time}s</strong> - ${speed.toFixed(2)}m/s</li>`);
 		});
 
 		// place
@@ -568,7 +573,7 @@ const drawRace = (cars, running) => {
 		else if (car.lapCount == 0) {
 			$(`#timer-lane${i}`).text(utils.prettyTime(0));
 		}
-		else if (car.lapCount > storage.get('roundLaps')) {
+		else if (car.lapCount > laps) {
 			$(`#timer-lane${i}`).addClass('is-success');
 			$(`#timer-lane${i}`).text(utils.prettyTime(car.currTime));
 		}
