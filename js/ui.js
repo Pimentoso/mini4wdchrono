@@ -222,22 +222,23 @@ const showTournamentDetails = (tournament) => {
 	}
 };
 
-const showThresholds = (timeThreshold, speedThreshold) => {
+const showThresholds = (timeThreshold, speedThreshold, roundLaps) => {
 	let track = storage.get('track');
 	if (track) {
 		let rTrackLength = track.length;
+		let rLaps = roundLaps || storage.get('roundLaps');
 		let rTimeThreshold = (timeThreshold || storage.get('timeThreshold')) / 100;
 		let rSpeedThreshold = speedThreshold || storage.get('speedThreshold');
-		let estimatedTime = rTrackLength / rSpeedThreshold;
+		let estimatedTime = rTrackLength / rSpeedThreshold / 3 * rLaps;
 		let estimatedCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold);
 		if (estimatedCutoffMin < 1) estimatedCutoffMin = 1;
 		let estimatedCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold);
 		$('#js-settings-estimated-time').show();
-		$('#js-settings-estimated-time').text(`${i18n.__('label-time-estimated')}: ${estimatedTime.toFixed(3)} sec`);
+		$('#js-settings-estimated-time').text(`${i18n.__('label-time-estimated')}: ${estimatedTime.toFixed(2)} sec`);
 		$('#js-settings-estimated-cutoff-min').show();
 		$('#js-settings-estimated-cutoff-max').show();
-		$('#js-settings-estimated-cutoff-min').text(`${i18n.__('label-time-estimated-cutoff-min')} ${estimatedCutoffMin.toFixed(3)} sec`);
-		$('#js-settings-estimated-cutoff-max').text(`${i18n.__('label-time-estimated-cutoff-max')} ${estimatedCutoffMax.toFixed(3)} sec`);
+		$('#js-settings-estimated-cutoff-min').text(`${i18n.__('label-time-estimated-cutoff-min')} ${estimatedCutoffMin.toFixed(2)} sec`);
+		$('#js-settings-estimated-cutoff-max').text(`${i18n.__('label-time-estimated-cutoff-max')} ${estimatedCutoffMax.toFixed(2)} sec`);
 	}
 	else {
 		$('#js-settings-estimated-time').hide();
@@ -518,7 +519,7 @@ const drawRace = (cars, running) => {
 		}
 
 		// lap count
-		if (car.lapCount == 4) {
+		if (car.lapCount > storage.get('roundLaps')) {
 			$(`#lap-lane${i}`).text(i18n.__('label-car-finish'));
 		}
 		else {
@@ -567,7 +568,7 @@ const drawRace = (cars, running) => {
 		else if (car.lapCount == 0) {
 			$(`#timer-lane${i}`).text(utils.prettyTime(0));
 		}
-		else if (car.lapCount == 4) {
+		else if (car.lapCount > storage.get('roundLaps')) {
 			$(`#timer-lane${i}`).addClass('is-success');
 			$(`#timer-lane${i}`).text(utils.prettyTime(car.currTime));
 		}
@@ -587,6 +588,7 @@ const disableRaceInput = (disabled) => {
 	$('#js-track-length-manual').prop('disabled', disabled);
 	$('#js-track-order-manual').prop('disabled', disabled);
 	$('#js-track-save-manual').prop('disabled', disabled);
+	$('#js-settings-round-laps').prop('disabled', disabled);
 };
 
 module.exports = {

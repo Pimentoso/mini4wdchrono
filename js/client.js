@@ -550,7 +550,7 @@ const updateRace = () => {
 
 	// stop timers
 	_.each(cars, (car, i) => {
-		if (car.outOfBounds || car.lapCount == 4) {
+		if (car.outOfBounds || car.lapCount > storage.get('roundLaps')) {
 			stopTimer(i);
 		}
 		else if (car.lapCount == 1) {
