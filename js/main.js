@@ -108,9 +108,23 @@ client.init();
 // Start race function. Handles all hardware checks.
 const startRace = () => {
 	log.info(`Starting race at ${new Date()}`);
-	if (!connected && !debugMode) {
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-disconnected'), buttons: ['Ok'] });
-		return;
+	if (!debugMode) {
+		if (!connected) {
+			dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-disconnected'), buttons: ['Ok'] });
+			return;
+		}
+		else if (tag1.text() != '1') {
+			dialog.showMessageBox({ type: 'error', title: 'Error', message: `${i18n.__('dialog-sensor-error')} 1`, buttons: ['Ok'] });
+			return;
+		}
+		else if (tag2.text() != '1') {
+			dialog.showMessageBox({ type: 'error', title: 'Error', message: `${i18n.__('dialog-sensor-error')} 2`, buttons: ['Ok'] });
+			return;
+		}
+		else if (tag3.text() != '1') {
+			dialog.showMessageBox({ type: 'error', title: 'Error', message: `${i18n.__('dialog-sensor-error')} 3`, buttons: ['Ok'] });
+			return;
+		}
 	}
 	client.startRace(debugMode);
 }
