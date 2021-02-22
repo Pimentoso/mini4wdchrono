@@ -11,7 +11,7 @@ const clone = require('clone');
 
 var currTrack, currTournament, ledManager;
 var playerList, mancheList, mancheCount, playerTimes;
-var currManche = 0, currRound = 0, raceRunning = false, freeRound = true;
+var currManche = 0, currRound = 0, raceStarting = false, raceRunning = false, freeRound = true;
 
 var timerIntervals = [], timerSeconds = [];
 var pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
@@ -72,14 +72,14 @@ const reset = (name) => {
 const chronoInit = (reset) => {
 	console.log('client.chronoInit called');
 
-	if (reset) {
+	if (currTournament == null || freeRound) {
+		// free round
+		chrono.init(currTrack);
+	}
+	else if (reset) {
 		// new blank round, or replay a past round
 		storage.deleteRound(currManche, currRound);
 		chrono.init(currTrack, mancheList[currManche][currRound]);
-	}
-	else if (currTournament == null || freeRound) {
-		// free round
-		chrono.init(currTrack);
 	}
 	else {
 		// load existing round
@@ -132,6 +132,8 @@ const overrideTimes = () => {
 	});
 
 	rebuildTimeList();
+	ui.showPlayerList();
+	ui.showMancheList();
 	ui.initRace(freeRound);
 	updateRace();
 };
@@ -206,6 +208,41 @@ const initFinal = () => {
 // ==========================================================================
 // ==== handle interface buttons
 
+const startRace = (debugMode) => {
+	console.log('client.startRace called');
+
+	if (!storage.get('track')) {
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-track-not-loaded'), buttons: ['Ok'] });
+		return;
+	}
+	if ($(`div[data-tab=race]`).is(":hidden")) {
+		return;
+	}
+	if (raceStarting || raceRunning) {
+		return;
+	}
+
+	if (debugMode) {
+		// debug mode
+		raceStarting = true;
+		ui.raceStarted();
+		initRound();
+		startRound();
+	}
+	else {
+		// production mode
+		if (!freeRound && storage.get('tournament') && storage.loadRound()) {
+			if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-replay-round'), buttons: ['Ok', 'Cancel'] }) == 1) {
+				return;
+			}
+		}
+		raceStarting = true;
+		ui.raceStarted();
+		initRound();
+		ledManager.roundStart(startRound);
+	}
+}
+
 // called before the starting sequence
 const initRound = () => {
 	console.log('client.initRound called');
@@ -235,8 +272,8 @@ const startRound = () => {
 };
 
 // called when the stop button is pressed
-const stopRound = () => {
-	console.log('client.stopRound called');
+const stopRace = () => {
+	console.log('client.stopRace called');
 
 	chrono.stopRace();
 	checkRace();
@@ -247,7 +284,7 @@ const prevRound = () => {
 
 	if (currTournament == null || currTrack == null) {
 		// tournament not loaded
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded') });
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
 		return;
 	}
 	if (currManche == 0 && currRound == 0) {
@@ -275,7 +312,7 @@ const nextRound = () => {
 
 	if (currTournament == null || currTrack == null) {
 		// tournament not loaded
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded') });
+		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
 		return;
 	}
 
@@ -478,6 +515,7 @@ const raceFinished = () => {
 		ui.showMancheList();
 	}
 
+	raceStarting = false;
 	raceRunning = false;
 	ui.raceFinished(freeRound);
 };
@@ -574,9 +612,8 @@ module.exports = {
 	saveXls: saveXls,
 	disqualify: disqualify,
 	overrideTimes: overrideTimes,
-	initRound: initRound,
-	startRound: startRound,
-	stopRound: stopRound,
+	startRace: startRace,
+	stopRace: stopRace,
 	prevRound: prevRound,
 	nextRound: nextRound,
 	isFreeRound: isFreeRound,

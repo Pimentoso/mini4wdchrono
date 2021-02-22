@@ -39,6 +39,7 @@ const init = () => {
 	$('#js-config-led-pin-2').val(configuration.get('ledPin2'));
 	$('#js-config-led-pin-3').val(configuration.get('ledPin3'));
 	$('#js-config-piezo-pin').val(configuration.get('piezoPin'));
+	$('#js-config-start-button-pin').val(configuration.get('startButtonPin'));
 	$('#js-config-title').val(configuration.get('title'));
 
 	$('#button-toggle-free-round').hide();
@@ -175,8 +176,9 @@ const raceFinished = (freeRound) => {
 		$('.js-show-on-no-tournament').show();
 		$('.js-hide-on-no-tournament').hide();
 	}
-
-	disableRaceInput(true);
+	else {
+		disableRaceInput(true);
+	}
 };
 
 const showTrackDetails = (track) => {
