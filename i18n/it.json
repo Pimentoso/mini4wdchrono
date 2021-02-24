@@ -107,6 +107,7 @@
 	"dialog-new-race": "Iniziare una nuova gara? Tutti i dati attuali saranno persi.",
 	"dialog-delete-race": "Eliminare questa gara?",
 	"dialog-disconnected": "Semaforo non connesso! Controlla il cavo USB.",
+	"dialog-sensor-error": "Errore sensore! Uno dei sensori non sta ricevendo luce. Sensore sulla corsia:",
 	"dialog-track-not-loaded": "Pista non caricata!",
 	"dialog-tournament-not-loaded": "Torneo non caricato!",
 	"dialog-change-round": "Cambiare round?",

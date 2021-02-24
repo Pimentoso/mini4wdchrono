@@ -107,6 +107,7 @@
 	"dialog-new-race": "Start new race? All the current data will be lost.",
 	"dialog-delete-race": "Delete this race?",
 	"dialog-disconnected": "Lap timer not connected! Check USB cable.",
+	"dialog-sensor-error": "Sensor error! One of the sensors is not receiving light. Sensor on lane:",
 	"dialog-track-not-loaded": "Track not loaded!",
 	"dialog-tournament-not-loaded": "Tournament not loaded!",
 	"dialog-change-round": "Change round?",
