@@ -118,7 +118,7 @@ const calculateCar = (car, timestamp) => {
 		car.currTimestamp = timestamp;
 		car.currTime = timestamp - car.startTimestamp;
 		car.speed = (rTrackLength / 3) * (car.lapCount - 1) / (car.currTime / 1000);
-		if (car.lapCount == rLaps + 1) {
+		if (car.lapCount > rLaps) {
 			// finish
 			car.endTimestamp = timestamp;
 		}
@@ -162,7 +162,7 @@ const nextLane = (lane) => {
 
 // check if round is finished (all cars out or did 3 laps)
 const isRaceFinished = () => {
-	return _.every(rCars, (c) => { return c.outOfBounds || c.lapCount == rLaps + 1; });
+	return _.every(rCars, (c) => { return c.outOfBounds || c.lapCount > rLaps; });
 };
 
 // forcefully stops the race. All cars still running are set to 99999.
