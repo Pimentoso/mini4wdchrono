@@ -239,11 +239,20 @@ const showThresholds = (timeThreshold, speedThreshold, roundLaps) => {
 		$('#js-settings-estimated-cutoff-max').show();
 		$('#js-settings-estimated-cutoff-min').text(`${i18n.__('label-time-estimated-cutoff-min')} ${estimatedCutoffMin.toFixed(2)} sec`);
 		$('#js-settings-estimated-cutoff-max').text(`${i18n.__('label-time-estimated-cutoff-max')} ${estimatedCutoffMax.toFixed(2)} sec`);
+
+		let worstCaseTime = estimatedCutoffMax * rLaps;
+		if (worstCaseTime >= 99.999) {
+			$('#js-settings-time-warning').show();
+		}
+		else {
+			$('#js-settings-time-warning').hide();
+		}
 	}
 	else {
 		$('#js-settings-estimated-time').hide();
 		$('#js-settings-estimated-cutoff-min').hide();
 		$('#js-settings-estimated-cutoff-max').hide();
+		$('#js-settings-time-warning').hide();
 	}
 };
 

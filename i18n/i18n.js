@@ -17,9 +17,9 @@ function i18n() {
 }
 
 i18n.prototype.__ = function (phrase) {
-     let translation = loadedLanguage[phrase]
+     let translation = loadedLanguage[phrase];
      if (translation === undefined) {
-          translation = phrase
+          translation = phrase;
      }
-     return translation
+     return translation;
 }

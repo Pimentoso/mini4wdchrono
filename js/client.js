@@ -259,7 +259,7 @@ const startRound = () => {
 	timerSeconds = [];
 
 	// run tasks periodically
-	checkRaceTask = setInterval(checkRace, 1000);
+	checkRaceTask = setInterval(checkRace, 500);
 	setTimeout(checkStart, storage.get('startDelay') * 1000);
 
 	raceRunning = true;

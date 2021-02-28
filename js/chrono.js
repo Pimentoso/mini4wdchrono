@@ -187,7 +187,8 @@ const checkOutCars = () => {
 	let timestamp = new Date().getTime();
 	let dirty = false;
 	_.each(_.filter(rCars, (c) => {
-		return c.startTimestamp > 0 && !c.outOfBounds && c.lapCount <= rLaps && (timestamp - c.currTimestamp) > rTimeCutoffMax;
+		return c.startTimestamp > 0 && !c.outOfBounds && c.lapCount <= rLaps &&
+			((timestamp - c.currTimestamp) > rTimeCutoffMax || (timestamp - c.startTimestamp) > 99999);
 	}), (c) => {
 		c.currTime = 99999;
 		c.outOfBounds = true;

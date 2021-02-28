@@ -53,6 +53,7 @@
 	"label-time-estimated": "DURATA STIMATA ROUND",
 	"label-time-estimated-cutoff-min": "SONO SCARTATI I GIRI CON TEMPO MINORE DI:",
 	"label-time-estimated-cutoff-max": "LA MINI E' CONSIDERATA USCITA SE IL GIRO DURA PIU' DI:",
+	"label-time-warning": "<strong>Attenzione: con queste impostazioni, un round potrebbe durare piu' di 99.999 secondi.</strong><br>Le mini vengono considerate come uscite se il loro tempo supera i 99.999 secondi.<br>Riduci il numero di giri, aumenta la velocita' media, oppure costruisci una pista piu' corta!",
 	"button-save-settings": "Salva impostazioni",
 	"button-save-xls": "Salva file Excel",
 	"button-print": "Stampa",

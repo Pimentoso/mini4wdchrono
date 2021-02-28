@@ -53,6 +53,7 @@
 	"label-time-estimated": "ESTIMATED ROUND TIME",
 	"label-time-estimated-cutoff-min": "LAPS WILL BE DISCARDED IF TIME IS UNDER:",
 	"label-time-estimated-cutoff-max": "CARS WILL BE CONSIDERED OUT IF LAP TIME IS OVER:",
+	"label-time-warning": "<strong>Warning: with the current settings, a round might be longer than 99.999 seconds.</strong><br>Cars are automatically marked as out of track if their time is greater than 99.999 seconds.<br>Please reduce the number of laps, increase the speed, or build a shorter track!",
 	"button-save-settings": "Save settings",
 	"button-save-xls": "Save XLS file",
 	"button-print": "Print",
