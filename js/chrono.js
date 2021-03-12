@@ -118,7 +118,7 @@ const calculateCar = (car, timestamp) => {
 		car.currTimestamp = timestamp;
 		car.currTime = timestamp - car.startTimestamp;
 		car.speed = (rTrackLength / 3) * (car.lapCount - 1) / (car.currTime / 1000);
-		if (car.lapCount > rLaps) {
+		if (car.lapCount == rLaps + 1) {
 			// finish
 			car.endTimestamp = timestamp;
 		}
@@ -130,7 +130,7 @@ const calculateRace = () => {
 	let bestTime = 0;
 	let bestLap = _.max(rCars, (c) => { return c.lapCount; }).lapCount;
 	let pos = 0;
-	let lapsArr = _.range(2, rLaps + 1).reverse();
+	let lapsArr = _.range(2, rLaps + 2).reverse(); // should be [4,3,2] for 3 laps
 
 	// first are the cars with the highest lap count,
 	// then with same lapCount first is the one with lowest time
