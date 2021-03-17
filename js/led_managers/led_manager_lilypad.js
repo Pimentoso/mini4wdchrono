@@ -3,6 +3,7 @@
 const j5 = require('johnny-five');
 const LedManager = require('./led_manager');
 const utils = require('../utils');
+const storage = require('../storage');
 
 // LED manager for 3 green LEDs.
 class LedManagerLilypad extends LedManager {
@@ -67,7 +68,8 @@ class LedManagerLilypad extends LedManager {
 
 	roundFinish(cars) {
 		// turn on winner car led
-		let finishCars = _.filter(cars, (c) => { return !c.outOfBounds && c.lapCount == 4 });
+		let rLaps = storage.get('roundLaps');
+		let finishCars = _.filter(cars, (c) => { return !c.outOfBounds && c.lapCount == rLaps + 1 });
 		utils.delay(() => {
 			_.each(finishCars, (c) => {
 				if (c.position == 1) {

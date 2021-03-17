@@ -103,7 +103,7 @@ $('.tn').each(function () {
 $('#main').show();
 
 // init client
-client.init();
+client.init({ led_manager: ledManager });
 
 // Start race function. Handles all hardware checks.
 const startRace = () => {
@@ -284,7 +284,7 @@ $(document).on('click', '.js-load-race', (e) => {
 	if ($this.attr('disabled')) return;
 	let filename = $this.data('filename');
 	storage.loadRace(filename);
-	client.init();
+	client.init({ led_manager: ledManager });
 	closeAllModals();
 });
 

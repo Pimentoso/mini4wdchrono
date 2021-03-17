@@ -17,10 +17,10 @@ var timerIntervals = [], timerSeconds = [];
 var pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
 var checkRaceTask;
 
-const init = () => {
+const init = (params) => {
 	console.log('client.init called');
 
-	ledManager = configuration.ledManager();
+	ledManager = params.led_manager;
 	ui.init();
 
 	// init variables

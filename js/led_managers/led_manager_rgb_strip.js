@@ -3,6 +3,7 @@
 const pixel = require('node-pixel');
 const LedManager = require('./led_manager');
 const utils = require('../utils');
+const storage = require('../storage');
 
 const COLOR_GREEN = '#66cc33';
 const COLOR_BLUE = '#188bc8';
@@ -63,7 +64,7 @@ class LedManagerRgbStrip extends LedManager {
 		this.beep(1500);
 		this.kitt(COLOR_BLUE);
 		utils
-			.delay(() => { stripp.off(); }, 1500)
+			.delay(() => { stripp.off(); }, 1650)
 			.delay(() => { stripp.pixel(0).color(COLOR_RED); stripp.show(); this.beep(200); }, 1000)
 			.delay(() => { stripp.pixel(1).color(COLOR_RED); stripp.show(); }, 400)
 			.delay(() => { stripp.pixel(2).color(COLOR_RED); stripp.show(); }, 400)
@@ -79,7 +80,8 @@ class LedManagerRgbStrip extends LedManager {
 
 	roundFinish(cars) {
 		// color lanes based on positions
-		let finishCars = _.filter(cars, (c) => { return !c.outOfBounds && c.lapCount == 4 });
+		let rLaps = storage.get('roundLaps');
+		let finishCars = _.filter(cars, (c) => { return !c.outOfBounds && c.lapCount == rLaps + 1 });
 		utils.delay(() => {
 			_.each(finishCars, (c) => {
 				if (c.position == 1) {
@@ -147,7 +149,7 @@ class LedManagerRgbStrip extends LedManager {
 			}
 		}, millis);
 		utils
-			.delay(() => { clearInterval(shift); }, 1500)
+			.delay(() => { clearInterval(shift); }, 1650)
 			.delay(() => { manager.strip.off(); }, millis);
 	}
 
