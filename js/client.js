@@ -264,6 +264,7 @@ const startRound = () => {
 
 	raceRunning = true;
 
+	// if final mode, start all timers now
 	if (storage.get('raceMode') == 1) {
 		startTimer(0);
 		startTimer(1);

@@ -74,8 +74,8 @@ class LedManagerRgbStrip extends LedManager {
 			.delay(() => { stripp.pixel(6).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
 			.delay(() => { stripp.pixel(7).color(COLOR_RED); stripp.show(); }, 400)
 			.delay(() => { stripp.pixel(8).color(COLOR_RED); stripp.show(); }, 400)
-			.delay(() => { stripp.color(COLOR_GREEN); stripp.show(); this.beep(1000); startTimerCallback(); }, 1500)
-			.delay(() => { stripp.off(); }, 2500)
+			.delay(() => { stripp.color(COLOR_GREEN); stripp.show(); this.beep(1000); startTimerCallback(); }, super.greenDelay())
+			.delay(() => { stripp.off(); }, storage.get('startDelay') * 1000)
 	}
 
 	roundFinish(cars) {

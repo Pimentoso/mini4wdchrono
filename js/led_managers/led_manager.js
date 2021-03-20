@@ -2,6 +2,7 @@
 
 const j5 = require('johnny-five');
 const utils = require('../utils');
+const storage = require('../storage');
 
 class LedManager {
 	constructor(board, pinBuzzer) {
@@ -35,6 +36,16 @@ class LedManager {
 	beep(millis) {
 		this.board.digitalWrite(this.pinBuzzer, 1);
 		utils.delay(() => { this.board.digitalWrite(this.pinBuzzer, 0); }, millis);
+	}
+
+	greenDelay() {
+		if (storage.get('raceMode') == 1) {
+			// if final mode, delay is random between 0.25/4 sec
+			return 250 + (Math.random() * 3750);
+		}
+		else {
+			return 1500;
+		}
 	}
 }
 

@@ -62,8 +62,8 @@ class LedManagerLilypad extends LedManager {
 			.delay(() => { this.led1.off(); this.led2.on(); this.beep(500); }, 1000)
 			.delay(() => { this.led2.off(); this.led3.on(); this.beep(500); }, 1000)
 			.delay(() => { this.led3.off(); }, 1000)
-			.delay(() => { this.led1.on(); this.led2.on(); this.led3.on(); this.beep(1000); startTimerCallback(); }, 1500)
-			.delay(() => { this.led1.off(); this.led2.off(); this.led3.off(); }, 2500);
+			.delay(() => { this.led1.on(); this.led2.on(); this.led3.on(); this.beep(1000); startTimerCallback(); }, super.greenDelay())
+			.delay(() => { this.led1.off(); this.led2.off(); this.led3.off(); }, storage.get('startDelay') * 1000);
 	}
 
 	roundFinish(cars) {
