@@ -12,7 +12,7 @@
     "jquery": "^3.5.0",
     "nconf": "^0.10.0",
     "serialport": "^9.0.7",
-    "underscore": "^1.9.1",
+    "underscore": "^1.12.1",
     "node-pixel": "Pimentoso/node-pixel"
   },
   "devDependencies": {
