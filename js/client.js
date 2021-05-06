@@ -212,7 +212,7 @@ const startRace = (debugMode) => {
 	console.log('client.startRace called');
 
 	if (!storage.get('track')) {
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-track-not-loaded'), buttons: ['Ok'] });
+		dialog.showMessageBoxSync({ type: 'error', title: 'Error', message: i18n.__('dialog-track-not-loaded'), buttons: ['Ok'] });
 		return;
 	}
 	if ($(`div[data-tab=race]`).is(":hidden")) {
@@ -232,7 +232,7 @@ const startRace = (debugMode) => {
 	else {
 		// production mode
 		if (!freeRound && storage.get('tournament') && storage.loadRound()) {
-			if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-replay-round'), buttons: ['Ok', 'Cancel'] }) == 1) {
+			if (dialog.showMessageBoxSync({ type: 'warning', message: i18n.__('dialog-replay-round'), buttons: ['Ok', 'Cancel'] }) == 1) {
 				return;
 			}
 		}
@@ -285,7 +285,7 @@ const prevRound = () => {
 
 	if (currTournament == null || currTrack == null) {
 		// tournament not loaded
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
+		dialog.showMessageBoxSync({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
 		return;
 	}
 	if (currManche == 0 && currRound == 0) {
@@ -293,7 +293,7 @@ const prevRound = () => {
 		return;
 	}
 
-	if (dialog.showMessageBox({ type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel'] }) == 0) {
+	if (dialog.showMessageBoxSync({ type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel'] }) == 0) {
 		currRound--;
 		if (currRound < 0) {
 			currManche--;
@@ -313,7 +313,7 @@ const nextRound = () => {
 
 	if (currTournament == null || currTrack == null) {
 		// tournament not loaded
-		dialog.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
+		dialog.showMessageBoxSync({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
 		return;
 	}
 
@@ -323,7 +323,7 @@ const nextRound = () => {
 	}
 
 	let dialogText = (currManche == (mancheCount - 1) && currRound == (mancheList[currManche].length - 1) && !currTournament.finals) ? i18n.__('dialog-enter-final') : i18n.__('dialog-change-round');
-	if (dialog.showMessageBox({ type: 'warning', message: dialogText, buttons: ['Ok', 'Cancel'] }) == 0) {
+	if (dialog.showMessageBoxSync({ type: 'warning', message: dialogText, buttons: ['Ok', 'Cancel'] }) == 0) {
 		currRound++;
 		if (currRound == mancheList[currManche].length) {
 			currManche++;
