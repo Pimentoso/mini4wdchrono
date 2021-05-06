@@ -77,6 +77,9 @@ function createWindow() {
 	});
 }
 
+// Fix for running serialPort on renderer process. Remove when serialPort is updated
+app.allowRendererProcessReuse = false
+
 // Prevent multiple instances of this app to run.
 const gotTheLock = app.requestSingleInstanceLock();
 

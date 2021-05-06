@@ -8,18 +8,18 @@
     "electron-log": "^3.0.5",
     "electron-settings": "^3.2.0",
     "exceljs": "^1.10.0",
-    "johnny-five": "1.5.0",
+    "johnny-five": "2.0.0",
     "jquery": "^3.5.0",
     "nconf": "^0.10.0",
-    "serialport": "^8.0.8",
+    "serialport": "^9.0.7",
     "underscore": "^1.9.1",
     "node-pixel": "Pimentoso/node-pixel"
   },
   "devDependencies": {
     "electron": "9.4.0",
     "electron-packager": "^14.0.1",
-    "electron-rebuild": "^1.8.4",
-    "electron-reload": "^1.4.0"
+    "electron-rebuild": "^2.3.5",
+    "electron-reload": "^1.5.0"
   },
   "scripts": {
     "postinstall": "node ./scripts/postinstall.js",
