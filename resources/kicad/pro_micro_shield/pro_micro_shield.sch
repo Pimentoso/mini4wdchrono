@@ -30,7 +30,7 @@ U 1 1 5E63B839
 P 5850 3150
 F 0 "JS0" H 5878 3176 50  0000 L CNN
 F 1 "Conn_01x03_Female" H 5878 3085 50  0000 L CNN
-F 2 "Connector_Wire:SolderWirePad_1x03_P3.175mm_Drill1mm" H 5850 3150 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 5850 3150 50  0001 C CNN
 F 3 "~" H 5850 3150 50  0001 C CNN
 	1    5850 3150
 	1    0    0    -1  
@@ -41,7 +41,7 @@ U 1 1 5E63C41C
 P 5850 3500
 F 0 "JS1" H 5878 3526 50  0000 L CNN
 F 1 "Conn_01x03_Female" H 5878 3435 50  0000 L CNN
-F 2 "Connector_Wire:SolderWirePad_1x03_P3.175mm_Drill1mm" H 5850 3500 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 5850 3500 50  0001 C CNN
 F 3 "~" H 5850 3500 50  0001 C CNN
 	1    5850 3500
 	1    0    0    -1  
@@ -52,7 +52,7 @@ U 1 1 5E63CED1
 P 5850 3850
 F 0 "JS2" H 5878 3876 50  0000 L CNN
 F 1 "Conn_01x03_Female" H 5878 3785 50  0000 L CNN
-F 2 "Connector_Wire:SolderWirePad_1x03_P3.175mm_Drill1mm" H 5850 3850 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 5850 3850 50  0001 C CNN
 F 3 "~" H 5850 3850 50  0001 C CNN
 	1    5850 3850
 	1    0    0    -1  
@@ -63,7 +63,7 @@ U 1 1 5E63D627
 P 5850 4200
 F 0 "JRGB0" H 5878 4226 50  0000 L CNN
 F 1 "Conn_01x03_Female" H 5878 4135 50  0000 L CNN
-F 2 "Connector_Wire:SolderWirePad_1x03_P3.175mm_Drill1mm" H 5850 4200 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 5850 4200 50  0001 C CNN
 F 3 "~" H 5850 4200 50  0001 C CNN
 	1    5850 4200
 	1    0    0    -1  
@@ -74,7 +74,7 @@ U 1 1 5E63E1AD
 P 5850 4550
 F 0 "JRGB1" H 5878 4576 50  0000 L CNN
 F 1 "Conn_01x03_Female" H 5878 4485 50  0000 L CNN
-F 2 "Connector_Wire:SolderWirePad_1x03_P3.175mm_Drill1mm" H 5850 4550 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 5850 4550 50  0001 C CNN
 F 3 "~" H 5850 4550 50  0001 C CNN
 	1    5850 4550
 	1    0    0    -1  
@@ -196,7 +196,7 @@ U 1 1 5E661891
 P 7450 4050
 F 0 "JLASER0" H 7478 4026 50  0000 L CNN
 F 1 "Conn_01x02_Female" H 7478 3935 50  0000 L CNN
-F 2 "Connector_Wire:SolderWirePad_1x02_P3.81mm_Drill1mm" H 7450 4050 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 7450 4050 50  0001 C CNN
 F 3 "~" H 7450 4050 50  0001 C CNN
 	1    7450 4050
 	1    0    0    -1  
@@ -213,7 +213,7 @@ U 1 1 5E640A6C
 P 5850 5700
 F 0 "JSPEAKER0" H 5878 5676 50  0000 L CNN
 F 1 "Conn_01x02_Female" H 5878 5585 50  0000 L CNN
-F 2 "Connector_Wire:SolderWirePad_1x02_P3.81mm_Drill1mm" H 5850 5700 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 5850 5700 50  0001 C CNN
 F 3 "~" H 5850 5700 50  0001 C CNN
 	1    5850 5700
 	1    0    0    -1  
@@ -233,7 +233,7 @@ U 1 1 5F930EE7
 P 5850 5100
 F 0 "JEX0" H 5878 5126 50  0000 L CNN
 F 1 "Conn_01x03_Female" H 5878 5035 50  0000 L CNN
-F 2 "Connector_Wire:SolderWirePad_1x03_P3.175mm_Drill1mm" H 5850 5100 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 5850 5100 50  0001 C CNN
 F 3 "~" H 5850 5100 50  0001 C CNN
 	1    5850 5100
 	1    0    0    -1  
@@ -280,7 +280,7 @@ U 1 1 5FD41B09
 P 5850 5450
 F 0 "JBUTTON0" H 5878 5426 50  0000 L CNN
 F 1 "Conn_01x02_Female" H 5878 5335 50  0000 L CNN
-F 2 "Connector_Wire:SolderWirePad_1x02_P3.81mm_Drill1mm" H 5850 5450 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 5850 5450 50  0001 C CNN
 F 3 "~" H 5850 5450 50  0001 C CNN
 	1    5850 5450
 	1    0    0    -1  
