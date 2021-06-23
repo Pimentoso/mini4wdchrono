@@ -11,8 +11,7 @@
 }
 
 .table tr.is-highlighted {
-	background-color: hsl(204, 86%, 53%);
-	color: #fff;
+	border: 3px solid hsl(204, 86%, 53%);
 }
 
 .content ul {

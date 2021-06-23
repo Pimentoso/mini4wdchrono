@@ -173,6 +173,10 @@ const raceFinished = (freeRound) => {
 		$('.js-show-on-free-round').show();
 		$('.js-hide-on-free-round').hide();
 	}
+	else {
+		$('.js-show-on-free-round').hide();
+		$('.js-hide-on-free-round').show();
+	}
 	if (tournament == null) {
 		$('.js-show-on-no-tournament').show();
 		$('.js-hide-on-no-tournament').hide();
@@ -333,7 +337,7 @@ const showMancheList = () => {
 	let mancheList = storage.getManches();
 
 	$('#tableMancheList').empty();
-	let cars, mancheText, playerName, playerTime, playerPosition, playerOut, playerNameTag, playerPositionTag, playerHeader, playerForm, highlight;
+	let cars, mancheText, playerName, playerTime, playerPosition, playerOut, playerNameTag, playerPositionTag, playerHeader, playerForm, highlight, isCurrentRound, gotoButton;
 	_.each(mancheList, (manche, mindex) => {
 		$('#tableMancheList').append(`<tr class="is-selected"><td><strong>${mancheName(mindex)}</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>`);
 		_.each(manche, (group, rindex) => {
@@ -380,8 +384,10 @@ const showMancheList = () => {
 					return `<td></td>`;
 				}
 			}).join();
-			highlight = (mindex == currManche && rindex == currRound) ? 'class="is-highlighted"' : '';
-			$('#tableMancheList').append(`<tr ${highlight}><td>Round ${rindex + 1}</td>${mancheText}</tr>`);
+			isCurrentRound = (mindex == currManche && rindex == currRound);
+			highlight = isCurrentRound ? 'class="is-highlighted"' : '';
+			gotoButton = isCurrentRound ? '' : `<button class="button is-small is-info is-light js-goto-round" data-manche="${mindex}" data-round="${rindex}">&lt; play this</button>`;
+			$('#tableMancheList').append(`<tr ${highlight}><td class="has-text-centered">Round ${rindex + 1} ${gotoButton}</td>${mancheText}</tr>`);
 		});
 	});
 };
@@ -492,6 +498,8 @@ const initRace = (freeRound) => {
 
 		$('.js-show-on-no-tournament').hide();
 		$('.js-hide-on-no-tournament').show();
+		$('.js-show-on-free-round').hide();
+		$('.js-hide-on-free-round').show();
 		$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '//');
 		$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '//');
 		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '//');

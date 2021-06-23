@@ -424,6 +424,14 @@ $('#button-manches-save').on('click', (e) => {
 	dialog.showMessageBoxSync({ type: 'warning', message: i18n.__('dialog-saved'), buttons: ['Ok'] });
 });
 
+$(document).on('click', '.js-goto-round', (e) => {
+	let $this = $(e.currentTarget);
+	if ($this.attr('disabled')) return;
+	let mindex = $this.data('manche');
+	let rindex = $this.data('round');
+	client.gotoRound(mindex, rindex);
+});
+
 $('.js-led-type').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
