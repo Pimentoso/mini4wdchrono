@@ -97,9 +97,7 @@ else if (configuration.get('ledType') == 1) {
 }
 
 // translate ui
-$('.tn').each(function () {
-	$(this).html(i18n.__($(this).data('tn')));
-});
+ui.translate();
 $('#main').show();
 
 // init client

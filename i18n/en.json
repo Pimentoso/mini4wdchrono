@@ -70,6 +70,7 @@
 	"button-goto-free": "Free round",
 	"button-goto-race": "Return to race",
 	"button-invalidate": "invalidate",
+	"button-goto-round": "move here",
 	"label-next-round": "Next round:",
 	"label-next-round-end": "MANCHE ENDED - Next round:",
 	"label-lane-1": "LANE 1",

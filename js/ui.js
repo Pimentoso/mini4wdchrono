@@ -19,6 +19,12 @@ const boardDisonnected = () => {
 	$('#tag-board-status').text(i18n.__('tag-disconnected'));
 };
 
+const translate = () => {
+	$('.tn').each(function () {
+		$(this).html(i18n.__($(this).data('tn')));
+	});
+};
+
 const init = () => {
 	let title_text = _.compact([configuration.get('title'), storage.get('name')]).join(' - ');
 	$('#js-title').text(title_text);
@@ -386,10 +392,11 @@ const showMancheList = () => {
 			}).join();
 			isCurrentRound = (mindex == currManche && rindex == currRound);
 			highlight = isCurrentRound ? 'class="is-highlighted"' : '';
-			gotoButton = isCurrentRound ? '' : `<button class="button is-small is-info is-light js-goto-round" data-manche="${mindex}" data-round="${rindex}">&lt; play this</button>`;
-			$('#tableMancheList').append(`<tr ${highlight}><td class="has-text-centered">Round ${rindex + 1} ${gotoButton}</td>${mancheText}</tr>`);
+			gotoButton = isCurrentRound ? '' : `<button class="button is-small is-info is-light js-goto-round tn" data-tn="button-goto-round" data-manche="${mindex}" data-round="${rindex}">&lt; play this</button>`;
+			$('#tableMancheList').append(`<tr ${highlight}><td class="has-text-centered">Round ${mindex + 1}-${rindex + 1} ${gotoButton}</td>${mancheText}</tr>`);
 		});
 	});
+	translate();
 };
 
 const showNextRoundNames = () => {
@@ -616,6 +623,7 @@ const disableRaceInput = (disabled) => {
 module.exports = {
 	boardConnected: boardConnected,
 	boardDisonnected: boardDisonnected,
+	translate: translate,
 	init: init,
 	initModal: initModal,
 	toggleFreeRound: toggleFreeRound,
