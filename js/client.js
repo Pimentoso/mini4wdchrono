@@ -346,6 +346,24 @@ const nextRound = () => {
 	}
 };
 
+const gotoRound = (mindex, rindex) => {
+	console.log('client.gotoRound called');
+
+	if (currTournament == null || currTrack == null) {
+		// tournament not loaded
+		dialog.showMessageBoxSync({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
+		return;
+	}
+
+	if (dialog.showMessageBoxSync({ type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel'] }) == 0) {
+		storage.set('currManche', mindex);
+		storage.set('currRound', rindex);
+		chronoInit();
+		ui.initRace(freeRound);
+		updateRace();
+	}
+};
+
 const isFreeRound = () => freeRound;
 
 const toggleFreeRound = () => {
@@ -617,6 +635,7 @@ module.exports = {
 	stopRace: stopRace,
 	prevRound: prevRound,
 	nextRound: nextRound,
+	gotoRound: gotoRound,
 	isFreeRound: isFreeRound,
 	toggleFreeRound: toggleFreeRound
 };

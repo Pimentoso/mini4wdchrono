@@ -97,9 +97,7 @@ else if (configuration.get('ledType') == 1) {
 }
 
 // translate ui
-$('.tn').each(function () {
-	$(this).html(i18n.__($(this).data('tn')));
-});
+ui.translate();
 $('#main').show();
 
 // init client
@@ -422,6 +420,14 @@ $('#button-manches-save').on('click', (e) => {
 	if ($this.attr('disabled')) return;
 	client.overrideTimes();
 	dialog.showMessageBoxSync({ type: 'warning', message: i18n.__('dialog-saved'), buttons: ['Ok'] });
+});
+
+$(document).on('click', '.js-goto-round', (e) => {
+	let $this = $(e.currentTarget);
+	if ($this.attr('disabled')) return;
+	let mindex = $this.data('manche');
+	let rindex = $this.data('round');
+	client.gotoRound(mindex, rindex);
 });
 
 $('.js-led-type').on('click', (e) => {
