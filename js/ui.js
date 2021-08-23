@@ -125,6 +125,7 @@ const toggleFreeRound = (freeRound) => {
 		$('#button-prev').show();
 		$('#button-next').show();
 	}
+	$('#button-toggle-free-round').trigger('blur');
 };
 
 const trackLoadDone = (track) => {
