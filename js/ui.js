@@ -394,7 +394,7 @@ const showMancheList = () => {
 			isCurrentRound = (mindex == currManche && rindex == currRound);
 			highlight = isCurrentRound ? 'class="is-highlighted"' : '';
 			gotoButton = isCurrentRound ? '' : `<button class="button is-small is-info is-light js-goto-round tn" data-tn="button-goto-round" data-manche="${mindex}" data-round="${rindex}">&lt; play this</button>`;
-			$('#tableMancheList').append(`<tr ${highlight}><td class="has-text-centered">Round ${mindex + 1}-${rindex + 1} ${gotoButton}</td>${mancheText}</tr>`);
+			$('#tableMancheList').append(`<tr ${highlight}><td class="has-text-centered">Round ${mindex + 1}-${rindex + 1}<br />${gotoButton}</td>${mancheText}</tr>`);
 		});
 	});
 	translate();
