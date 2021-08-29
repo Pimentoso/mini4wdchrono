@@ -59,8 +59,8 @@ Run ```brew install nodenv``` and follow installation instructions here. https:/
 brew cask install arduino
 # now open the arduino IDE, and use it to upload the StandardFirmataPlus firmware on the board
 
-nodenv install 10.16.3
 cd mini4wdchrono
+nodenv install
 npm install
 
 # make sure the arduino board is connected via USB, then
@@ -105,9 +105,6 @@ If you get an error when running the program like
 Serialport was compiled against a different Node.js version using NODE_MODULE_VERSION 72. This version of Node.js requires NODE_MODULE_VERSION 70. Please try re-compiling or re-installing the module (for instance, using npm rebuild or npm install).
 ```
 
-- Remove from the node-modules folder the serialport and @serialport folders.
-- Remove the file packages-lock.json
-- Run `npm install` to install non-installed modules
-- And finally run `./node_modules/.bin/electron-rebuild`
+it means you need to run `electron-rebuild` on the project. Please run `npm run postinstall` inside the project directory.
 
 Related issue: https://github.com/serialport/node-serialport/issues/1910
