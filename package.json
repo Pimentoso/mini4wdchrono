@@ -16,7 +16,7 @@
     "node-pixel": "Pimentoso/node-pixel"
   },
   "devDependencies": {
-    "electron": "9.4.4",
+    "electron": "13.6.6",
     "electron-packager": "^15.3.0",
     "electron-rebuild": "^2.3.5",
     "electron-reload": "^1.5.0"
