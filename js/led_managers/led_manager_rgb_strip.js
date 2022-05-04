@@ -19,8 +19,8 @@ const COLOR_TAMIYA_BLUE = COLOR_BLUE;
 
 // Manager for a 9 LEDs WS2812b strip and a buzzer.
 class LedManagerRgbStrip extends LedManager {
-	constructor(board, pin, pinBuzzer) {
-		super(board, pinBuzzer);
+	constructor(board, pin, pinBuzzer, reverse) {
+		super(board, pinBuzzer, reverse);
 		this.pin = pin;
 		this.ready = false;
 	}
@@ -63,19 +63,37 @@ class LedManagerRgbStrip extends LedManager {
 		var stripp = this.strip;
 		this.beep(1500);
 		this.kitt(COLOR_BLUE);
-		utils
-			.delay(() => { stripp.off(); }, 1650)
-			.delay(() => { stripp.pixel(0).color(COLOR_RED); stripp.show(); this.beep(200); }, 1000)
-			.delay(() => { stripp.pixel(1).color(COLOR_RED); stripp.show(); }, 400)
-			.delay(() => { stripp.pixel(2).color(COLOR_RED); stripp.show(); }, 400)
-			.delay(() => { stripp.pixel(3).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
-			.delay(() => { stripp.pixel(4).color(COLOR_RED); stripp.show(); }, 400)
-			.delay(() => { stripp.pixel(5).color(COLOR_RED); stripp.show(); }, 400)
-			.delay(() => { stripp.pixel(6).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
-			.delay(() => { stripp.pixel(7).color(COLOR_RED); stripp.show(); }, 400)
-			.delay(() => { stripp.pixel(8).color(COLOR_RED); stripp.show(); }, 400)
-			.delay(() => { stripp.color(COLOR_GREEN); stripp.show(); this.beep(1000); startTimerCallback(); }, super.greenDelay())
-			.delay(() => { stripp.off(); }, storage.get('startDelay') * 1000)
+
+		if (this.reverse) {
+			utils
+				.delay(() => { stripp.off(); }, 1650)
+				.delay(() => { stripp.pixel(8).color(COLOR_RED); stripp.show(); this.beep(200); }, 1000)
+				.delay(() => { stripp.pixel(7).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.pixel(6).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.pixel(5).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
+				.delay(() => { stripp.pixel(4).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.pixel(3).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.pixel(2).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
+				.delay(() => { stripp.pixel(1).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.pixel(0).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.color(COLOR_GREEN); stripp.show(); this.beep(1000); startTimerCallback(); }, super.greenDelay())
+				.delay(() => { stripp.off(); }, storage.get('startDelay') * 1000)
+		}
+		else {
+			utils
+				.delay(() => { stripp.off(); }, 1650)
+				.delay(() => { stripp.pixel(0).color(COLOR_RED); stripp.show(); this.beep(200); }, 1000)
+				.delay(() => { stripp.pixel(1).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.pixel(2).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.pixel(3).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
+				.delay(() => { stripp.pixel(4).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.pixel(5).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.pixel(6).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
+				.delay(() => { stripp.pixel(7).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.pixel(8).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.color(COLOR_GREEN); stripp.show(); this.beep(1000); startTimerCallback(); }, super.greenDelay())
+				.delay(() => { stripp.off(); }, storage.get('startDelay') * 1000)
+		}
 	}
 
 	roundFinish(cars) {
@@ -85,13 +103,13 @@ class LedManagerRgbStrip extends LedManager {
 		utils.delay(() => {
 			_.each(finishCars, (c) => {
 				if (c.position == 1) {
-					this.colorLane(c.startLane, COLOR_POS1);
+					this.colorLane(this.laneIndex(c.startLane), COLOR_POS1);
 				}
 				else if (c.position == 2) {
-					this.colorLane(c.startLane, COLOR_POS2);
+					this.colorLane(this.laneIndex(c.startLane), COLOR_POS2);
 				}
 				else if (c.position == 3) {
-					this.colorLane(c.startLane, COLOR_POS3);
+					this.colorLane(this.laneIndex(c.startLane), COLOR_POS3);
 				}
 			})
 		}, 1500);
@@ -100,6 +118,7 @@ class LedManagerRgbStrip extends LedManager {
 	lap(lane) {
 		// flash lane led for 1 sec
 		if (this.ready) {
+			lane = this.laneIndex(lane);
 			this.colorLane(lane, COLOR_GREEN);
 			utils.delay(() => {
 				this.clearLane(lane);
@@ -108,6 +127,7 @@ class LedManagerRgbStrip extends LedManager {
 	}
 
 	colorLane(lane, color) {
+		lane = this.laneIndex(lane);
 		let start = lane * 3;
 		for (let i = start; i <= start + 2; i++) {
 			this.strip.pixel(i).color(color);
@@ -116,6 +136,7 @@ class LedManagerRgbStrip extends LedManager {
 	}
 
 	clearLane(lane) {
+		lane = this.laneIndex(lane);
 		let start = lane * 3;
 		for (let i = start; i <= start + 2; ++i) {
 			this.strip.pixel(i).off();

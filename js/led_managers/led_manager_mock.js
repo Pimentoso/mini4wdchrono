@@ -4,8 +4,8 @@ const LedManager = require('./led_manager');
 
 // Mock led manager. Does nothing.
 class LedManagerMock extends LedManager {
-	constructor(board, pinBuzzer) {
-		super(board, pinBuzzer);
+	constructor(board, pinBuzzer, reverse) {
+		super(board, pinBuzzer, reverse);
 	}
 
 	static getInstance(board, pinBuzzer) {

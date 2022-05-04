@@ -5,9 +5,10 @@ const utils = require('../utils');
 const storage = require('../storage');
 
 class LedManager {
-	constructor(board, pinBuzzer) {
+	constructor(board, pinBuzzer, reverse) {
 		this.board = board;
 		this.pinBuzzer = pinBuzzer;
+		this.reverse = reverse;
 	}
 
 	connected() {
@@ -45,6 +46,23 @@ class LedManager {
 		}
 		else {
 			return 1500;
+		}
+	}
+
+	laneIndex(lane) {
+		if (this.reverse) {
+			if (lane == 0) {
+				return 2;
+			}
+			else if (lane == 2) {
+				return 0;
+			}
+			else {
+				return 1;
+			}
+		}
+		else {
+			return lane;
 		}
 	}
 }

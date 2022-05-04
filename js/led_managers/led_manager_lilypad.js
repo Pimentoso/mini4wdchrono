@@ -7,8 +7,8 @@ const storage = require('../storage');
 
 // LED manager for 3 green LEDs.
 class LedManagerLilypad extends LedManager {
-	constructor(board, pinLeds, pinBuzzer) {
-		super(board, pinBuzzer);
+	constructor(board, pinLeds, pinBuzzer, reverse) {
+		super(board, pinBuzzer, reverse);
 		this.pinLeds = pinLeds;
 		this.ready = false;
 	}
@@ -73,7 +73,7 @@ class LedManagerLilypad extends LedManager {
 		utils.delay(() => {
 			_.each(finishCars, (c) => {
 				if (c.position == 1) {
-					this.leds[c.startLane].on();
+					this.leds[this.laneIndex(c.startLane)].on();
 				}
 			})
 		}, 1500);
@@ -82,6 +82,7 @@ class LedManagerLilypad extends LedManager {
 	lap(lane) {
 		// flash lane led for 1 sec
 		if (this.ready) {
+			lane = this.laneIndex(lane);
 			let led = this.leds[lane];
 			led.on();
 			utils.delay(() => { led.off(); }, 1000);
