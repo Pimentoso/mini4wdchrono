@@ -83,6 +83,8 @@
 	"button-led-type-normal": "3 LED singoli",
 	"button-led-type-strip": "Striscia LED multicolore",
 	"label-usb-port": "Porta USB",
+	"label-direction": "Senso di marcia",
+	"label-reverse": "Inverti destra-sinistra",
 	"label-sensor-reading": "Valore sensori - assicurarsi che tutte le corsie mostrino 1",
 	"label-sensor-1": "Pin sensore 1",
 	"label-sensor-2": "Pin sensore 2",

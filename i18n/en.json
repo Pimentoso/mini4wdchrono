@@ -83,6 +83,8 @@
 	"button-led-type-normal": "3 single LEDs",
 	"button-led-type-strip": "Multicolor LED strip",
 	"label-usb-port": "USB Port",
+	"label-direction": "Direction",
+	"label-reverse": "Invert left-right",
 	"label-sensor-reading": "Sensor values - make sure all lanes show 1",
 	"label-sensor-1": "Sensor 1 pin",
 	"label-sensor-2": "Sensor 2 pin",

@@ -400,6 +400,7 @@ $('#button-save-settings').on('click', (e) => {
 });
 
 $('#button-save-config').on('click', (e) => {
+	configuration.set('reverse', $('#js-config-reverse').is(':checked') ? 1 : 0);
 	configuration.set('sensorPin1', parseInt($('#js-config-sensor-pin-1').val()));
 	configuration.set('sensorPin2', parseInt($('#js-config-sensor-pin-2').val()));
 	configuration.set('sensorPin3', parseInt($('#js-config-sensor-pin-3').val()));
