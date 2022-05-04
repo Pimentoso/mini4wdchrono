@@ -613,7 +613,7 @@ const sensorRead = (lane) => {
 const addLap = (lane) => {
 	console.log('client.addLap called');
 
-	chrono.addLap(lane - 1);
+	chrono.addLap(lane);
 	if (chrono.isRaceFinished()) {
 		raceFinished();
 	}

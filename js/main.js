@@ -50,6 +50,7 @@ const board = new j5.Board({
 	repl: false // does not work with browser console
 });
 var connected = false;
+var reverse;
 var ledManager;
 var button1;
 var sensorPin1, sensorPin2, sensorPin3;
@@ -129,6 +130,8 @@ board.on('ready', function () {
 	sensorPin2 = configuration.get('sensorPin2');
 	sensorPin3 = configuration.get('sensorPin3');
 
+	reverse = configuration.get('reverse') > 0;
+
 	this.samplingInterval(1);
 	this.pinMode(sensorPin1, j5.Pin.INPUT);
 	this.pinMode(sensorPin2, j5.Pin.INPUT);
@@ -137,8 +140,14 @@ board.on('ready', function () {
 	this.digitalRead(sensorPin1, function (val) {
 		tag1.text(val);
 		if (val == 0 && val1 == 1) {
-			client.sensorRead(1);
-			ledManager.lap(0);
+			if (reverse) {
+				client.sensorRead(2);
+				ledManager.lap(2);
+			}
+			else {
+				client.sensorRead(0);
+				ledManager.lap(0);
+			}
 		}
 		val1 = val;
 	});
@@ -146,7 +155,7 @@ board.on('ready', function () {
 	this.digitalRead(sensorPin2, function (val) {
 		tag2.text(val);
 		if (val == 0 && val2 == 1) {
-			client.sensorRead(2);
+			client.sensorRead(1);
 			ledManager.lap(1);
 		}
 		val2 = val;
@@ -155,8 +164,14 @@ board.on('ready', function () {
 	this.digitalRead(sensorPin3, function (val) {
 		tag3.text(val);
 		if (val == 0 && val3 == 1) {
-			client.sensorRead(3);
-			ledManager.lap(2);
+			if (reverse) {
+				client.sensorRead(0);
+				ledManager.lap(0);
+			}
+			else {
+				client.sensorRead(2);
+				ledManager.lap(2);
+			}
 		}
 		val3 = val;
 	});
