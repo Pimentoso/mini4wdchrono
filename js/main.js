@@ -83,10 +83,12 @@ else if (configuration.get('ledType') == 1) {
 
 // translate ui
 ui.translate();
-$('#main').show();
 
 // init client
 client.init({ led_manager: ledManager });
+
+// show interface
+$('#main').show();
 
 // Start race function. Handles all hardware checks.
 const startRace = () => {
@@ -241,11 +243,8 @@ board.on("exit", function (event) {
 // tabs
 $('.tabs a').on('click', (e) => {
 	let $this = $(e.currentTarget);
-	$('.tabs li').removeClass('is-active');
-	$this.closest('li').addClass('is-active');
 	let tab = $this.closest('li').data('tab');
-	$('div[data-tab]').hide();
-	$(`div[data-tab=${tab}]`).show();
+	ui.gotoTab(tab);
 });
 
 // modals
@@ -410,6 +409,7 @@ $('#button-save-config').on('click', (e) => {
 	configuration.set('piezoPin', parseInt($('#js-config-piezo-pin').val()));
 	configuration.set('startButtonPin', parseInt($('#js-config-start-button-pin').val()));
 	configuration.set('title', $('#js-config-title').val());
+	configuration.set('tab', $('#js-config-starting-tab').val());
 	configuration.set('usbPort', $('#js-config-usb-port').val());
 	dialog.showMessageBoxSync({ type: 'warning', message: i18n.__('dialog-restart'), buttons: ['Ok'] });
 	e.preventDefault();

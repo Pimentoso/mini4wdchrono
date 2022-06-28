@@ -25,6 +25,14 @@ const translate = () => {
 	});
 };
 
+const gotoTab = (tab) => {
+	$('.tabs li').removeClass('is-active');
+	$(`li[data-tab=${tab}]`).addClass('is-active');
+	
+	$('div[data-tab]').hide();
+	$(`div[data-tab=${tab}]`).show();
+};
+
 const init = () => {
 	let title_text = _.compact([configuration.get('title'), storage.get('name')]).join(' - ');
 	$('#js-title').text(title_text);
@@ -49,6 +57,8 @@ const init = () => {
 	$('#js-config-piezo-pin').val(configuration.get('piezoPin'));
 	$('#js-config-start-button-pin').val(configuration.get('startButtonPin'));
 	$('#js-config-title').val(configuration.get('title'));
+	$('#js-config-starting-tab').val(configuration.get('tab'));
+	gotoTab(configuration.get('tab'));
 
 	$('#button-toggle-free-round').hide();
 	$('#js-input-track-code').removeClass('is-danger');
@@ -626,6 +636,7 @@ module.exports = {
 	boardConnected: boardConnected,
 	boardDisonnected: boardDisonnected,
 	translate: translate,
+	gotoTab: gotoTab,
 	init: init,
 	initModal: initModal,
 	toggleFreeRound: toggleFreeRound,

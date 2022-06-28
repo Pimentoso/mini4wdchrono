@@ -26,7 +26,8 @@ const init = () => {
 		'startButtonPin': 9,
 		'reverse': 0,
 		// 'usbPort': 'COM3',
-		'title': 'MINI4WD CHRONO'
+		'title': 'MINI4WD CHRONO',
+		'tab': 'setup'
 	});
 };
 
