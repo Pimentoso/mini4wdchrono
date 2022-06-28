@@ -39,6 +39,7 @@ const init = () => {
 
 	$('.js-led-type').removeClass('is-primary');
 	$(`#js-led-type-${configuration.get('ledType')}`).addClass('is-primary');
+	$('#js-config-reverse').prop('checked', configuration.get('reverse') > 0);
 	$('#js-config-sensor-pin-1').val(configuration.get('sensorPin1'));
 	$('#js-config-sensor-pin-2').val(configuration.get('sensorPin2'));
 	$('#js-config-sensor-pin-3').val(configuration.get('sensorPin3'));
