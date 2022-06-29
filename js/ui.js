@@ -82,10 +82,10 @@ const init = () => {
 	serialport.list().then(ports => {
 		ports.forEach(function (port) {
 			$('#js-config-usb-port').append($('<option>', {
-				value: port.comName,
-				text: port.manufacturer ? `${port.comName} (${port.manufacturer})` : port.comName
+				value: port.path,
+				text: port.manufacturer ? `${port.path} (${port.manufacturer})` : port.path
 			}));
-			console.log(port.comName);
+			console.log(port.path);
 		});
 		$('#js-config-usb-port').val(configuration.get('usbPort'));
 	});
