@@ -69,7 +69,8 @@ else if (configuration.get('ledType') == 0) {
 			configuration.get('ledPin2'),
 			configuration.get('ledPin3')
 		],
-		configuration.get('piezoPin')
+		configuration.get('piezoPin'),
+		configuration.get('reverse') > 0
 	);
 }
 else if (configuration.get('ledType') == 1) {
@@ -77,7 +78,8 @@ else if (configuration.get('ledType') == 1) {
 	ledManager = LedManagerRgbStrip.getInstance(
 		board,
 		configuration.get('ledPin1'),
-		configuration.get('piezoPin')
+		configuration.get('piezoPin'),
+		configuration.get('reverse') > 0
 	);
 }
 

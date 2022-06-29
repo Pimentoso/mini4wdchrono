@@ -13,12 +13,12 @@ class LedManagerLilypad extends LedManager {
 		this.ready = false;
 	}
 
-	static getInstance(board, pinLeds, pinBuzzer) {
+	static getInstance(board, pinLeds, pinBuzzer, reverse) {
 		if (!!LedManagerLilypad.instance) {
-      return LedManagerLilypad.instance;
-    }
+			return LedManagerLilypad.instance;
+		}
 
-		LedManagerLilypad.instance = new LedManagerLilypad(board, pinLeds, pinBuzzer);
+		LedManagerLilypad.instance = new LedManagerLilypad(board, pinLeds, pinBuzzer, reverse);
 		return LedManagerLilypad.instance;
 	}
 

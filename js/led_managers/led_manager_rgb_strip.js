@@ -25,12 +25,12 @@ class LedManagerRgbStrip extends LedManager {
 		this.ready = false;
 	}
 
-	static getInstance(board, pin, pinBuzzer) {
+	static getInstance(board, pin, pinBuzzer, reverse) {
 		if (!!LedManagerRgbStrip.instance) {
-      return LedManagerRgbStrip.instance;
-    }
+      		return LedManagerRgbStrip.instance;
+    	}
 
-		LedManagerRgbStrip.instance = new LedManagerRgbStrip(board, pin, pinBuzzer);
+		LedManagerRgbStrip.instance = new LedManagerRgbStrip(board, pin, pinBuzzer, reverse);
 		return LedManagerRgbStrip.instance;
 	}
 
@@ -64,6 +64,7 @@ class LedManagerRgbStrip extends LedManager {
 		this.beep(1500);
 		this.kitt(COLOR_BLUE);
 
+		debugger;
 		if (this.reverse) {
 			utils
 				.delay(() => { stripp.off(); }, 1650)
