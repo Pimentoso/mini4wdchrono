@@ -144,14 +144,8 @@ board.on('ready', function () {
 	this.digitalRead(sensorPin1, function (val) {
 		tag1.text(val);
 		if (val == 0 && val1 == 1) {
-			if (reverse) {
-				client.sensorRead(2);
-				ledManager.lap(2);
-			}
-			else {
-				client.sensorRead(0);
-				ledManager.lap(0);
-			}
+			reverse ? client.sensorRead(2) : client.sensorRead(0);
+			ledManager.lap(0);
 		}
 		val1 = val;
 	});
@@ -168,14 +162,8 @@ board.on('ready', function () {
 	this.digitalRead(sensorPin3, function (val) {
 		tag3.text(val);
 		if (val == 0 && val3 == 1) {
-			if (reverse) {
-				client.sensorRead(0);
-				ledManager.lap(0);
-			}
-			else {
-				client.sensorRead(2);
-				ledManager.lap(2);
-			}
+			reverse ? client.sensorRead(0) : client.sensorRead(2);
+			ledManager.lap(2);
 		}
 		val3 = val;
 	});
