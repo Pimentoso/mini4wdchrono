@@ -101,16 +101,17 @@ class LedManagerRgbStrip extends LedManager {
 		// color lanes based on positions
 		let rLaps = storage.get('roundLaps');
 		let finishCars = _.filter(cars, (c) => { return !c.outOfBounds && c.lapCount == rLaps + 1 });
+		debugger;
 		utils.delay(() => {
 			_.each(finishCars, (c) => {
 				if (c.position == 1) {
-					this.colorLane(this.laneIndex(c.startLane), COLOR_POS1);
+					this.colorLane(c.startLane, COLOR_POS1);
 				}
 				else if (c.position == 2) {
-					this.colorLane(this.laneIndex(c.startLane), COLOR_POS2);
+					this.colorLane(c.startLane, COLOR_POS2);
 				}
 				else if (c.position == 3) {
-					this.colorLane(this.laneIndex(c.startLane), COLOR_POS3);
+					this.colorLane(c.startLane, COLOR_POS3);
 				}
 			})
 		}, 1500);
@@ -119,7 +120,6 @@ class LedManagerRgbStrip extends LedManager {
 	lap(lane) {
 		// flash lane led for 1 sec
 		if (this.ready) {
-			lane = this.laneIndex(lane);
 			this.colorLane(lane, COLOR_GREEN);
 			utils.delay(() => {
 				this.clearLane(lane);

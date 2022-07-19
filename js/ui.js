@@ -58,7 +58,6 @@ const init = () => {
 	$('#js-config-start-button-pin').val(configuration.get('startButtonPin'));
 	$('#js-config-title').val(configuration.get('title'));
 	$('#js-config-starting-tab').val(configuration.get('tab'));
-	gotoTab(configuration.get('tab'));
 
 	$('#button-toggle-free-round').hide();
 	$('#js-input-track-code').removeClass('is-danger');

@@ -22,6 +22,7 @@ const init = (params) => {
 
 	ledManager = params.led_manager;
 	ui.init();
+	ui.gotoTab(configuration.get('tab'));
 
 	// init variables
 	playerTimes = [];
