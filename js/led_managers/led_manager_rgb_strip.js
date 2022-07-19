@@ -63,8 +63,6 @@ class LedManagerRgbStrip extends LedManager {
 		var stripp = this.strip;
 		this.beep(1500);
 		this.kitt(COLOR_BLUE);
-
-		debugger;
 		if (this.reverse) {
 			utils
 				.delay(() => { stripp.off(); }, 1650)
@@ -101,7 +99,6 @@ class LedManagerRgbStrip extends LedManager {
 		// color lanes based on positions
 		let rLaps = storage.get('roundLaps');
 		let finishCars = _.filter(cars, (c) => { return !c.outOfBounds && c.lapCount == rLaps + 1 });
-		debugger;
 		utils.delay(() => {
 			_.each(finishCars, (c) => {
 				if (c.position == 1) {
