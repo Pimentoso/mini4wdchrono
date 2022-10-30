@@ -213,13 +213,16 @@ const startRace = (debugMode) => {
 	console.log('client.startRace called');
 
 	if (!storage.get('track')) {
+		// track not loaded
 		dialog.showMessageBoxSync({ type: 'error', title: 'Error', message: i18n.__('dialog-track-not-loaded'), buttons: ['Ok'] });
 		return;
 	}
 	if ($(`div[data-tab=race]`).is(":hidden")) {
+		// race tab not selected in interface
 		return;
 	}
-	if (raceStarting || raceRunning) {
+	if (isStarted()) {
+		// race is already started
 		return;
 	}
 
@@ -366,6 +369,8 @@ const gotoRound = (mindex, rindex) => {
 };
 
 const isFreeRound = () => freeRound;
+
+const isStarted = () => raceStarting || raceRunning;
 
 const toggleFreeRound = () => {
 	console.log('client.toggleFreeRound called');
@@ -638,5 +643,6 @@ module.exports = {
 	nextRound: nextRound,
 	gotoRound: gotoRound,
 	isFreeRound: isFreeRound,
+	isStarted: isStarted,
 	toggleFreeRound: toggleFreeRound
 };
