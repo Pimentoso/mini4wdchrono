@@ -114,7 +114,11 @@ const startRace = () => {
 		}
 	}
 	client.startRace(debugMode);
-}
+};
+
+const buttonPressed = () => {
+	client.isStarted() ? client.stopRace() : startRace;
+};
 
 // board events
 board.on('ready', function () {
@@ -127,7 +131,7 @@ board.on('ready', function () {
 
 	// init start button if present
 	button1 = new j5.Button(configuration.get('startButtonPin'));
-	button1.on("release", startRace);
+	button1.on("release", buttonPressed);
 
 	// raw reading from digital pins because it's faster
 	sensorPin1 = configuration.get('sensorPin1');
