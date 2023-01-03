@@ -117,7 +117,7 @@ const startRace = () => {
 };
 
 const buttonPressed = () => {
-	client.isStarted() ? client.stopRace() : startRace;
+	client.isStarted() ? client.stopRace() : startRace();
 };
 
 // board events
