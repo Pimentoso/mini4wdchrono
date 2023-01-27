@@ -13,7 +13,7 @@
     "nconf": "^0.10.0",
     "serialport": "^9.0.7",
     "underscore": "^1.9.1",
-    "node-pixel": "Pimentoso/node-pixel"
+    "node-pixel": "^0.11.0"
   },
   "devDependencies": {
     "electron": "9.4.4",
