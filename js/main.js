@@ -130,8 +130,10 @@ board.on('ready', function () {
 	tag3 = $('#sensor-reading-3');
 
 	// init start button if present
-	button1 = new j5.Button(configuration.get('startButtonPin'));
-	button1.on("release", buttonPressed);
+	if (configuration.get('startButtonPin') > 0) {
+		button1 = new j5.Button(configuration.get('startButtonPin'));
+		button1.on("release", buttonPressed);
+	}
 
 	// raw reading from digital pins because it's faster
 	sensorPin1 = configuration.get('sensorPin1');

@@ -11,15 +11,23 @@ class LedManager {
 		this.reverse = reverse;
 	}
 
+	buzzerAvailable() {
+		return this.pinBuzzer > 0;
+	}
+
 	connected() {
-		this.board.pinMode(this.pinBuzzer, j5.Pin.OUTPUT);
-		this.beep(100);
+		if (this.buzzerAvailable()) {
+			this.board.pinMode(this.pinBuzzer, j5.Pin.OUTPUT);
+			this.beep(100);
+		}
 	}
 
 	disconnected() {
-		try {
-			this.board.digitalWrite(this.pinBuzzer, 0);
-		} catch (e) { }
+		if (this.buzzerAvailable()) {
+			try {
+				this.board.digitalWrite(this.pinBuzzer, 0);
+			} catch (e) { }
+		}
 	}
 
 	roundStart() {
@@ -35,8 +43,10 @@ class LedManager {
 	}
 
 	beep(millis) {
-		this.board.digitalWrite(this.pinBuzzer, 1);
-		utils.delay(() => { this.board.digitalWrite(this.pinBuzzer, 0); }, millis);
+		if (this.buzzerAvailable()) {
+			this.board.digitalWrite(this.pinBuzzer, 1);
+			utils.delay(() => { this.board.digitalWrite(this.pinBuzzer, 0); }, millis);
+		}
 	}
 
 	greenDelay() {

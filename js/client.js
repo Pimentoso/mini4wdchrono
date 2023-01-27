@@ -279,6 +279,9 @@ const startRound = () => {
 // called when the stop button is pressed
 const stopRace = () => {
 	console.log('client.stopRace called');
+	if (raceStarting) {
+		return false;
+	}
 
 	chrono.stopRace();
 	checkRace();
