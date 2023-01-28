@@ -23,7 +23,7 @@ const init = () => {
 		'ledPin2': 4,
 		'ledPin3': 5,
 		'piezoPin': 2,
-		'startButtonPin': 9,
+		'startButtonPin': 0,
 		'reverse': 0,
 		// 'usbPort': 'COM3',
 		'title': 'MINI4WD CHRONO',
