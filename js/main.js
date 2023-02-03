@@ -131,10 +131,7 @@ board.on('ready', function () {
 
 	// init start button if present
 	if (configuration.get('startButtonPin') > 0) {
-		button1 = new j5.Button({
-			pin: configuration.get('startButtonPin'),
-			isPulldown: true
-		});
+		button1 = new j5.Button(configuration.get('startButtonPin'));
 		button1.on("release", buttonPressed);
 	}
 
