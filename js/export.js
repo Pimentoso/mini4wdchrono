@@ -5,6 +5,7 @@ const utils = require('./utils');
 const { app } = require('electron').remote;
 const fs = require('fs');
 const path = require('path');
+const storage = require('./storage');
 
 const getXlsFilePath = () => {
 	// {user home dir}/Mini4wdChrono
@@ -20,7 +21,12 @@ const createDir = () => {
 	return dir;
 };
 
-const geneateXls = (mancheCount, playerData, playerTimes) => {
+const geneateXls = () => {
+	let tournament = storage.get('tournament');
+	let playerList = tournament.players;
+	let mancheCount = tournament.manches.length;
+	let playerData = storage.getPlayerData();
+
 	let workbook = new xls.Workbook();
 	workbook.creator = 'Mini4wd Chrono';
 	workbook.created = new Date();
@@ -28,11 +34,11 @@ const geneateXls = (mancheCount, playerData, playerTimes) => {
 
 	let worksheet = workbook.addWorksheet('Racers data');
 
-	_.each(playerTimes, (pdata, pindex) => {
-		let row = [playerData[pindex].toUpperCase()];
+	_.each(playerData, (pdata, pindex) => {
+		let row = [playerList[pindex].toUpperCase()];
 		pdata = pdata || [];
 		_.times(mancheCount, (i) => {
-			row[i+1] = utils.prettyTime(pdata[i]);
+			row[i+1] = utils.prettyTime(pdata[i].time);
 		});
 		worksheet.addRow(row);
 	});

@@ -28,7 +28,7 @@ const translate = () => {
 const gotoTab = (tab) => {
 	$('.tabs li').removeClass('is-active');
 	$(`li[data-tab=${tab}]`).addClass('is-active');
-	
+
 	$('div[data-tab]').hide();
 	$(`div[data-tab=${tab}]`).show();
 };
@@ -97,7 +97,7 @@ const initModal = (modalId) => {
 	}
 	if (modalId == 'modal-open') {
 		$('#modal-open-files').empty();
-		let data = storage.getRecent(25);
+		let data = storage.getRecentFiles(25);
 		if (data.length) {
 			data.forEach((race) => {
 				if (race.filename == configuration.get('raceFile')) {
@@ -303,7 +303,7 @@ const showPlayerList = () => {
 
 	$('#tablePlayerList').empty();
 	if (playerList.length > 0) {
-		let times = getSortedPlayerList();
+		let times = storage.getSortedPlayerList();
 		let raceBestTime = _.min(_.flatten(_.map(times, (info) => { return _.filter(info.times, (t) => { return t > 0 && t < 99999; }) })));
 
 		// draw title row
@@ -449,31 +449,6 @@ const mancheName = (mindex) => {
 	else {
 		return `MANCHE ${mindex + 1}`;
 	}
-};
-
-// TODO move to client?
-const getSortedPlayerList = () => {
-	let playerList = storage.get('tournament').players;
-	let playerTimes = storage.get('playerTimes');
-
-	// calculate best time sums
-	let sums = [], times, pTimes, bestTimes, bestSum;
-	_.each(playerList, (_player, pindex) => {
-		pTimes = playerTimes[pindex] || [];
-		bestTimes = _.filter(pTimes, (t) => { return t > 0; }).sort().slice(0, 2);
-		bestSum = (bestTimes[0] || 99999) + (bestTimes[1] || 99999);
-		sums[pindex] = bestSum;
-	});
-
-	// sort list by sum desc
-	times = _.map(playerTimes, (times, index) => {
-		return {
-			id: index,
-			times: times || [],
-			best: sums[index]
-		};
-	});
-	return _.sortBy(times, 'best');
 };
 
 const initRace = (freeRound) => {
@@ -652,7 +627,6 @@ module.exports = {
 	showPlayerList: showPlayerList,
 	showMancheList: showMancheList,
 	showNextRoundNames: showNextRoundNames,
-	getSortedPlayerList: getSortedPlayerList,
 	initRace: initRace,
 	drawRace: drawRace
 };

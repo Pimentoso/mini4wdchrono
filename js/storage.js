@@ -62,10 +62,10 @@ const deleteRace = (filename) => {
 
 const extension = (element) => {
   var extName = path.extname(element);
-  return extName === '.json'; // change to whatever extensions you want
+  return extName === '.json';
 };
 
-const getRecent = (num) => {
+const getRecentFiles = (num) => {
 	num = num || 10
 	let userdir = app.getPath('userData');
 	let storagedir = path.join(userdir, 'races');
@@ -91,25 +91,31 @@ const get = (key) => {
 	return storage.get(key);
 };
 
+const remove = (key) => {
+	return storage.delete(key);
+};
+
 const saveRound = (manche, round, cars) => {
 	storage.set(`race.m${manche}.r${round}`, cars);
 };
 
 const loadRound = (manche, round) => {
 	if (manche == null)
-		manche = storage.get('currManche');
+		manche = get('currManche');
 	if (round == null)
-		round = storage.get('currRound');
+		round = get('currRound');
 
-	return storage.get(`race.m${manche}.r${round}`);
+	return get(`race.m${manche}.r${round}`);
 };
 
 const deleteRound = (manche, round) => {
-	storage.delete(`race.m${manche}.r${round}`);
+	remove(`race.m${manche}.r${round}`);
 };
 
 const getManches = () => {
 	let tournament = get('tournament');
+	if (!tournament) return null;
+
 	let mancheList = tournament.manches;
 	if (tournament.finals) {
 		mancheList.push(...tournament.finals);
@@ -117,15 +123,80 @@ const getManches = () => {
 	return mancheList;
 };
 
+const getPlayers = () => {
+	let tournament = get('tournament');
+	if (!tournament) return null;
+
+	return tournament.players;
+};
+
+/*
+	Builds a structure like the following
+	[
+		(1 entry for each player)
+		[
+			(1 entry for each manche)
+			{ time: 99999, position: 3, outOfBounds: true }
+		]
+	]
+	@return [Array]
+*/
+const getPlayerData = () => {
+	let cars, playerTimes = [];
+	_.each(mancheList, (manche, mindex) => {
+		_.each(manche, (round, rindex) => {
+			cars = storage.loadRound(mindex, rindex);
+			if (cars) {
+				_.each(round, (playerId, pindex) => {
+					playerTimes[playerId] = playerTimes[playerId] || [];
+					playerTimes[playerId][mindex] = {
+						time: cars[pindex].currTime,
+						position: cars[pindex].position,
+						outOfBounds: cars[pindex].outOfBounds
+					};
+				});
+			}
+		});
+	});
+	return playerTimes;
+};
+
+const getSortedPlayerList = () => {
+	let playerList = getPlayers();
+	let playerData = getPlayerData();
+
+	// calculate best time sums
+	let sums = [], times, pData, bestTimes, bestSum;
+	_.each(playerList, (_player, pindex) => {
+		pData = playerData[pindex] || [];
+		bestTimes = _.filter(pData, (i) => { return t.time > 0; }).sort().slice(0, 2);
+		bestSum = (bestTimes[0].time || 99999) + (bestTimes[1].time || 99999);
+		sums[pindex] = bestSum;
+	});
+
+	// sort list by sum desc
+	times = _.map(playerData, (data, index) => {
+		return {
+			id: index,
+			times: _.map(data, (i) => { return i.time; }),
+			best: sums[index]
+		};
+	});
+	return _.sortBy(times, 'best');
+};
+
 module.exports = {
 	newRace: newRace,
 	loadRace:	loadRace,
 	deleteRace:	deleteRace,
-	getRecent: getRecent,
+	getRecentFiles: getRecentFiles,
 	set: set,
 	get: get,
 	saveRound: saveRound,
 	loadRound: loadRound,
 	deleteRound: deleteRound,
-	getManches: getManches
+	getManches: getManches,
+	getPlayers: getPlayers,
+	getPlayerData: getPlayerData,
+	getSortedPlayerList: getSortedPlayerList
 };
