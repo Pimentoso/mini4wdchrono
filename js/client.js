@@ -62,7 +62,6 @@ const reset = (name) => {
 	storage.newRace(name);
 	ui.init();
 
-	initTimeList();
 	showTrackDetails();
 	showTournamentDetails();
 };
@@ -99,7 +98,6 @@ const disqualify = (mindex, rindex, pindex) => {
 	cars[pindex].currTime = 99999;
 	storage.saveRound(mindex, rindex, cars);
 
-	rebuildTimeList();
 	ui.initRace(freeRound);
 	updateRace();
 };
@@ -129,7 +127,6 @@ const overrideTimes = () => {
 		});
 	});
 
-	rebuildTimeList();
 	ui.showPlayerList();
 	ui.showMancheList();
 	ui.initRace(freeRound);
@@ -441,7 +438,6 @@ const tournamentLoadDone = (obj) => {
 
 	freeRound = false;
 	ui.tournamentLoadDone(currTournament);
-	initTimeList();
 };
 
 const tournamentLoadFail = () => {

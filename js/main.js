@@ -360,11 +360,11 @@ $('#button-xls').on('click', (e) => {
 
 $('#button-xls-folder').on('click', (e) => {
 	let dir = xls.createDir();
-	shell.openItem(dir);
+	shell.openPath(dir);
 });
 
 $('#button-log-file').on('click', (e) => {
-	shell.openItem(log.transports.file.findLogPath());
+	shell.openPath(log.transports.file.findLogPath());
 });
 
 const updateThresholds = () => {

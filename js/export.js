@@ -38,7 +38,7 @@ const geneateXls = () => {
 		let row = [playerList[pindex].toUpperCase()];
 		pdata = pdata || [];
 		_.times(mancheCount, (i) => {
-			row[i+1] = utils.prettyTime(pdata[i].time);
+			row[i+1] = utils.prettyTime(pdata[i] ? pdata[i].time : null);
 		});
 		worksheet.addRow(row);
 	});

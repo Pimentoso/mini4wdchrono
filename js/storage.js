@@ -142,10 +142,10 @@ const getPlayers = () => {
 	@return [Array]
 */
 const getPlayerData = () => {
-	let cars, playerTimes = [];
+	let cars, playerTimes = [], mancheList = getManches();
 	_.each(mancheList, (manche, mindex) => {
 		_.each(manche, (round, rindex) => {
-			cars = storage.loadRound(mindex, rindex);
+			cars = loadRound(mindex, rindex);
 			if (cars) {
 				_.each(round, (playerId, pindex) => {
 					playerTimes[playerId] = playerTimes[playerId] || [];
@@ -164,21 +164,23 @@ const getPlayerData = () => {
 const getSortedPlayerList = () => {
 	let playerList = getPlayers();
 	let playerData = getPlayerData();
+	debugger;
 
 	// calculate best time sums
 	let sums = [], times, pData, bestTimes, bestSum;
 	_.each(playerList, (_player, pindex) => {
 		pData = playerData[pindex] || [];
-		bestTimes = _.filter(pData, (i) => { return t.time > 0; }).sort().slice(0, 2);
-		bestSum = (bestTimes[0].time || 99999) + (bestTimes[1].time || 99999);
+		bestTimes = _.filter(pData, (i) => { return i && i.time > 0; }).sort().slice(0, 2);
+		bestSum = (bestTimes[0] ? bestTimes[0].time : 99999) + (bestTimes[1] ? bestTimes[1].time : 99999);
 		sums[pindex] = bestSum;
 	});
 
+	debugger;
 	// sort list by sum desc
 	times = _.map(playerData, (data, index) => {
 		return {
 			id: index,
-			times: _.map(data, (i) => { return i.time; }),
+			times: _.map(data, (i) => { return i ? i.time : null; }),
 			best: sums[index]
 		};
 	});
