@@ -17,13 +17,17 @@ if (process.argv[2] == "--watch") {
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
+// TODO SIAMO RIMASTI QUI
+// https://stackoverflow.com/questions/44391448/electron-require-is-not-defined/57049268#57049268
+
 function createWindow() {
 	// Create the browser window.
 	mainWindow = new BrowserWindow({
 		width: 1280,
-		height: 800,
+		height: 700,
 		webPreferences: {
-			nodeIntegration: true
+			nodeIntegration: true,
+			contextIsolation: false
 		}
 	});
 
@@ -35,8 +39,8 @@ function createWindow() {
 	}));
 
 	// Maximize.
-	mainWindow.maximize();
-	mainWindow.setResizable(false);
+	//mainWindow.maximize();
+	//mainWindow.setResizable(false);
 
 	// Open the DevTools.
 	// mainWindow.webContents.openDevTools();
@@ -76,6 +80,9 @@ function createWindow() {
 		}
 	});
 }
+
+// Fix for gpu driver error in ubuntu.
+app.disableHardwareAcceleration();
 
 // Fix for running serialPort on renderer process. Remove when serialPort is updated
 app.allowRendererProcessReuse = false
