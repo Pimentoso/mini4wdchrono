@@ -164,7 +164,6 @@ const getPlayerData = () => {
 const getSortedPlayerList = () => {
 	let playerList = getPlayers();
 	let playerData = getPlayerData();
-	debugger;
 
 	// calculate best time sums
 	let sums = [], times, pData, bestTimes, bestSum;
@@ -175,7 +174,6 @@ const getSortedPlayerList = () => {
 		sums[pindex] = bestSum;
 	});
 
-	debugger;
 	// sort list by sum desc
 	times = _.map(playerData, (data, index) => {
 		return {
