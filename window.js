@@ -15,17 +15,19 @@ if (process.argv[2] == "--watch") {
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow;
+let mainWindow, devToolsWindow;
 
 function createWindow() {
 	// Create the browser window.
 	mainWindow = new BrowserWindow({
 		width: 1280,
-		height: 800,
+		height: 700,
 		webPreferences: {
 			nodeIntegration: true
 		}
 	});
+
+  devToolsWindow = new BrowserWindow();
 
 	// and load the index.html of the app.
 	mainWindow.loadURL(url.format({
@@ -33,6 +35,8 @@ function createWindow() {
 		protocol: 'file:',
 		slashes: true
 	}));
+
+  mainWindow.webContents.setDevToolsWebContents(devToolsWindow.webContents);
 
 	// Maximize.
 	mainWindow.maximize();

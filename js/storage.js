@@ -62,7 +62,7 @@ const deleteRace = (filename) => {
 
 const extension = (element) => {
   var extName = path.extname(element);
-  return extName === '.json'; // change to whatever extensions you want
+  return extName === '.json';
 };
 
 const getRecent = (num) => {
@@ -91,25 +91,31 @@ const get = (key) => {
 	return storage.get(key);
 };
 
+const remove = (key) => {
+	return storage.delete(key);
+};
+
 const saveRound = (manche, round, cars) => {
 	storage.set(`race.m${manche}.r${round}`, cars);
 };
 
 const loadRound = (manche, round) => {
 	if (manche == null)
-		manche = storage.get('currManche');
+		manche = get('currManche');
 	if (round == null)
-		round = storage.get('currRound');
+		round = get('currRound');
 
-	return storage.get(`race.m${manche}.r${round}`);
+	return get(`race.m${manche}.r${round}`);
 };
 
 const deleteRound = (manche, round) => {
-	storage.delete(`race.m${manche}.r${round}`);
+	remove(`race.m${manche}.r${round}`);
 };
 
 const getManches = () => {
 	let tournament = get('tournament');
+	if (!tournament) return null;
+
 	let mancheList = tournament.manches;
 	if (tournament.finals) {
 		mancheList.push(...tournament.finals);
