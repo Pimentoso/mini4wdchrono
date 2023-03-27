@@ -20,8 +20,6 @@ let mainWindow, devToolsWindow;
 function createWindow() {
 	// Create the browser window.
 	mainWindow = new BrowserWindow({
-		width: 1280,
-		height: 700,
 		webPreferences: {
 			nodeIntegration: true
 		}
@@ -87,9 +85,9 @@ const gotTheLock = app.requestSingleInstanceLock();
 
 app.on('second-instance', (_cl, _wd) => {
 	// Someone tried to run a second instance, we should focus our window.
-	if (myWindow) {
-		if (myWindow.isMinimized()) myWindow.restore();
-		myWindow.focus();
+	if (mainWindow) {
+		if (mainWindow.isMinimized()) mainWindow.restore();
+		mainWindow.focus();
 	}
 })
 
