@@ -27,16 +27,12 @@ function createWindow() {
 		}
 	});
 
-  devToolsWindow = new BrowserWindow();
-
 	// and load the index.html of the app.
 	mainWindow.loadURL(url.format({
 		pathname: path.join(__dirname, 'index.html'),
 		protocol: 'file:',
 		slashes: true
 	}));
-
-  mainWindow.webContents.setDevToolsWebContents(devToolsWindow.webContents);
 
 	// Maximize.
 	mainWindow.maximize();
