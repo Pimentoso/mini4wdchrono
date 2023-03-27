@@ -168,7 +168,7 @@ board.on('ready', function () {
 	this.digitalRead(sensorPin3, function (val) {
 		tag3.text(val);
 		if (val == 0 && val3 == 1) {
-			reverse ? client.addLap(0) : client.addLapra(2);
+			reverse ? client.addLap(0) : client.addLap(2);
 			reverse ? ledManager.lap(0) : ledManager.lap(2);
 		}
 		val3 = val;

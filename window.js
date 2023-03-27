@@ -2,7 +2,7 @@
 
 'use strict';
 
-const {app, BrowserWindow, Menu} = require('electron')
+const { app, BrowserWindow, Menu } = require('electron')
 const path = require('path');
 const url = require('url');
 const isMac = process.platform === 'darwin';
@@ -27,8 +27,6 @@ function createWindow() {
 		}
 	});
 
-  devToolsWindow = new BrowserWindow();
-
 	// and load the index.html of the app.
 	mainWindow.loadURL(url.format({
 		pathname: path.join(__dirname, 'index.html'),
@@ -36,13 +34,13 @@ function createWindow() {
 		slashes: true
 	}));
 
-  mainWindow.webContents.setDevToolsWebContents(devToolsWindow.webContents);
-
 	// Maximize.
 	mainWindow.maximize();
 	mainWindow.setResizable(false);
 
 	// Open the DevTools.
+	// devToolsWindow = new BrowserWindow();
+	// mainWindow.webContents.setDevToolsWebContents(devToolsWindow.webContents);
 	// mainWindow.webContents.openDevTools();
 
 	// Emitted when the window is closed.
@@ -88,15 +86,15 @@ app.allowRendererProcessReuse = false
 const gotTheLock = app.requestSingleInstanceLock();
 
 app.on('second-instance', (_cl, _wd) => {
-  // Someone tried to run a second instance, we should focus our window.
-  if (myWindow) {
-    if (myWindow.isMinimized()) myWindow.restore();
-    myWindow.focus();
-  }
+	// Someone tried to run a second instance, we should focus our window.
+	if (myWindow) {
+		if (myWindow.isMinimized()) myWindow.restore();
+		myWindow.focus();
+	}
 })
 
 if (!gotTheLock) {
-  return app.quit();
+	return app.quit();
 }
 
 // This method will be called when Electron has finished
