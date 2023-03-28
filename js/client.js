@@ -637,6 +637,7 @@ module.exports = {
 	setTrackManual: setTrackManual,
 	loadTournament: loadTournament,
 	saveXls: saveXls,
+	addLap: addLap,
 	disqualify: disqualify,
 	overrideTimes: overrideTimes,
 	startRace: startRace,
