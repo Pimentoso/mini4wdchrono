@@ -1,6 +1,5 @@
 'use strict';
 
-const serialport = require('serialport');
 const utils = require('./utils');
 const i18n = new (require('../i18n/i18n'))();
 const configuration = require('./configuration');
@@ -72,22 +71,12 @@ const init = () => {
 	$('#tag-tournament-status').addClass('is-danger');
 	$('#tag-tournament-status').removeClass('is-success');
 	$('#tag-tournament-status').text(i18n.__('tag-not-loaded'));
+	$('#js-config-usb-port').val(configuration.get('usbPort'));
 
 	disableRaceInput(false);
 	if (storage.get('race')) {
 		disableRaceInput(true);
 	}
-
-	serialport.list().then(ports => {
-		ports.forEach(function (port) {
-			$('#js-config-usb-port').append($('<option>', {
-				value: port.path,
-				text: port.manufacturer ? `${port.path} (${port.manufacturer})` : port.path
-			}));
-			console.log(port.path);
-		});
-		$('#js-config-usb-port').val(configuration.get('usbPort'));
-	});
 };
 
 const initModal = (modalId) => {
