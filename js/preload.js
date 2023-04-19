@@ -4,12 +4,6 @@
 const serialport = require('serialport');
 
 window.addEventListener('DOMContentLoaded', () => {
-	for (const versionType of ['chrome', 'electron', 'node']) {
-		document.getElementById(`${versionType}-version`).innerText = process.versions[versionType]
-	}
-
-	document.getElementById('serialport-version').innerText = require('serialport/package').version
-
 	serialport.list().then(ports => {
 		ports.forEach(function (port) {
 			$('#js-config-usb-port').append($('<option>', {

@@ -7,12 +7,17 @@ const path = require('path');
 const url = require('url');
 const isMac = process.platform === 'darwin';
 
+// Initialize @electron/remote
+const remoteMain = require('@electron/remote/main');
+remoteMain.initialize();
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
 // TODO SIAMO RIMASTI QUI
 // https://stackoverflow.com/questions/71876063/uncaught-typeerror-cannot-destructure-property-dialog-of-require-remote
+// https://www.npmjs.com/package/@electron/remote
 
 function createWindow() {
 	// Create the browser window.
@@ -47,6 +52,8 @@ function createWindow() {
 		// when you should delete the corresponding element.
 		mainWindow = null
 	});
+
+	remoteMain.enable(mainWindow.webContents);
 
 	const selectionMenu = Menu.buildFromTemplate([
 		{ role: 'copy' },

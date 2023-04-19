@@ -4,7 +4,7 @@
 const debugMode = false;
 ////////////////////////
 
-const { dialog, shell, app, webContents } = require('electron').remote;
+const { dialog, shell, app, webContents } = require('@electron/remote');
 
 const log = require('electron-log');
 log.info(`Launched Mini4wdChrono at ${new Date()}`);
