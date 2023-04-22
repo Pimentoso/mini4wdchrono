@@ -7,7 +7,7 @@ const debugMode = false;
 const { dialog, shell, app, webContents } = require('electron').remote;
 
 const log = require('electron-log');
-log.info(`Launched Mini4wdChrono at ${new Date()}`);
+log.info(`Launched Mini4wdChrono v${app.getVersion()} at ${new Date()}`);
 log.catchErrors();
 
 const j5 = require('johnny-five');
@@ -179,58 +179,60 @@ board.on('ready', function () {
 });
 
 board.on("info", function (event) {
-	log.info(`Board INFO at ${new Date()} - ${event.message}`);
+	if (event) {
+		log.info(`Board INFO at ${new Date()} - ${event.message}`);
+	}
 });
 
 board.on("warn", function (event) {
-	log.warn(`Board WARN at ${new Date()} - ${event.message}`);
+	if (event) {
+		log.warn(`Board WARN at ${new Date()} - ${event.message}`);
+	}
 });
 
 board.on("fail", function (event) {
 	connected = false;
-	log.error(`Board FAIL at ${new Date()} - ${event.message}`);
-
 	ledManager.disconnected();
 	ui.boardDisonnected();
 
-	if (!debugMode) {
-		dialog.showMessageBoxSync({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message, buttons: ['Ok'] });
+	if (event) {
+		log.error(`Board FAIL at ${new Date()} - ${event.message}`);
+		if (!debugMode) {
+			dialog.showMessageBoxSync({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message, buttons: ['Ok'] });
+		}
 	}
 });
 
 board.on("error", function (event) {
 	connected = false;
-	log.error(`Board ERROR at ${new Date()} - ${event.message}`);
-
 	ledManager.disconnected();
 	ui.boardDisonnected();
 
-	if (!debugMode) {
-		dialog.showMessageBoxSync({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message, buttons: ['Ok'] });
+	if (event) {
+		log.error(`Board ERROR at ${new Date()} - ${event.message}`);
+		if (!debugMode) {
+			dialog.showMessageBoxSync({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message, buttons: ['Ok'] });
+		}
 	}
-});
-
-board.on("info", function (event) {
-	log.info(`Board INFO at ${new Date()} - ${event.message}`);
-});
-
-board.on("warn", function (event) {
-	log.warn(`Board WARN at ${new Date()} - ${event.message}`);
 });
 
 // TODO does not work
 board.on("close", function (event) {
 	connected = false;
-	log.error(`Board CLOSE at ${new Date()} - ${event.message}`);
 	ui.boardDisonnected();
 	ledManager.disconnected();
+	if (event) {
+		log.error(`Board CLOSE at ${new Date()} - ${event.message}`);
+	}
 });
 
 board.on("exit", function (event) {
 	connected = false;
-	log.error(`Board EXIT at ${new Date()} - ${event.message}`);
 	ui.boardDisonnected();
 	ledManager.disconnected();
+	if (event) {
+		log.error(`Board EXIT at ${new Date()} - ${event.message}`);
+	}
 });
 
 // ==========================================================================
