@@ -1,10 +1,10 @@
 // All of the Node.js APIs are available in the preload process.
 // It has the same sandbox as a Chrome extension.
 
-const serialport = require('serialport');
+const sp = require('serialport');
 
 window.addEventListener('DOMContentLoaded', () => {
-	serialport.list().then(ports => {
+	sp.SerialPort.list().then(ports => {
 		ports.forEach(function (port) {
 			$('#js-config-usb-port').append($('<option>', {
 				value: port.path,

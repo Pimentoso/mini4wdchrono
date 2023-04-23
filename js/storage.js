@@ -4,36 +4,36 @@ const { app } = require('@electron/remote');
 const fs = require('fs');
 const path = require('path');
 const jsonfile = require('jsonfile');
-const storage = require('electron-settings');
+const storage = require('electron-json-storage');
 const configuration = require('./configuration');
 configuration.init();
 
+const userdir = app.getPath('userData');
+const storagedir = path.join(userdir, 'races');
+if (!fs.existsSync(storagedir)) {
+	fs.mkdirSync(storagedir);
+}
+storage.setDataPath(storagedir);
+
 const setDefaults = () => {
 	let timestamp = parseInt(new Date().getTime() / 1000);
-	storage.set('created', timestamp);
-	storage.set('currManche', 0);
-	storage.set('currRound', 0);
-	storage.set('raceMode', 0);
-	storage.set('timeThreshold', 40);
-	storage.set('speedThreshold', 5);
-	storage.set('startDelay', 3);
-	storage.set('roundLaps', 3);
-};
+	set('created', timestamp);
+	set('currManche', 0);
+	set('currRound', 0);
+	set('raceMode', 0);
+	set('timeThreshold', 40);
+	set('speedThreshold', 5);
+	set('startDelay', 3);
+	set('roundLaps', 3);
+}
 
 const newRace = (raceName) => {
-	let userdir = app.getPath('userData');
-	let storagedir = path.join(userdir, 'races');
-	if (!fs.existsSync(storagedir)) {
-		fs.mkdirSync(storagedir);
-	}
-
 	let timestamp = parseInt(new Date().getTime() / 1000);
 	let filename = `${timestamp}.json`;
 	let filepath = path.join(userdir, 'races', filename);
 	configuration.set('raceFile', filename);
 	fs.closeSync(fs.openSync(filepath, 'w')); // create empty file
-	storage.setPath(filepath);
-	storage.set('name', raceName);
+	set('name', raceName);
 	setDefaults();
 };
 
@@ -41,11 +41,8 @@ const loadRace = (filename) => {
 	filename = filename || configuration.get('raceFile');
 	if (filename) {
 		filename = filename.substr(filename.length - 15); // retrocompatibility
-		let userdir = app.getPath('userData');
-		let filepath = path.join(userdir, 'races', filename);
 		configuration.set('raceFile', filename);
-		storage.setPath(filepath);
-		if (storage.get('created') == null) {
+		if (get('created') == null) {
 			setDefaults();
 		}
 	}
@@ -84,19 +81,26 @@ const getRecentFiles = (num) => {
 };
 
 const set = (key, value) => {
-	storage.set(key, value);
+	var filename = configuration.get('raceFile');
+	var data = storage.getSync(filename);
+	data[key] = value;
+	storage.set(filename, data);
 };
 
 const get = (key) => {
-	return storage.get(key);
+	var filename = configuration.get('raceFile');
+	var data = storage.getSync(filename);
+	return data[key];
 };
 
 const remove = (key) => {
-	return storage.delete(key);
+	var filename = configuration.get('raceFile');
+	var data = storage.getSync(filename);
+	delete data[key];
 };
 
 const saveRound = (manche, round, cars) => {
-	storage.set(`race.m${manche}.r${round}`, cars);
+	set(`race.m${manche}.r${round}`, cars);
 };
 
 const loadRound = (manche, round) => {
@@ -164,7 +168,6 @@ const getPlayerData = () => {
 const getSortedPlayerList = () => {
 	let playerList = getPlayers();
 	let playerData = getPlayerData();
-	debugger;
 
 	// calculate best time sums
 	let sums = [], times, pData, bestTimes, bestSum;
@@ -175,7 +178,6 @@ const getSortedPlayerList = () => {
 		sums[pindex] = bestSum;
 	});
 
-	debugger;
 	// sort list by sum desc
 	times = _.map(playerData, (data, index) => {
 		return {
