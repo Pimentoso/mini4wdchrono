@@ -11,13 +11,12 @@ const isMac = process.platform === 'darwin';
 const remoteMain = require('@electron/remote/main');
 remoteMain.initialize();
 
+// Fix for gpu driver error in ubuntu.
+app.disableHardwareAcceleration();
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
-
-// TODO SIAMO RIMASTI QUI
-// https://stackoverflow.com/questions/71876063/uncaught-typeerror-cannot-destructure-property-dialog-of-require-remote
-// https://www.npmjs.com/package/@electron/remote
 
 function createWindow() {
 	// Create the browser window.
@@ -82,12 +81,6 @@ function createWindow() {
 		}
 	});
 }
-
-// Fix for gpu driver error in ubuntu.
-app.disableHardwareAcceleration();
-
-// Fix for running serialPort on renderer process. Remove when serialPort is updated
-app.allowRendererProcessReuse = false
 
 // Prevent multiple instances of this app to run.
 const gotTheLock = app.requestSingleInstanceLock();
