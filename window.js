@@ -25,8 +25,7 @@ function createWindow() {
 		height: 700,
 		webPreferences: {
 			nodeIntegration: true,
-			contextIsolation: false,
-			preload: path.join(__dirname, 'js/preload.js')
+			contextIsolation: false
 		}
 	});
 
@@ -42,7 +41,7 @@ function createWindow() {
 	//mainWindow.setResizable(false);
 
 	// Open the DevTools.
-	// mainWindow.webContents.openDevTools();
+	mainWindow.webContents.openDevTools();
 
 	// Emitted when the window is closed.
 	mainWindow.on('closed', function () {

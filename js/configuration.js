@@ -59,6 +59,5 @@ module.exports = {
 	reset: reset,
 	set: set,
 	get: get,
-	del: del,
-	ledManager: ledManager
+	del: del
 };

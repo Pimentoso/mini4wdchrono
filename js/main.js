@@ -4,6 +4,9 @@
 const debugMode = false;
 ////////////////////////
 
+window.$ = require('jquery');
+window._ = require('underscore');
+
 const { dialog, shell, app, webContents } = require('@electron/remote');
 
 const log = require('electron-log');
