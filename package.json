@@ -13,6 +13,7 @@
     "nconf": "^0.12.0",
     "node-pixel": "Pimentoso/node-pixel",
     "serialport": "^10.5.0",
+    "strftime": "^0.10.2",
     "underscore": "^1.13.0"
   },
   "devDependencies": {

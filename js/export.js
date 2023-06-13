@@ -6,6 +6,7 @@ const { app } = require('@electron/remote');
 const fs = require('fs');
 const path = require('path');
 const storage = require('./storage');
+const strftime = require('strftime');
 
 const getXlsFilePath = () => {
 	// {user home dir}/Mini4wdChrono
@@ -44,7 +45,7 @@ const geneateXls = () => {
 	});
 
 	let dir = createDir();
-	let filename = path.join(dir, `mini4wd_race_${utils.strftime('%Y-%m-%d_%H-%M-%S', new Date())}.xlsx`);
+	let filename = path.join(dir, `mini4wd_race_${strftime('%Y-%m-%d_%H-%M-%S', new Date())}.xlsx`);
 	workbook.xlsx.writeFile(filename)
 		.then(() =>  {
 			// done
