@@ -4,16 +4,9 @@ const { app } = require('@electron/remote');
 const fs = require('fs');
 const path = require('path');
 const jsonfile = require('jsonfile');
-const storage = require('electron-json-storage');
+const storage = require('electron-settings');
 const configuration = require('./configuration');
 configuration.init();
-
-const userdir = app.getPath('userData');
-const storagedir = path.join(userdir, 'races');
-if (!fs.existsSync(storagedir)) {
-	fs.mkdirSync(storagedir);
-}
-storage.setDataPath(storagedir);
 
 const setDefaults = () => {
 	let timestamp = parseInt(new Date().getTime() / 1000);
@@ -25,14 +18,21 @@ const setDefaults = () => {
 	set('speedThreshold', 5);
 	set('startDelay', 3);
 	set('roundLaps', 3);
-}
+};
 
 const newRace = (raceName) => {
+	let userdir = app.getPath('userData');
+	let storagedir = path.join(userdir, 'races');
+	if (!fs.existsSync(storagedir)) {
+		fs.mkdirSync(storagedir);
+	}
+
 	let timestamp = parseInt(new Date().getTime() / 1000);
 	let filename = `${timestamp}.json`;
 	let filepath = path.join(userdir, 'races', filename);
 	configuration.set('raceFile', filename);
 	fs.closeSync(fs.openSync(filepath, 'w')); // create empty file
+	storage.setPath(filepath);
 	set('name', raceName);
 	setDefaults();
 };
@@ -41,7 +41,10 @@ const loadRace = (filename) => {
 	filename = filename || configuration.get('raceFile');
 	if (filename) {
 		filename = filename.substr(filename.length - 15); // retrocompatibility
+		let userdir = app.getPath('userData');
+		let filepath = path.join(userdir, 'races', filename);
 		configuration.set('raceFile', filename);
+		storage.setPath(filepath);
 		if (get('created') == null) {
 			setDefaults();
 		}
@@ -81,22 +84,15 @@ const getRecentFiles = (num) => {
 };
 
 const set = (key, value) => {
-	var filename = configuration.get('raceFile');
-	var data = storage.getSync(filename);
-	data[key] = value;
-	storage.set(filename, data);
+	storage.set(key, value);
 };
 
 const get = (key) => {
-	var filename = configuration.get('raceFile');
-	var data = storage.getSync(filename);
-	return data[key];
+	return storage.get(key);
 };
 
 const remove = (key) => {
-	var filename = configuration.get('raceFile');
-	var data = storage.getSync(filename);
-	delete data[key];
+	return storage.delete(key);
 };
 
 const saveRound = (manche, round, cars) => {

@@ -6,7 +6,7 @@
   "dependencies": {
     "clone": "^2.1.0",
     "electron-log": "^3.0.0",
-    "electron-json-storage": "^4.5.0",
+    "electron-settings": "^3.2.0",
     "exceljs": "^4.3.0",
     "johnny-five": "rwaldron/johnny-five",
     "jquery": "^3.6.0",
