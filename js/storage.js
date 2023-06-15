@@ -61,8 +61,8 @@ const deleteRace = (filename) => {
 };
 
 const extension = (element) => {
-  var extName = path.extname(element);
-  return extName === '.json';
+	var extName = path.extname(element);
+	return extName === '.json';
 };
 
 const getRecentFiles = (num) => {
@@ -187,8 +187,8 @@ const getSortedPlayerList = () => {
 
 module.exports = {
 	newRace: newRace,
-	loadRace:	loadRace,
-	deleteRace:	deleteRace,
+	loadRace: loadRace,
+	deleteRace: deleteRace,
 	getRecentFiles: getRecentFiles,
 	set: set,
 	get: get,

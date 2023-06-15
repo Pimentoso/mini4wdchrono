@@ -309,7 +309,7 @@ const showPlayerList = () => {
 			let bestTime = _.min(_.filter(info.times, (t) => { return t > 0 && t < 99999; }));
 			let bestSpeed = track.length / (bestTime / 1000);
 			let cells = [];
-			cells.push(`<td class="has-text-centered"><span class="tag is-large ${_.contains([0,1,2], pos) ? 'is-warning' : _.contains([3,4,5], pos) ? 'is-success' : '' }">${pos + 1}</span></td>`);
+			cells.push(`<td class="has-text-centered"><span class="tag is-large ${_.contains([0, 1, 2], pos) ? 'is-warning' : _.contains([3, 4, 5], pos) ? 'is-success' : ''}">${pos + 1}</span></td>`);
 			cells.push(`<td><p class="is-uppercase">${playerList[info.id]}</p></td>`);
 			cells.push(_.map(tournament.manches, (_manche, mindex) => {
 				let playerTime = info.times[mindex] || 0;

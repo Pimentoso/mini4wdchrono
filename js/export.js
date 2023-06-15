@@ -39,7 +39,7 @@ const geneateXls = () => {
 		let row = [playerList[pindex].toUpperCase()];
 		pdata = pdata || [];
 		_.times(mancheCount, (i) => {
-			row[i+1] = utils.prettyTime(pdata[i] ? pdata[i].time : null);
+			row[i + 1] = utils.prettyTime(pdata[i] ? pdata[i].time : null);
 		});
 		worksheet.addRow(row);
 	});
@@ -47,7 +47,7 @@ const geneateXls = () => {
 	let dir = createDir();
 	let filename = path.join(dir, `mini4wd_race_${strftime('%Y-%m-%d_%H-%M-%S', new Date())}.xlsx`);
 	workbook.xlsx.writeFile(filename)
-		.then(() =>  {
+		.then(() => {
 			// done
 			$('#button-xls').removeAttr('disabled');
 			$('#status-xls').text(`saved ${filename}`);
