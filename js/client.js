@@ -229,6 +229,7 @@ const startRound = () => {
 	checkRaceTask = setInterval(checkRace, 500);
 	setTimeout(checkStart, storage.get('startDelay') * 1000);
 
+	raceStarting = false;
 	raceRunning = true;
 
 	// if final mode, start all timers now
@@ -353,15 +354,15 @@ const keydown = (keyCode) => {
 	if (raceRunning) {
 		if (keyCode == 49 || keyCode == 97) {
 			// pressed 1
-			addLap(1);
+			addLap(0);
 		}
 		else if (keyCode == 50 || keyCode == 98) {
 			// pressed 2
-			addLap(2);
+			addLap(1);
 		}
 		else if (keyCode == 51 || keyCode == 99) {
 			// pressed 3
-			addLap(3);
+			addLap(2);
 		}
 	}
 };
@@ -563,13 +564,12 @@ const saveXls = () => {
 // ==========================================================================
 // ==== listen to arduino events
 
-const sensorRead = (lane) => {
-	if (raceRunning)
-		addLap(lane);
-};
-
 const addLap = (lane) => {
 	console.log('client.addLap called');
+
+	if (!raceRunning) {
+		return;
+	}
 
 	chrono.addLap(lane);
 	if (chrono.isRaceFinished()) {
@@ -581,12 +581,12 @@ const addLap = (lane) => {
 module.exports = {
 	init: init,
 	reset: reset,
-	sensorRead: sensorRead,
 	keydown: keydown,
 	loadTrack: loadTrack,
 	setTrackManual: setTrackManual,
 	loadTournament: loadTournament,
 	saveXls: saveXls,
+	addLap: addLap,
 	disqualify: disqualify,
 	overrideTimes: overrideTimes,
 	startRace: startRace,

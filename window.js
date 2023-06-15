@@ -2,7 +2,7 @@
 
 'use strict';
 
-const {app, BrowserWindow, Menu} = require('electron')
+const { app, BrowserWindow, Menu } = require('electron')
 const path = require('path');
 const url = require('url');
 const isMac = process.platform === 'darwin';
@@ -85,15 +85,15 @@ function createWindow() {
 const gotTheLock = app.requestSingleInstanceLock();
 
 app.on('second-instance', (_cl, _wd) => {
-  // Someone tried to run a second instance, we should focus our window.
-  if (myWindow) {
-    if (myWindow.isMinimized()) myWindow.restore();
-    myWindow.focus();
-  }
+	// Someone tried to run a second instance, we should focus our window.
+	if (mainWindow) {
+		if (mainWindow.isMinimized()) mainWindow.restore();
+		mainWindow.focus();
+	}
 })
 
 if (!gotTheLock) {
-  return app.quit();
+	return app.quit();
 }
 
 // This method will be called when Electron has finished
