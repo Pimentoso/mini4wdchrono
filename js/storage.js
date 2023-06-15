@@ -169,7 +169,7 @@ const getSortedPlayerList = () => {
 	let sums = [], times, pData, bestTimes, bestSum;
 	_.each(playerList, (_player, pindex) => {
 		pData = playerData[pindex] || [];
-		bestTimes = _.filter(pData, (i) => { return i && i.time > 0; }).sort().slice(0, 2);
+		bestTimes = _.sortBy(_.filter(pData, (i) => { return i && i.time > 0; }), 'time').slice(0, 2);
 		bestSum = (bestTimes[0] ? bestTimes[0].time : 99999) + (bestTimes[1] ? bestTimes[1].time : 99999);
 		sums[pindex] = bestSum;
 	});
