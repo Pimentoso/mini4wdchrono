@@ -7,6 +7,7 @@
     "clone": "^2.1.0",
     "electron-log": "^3.0.0",
     "electron-settings": "^3.2.0",
+    "@electron/remote": "^2.0.9",
     "exceljs": "^4.3.0",
     "johnny-five": "rwaldron/johnny-five",
     "jquery": "^3.6.0",
@@ -17,11 +18,8 @@
     "underscore": "^1.13.0"
   },
   "devDependencies": {
-    "@electron/remote": "^2.0.9",
     "electron": "^17.0.0",
-    "electron-packager": "^17.0.0",
-    "@electron/rebuild": "^3.2.0",
-    "electron-reload": "^1.5.0"
+    "electron-packager": "^17.0.0"
   },
   "scripts": {
     "start": "./node_modules/.bin/electron ."
