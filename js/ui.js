@@ -1,11 +1,12 @@
 'use strict';
 
-const serialport = require('serialport');
 const utils = require('./utils');
 const i18n = new (require('../i18n/i18n'))();
 const configuration = require('./configuration');
 configuration.init();
 const storage = require('./storage');
+const strftime = require('strftime');
+const serialport = require('serialport');
 
 const boardConnected = () => {
 	$('#tag-board-status').removeClass('is-danger');
@@ -28,7 +29,7 @@ const translate = () => {
 const gotoTab = (tab) => {
 	$('.tabs li').removeClass('is-active');
 	$(`li[data-tab=${tab}]`).addClass('is-active');
-	
+
 	$('div[data-tab]').hide();
 	$(`div[data-tab=${tab}]`).show();
 };
@@ -38,7 +39,7 @@ const init = () => {
 	$('#js-title').text(title_text);
 
 	$('#js-race-name').text(storage.get('name') || i18n.__('label-untitled'));
-	$('#js-race-created').text(`${i18n.__('label-created')} ${utils.strftime('%Y-%m-%d, %H:%M', new Date(storage.get('created') * 1000))}`);
+	$('#js-race-created').text(`${i18n.__('label-created')} ${strftime('%Y-%m-%d, %H:%M', new Date(storage.get('created') * 1000))}`);
 	$('#js-settings-time-threshold').val(storage.get('timeThreshold'));
 	$('#js-settings-speed-threshold').val(storage.get('speedThreshold'));
 	$('#js-settings-start-delay').val(storage.get('startDelay'));
@@ -78,13 +79,12 @@ const init = () => {
 		disableRaceInput(true);
 	}
 
-	serialport.list().then(ports => {
+	serialport.SerialPort.list().then(ports => {
 		ports.forEach(function (port) {
 			$('#js-config-usb-port').append($('<option>', {
 				value: port.path,
 				text: port.manufacturer ? `${port.path} (${port.manufacturer})` : port.path
 			}));
-			console.log(port.path);
 		});
 		$('#js-config-usb-port').val(configuration.get('usbPort'));
 	});
@@ -97,13 +97,13 @@ const initModal = (modalId) => {
 	}
 	if (modalId == 'modal-open') {
 		$('#modal-open-files').empty();
-		let data = storage.getRecent(25);
+		let data = storage.getRecentFiles(25);
 		if (data.length) {
 			data.forEach((race) => {
 				if (race.filename == configuration.get('raceFile')) {
 					$('#modal-open-files').append(`
 					<tr>
-						<td style="width:165px;">${utils.strftime('%Y-%m-%d, %H:%M', new Date(race.created * 1000))}</td>
+						<td style="width:165px;">${strftime('%Y-%m-%d, %H:%M', new Date(race.created * 1000))}</td>
 						<td><span class="is-uppercase has-text-grey">${race.name || i18n.__('label-untitled')}</span></td>
 						<td style="width:52px;"></td>
 					<tr>`);
@@ -111,7 +111,7 @@ const initModal = (modalId) => {
 				else {
 					$('#modal-open-files').append(`
 					<tr>
-						<td style="width:165px;">${utils.strftime('%Y-%m-%d, %H:%M', new Date(race.created * 1000))}</td>
+						<td style="width:165px;">${strftime('%Y-%m-%d, %H:%M', new Date(race.created * 1000))}</td>
 						<td><a href="javascript:void(0)" class="js-load-race is-uppercase" data-filename="${race.filename}">${race.name || i18n.__('label-untitled')}</a></td>
 						<td style="width:52px;"><a class="button is-small is-danger is-pulled-right js-delete-race is-uppercase" data-filename="${race.filename}">X</a></td>
 					<tr>`);
@@ -303,7 +303,7 @@ const showPlayerList = () => {
 
 	$('#tablePlayerList').empty();
 	if (playerList.length > 0) {
-		let times = getSortedPlayerList();
+		let times = storage.getSortedPlayerList();
 		let raceBestTime = _.min(_.flatten(_.map(times, (info) => { return _.filter(info.times, (t) => { return t > 0 && t < 99999; }) })));
 
 		// draw title row
@@ -319,7 +319,7 @@ const showPlayerList = () => {
 			let bestTime = _.min(_.filter(info.times, (t) => { return t > 0 && t < 99999; }));
 			let bestSpeed = track.length / (bestTime / 1000);
 			let cells = [];
-			cells.push(`<td class="has-text-centered"><span class="tag is-large ${_.contains([0,1,2], pos) ? 'is-warning' : _.contains([3,4,5], pos) ? 'is-success' : '' }">${pos + 1}</span></td>`);
+			cells.push(`<td class="has-text-centered"><span class="tag is-large ${_.contains([0, 1, 2], pos) ? 'is-warning' : _.contains([3, 4, 5], pos) ? 'is-success' : ''}">${pos + 1}</span></td>`);
 			cells.push(`<td><p class="is-uppercase">${playerList[info.id]}</p></td>`);
 			cells.push(_.map(tournament.manches, (_manche, mindex) => {
 				let playerTime = info.times[mindex] || 0;
@@ -449,31 +449,6 @@ const mancheName = (mindex) => {
 	else {
 		return `MANCHE ${mindex + 1}`;
 	}
-};
-
-// TODO move to client?
-const getSortedPlayerList = () => {
-	let playerList = storage.get('tournament').players;
-	let playerTimes = storage.get('playerTimes');
-
-	// calculate best time sums
-	let sums = [], times, pTimes, bestTimes, bestSum;
-	_.each(playerList, (_player, pindex) => {
-		pTimes = playerTimes[pindex] || [];
-		bestTimes = _.filter(pTimes, (t) => { return t > 0; }).sort().slice(0, 2);
-		bestSum = (bestTimes[0] || 99999) + (bestTimes[1] || 99999);
-		sums[pindex] = bestSum;
-	});
-
-	// sort list by sum desc
-	times = _.map(playerTimes, (times, index) => {
-		return {
-			id: index,
-			times: times || [],
-			best: sums[index]
-		};
-	});
-	return _.sortBy(times, 'best');
 };
 
 const initRace = (freeRound) => {
@@ -652,7 +627,6 @@ module.exports = {
 	showPlayerList: showPlayerList,
 	showMancheList: showMancheList,
 	showNextRoundNames: showNextRoundNames,
-	getSortedPlayerList: getSortedPlayerList,
 	initRace: initRace,
 	drawRace: drawRace
 };

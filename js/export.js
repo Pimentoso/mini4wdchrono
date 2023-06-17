@@ -2,9 +2,11 @@
 
 const xls = require('exceljs');
 const utils = require('./utils');
-const { app } = require('electron').remote;
+const { app } = require('@electron/remote');
 const fs = require('fs');
 const path = require('path');
+const storage = require('./storage');
+const strftime = require('strftime');
 
 const getXlsFilePath = () => {
 	// {user home dir}/Mini4wdChrono
@@ -20,7 +22,12 @@ const createDir = () => {
 	return dir;
 };
 
-const geneateXls = (mancheCount, playerData, playerTimes) => {
+const generateXls = () => {
+	let tournament = storage.get('tournament');
+	let playerList = tournament.players;
+	let mancheCount = tournament.manches.length;
+	let playerData = storage.getPlayerData();
+
 	let workbook = new xls.Workbook();
 	workbook.creator = 'Mini4wd Chrono';
 	workbook.created = new Date();
@@ -28,19 +35,19 @@ const geneateXls = (mancheCount, playerData, playerTimes) => {
 
 	let worksheet = workbook.addWorksheet('Racers data');
 
-	_.each(playerTimes, (pdata, pindex) => {
-		let row = [playerData[pindex].toUpperCase()];
+	_.each(playerData, (pdata, pindex) => {
+		let row = [playerList[pindex].toUpperCase()];
 		pdata = pdata || [];
 		_.times(mancheCount, (i) => {
-			row[i+1] = utils.prettyTime(pdata[i]);
+			row[i + 1] = utils.prettyTime(pdata[i] ? pdata[i].time : null);
 		});
 		worksheet.addRow(row);
 	});
 
 	let dir = createDir();
-	let filename = path.join(dir, `mini4wd_race_${utils.strftime('%Y-%m-%d_%H-%M-%S', new Date())}.xlsx`);
+	let filename = path.join(dir, `mini4wd_race_${strftime('%Y-%m-%d_%H-%M-%S', new Date())}.xlsx`);
 	workbook.xlsx.writeFile(filename)
-		.then(() =>  {
+		.then(() => {
 			// done
 			$('#button-xls').removeAttr('disabled');
 			$('#status-xls').text(`saved ${filename}`);
@@ -48,6 +55,6 @@ const geneateXls = (mancheCount, playerData, playerTimes) => {
 };
 
 module.exports = {
-	geneateXls: geneateXls,
+	generateXls: generateXls,
 	createDir: createDir
 };

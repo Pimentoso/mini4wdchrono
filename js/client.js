@@ -1,6 +1,6 @@
 'use strict';
 
-const { dialog } = require('electron').remote;
+const { dialog } = require('@electron/remote');
 const ui = require('./ui');
 const utils = require('./utils');
 const storage = require('./storage');
@@ -10,7 +10,7 @@ const i18n = new (require('../i18n/i18n'));
 const clone = require('clone');
 
 var currTrack, currTournament, ledManager;
-var playerList, mancheList, mancheCount, playerTimes;
+var playerList, mancheList, mancheCount;
 var currManche = 0, currRound = 0, raceStarting = false, raceRunning = false, freeRound = true;
 
 var timerIntervals = [], timerSeconds = [];
@@ -25,7 +25,6 @@ const init = (params) => {
 	ui.gotoTab(configuration.get('tab'));
 
 	// init variables
-	playerTimes = [];
 	playerList = [];
 	mancheList = [];
 	currManche = storage.get('currManche') || 0;
@@ -44,7 +43,6 @@ const init = (params) => {
 	// load tournament from settings
 	let savedTournament = storage.get('tournament');
 	if (savedTournament) {
-		playerTimes = storage.get('playerTimes') || [];
 		tournamentLoadDone(savedTournament);
 	}
 	showTournamentDetails();
@@ -53,7 +51,6 @@ const init = (params) => {
 const reset = (name) => {
 	console.log('client.reset called');
 
-	playerTimes = [];
 	playerList = [];
 	mancheList = [];
 	currManche = 0;
@@ -65,7 +62,6 @@ const reset = (name) => {
 	storage.newRace(name);
 	ui.init();
 
-	initTimeList();
 	showTrackDetails();
 	showTournamentDetails();
 };
@@ -102,7 +98,6 @@ const disqualify = (mindex, rindex, pindex) => {
 	cars[pindex].currTime = 99999;
 	storage.saveRound(mindex, rindex, cars);
 
-	rebuildTimeList();
 	ui.initRace(freeRound);
 	updateRace();
 };
@@ -132,49 +127,16 @@ const overrideTimes = () => {
 		});
 	});
 
-	rebuildTimeList();
 	ui.showPlayerList();
 	ui.showMancheList();
 	ui.initRace(freeRound);
 	updateRace();
 };
 
-// Initializes playerTimes
-const initTimeList = () => {
-	console.log('client.initTimeList called');
-	_.each(mancheList, (_manche, mindex) => {
-		_.each(playerList, (_playerId, pindex) => {
-			playerTimes[pindex] = playerTimes[pindex] || [];
-			playerTimes[pindex][mindex] = playerTimes[pindex][mindex] || 0;
-		});
-	});
-	storage.set('playerTimes', playerTimes);
-};
-
-// Rebuilds playerTimes starting from saved race results
-const rebuildTimeList = () => {
-	console.log('client.rebuildTimeList called');
-
-	let time, cars;
-	_.each(mancheList, (manche, mindex) => {
-		_.each(manche, (round, rindex) => {
-			cars = storage.loadRound(mindex, rindex);
-			if (cars) {
-				_.each(round, (playerId, pindex) => {
-					time = cars[pindex].currTime;
-					playerTimes[playerId] = playerTimes[playerId] || [];
-					playerTimes[playerId][mindex] = time;
-				});
-			}
-		});
-	});
-	storage.set('playerTimes', playerTimes);
-};
-
 const initFinal = () => {
 	console.log('client.initFinal called');
 
-	let ids = _.map(ui.getSortedPlayerList(), (t) => { return t.id });
+	let ids = _.map(storage.getSortedPlayerList(), (t) => { return t.id });
 
 	// remove any previously generated finals
 	mancheList = mancheList.slice(0, mancheCount);
@@ -433,8 +395,6 @@ const loadTournament = (code) => {
 
 	$.getJSON(`https://mini4wd-tournament.pimentoso.com/api/tournament/${code}`)
 		.done((obj) => {
-			playerTimes = [];
-			storage.set('playerTimes', playerTimes);
 			tournamentLoadDone(obj);
 		})
 		.fail(tournamentLoadFail)
@@ -479,7 +439,6 @@ const tournamentLoadDone = (obj) => {
 
 	freeRound = false;
 	ui.tournamentLoadDone(currTournament);
-	initTimeList();
 };
 
 const tournamentLoadFail = () => {
@@ -527,17 +486,6 @@ const raceFinished = () => {
 	ledManager.roundFinish(cars);
 
 	if (currTournament && !freeRound) {
-		if (cars[0].playerId > -1) {
-			playerTimes[cars[0].playerId][currManche] = cars[0].currTime;
-		}
-		if (cars[1].playerId > -1) {
-			playerTimes[cars[1].playerId][currManche] = cars[1].currTime;
-		}
-		if (cars[2].playerId > -1) {
-			playerTimes[cars[2].playerId][currManche] = cars[2].currTime;
-		}
-		storage.set('playerTimes', playerTimes);
-
 		storage.saveRound(currManche, currRound, cars);
 
 		ui.showPlayerList();
@@ -608,7 +556,7 @@ const timer = (lane) => {
 
 const saveXls = () => {
 	if (currTournament) {
-		xls.geneateXls(mancheList.length, playerList, playerTimes);
+		xls.generateXls();
 	}
 };
 

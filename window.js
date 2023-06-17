@@ -7,21 +7,25 @@ const path = require('path');
 const url = require('url');
 const isMac = process.platform === 'darwin';
 
-if (process.argv[2] == "--watch") {
-	require('electron-reload')(__dirname, {
-		electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
-	})
-}
+// Initialize @electron/remote
+const remoteMain = require('@electron/remote/main');
+remoteMain.initialize();
+
+// Fix for gpu driver error in ubuntu.
+app.disableHardwareAcceleration();
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow, devToolsWindow;
+let mainWindow;
 
 function createWindow() {
 	// Create the browser window.
 	mainWindow = new BrowserWindow({
+		width: 1280,
+		height: 700,
 		webPreferences: {
-			nodeIntegration: true
+			nodeIntegration: true,
+			contextIsolation: false
 		}
 	});
 
@@ -37,8 +41,6 @@ function createWindow() {
 	mainWindow.setResizable(false);
 
 	// Open the DevTools.
-	// devToolsWindow = new BrowserWindow();
-	// mainWindow.webContents.setDevToolsWebContents(devToolsWindow.webContents);
 	// mainWindow.webContents.openDevTools();
 
 	// Emitted when the window is closed.
@@ -48,6 +50,8 @@ function createWindow() {
 		// when you should delete the corresponding element.
 		mainWindow = null
 	});
+
+	remoteMain.enable(mainWindow.webContents);
 
 	const selectionMenu = Menu.buildFromTemplate([
 		{ role: 'copy' },
@@ -76,9 +80,6 @@ function createWindow() {
 		}
 	});
 }
-
-// Fix for running serialPort on renderer process. Remove when serialPort is updated
-app.allowRendererProcessReuse = false
 
 // Prevent multiple instances of this app to run.
 const gotTheLock = app.requestSingleInstanceLock();
