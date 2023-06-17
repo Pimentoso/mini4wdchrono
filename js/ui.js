@@ -6,6 +6,7 @@ const configuration = require('./configuration');
 configuration.init();
 const storage = require('./storage');
 const strftime = require('strftime');
+const serialport = require('serialport');
 
 const boardConnected = () => {
 	$('#tag-board-status').removeClass('is-danger');
@@ -72,12 +73,21 @@ const init = () => {
 	$('#tag-tournament-status').addClass('is-danger');
 	$('#tag-tournament-status').removeClass('is-success');
 	$('#tag-tournament-status').text(i18n.__('tag-not-loaded'));
-	$('#js-config-usb-port').val(configuration.get('usbPort'));
 
 	disableRaceInput(false);
 	if (storage.get('race')) {
 		disableRaceInput(true);
 	}
+
+	serialport.SerialPort.list().then(ports => {
+		ports.forEach(function (port) {
+			$('#js-config-usb-port').append($('<option>', {
+				value: port.path,
+				text: port.manufacturer ? `${port.path} (${port.manufacturer})` : port.path
+			}));
+		});
+		$('#js-config-usb-port').val(configuration.get('usbPort'));
+	});
 };
 
 const initModal = (modalId) => {

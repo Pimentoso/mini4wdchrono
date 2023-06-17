@@ -112,7 +112,6 @@ const overrideTimes = () => {
 			cars = storage.loadRound(mindex, rindex);
 			if (cars) {
 				_.each(round, (_playerId, pindex) => {
-					// TODO DO NOT READ TEXT FIELD VALUE, ADD IT TO DATA AND AVOID USING SAFETIME
 					time = $(`input[data-manche='${mindex}'][data-round='${rindex}'][data-player='${pindex}']`).val();
 					if (time) {
 						newTime = utils.safeTime(time);
@@ -557,7 +556,7 @@ const timer = (lane) => {
 
 const saveXls = () => {
 	if (currTournament) {
-		xls.geneateXls();
+		xls.generateXls();
 	}
 };
 

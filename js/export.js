@@ -22,7 +22,7 @@ const createDir = () => {
 	return dir;
 };
 
-const geneateXls = () => {
+const generateXls = () => {
 	let tournament = storage.get('tournament');
 	let playerList = tournament.players;
 	let mancheCount = tournament.manches.length;
@@ -55,6 +55,6 @@ const geneateXls = () => {
 };
 
 module.exports = {
-	geneateXls: geneateXls,
+	generateXls: generateXls,
 	createDir: createDir
 };
