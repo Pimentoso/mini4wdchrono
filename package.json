@@ -12,6 +12,7 @@
     "jquery": "^3.5.0",
     "nconf": "^0.10.0",
     "serialport": "^9.0.7",
+    "strftime": "^0.10.2",
     "underscore": "^1.9.1",
     "node-pixel": "^0.11.0"
   },

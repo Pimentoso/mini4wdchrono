@@ -4,6 +4,9 @@
 const debugMode = false;
 ////////////////////////
 
+window.$ = require('jquery');
+window._ = require('underscore');
+
 const { dialog, shell, app, webContents } = require('electron').remote;
 
 const log = require('electron-log');
@@ -65,10 +68,10 @@ if (debugMode) {
 else if (configuration.get('ledType') == 0) {
 	const LedManagerLilypad = require('./js/led_managers/led_manager_lilypad');
 	ledManager = LedManagerLilypad.getInstance(board, [
-			configuration.get('ledPin1'),
-			configuration.get('ledPin2'),
-			configuration.get('ledPin3')
-		],
+		configuration.get('ledPin1'),
+		configuration.get('ledPin2'),
+		configuration.get('ledPin3')
+	],
 		configuration.get('piezoPin'),
 		configuration.get('reverse') > 0
 	);

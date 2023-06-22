@@ -556,7 +556,7 @@ const timer = (lane) => {
 
 const saveXls = () => {
 	if (currTournament) {
-		xls.geneateXls();
+		xls.generateXls();
 	}
 };
 

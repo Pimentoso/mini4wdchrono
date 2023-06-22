@@ -1,6 +1,7 @@
 'use strict';
 
 const serialport = require('serialport');
+const strftime = require('strftime');
 const utils = require('./utils');
 const i18n = new (require('../i18n/i18n'))();
 const configuration = require('./configuration');
@@ -38,7 +39,7 @@ const init = () => {
 	$('#js-title').text(title_text);
 
 	$('#js-race-name').text(storage.get('name') || i18n.__('label-untitled'));
-	$('#js-race-created').text(`${i18n.__('label-created')} ${utils.strftime('%Y-%m-%d, %H:%M', new Date(storage.get('created') * 1000))}`);
+	$('#js-race-created').text(`${i18n.__('label-created')} ${strftime('%Y-%m-%d, %H:%M', new Date(storage.get('created') * 1000))}`);
 	$('#js-settings-time-threshold').val(storage.get('timeThreshold'));
 	$('#js-settings-speed-threshold').val(storage.get('speedThreshold'));
 	$('#js-settings-start-delay').val(storage.get('startDelay'));
@@ -103,7 +104,7 @@ const initModal = (modalId) => {
 				if (race.filename == configuration.get('raceFile')) {
 					$('#modal-open-files').append(`
 					<tr>
-						<td style="width:165px;">${utils.strftime('%Y-%m-%d, %H:%M', new Date(race.created * 1000))}</td>
+						<td style="width:165px;">${strftime('%Y-%m-%d, %H:%M', new Date(race.created * 1000))}</td>
 						<td><span class="is-uppercase has-text-grey">${race.name || i18n.__('label-untitled')}</span></td>
 						<td style="width:52px;"></td>
 					<tr>`);
@@ -111,7 +112,7 @@ const initModal = (modalId) => {
 				else {
 					$('#modal-open-files').append(`
 					<tr>
-						<td style="width:165px;">${utils.strftime('%Y-%m-%d, %H:%M', new Date(race.created * 1000))}</td>
+						<td style="width:165px;">${strftime('%Y-%m-%d, %H:%M', new Date(race.created * 1000))}</td>
 						<td><a href="javascript:void(0)" class="js-load-race is-uppercase" data-filename="${race.filename}">${race.name || i18n.__('label-untitled')}</a></td>
 						<td style="width:52px;"><a class="button is-small is-danger is-pulled-right js-delete-race is-uppercase" data-filename="${race.filename}">X</a></td>
 					<tr>`);
@@ -319,7 +320,7 @@ const showPlayerList = () => {
 			let bestTime = _.min(_.filter(info.times, (t) => { return t > 0 && t < 99999; }));
 			let bestSpeed = track.length / (bestTime / 1000);
 			let cells = [];
-			cells.push(`<td class="has-text-centered"><span class="tag is-large ${_.contains([0,1,2], pos) ? 'is-warning' : _.contains([3,4,5], pos) ? 'is-success' : '' }">${pos + 1}</span></td>`);
+			cells.push(`<td class="has-text-centered"><span class="tag is-large ${_.contains([0, 1, 2], pos) ? 'is-warning' : _.contains([3, 4, 5], pos) ? 'is-success' : ''}">${pos + 1}</span></td>`);
 			cells.push(`<td><p class="is-uppercase">${playerList[info.id]}</p></td>`);
 			cells.push(_.map(tournament.manches, (_manche, mindex) => {
 				let playerTime = info.times[mindex] || 0;
