@@ -70,10 +70,10 @@ const getRecentFiles = (num) => {
 	let userdir = app.getPath('userData');
 	let storagedir = path.join(userdir, 'races');
 	let files = fs.readdirSync(storagedir);
-	files = files.filter(extension).slice(0, num);
+	files = files.filter(extension);
 	let recent = [];
 	files.forEach((filename) => {
-		let data = jsonfile.readFileSync(path.join(storagedir, filename), { throws: false });
+		let data = jsonfile.readFileSync(path.join(storagedir, filename));
 		if (data) {
 			recent.push({
 				filename: filename,
@@ -82,7 +82,7 @@ const getRecentFiles = (num) => {
 			});
 		}
 	});
-	return recent.reverse();
+	return _.sortBy(recent, 'created').reverse().slice(0, num);
 };
 
 const set = (key, value) => {

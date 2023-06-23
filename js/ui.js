@@ -98,7 +98,7 @@ const initModal = (modalId) => {
 	}
 	if (modalId == 'modal-open') {
 		$('#modal-open-files').empty();
-		let data = storage.getRecentFiles(25);
+		let data = storage.getRecentFiles(50);
 		if (data.length) {
 			data.forEach((race) => {
 				if (race.filename == configuration.get('raceFile')) {
