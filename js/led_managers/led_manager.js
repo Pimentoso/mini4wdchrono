@@ -30,15 +30,19 @@ class LedManager {
 		}
 	}
 
-	roundStart() {
+	roundStart(_startTimerCallback) {
 		throw 'not implemented';
 	}
 
-	roundFinish(cars) {
+	roundStartInstant(_startTimerCallback) {
 		throw 'not implemented';
 	}
 
-	lap(lane) {
+	roundFinish(_cars) {
+		throw 'not implemented';
+	}
+
+	lap(_lane) {
 		throw 'not implemented';
 	}
 

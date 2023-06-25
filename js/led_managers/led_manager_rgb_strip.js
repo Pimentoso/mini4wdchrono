@@ -95,6 +95,15 @@ class LedManagerRgbStrip extends LedManager {
 		}
 	}
 
+	roundStartInstant(startTimerCallback) {
+		var stripp = this.strip;
+		this.beep(1500);
+		this.kitt(COLOR_BLUE);
+		utils
+			.delay(() => { stripp.color(COLOR_GREEN); stripp.show(); this.beep(1000); startTimerCallback(); }, 0)
+			.delay(() => { stripp.off(); }, storage.get('startDelay') * 1000)
+	}
+
 	roundFinish(cars) {
 		// color lanes based on positions
 		let rLaps = storage.get('roundLaps');

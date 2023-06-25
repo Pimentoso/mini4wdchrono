@@ -2,7 +2,7 @@
 
 // converts a milliseconds integer in a readable string like '12.345'
 const prettyTime = (millis) => {
-	return ((millis || 0) / 1000).toLocaleString(app.getLocale(), { minimumFractionDigits: 3, maximumFractionDigits: 3 })
+	return ((millis || 0) / 1000).toLocaleString(app.getLocale(), { minimumFractionDigits: 3, maximumFractionDigits: 3 });
 };
 
 // converts a string like '12,345' or '12.345' into a milliseconds integer like 12345
