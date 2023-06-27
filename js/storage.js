@@ -148,16 +148,23 @@ const getPlayerData = () => {
 	_.each(mancheList, (manche, mindex) => {
 		_.each(manche, (round, rindex) => {
 			cars = loadRound(mindex, rindex);
-			if (cars) {
-				_.each(round, (playerId, pindex) => {
-					playerTimes[playerId] = playerTimes[playerId] || [];
+			_.each(round, (playerId, pindex) => {
+				playerTimes[playerId] = playerTimes[playerId] || [];
+				if (cars) {
 					playerTimes[playerId][mindex] = {
 						time: cars[pindex].currTime,
 						position: cars[pindex].position,
 						outOfBounds: cars[pindex].outOfBounds
 					};
-				});
-			}
+				}
+				else {
+					playerTimes[playerId][mindex] = {
+						time: 0,
+						position: 0,
+						outOfBounds: false
+					};
+				}
+			});
 		});
 	});
 	return playerTimes;
