@@ -1,6 +1,6 @@
 'use strict';
 
-const { app, dialog } = require('electron').remote;
+const { app } = require('electron').remote;
 const fs = require('fs');
 const path = require('path');
 
@@ -59,6 +59,5 @@ module.exports = {
 	reset: reset,
 	set: set,
 	get: get,
-	del: del,
-	ledManager: ledManager
+	del: del
 };
