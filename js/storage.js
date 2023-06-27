@@ -70,17 +70,19 @@ const getRecentFiles = (num) => {
 	let userdir = app.getPath('userData');
 	let storagedir = path.join(userdir, 'races');
 	let files = fs.readdirSync(storagedir);
-	files = files.filter(extension).slice(0, num);
+	files = files.filter(extension);
 	let recent = [];
 	files.forEach((filename) => {
 		let data = jsonfile.readFileSync(path.join(storagedir, filename));
-		recent.push({
-			filename: filename,
-			name: data.name,
-			created: data.created
-		});
+		if (data) {
+			recent.push({
+				filename: filename,
+				name: data.name,
+				created: data.created
+			});
+		}
 	});
-	return recent.reverse();
+	return _.sortBy(recent, 'created').reverse().slice(0, num);
 };
 
 const set = (key, value) => {

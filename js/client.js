@@ -326,8 +326,10 @@ const gotoRound = (mindex, rindex) => {
 	}
 
 	if (dialog.showMessageBoxSync({ type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel'] }) == 0) {
-		storage.set('currManche', mindex);
-		storage.set('currRound', rindex);
+		currManche = mindex;
+		currRound = rindex;
+		storage.set('currManche', currManche);
+		storage.set('currRound', currRound);
 		chronoInit();
 		ui.initRace(freeRound);
 		updateRace();

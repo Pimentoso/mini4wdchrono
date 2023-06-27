@@ -1,12 +1,12 @@
 'use strict';
 
+const serialport = require('serialport');
+const strftime = require('strftime');
 const utils = require('./utils');
 const i18n = new (require('../i18n/i18n'))();
 const configuration = require('./configuration');
 configuration.init();
 const storage = require('./storage');
-const strftime = require('strftime');
-const serialport = require('serialport');
 
 const boardConnected = () => {
 	$('#tag-board-status').removeClass('is-danger');
@@ -97,7 +97,7 @@ const initModal = (modalId) => {
 	}
 	if (modalId == 'modal-open') {
 		$('#modal-open-files').empty();
-		let data = storage.getRecentFiles(25);
+		let data = storage.getRecentFiles(50);
 		if (data.length) {
 			data.forEach((race) => {
 				if (race.filename == configuration.get('raceFile')) {
