@@ -10,7 +10,7 @@ const i18n = new (require('../i18n/i18n'));
 const clone = require('clone');
 
 var currTrack, currTournament, ledManager;
-var playerList, mancheList, mancheCount;
+var mancheList, mancheCount;
 var currManche = 0, currRound = 0, raceStarting = false, raceRunning = false, freeRound = true;
 
 var timerIntervals = [], timerSeconds = [];
@@ -25,7 +25,6 @@ const init = (params) => {
 	ui.gotoTab(configuration.get('tab'));
 
 	// init variables
-	playerList = [];
 	mancheList = [];
 	currManche = storage.get('currManche') || 0;
 	currRound = storage.get('currRound') || 0;
@@ -51,7 +50,6 @@ const init = (params) => {
 const reset = (name) => {
 	console.log('client.reset called');
 
-	playerList = [];
 	mancheList = [];
 	currManche = 0;
 	currRound = 0;
@@ -143,7 +141,7 @@ const initFinal = () => {
 	currTournament.finals = []
 
 	// generate semifinal manche rounds
-	if (playerList.length >= 5) {
+	if (ids.length >= 5) {
 		let semifinalPlayerIds = ids.slice(3, 6);
 		if (semifinalPlayerIds.length == 2) {
 			// only 5 players: pad array
@@ -191,7 +189,7 @@ const startRace = (debugMode) => {
 	if (debugMode) {
 		// debug mode
 		raceStarting = true;
-		ui.raceStarted();
+		ui.raceStarted(freeRound);
 		initRound();
 		startRound();
 	}
@@ -203,7 +201,7 @@ const startRace = (debugMode) => {
 			}
 		}
 		raceStarting = true;
-		ui.raceStarted();
+		ui.raceStarted(freeRound);
 		initRound();
 		ledManager.roundStart(startRound);
 	}
@@ -427,7 +425,6 @@ const tournamentLoadDone = (obj) => {
 	console.log('client.tournamentLoadDone called');
 
 	currTournament = obj;
-	playerList = clone(obj.players);
 	mancheList = clone(obj.manches);
 
 	mancheCount = mancheList.length; // save original manche count, without finals
@@ -438,6 +435,8 @@ const tournamentLoadDone = (obj) => {
 	}
 
 	storage.set('tournament', currTournament);
+	ui.showPlayerList();
+	ui.showMancheList();
 
 	freeRound = false;
 	ui.tournamentLoadDone(currTournament);
