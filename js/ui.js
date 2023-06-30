@@ -567,7 +567,6 @@ const disableRaceInput = (disabled) => {
 };
 
 const updateUiState = (freeRound) => {
-	debugger;
 	let track = storage.get('track');
 	let tournament = storage.get('tournament');
 
