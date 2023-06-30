@@ -128,14 +128,11 @@ const initModal = (modalId) => {
 const toggleFreeRound = (freeRound) => {
 	if (freeRound) {
 		$('#button-toggle-free-round').text(i18n.__('button-goto-race'));
-		$('#button-prev').hide();
-		$('#button-next').hide();
 	}
 	else {
 		$('#button-toggle-free-round').text(i18n.__('button-goto-free'));
-		$('#button-prev').show();
-		$('#button-next').show();
 	}
+	updateUiState(freeRound);
 	$('#button-toggle-free-round').trigger('blur');
 };
 
@@ -169,14 +166,16 @@ const tournamentLoadFail = () => {
 	$('#tag-tournament-status').text(i18n.__('tag-not-loaded'));
 };
 
-const raceStarted = () => {
-	$('.js-disable-on-race-started').attr('disabled', true);
-	updateUiState(null, true);
+const raceStarted = (freeRound) => {
+	updateUiState(freeRound);
+	$('.js-show-on-race-running').show();
+	$('.js-hide-on-race-running').hide();
 };
 
 const raceFinished = (freeRound) => {
-	$('.js-disable-on-race-started').removeAttr('disabled');
-	updateUiState(freeRound, false);
+	updateUiState(freeRound);
+	$('.js-show-on-race-running').hide();
+	$('.js-hide-on-race-running').show();
 	let tournament = storage.get('tournament');
 	if (tournament) {
 		disableRaceInput(true);
@@ -436,7 +435,8 @@ const initRace = (freeRound) => {
 	let currManche = storage.get('currManche');
 	let currRound = storage.get('currRound');
 
-	updateUiState(freeRound, false);
+	updateUiState(freeRound);
+	$('.js-show-on-race-running').hide();
 
 	if (tournament == null) {
 		$('#name-lane0').text(' ');
@@ -566,7 +566,8 @@ const disableRaceInput = (disabled) => {
 	$('#js-settings-round-laps').prop('disabled', disabled);
 };
 
-const updateUiState = (freeRound, raceStarted) => {
+const updateUiState = (freeRound) => {
+	debugger;
 	let track = storage.get('track');
 	let tournament = storage.get('tournament');
 
@@ -589,22 +590,13 @@ const updateUiState = (freeRound, raceStarted) => {
 			$('.js-hide-on-no-tournament').hide();
 		}
 
-		if (freeRound) {
+		if (freeRound === true) {
 			$('.js-show-on-free-round').show();
 			$('.js-hide-on-free-round').hide();
 		}
-		else {
+		else if (freeRound === false) {
 			$('.js-show-on-free-round').hide();
 			$('.js-hide-on-free-round').show();
-		}
-
-		if (raceStarted) {
-			$('.js-show-on-race-started').show();
-			$('.js-hide-on-race-started').hide();
-		}
-		else {
-			$('.js-show-on-race-started').hide();
-			$('.js-hide-on-race-started').show();
 		}
 	}
 };

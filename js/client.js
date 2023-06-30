@@ -189,7 +189,7 @@ const startRace = (debugMode) => {
 	if (debugMode) {
 		// debug mode
 		raceStarting = true;
-		ui.raceStarted();
+		ui.raceStarted(freeRound);
 		initRound();
 		startRound();
 	}
@@ -201,7 +201,7 @@ const startRace = (debugMode) => {
 			}
 		}
 		raceStarting = true;
-		ui.raceStarted();
+		ui.raceStarted(freeRound);
 		initRound();
 		ledManager.roundStart(startRound);
 	}

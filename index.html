@@ -348,25 +348,25 @@
 
 			<div class="level has-text-centered js-hide-on-no-track">
 				<div class="level-item">
-					<button class="button js-hide-on-no-tournament js-hide-on-free-round js-hide-on-race-started" id="button-prev">
+					<button class="button js-hide-on-no-tournament js-hide-on-free-round js-hide-on-race-running" id="button-prev">
 						<span class="tn" data-tn="button-prev-round">&lt; Prev round</span>
 					</button>
 				</div>
 				<div class="level-item">
-					<button class="button is-link is-large has-text-weight-bold js-disable-on-race-started" id="button-start" style="min-width: 200px;">
+					<button class="button is-link is-large has-text-weight-bold js-hide-on-race-running" id="button-start" style="min-width: 200px;">
 						<span class="tn" data-tn="button-start">START</span>
 					</button>
 
-					<button class="button is-link is-outlined js-hide-on-race-started js-hide-on-no-tournament" id="button-toggle-free-round" style="min-width: 150px; margin-left: 20px;">
+					<button class="button is-link is-outlined js-hide-on-race-running js-hide-on-no-tournament" id="button-toggle-free-round" style="min-width: 150px; margin-left: 20px;">
 						<span class="tn" data-tn="button-goto-free">Free round &gt;</span>
 					</button>
 
-					<button class="button is-danger is-outlined js-show-on-race-started" id="button-stop" style="min-width: 150px; margin-left: 20px;">
+					<button class="button is-danger is-large js-show-on-race-running" id="button-stop" style="min-width: 200px;">
 						<span class="tn" data-tn="button-stop">STOP</span>
 					</button>
 				</div>
 				<div class="level-item">
-					<button class="button js-hide-on-no-tournament js-hide-on-free-round js-hide-on-race-started" id="button-next">
+					<button class="button js-hide-on-no-tournament js-hide-on-free-round js-hide-on-race-running" id="button-next">
 						<span class="tn" data-tn="button-next-round">Next round &gt;</span>
 					</button>
 				</div>
@@ -389,7 +389,7 @@
 
 							<ul id="laps-lane0"></ul>
 
-							<a id="invalidate-0" href="#" class="button is-small is-danger js-invalidate js-hide-on-race-started tn" data-lane="0" data-tn="button-invalidate">invalidate</a>
+							<a id="invalidate-0" href="#" class="button is-small is-danger js-invalidate js-hide-on-race-running js-hide-on-free-round tn" data-lane="0" data-tn="button-invalidate">invalidate</a>
 						</div>
 					</div>
 				</div>
@@ -409,7 +409,7 @@
 
 							<ul id="laps-lane1"></ul>
 
-							<a id="invalidate-1" href="#" class="button is-small is-danger js-invalidate js-hide-on-race-started tn" data-lane="1" data-tn="button-invalidate">invalidate</a>
+							<a id="invalidate-1" href="#" class="button is-small is-danger js-invalidate js-hide-on-free-round js-hide-on-race-running tn" data-lane="1" data-tn="button-invalidate">invalidate</a>
 						</div>
 					</div>
 				</div>
@@ -429,7 +429,7 @@
 
 							<ul id="laps-lane2"></ul>
 
-							<a id="invalidate-2" href="#" class="button is-small is-danger js-invalidate js-hide-on-race-started tn" data-lane="2" data-tn="button-invalidate">invalidate</a>
+							<a id="invalidate-2" href="#" class="button is-small is-danger js-invalidate js-hide-on-free-round js-hide-on-race-running tn" data-lane="2" data-tn="button-invalidate">invalidate</a>
 						</div>
 					</div>
 				</div>
