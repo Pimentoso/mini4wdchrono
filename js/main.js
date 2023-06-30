@@ -7,7 +7,7 @@ const debugMode = false;
 window.$ = require('jquery');
 window._ = require('underscore');
 
-const { dialog, shell, app, webContents } = require('electron').remote;
+const { dialog, shell, app, webContents, getCurrentWindow } = require('electron').remote;
 
 const log = require('electron-log');
 log.info(`Launched Mini4wdChrono v${app.getVersion()} at ${new Date()}`);
@@ -413,6 +413,7 @@ $('#button-save-config').on('click', (e) => {
 	configuration.set('tab', $('#js-config-starting-tab').val());
 	configuration.set('usbPort', $('#js-config-usb-port').val());
 	dialog.showMessageBoxSync({ type: 'warning', message: i18n.__('dialog-restart'), buttons: ['Ok'] });
+	getCurrentWindow().reload();
 	e.preventDefault();
 });
 
