@@ -54,7 +54,7 @@ class LedManagerLilypad extends LedManager {
 		} catch (e) { }
 	}
 
-	roundStart(startTimerCallback) {
+	roundStart(animationType, startTimerCallback) {
 		this.led1.on(); this.led2.on(); this.led3.on(); this.beep(1500);
 		utils
 			.delay(() => { this.led1.off(); this.led2.off(); this.led3.off(); }, 1500)
@@ -63,12 +63,6 @@ class LedManagerLilypad extends LedManager {
 			.delay(() => { this.led2.off(); this.led3.on(); this.beep(500); }, 1000)
 			.delay(() => { this.led3.off(); }, 1000)
 			.delay(() => { this.led1.on(); this.led2.on(); this.led3.on(); this.beep(1000); startTimerCallback(); }, super.greenDelay())
-			.delay(() => { this.led1.off(); this.led2.off(); this.led3.off(); }, storage.get('startDelay') * 1000);
-	}
-
-	roundStartInstant(startTimerCallback) {
-		utils
-			.delay(() => { this.led1.on(); this.led2.on(); this.led3.on(); this.beep(1000); startTimerCallback(); }, 0)
 			.delay(() => { this.led1.off(); this.led2.off(); this.led3.off(); }, storage.get('startDelay') * 1000);
 	}
 

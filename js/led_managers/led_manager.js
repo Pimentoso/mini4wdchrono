@@ -30,11 +30,7 @@ class LedManager {
 		}
 	}
 
-	roundStart(_startTimerCallback) {
-		throw 'not implemented';
-	}
-
-	roundStartInstant(_startTimerCallback) {
+	roundStart(_animationType, _startTimerCallback) {
 		throw 'not implemented';
 	}
 
