@@ -46,6 +46,8 @@ const init = () => {
 	$('#js-settings-round-laps').val(storage.get('roundLaps'));
 	showRaceModeDetails();
 
+	$('.js-led-animation').removeClass('is-primary');
+	$(`#js-led-animation-${configuration.get('ledAnimation')}`).addClass('is-primary');
 	$('.js-led-type').removeClass('is-primary');
 	$(`#js-led-type-${configuration.get('ledType')}`).addClass('is-primary');
 	$('#js-config-reverse').prop('checked', configuration.get('reverse') > 0);
