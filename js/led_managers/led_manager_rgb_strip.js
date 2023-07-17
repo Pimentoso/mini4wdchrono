@@ -192,25 +192,26 @@ class LedManagerRgbStrip extends LedManager {
 
 	tamiyaSlide() {
 		var manager = this;
+		var stripp = this.strip;
 		let millis = 100;
-		manager.strip.pixel(0).color(COLOR_TAMIYA_BLUE);
-		manager.strip.pixel(1).color(COLOR_TAMIYA_BLUE);
-		manager.strip.pixel(2).color(COLOR_TAMIYA_BLUE);
-		manager.strip.pixel(3).color(COLOR_TAMIYA_RED);
-		manager.strip.pixel(4).color(COLOR_TAMIYA_RED);
-		manager.strip.pixel(5).color(COLOR_TAMIYA_RED);
-		manager.strip.pixel(6).color(COLOR_TAMIYA_WHITE);
-		manager.strip.pixel(7).color(COLOR_TAMIYA_WHITE);
-		manager.strip.pixel(8).color(COLOR_TAMIYA_WHITE);
-		manager.strip.show();
+		stripp.pixel(0).color(COLOR_TAMIYA_BLUE);
+		stripp.pixel(1).color(COLOR_TAMIYA_BLUE);
+		stripp.pixel(2).color(COLOR_TAMIYA_BLUE);
+		stripp.pixel(3).color(COLOR_TAMIYA_RED);
+		stripp.pixel(4).color(COLOR_TAMIYA_RED);
+		stripp.pixel(5).color(COLOR_TAMIYA_RED);
+		stripp.pixel(6).color(COLOR_TAMIYA_WHITE);
+		stripp.pixel(7).color(COLOR_TAMIYA_WHITE);
+		stripp.pixel(8).color(COLOR_TAMIYA_WHITE);
+		stripp.show();
 
 		let shift = setInterval(function () {
-			manager.strip.shift(1, pixel.FORWARD, true);
-			manager.strip.show();
+			stripp.shift(1, pixel.FORWARD, true);
+			stripp.show();
 		}, millis);
 		utils
 			.delay(() => { clearInterval(shift); }, 3000)
-			.delay(() => { manager.strip.off(); manager.ready = true; }, millis);
+			.delay(() => { stripp.off(); manager.ready = true; }, millis);
 	}
 }
 
