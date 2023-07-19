@@ -81,7 +81,7 @@
 	"label-custom-title": "Your team/club name",
 	"label-starting-tab": "Starting screen",
 	"label-led-type": "LED type",
-	"label-led-animation": "LED animation at race start",
+	"label-led-animation": "LED animation at race start (only for RGB strip)",
 	"button-led-animation-full": "Animation + countdown",
 	"button-led-animation-cd": "Countdown only",
 	"button-led-animation-off": "None",
