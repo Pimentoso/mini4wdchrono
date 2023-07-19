@@ -164,11 +164,11 @@ class LedManagerRgbStrip extends LedManager {
 		var stripp = this.strip;
 		let direction = 0, curr = 0, prev = -1, millis = 50;
 		let shift = setInterval(function () {
-			stripp.strip.pixel(curr).color(color);
+			stripp.pixel(curr).color(color);
 			if (prev >= 0) {
-				stripp.strip.pixel(prev).off();
+				stripp.pixel(prev).off();
 			}
-			stripp.strip.show();
+			stripp.show();
 
 			if (direction == 0) {
 				curr++; prev++;
