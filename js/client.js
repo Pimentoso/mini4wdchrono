@@ -203,7 +203,7 @@ const startRace = (debugMode) => {
 		raceStarting = true;
 		ui.raceStarted(freeRound);
 		initRound();
-		ledManager.roundStart(startRound);
+		ledManager.roundStart(configuration.get('ledAnimation'), startRound);
 	}
 }
 

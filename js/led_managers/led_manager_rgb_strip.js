@@ -59,39 +59,22 @@ class LedManagerRgbStrip extends LedManager {
 		} catch (e) { }
 	}
 
-	roundStart(startTimerCallback) {
-		var stripp = this.strip;
-		this.beep(1500);
-		this.kitt(COLOR_BLUE);
-		if (this.reverse) {
-			utils
-				.delay(() => { stripp.off(); }, 1650)
-				.delay(() => { stripp.pixel(8).color(COLOR_RED); stripp.show(); this.beep(200); }, 1000)
-				.delay(() => { stripp.pixel(7).color(COLOR_RED); stripp.show(); }, 400)
-				.delay(() => { stripp.pixel(6).color(COLOR_RED); stripp.show(); }, 400)
-				.delay(() => { stripp.pixel(5).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
-				.delay(() => { stripp.pixel(4).color(COLOR_RED); stripp.show(); }, 400)
-				.delay(() => { stripp.pixel(3).color(COLOR_RED); stripp.show(); }, 400)
-				.delay(() => { stripp.pixel(2).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
-				.delay(() => { stripp.pixel(1).color(COLOR_RED); stripp.show(); }, 400)
-				.delay(() => { stripp.pixel(0).color(COLOR_RED); stripp.show(); }, 400)
-				.delay(() => { stripp.color(COLOR_GREEN); stripp.show(); this.beep(1000); startTimerCallback(); }, super.greenDelay())
-				.delay(() => { stripp.off(); }, storage.get('startDelay') * 1000)
+	roundStart(animationType, startTimerCallback) {
+		if (animationType == 0) {
+			// full animation
+			this.beep(1500);
+			this.kitt(COLOR_BLUE);
+			this.countdown(2500);
+			this.greenLight(2500 + 3200 + super.greenDelay(), startTimerCallback);
+		}
+		else if (animationType == 1) {
+			// countdown only
+			this.countdown(0);
+			this.greenLight(3200 + super.greenDelay(), startTimerCallback);
 		}
 		else {
-			utils
-				.delay(() => { stripp.off(); }, 1650)
-				.delay(() => { stripp.pixel(0).color(COLOR_RED); stripp.show(); this.beep(200); }, 1000)
-				.delay(() => { stripp.pixel(1).color(COLOR_RED); stripp.show(); }, 400)
-				.delay(() => { stripp.pixel(2).color(COLOR_RED); stripp.show(); }, 400)
-				.delay(() => { stripp.pixel(3).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
-				.delay(() => { stripp.pixel(4).color(COLOR_RED); stripp.show(); }, 400)
-				.delay(() => { stripp.pixel(5).color(COLOR_RED); stripp.show(); }, 400)
-				.delay(() => { stripp.pixel(6).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
-				.delay(() => { stripp.pixel(7).color(COLOR_RED); stripp.show(); }, 400)
-				.delay(() => { stripp.pixel(8).color(COLOR_RED); stripp.show(); }, 400)
-				.delay(() => { stripp.color(COLOR_GREEN); stripp.show(); this.beep(1000); startTimerCallback(); }, super.greenDelay())
-				.delay(() => { stripp.off(); }, storage.get('startDelay') * 1000)
+			// no animations
+			this.greenLight(0, startTimerCallback);
 		}
 	}
 
@@ -142,15 +125,50 @@ class LedManagerRgbStrip extends LedManager {
 		this.strip.show();
 	}
 
+	greenLight(delay, callback) {
+		var stripp = this.strip;
+		utils
+			.delay(() => { stripp.color(COLOR_GREEN); stripp.show(); this.beep(1000); callback(); }, delay)
+			.delay(() => { stripp.off(); }, storage.get('startDelay') * 1000);
+	}
+
+	countdown(delay) {
+		var stripp = this.strip;
+		if (this.reverse) {
+			utils
+				.delay(() => { stripp.pixel(8).color(COLOR_RED); stripp.show(); this.beep(200); }, delay)
+				.delay(() => { stripp.pixel(7).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.pixel(6).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.pixel(5).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
+				.delay(() => { stripp.pixel(4).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.pixel(3).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.pixel(2).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
+				.delay(() => { stripp.pixel(1).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.pixel(0).color(COLOR_RED); stripp.show(); }, 400)
+		}
+		else {
+			utils
+				.delay(() => { stripp.pixel(0).color(COLOR_RED); stripp.show(); this.beep(200); }, delay)
+				.delay(() => { stripp.pixel(1).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.pixel(2).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.pixel(3).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
+				.delay(() => { stripp.pixel(4).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.pixel(5).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.pixel(6).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
+				.delay(() => { stripp.pixel(7).color(COLOR_RED); stripp.show(); }, 400)
+				.delay(() => { stripp.pixel(8).color(COLOR_RED); stripp.show(); }, 400)
+		}
+	}
+
 	kitt(color) {
-		var manager = this;
+		var stripp = this.strip;
 		let direction = 0, curr = 0, prev = -1, millis = 50;
 		let shift = setInterval(function () {
-			manager.strip.pixel(curr).color(color);
+			stripp.pixel(curr).color(color);
 			if (prev >= 0) {
-				manager.strip.pixel(prev).off();
+				stripp.pixel(prev).off();
 			}
-			manager.strip.show();
+			stripp.show();
 
 			if (direction == 0) {
 				curr++; prev++;
@@ -169,30 +187,31 @@ class LedManagerRgbStrip extends LedManager {
 		}, millis);
 		utils
 			.delay(() => { clearInterval(shift); }, 1650)
-			.delay(() => { manager.strip.off(); }, millis);
+			.delay(() => { stripp.off(); }, millis);
 	}
 
 	tamiyaSlide() {
 		var manager = this;
+		var stripp = this.strip;
 		let millis = 100;
-		manager.strip.pixel(0).color(COLOR_TAMIYA_BLUE);
-		manager.strip.pixel(1).color(COLOR_TAMIYA_BLUE);
-		manager.strip.pixel(2).color(COLOR_TAMIYA_BLUE);
-		manager.strip.pixel(3).color(COLOR_TAMIYA_RED);
-		manager.strip.pixel(4).color(COLOR_TAMIYA_RED);
-		manager.strip.pixel(5).color(COLOR_TAMIYA_RED);
-		manager.strip.pixel(6).color(COLOR_TAMIYA_WHITE);
-		manager.strip.pixel(7).color(COLOR_TAMIYA_WHITE);
-		manager.strip.pixel(8).color(COLOR_TAMIYA_WHITE);
-		manager.strip.show();
+		stripp.pixel(0).color(COLOR_TAMIYA_BLUE);
+		stripp.pixel(1).color(COLOR_TAMIYA_BLUE);
+		stripp.pixel(2).color(COLOR_TAMIYA_BLUE);
+		stripp.pixel(3).color(COLOR_TAMIYA_RED);
+		stripp.pixel(4).color(COLOR_TAMIYA_RED);
+		stripp.pixel(5).color(COLOR_TAMIYA_RED);
+		stripp.pixel(6).color(COLOR_TAMIYA_WHITE);
+		stripp.pixel(7).color(COLOR_TAMIYA_WHITE);
+		stripp.pixel(8).color(COLOR_TAMIYA_WHITE);
+		stripp.show();
 
 		let shift = setInterval(function () {
-			manager.strip.shift(1, pixel.FORWARD, true);
-			manager.strip.show();
+			stripp.shift(1, pixel.FORWARD, true);
+			stripp.show();
 		}, millis);
 		utils
 			.delay(() => { clearInterval(shift); }, 3000)
-			.delay(() => { manager.strip.off(); manager.ready = true; }, millis);
+			.delay(() => { stripp.off(); manager.ready = true; }, millis);
 	}
 }
 

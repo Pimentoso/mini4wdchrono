@@ -17,11 +17,11 @@ class LedManagerMock extends LedManager {
 		return LedManagerMock.instance;
 	}
 
-	roundStart(startTimerCallback) { }
+	roundStart(_animationType, _startTimerCallback) { }
 
-	roundFinish(cars) { }
+	roundFinish(_cars) { }
 
-	lap(lane) { }
+	lap(_lane) { }
 }
 
 module.exports = LedManagerMock;

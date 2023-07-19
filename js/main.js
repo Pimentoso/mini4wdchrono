@@ -432,6 +432,15 @@ $(document).on('click', '.js-goto-round', (e) => {
 	client.gotoRound(mindex, rindex);
 });
 
+$('.js-led-animation').on('click', (e) => {
+	let $this = $(e.currentTarget);
+	if ($this.attr('disabled')) return;
+	$('.js-led-animation').removeClass('is-primary');
+	$this.addClass('is-primary');
+	let type = $this.data('led-animation');
+	configuration.set('ledAnimation', type);
+});
+
 $('.js-led-type').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
