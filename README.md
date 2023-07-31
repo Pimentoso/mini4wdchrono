@@ -57,8 +57,6 @@ Run ```brew install nodenv``` and follow installation instructions here. https:/
 
 ```bash
 brew cask install arduino
-# now open the arduino IDE, and use it to upload the StandardFirmataPlus firmware on the board
-
 cd mini4wdchrono
 nodenv install
 npm install
@@ -80,8 +78,6 @@ Make sure you are running a Powershell with administrator permissions, and Choco
 ```bash
 choco install python2
 choco install arduino
-# now open the arduino IDE, and use it to upload the StandardFirmataPlus firmware on the board
-
 choco install nodejs --version=10.16.3
 npm install -g windows-build-tools
 cd mini4wdchrono
@@ -95,6 +91,25 @@ To package the project run utils/build_win64.ps1, or
 
 ```bash
 electron-packager . Mini4wdChrono --overwrite --asar --icon=images/ic_launcher_web.ico --prune=true --out=release-builds
+```
+
+## Build on Linux
+
+:warning: This instructions are from a very old note, I haven't tried them recently.
+
+```bash
+sudo apt update
+sudo apt install build-essential apt-transport-https lsb-release ca-certificates curl
+curl -sL https://deb.nodesource.com/setup_10.x | bash -
+sudo apt install nodejs
+sudo apt install npm
+cd mini4wdchrono/
+npm install
+./node_modules/.bin/electron-rebuild
+sudo chmod 666 /dev/ttyACM0
+
+# make sure the arduino board is connected via USB, then
+npm start
 ```
 
 ## Errors
