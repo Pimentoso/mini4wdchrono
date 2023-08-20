@@ -505,7 +505,7 @@ const drawRace = (cars, running) => {
 		$(`#laps-lane${i}`).empty();
 		_.each(car.splitTimes, (t, ii) => {
 			let time = utils.prettyTime(t);
-			let speed = track.length / 3 / time;
+			let speed = (track.length / 3) / (t / 1000);
 			$(`#laps-lane${i}`).append(`<li class="is-size-5">${i18n.__('label-car-lap')} ${ii + 1} - <strong>${time}s</strong> - ${speed.toFixed(2)}m/s</li>`);
 		});
 

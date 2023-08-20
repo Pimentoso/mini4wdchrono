@@ -26,7 +26,7 @@ catch (e) {
 	log.error("Error loading configuration.");
 	log.error(e.message);
 	let backup_filepath = configuration.reset();
-	dialog.showMessageBoxSync({ type: 'error', title: 'Error', message: i18n.__('dialog-configuration-error'), detail: `${i18n.__('dialog-configuration-error-detail')} ${backup_filepath}`, buttons: ['Ok'] });
+	dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: i18n.__('dialog-configuration-error'), detail: `${i18n.__('dialog-configuration-error-detail')} ${backup_filepath}`, buttons: ['Ok'] });
 }
 
 const storage = require('./js/storage');
@@ -100,19 +100,19 @@ const startRace = () => {
 	log.info(`Starting race at ${new Date()}`);
 	if (!debugMode) {
 		if (!connected) {
-			dialog.showMessageBoxSync({ type: 'error', title: 'Error', message: i18n.__('dialog-disconnected'), buttons: ['Ok'] });
+			dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: i18n.__('dialog-disconnected'), buttons: ['Ok'] });
 			return;
 		}
 		else if (tag1.text() != '1') {
-			dialog.showMessageBoxSync({ type: 'error', title: 'Error', message: `${i18n.__('dialog-sensor-error')} 1`, buttons: ['Ok'] });
+			dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: `${i18n.__('dialog-sensor-error')} 1`, buttons: ['Ok'] });
 			return;
 		}
 		else if (tag2.text() != '1') {
-			dialog.showMessageBoxSync({ type: 'error', title: 'Error', message: `${i18n.__('dialog-sensor-error')} 2`, buttons: ['Ok'] });
+			dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: `${i18n.__('dialog-sensor-error')} 2`, buttons: ['Ok'] });
 			return;
 		}
 		else if (tag3.text() != '1') {
-			dialog.showMessageBoxSync({ type: 'error', title: 'Error', message: `${i18n.__('dialog-sensor-error')} 3`, buttons: ['Ok'] });
+			dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: `${i18n.__('dialog-sensor-error')} 3`, buttons: ['Ok'] });
 			return;
 		}
 	}
@@ -201,7 +201,7 @@ board.on("fail", function (event) {
 	if (event) {
 		log.error(`Board FAIL at ${new Date()} - ${event.message}`);
 		if (!debugMode) {
-			dialog.showMessageBoxSync({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message, buttons: ['Ok'] });
+			dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message, buttons: ['Ok'] });
 		}
 	}
 });
@@ -214,7 +214,7 @@ board.on("error", function (event) {
 	if (event) {
 		log.error(`Board ERROR at ${new Date()} - ${event.message}`);
 		if (!debugMode) {
-			dialog.showMessageBoxSync({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message, buttons: ['Ok'] });
+			dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message, buttons: ['Ok'] });
 		}
 	}
 });
@@ -288,7 +288,7 @@ $(document).on('click', '.js-load-race', (e) => {
 $(document).on('click', '.js-delete-race', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
-	if (dialog.showMessageBoxSync({ type: 'warning', message: i18n.__('dialog-delete-race'), buttons: ['Ok', 'Cancel'] }) == 0) {
+	if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-delete-race'), buttons: ['Ok', 'Cancel'] }) == 0) {
 		let filename = $this.data('filename');
 		storage.deleteRace(filename);
 		closeAllModals();
@@ -305,7 +305,7 @@ $('#js-load-track').on('click', (e) => {
 $('#js-track-save-manual').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
-	if (dialog.showMessageBoxSync({ type: 'warning', message: i18n.__('dialog-save-track'), buttons: ['Ok', 'Cancel'] }) == 0) {
+	if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-save-track'), buttons: ['Ok', 'Cancel'] }) == 0) {
 		$('#js-track-length-manual').removeClass('is-danger');
 		$('#js-track-order-manual').removeClass('is-danger');
 		if (!$('#js-track-length-manual').val()) {
@@ -412,7 +412,7 @@ $('#button-save-config').on('click', (e) => {
 	configuration.set('title', $('#js-config-title').val());
 	configuration.set('tab', $('#js-config-starting-tab').val());
 	configuration.set('usbPort', $('#js-config-usb-port').val());
-	dialog.showMessageBoxSync({ type: 'warning', message: i18n.__('dialog-restart'), buttons: ['Ok'] });
+	dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-restart'), buttons: ['Ok'] });
 	getCurrentWindow().reload();
 	e.preventDefault();
 });
@@ -421,7 +421,7 @@ $('#button-manches-save').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
 	client.overrideTimes();
-	dialog.showMessageBoxSync({ type: 'warning', message: i18n.__('dialog-saved'), buttons: ['Ok'] });
+	dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-saved'), buttons: ['Ok'] });
 });
 
 $(document).on('click', '.js-goto-round', (e) => {
@@ -463,7 +463,7 @@ $('.js-race-mode').on('click', (e) => {
 $('.js-invalidate').on('click', (e) => {
 	let $this = $(e.currentTarget);
 	if ($this.attr('disabled')) return;
-	if (dialog.showMessageBoxSync({ type: 'warning', message: i18n.__('dialog-disqualify'), buttons: ['Ok', 'Cancel'] }) == 0) {
+	if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-disqualify'), buttons: ['Ok', 'Cancel'] }) == 0) {
 		client.disqualify(null, null, parseInt($this.data('lane')));
 	}
 });

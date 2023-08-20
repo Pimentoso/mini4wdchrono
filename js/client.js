@@ -1,6 +1,6 @@
 'use strict';
 
-const { dialog } = require('electron').remote;
+const { dialog, getCurrentWindow } = require('electron').remote;
 const ui = require('./ui');
 const utils = require('./utils');
 const storage = require('./storage');
@@ -174,7 +174,7 @@ const startRace = (debugMode) => {
 
 	if (!storage.get('track')) {
 		// track not loaded
-		dialog.showMessageBoxSync({ type: 'error', title: 'Error', message: i18n.__('dialog-track-not-loaded'), buttons: ['Ok'] });
+		dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: i18n.__('dialog-track-not-loaded'), buttons: ['Ok'] });
 		return;
 	}
 	if ($(`div[data-tab=race]`).is(":hidden")) {
@@ -196,7 +196,7 @@ const startRace = (debugMode) => {
 	else {
 		// production mode
 		if (!freeRound && storage.get('tournament') && storage.loadRound()) {
-			if (dialog.showMessageBoxSync({ type: 'warning', message: i18n.__('dialog-replay-round'), buttons: ['Ok', 'Cancel'] }) == 1) {
+			if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-replay-round'), buttons: ['Ok', 'Cancel'] }) == 1) {
 				return;
 			}
 		}
@@ -253,7 +253,7 @@ const prevRound = () => {
 
 	if (currTournament == null || currTrack == null) {
 		// tournament not loaded
-		dialog.showMessageBoxSync({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
+		dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
 		return;
 	}
 	if (currManche == 0 && currRound == 0) {
@@ -261,7 +261,7 @@ const prevRound = () => {
 		return;
 	}
 
-	if (dialog.showMessageBoxSync({ type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel'] }) == 0) {
+	if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel'] }) == 0) {
 		currRound--;
 		if (currRound < 0) {
 			currManche--;
@@ -281,7 +281,7 @@ const nextRound = () => {
 
 	if (currTournament == null || currTrack == null) {
 		// tournament not loaded
-		dialog.showMessageBoxSync({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
+		dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
 		return;
 	}
 
@@ -291,7 +291,7 @@ const nextRound = () => {
 	}
 
 	let dialogText = (currManche == (mancheCount - 1) && currRound == (mancheList[currManche].length - 1) && !currTournament.finals) ? i18n.__('dialog-enter-final') : i18n.__('dialog-change-round');
-	if (dialog.showMessageBoxSync({ type: 'warning', message: dialogText, buttons: ['Ok', 'Cancel'] }) == 0) {
+	if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: dialogText, buttons: ['Ok', 'Cancel'] }) == 0) {
 		currRound++;
 		if (currRound == mancheList[currManche].length) {
 			currManche++;
@@ -319,11 +319,11 @@ const gotoRound = (mindex, rindex) => {
 
 	if (currTournament == null || currTrack == null) {
 		// tournament not loaded
-		dialog.showMessageBoxSync({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
+		dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
 		return;
 	}
 
-	if (dialog.showMessageBoxSync({ type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel'] }) == 0) {
+	if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel'] }) == 0) {
 		currManche = mindex;
 		currRound = rindex;
 		storage.set('currManche', currManche);
