@@ -288,11 +288,12 @@ const showPlayerList = () => {
 		let raceBestTime = _.min(_.flatten(_.map(times, (info) => { return _.filter(info.times, (t) => { return t > 0 && t < 99999; }) })));
 
 		// draw title row
-		let titleCells = _.map(tournament.manches, (_manche, mindex) => {
-			return `<td class="has-text-centered">Manche ${mindex + 1}</td>`;
+		let titleCells = _.times(tournament.manches.length, (i) => {
+			return `<td class="has-text-centered">Manche ${i + 1}</td>`;
 		});
 		titleCells.push(`<td class="has-text-centered">${i18n.__('label-best-2-times')}</td>`);
 		titleCells.push(`<td class="has-text-centered">${i18n.__('label-best-speed')}</td>`);
+		titleCells.push(`<td class="has-text-centered">${i18n.__('label-best-speed-km')}</td>`);
 		$('#tablePlayerList').append(`<tr class="is-selected"><td colspan="2"><strong>${playerList.length} RACERS</strong></td>${titleCells}</tr>`);
 
 		// draw player rows
@@ -302,8 +303,8 @@ const showPlayerList = () => {
 			let cells = [];
 			cells.push(`<td class="has-text-centered"><span class="tag is-large ${_.contains([0, 1, 2], pos) ? 'is-warning' : _.contains([3, 4, 5], pos) ? 'is-success' : ''}">${pos + 1}</span></td>`);
 			cells.push(`<td><p class="is-uppercase">${playerList[info.id]}</p></td>`);
-			cells.push(_.map(tournament.manches, (_manche, mindex) => {
-				let playerTime = info.times[mindex] || 0;
+			cells.push(_.times(tournament.manches.length, (i) => {
+				let playerTime = info.times[i] || 0;
 				let highlight = '';
 				if (playerTime == 0 || playerTime == 99999) {
 					highlight = 'has-text-grey-light is-out';
@@ -317,7 +318,8 @@ const showPlayerList = () => {
 				return `<td class="has-text-centered ${highlight}">${utils.prettyTime(playerTime)}</td>`;
 			}));
 			cells.push(`<td class="has-text-centered">${utils.prettyTime(info.best)}</td>`);
-			cells.push(`<td class="has-text-centered">${bestSpeed.toFixed(2)} m/s</td>`);
+			cells.push(`<td class="has-text-centered">${bestSpeed.toFixed(2)}</td>`);
+			cells.push(`<td class="has-text-centered">${(bestSpeed * 3.6).toFixed(2)}</td>`);
 			$('#tablePlayerList').append(`<tr>${cells}</tr>`);
 		});
 	}
@@ -481,7 +483,7 @@ const drawRace = (cars, running) => {
 			// $(`#speed-lane${i}`).text('0.00 m/s');
 		}
 		else {
-			$(`#delay-lane${i}`).text(`+${car.delayFromFirst / 1000}`);
+			$(`#delay-lane${i}`).text(`+${utils.prettyTime(car.delayFromFirst)}`);
 			if (car.delayFromFirst > 0) {
 				$(`#delay-lane${i}`).addClass('is-danger');
 			}

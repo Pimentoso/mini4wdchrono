@@ -23,10 +23,10 @@ const createDir = () => {
 };
 
 const generateXls = () => {
+	let track = storage.get('track');
 	let tournament = storage.get('tournament');
 	let playerList = tournament.players;
-	let mancheCount = tournament.manches.length;
-	let playerData = storage.getPlayerData();
+	let times = storage.getSortedPlayerList();
 
 	let workbook = new xls.Workbook();
 	workbook.creator = 'Mini4wd Chrono';
@@ -35,12 +35,33 @@ const generateXls = () => {
 
 	let worksheet = workbook.addWorksheet('Racers data');
 
-	_.each(playerData, (pdata, pindex) => {
-		let row = [playerList[pindex].toUpperCase()];
-		pdata = pdata || [];
-		_.times(mancheCount, (i) => {
-			row[i + 1] = utils.prettyTime(pdata[i] ? pdata[i].time : null);
+	let headerRow = [
+		'',
+		'',
+		'',
+		_.times(tournament.manches.length, (i) => { return `Manche ${i + 1}` }),
+		i18n.__('label-best-time'),
+		i18n.__('label-best-2-times'),
+		i18n.__('label-best-speed'),
+		i18n.__('label-best-speed-km')
+	];
+	worksheet.addRow(_.flatten(headerRow));
+
+	_.each(times, (info, pos) => {
+		let bestTime = _.min(_.filter(info.times, (t) => { return t > 0 && t < 99999; }));
+		let bestSpeed = track.length / (bestTime / 1000);
+
+		let row = [];
+		row.push(pos + 1);
+		row.push(playerList[info.id].toUpperCase());
+		row.push('');
+		_.times(tournament.manches.length, (i) => {
+			row.push(utils.prettyTime(info.times[i] || 0));
 		});
+		row.push(utils.prettyTime(bestTime));
+		row.push(utils.prettyTime(info.best));
+		row.push(bestSpeed.toFixed(2));
+		row.push((bestSpeed * 3.6).toFixed(2));
 		worksheet.addRow(row);
 	});
 
