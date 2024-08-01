@@ -15,6 +15,7 @@ const init = () => {
 	globalConf = require('nconf').file('global', { file: filepath });
 
 	globalConf.defaults({
+		'ledAnimation': 0,
 		'ledType': 0,
 		'sensorPin1': 6,
 		'sensorPin2': 7,

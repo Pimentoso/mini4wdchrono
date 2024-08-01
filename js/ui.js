@@ -46,6 +46,8 @@ const init = () => {
 	$('#js-settings-round-laps').val(storage.get('roundLaps'));
 	showRaceModeDetails();
 
+	$('.js-led-animation').removeClass('is-primary');
+	$(`#js-led-animation-${configuration.get('ledAnimation')}`).addClass('is-primary');
 	$('.js-led-type').removeClass('is-primary');
 	$(`#js-led-type-${configuration.get('ledType')}`).addClass('is-primary');
 	$('#js-config-reverse').prop('checked', configuration.get('reverse') > 0);
@@ -127,14 +129,11 @@ const initModal = (modalId) => {
 const toggleFreeRound = (freeRound) => {
 	if (freeRound) {
 		$('#button-toggle-free-round').text(i18n.__('button-goto-race'));
-		$('#button-prev').hide();
-		$('#button-next').hide();
 	}
 	else {
 		$('#button-toggle-free-round').text(i18n.__('button-goto-free'));
-		$('#button-prev').show();
-		$('#button-next').show();
 	}
+	updateUiState(freeRound);
 	$('#button-toggle-free-round').trigger('blur');
 };
 
@@ -168,37 +167,18 @@ const tournamentLoadFail = () => {
 	$('#tag-tournament-status').text(i18n.__('tag-not-loaded'));
 };
 
-const raceStarted = () => {
-	let tournament = storage.get('tournament');
-
-	$('.js-show-on-race-started').show();
-	$('.js-hide-on-race-started').hide();
-	$('.js-disable-on-race-started').attr('disabled', true);
-	if (tournament == null) {
-		$('.js-show-on-no-tournament').show();
-		$('.js-hide-on-no-tournament').hide();
-	}
+const raceStarted = (freeRound) => {
+	updateUiState(freeRound);
+	$('.js-show-on-race-running').show();
+	$('.js-hide-on-race-running').hide();
 };
 
 const raceFinished = (freeRound) => {
+	updateUiState(freeRound);
+	$('.js-show-on-race-running').hide();
+	$('.js-hide-on-race-running').show();
 	let tournament = storage.get('tournament');
-
-	$('.js-show-on-race-started').hide();
-	$('.js-hide-on-race-started').show();
-	$('.js-disable-on-race-started').removeAttr('disabled');
-	if (freeRound) {
-		$('.js-show-on-free-round').show();
-		$('.js-hide-on-free-round').hide();
-	}
-	else {
-		$('.js-show-on-free-round').hide();
-		$('.js-hide-on-free-round').show();
-	}
-	if (tournament == null) {
-		$('.js-show-on-no-tournament').show();
-		$('.js-hide-on-no-tournament').hide();
-	}
-	else {
+	if (tournament) {
 		disableRaceInput(true);
 	}
 };
@@ -307,11 +287,12 @@ const showPlayerList = () => {
 		let raceBestTime = _.min(_.flatten(_.map(times, (info) => { return _.filter(info.times, (t) => { return t > 0 && t < 99999; }) })));
 
 		// draw title row
-		let titleCells = _.map(tournament.manches, (_manche, mindex) => {
-			return `<td class="has-text-centered">Manche ${mindex + 1}</td>`;
+		let titleCells = _.times(tournament.manches.length, (i) => {
+			return `<td class="has-text-centered">Manche ${i + 1}</td>`;
 		});
 		titleCells.push(`<td class="has-text-centered">${i18n.__('label-best-2-times')}</td>`);
 		titleCells.push(`<td class="has-text-centered">${i18n.__('label-best-speed')}</td>`);
+		titleCells.push(`<td class="has-text-centered">${i18n.__('label-best-speed-km')}</td>`);
 		$('#tablePlayerList').append(`<tr class="is-selected"><td colspan="2"><strong>${playerList.length} RACERS</strong></td>${titleCells}</tr>`);
 
 		// draw player rows
@@ -321,8 +302,8 @@ const showPlayerList = () => {
 			let cells = [];
 			cells.push(`<td class="has-text-centered"><span class="tag is-large ${_.contains([0, 1, 2], pos) ? 'is-warning' : _.contains([3, 4, 5], pos) ? 'is-success' : ''}">${pos + 1}</span></td>`);
 			cells.push(`<td><p class="is-uppercase">${playerList[info.id]}</p></td>`);
-			cells.push(_.map(tournament.manches, (_manche, mindex) => {
-				let playerTime = info.times[mindex] || 0;
+			cells.push(_.times(tournament.manches.length, (i) => {
+				let playerTime = info.times[i] || 0;
 				let highlight = '';
 				if (playerTime == 0 || playerTime == 99999) {
 					highlight = 'has-text-grey-light is-out';
@@ -336,7 +317,8 @@ const showPlayerList = () => {
 				return `<td class="has-text-centered ${highlight}">${utils.prettyTime(playerTime)}</td>`;
 			}));
 			cells.push(`<td class="has-text-centered">${utils.prettyTime(info.best)}</td>`);
-			cells.push(`<td class="has-text-centered">${bestSpeed.toFixed(2)} m/s</td>`);
+			cells.push(`<td class="has-text-centered">${bestSpeed.toFixed(2)}</td>`);
+			cells.push(`<td class="has-text-centered">${(bestSpeed * 3.6).toFixed(2)}</td>`);
 			$('#tablePlayerList').append(`<tr>${cells}</tr>`);
 		});
 	}
@@ -452,26 +434,14 @@ const mancheName = (mindex) => {
 };
 
 const initRace = (freeRound) => {
-	let track = storage.get('track');
 	let tournament = storage.get('tournament');
 	let currManche = storage.get('currManche');
 	let currRound = storage.get('currRound');
 
-	$('.js-show-on-race-started').hide();
-	$('.js-hide-on-race-started').show();
-
-	if (track == null) {
-		$('.js-show-on-no-track').show();
-		$('.js-hide-on-no-track').hide();
-	}
-	else {
-		$('.js-show-on-no-track').hide();
-		$('.js-hide-on-no-track').show();
-	}
+	updateUiState(freeRound);
+	$('.js-show-on-race-running').hide();
 
 	if (tournament == null) {
-		$('.js-show-on-no-tournament').show();
-		$('.js-hide-on-no-tournament').hide();
 		$('#name-lane0').text(' ');
 		$('#name-lane1').text(' ');
 		$('#name-lane2').text(' ');
@@ -479,8 +449,6 @@ const initRace = (freeRound) => {
 		$('#curr-round').text('0');
 	}
 	else if (freeRound) {
-		$('.js-show-on-free-round').show();
-		$('.js-hide-on-free-round').hide();
 		$('#name-lane0').text(' ');
 		$('#name-lane1').text(' ');
 		$('#name-lane2').text(' ');
@@ -488,11 +456,6 @@ const initRace = (freeRound) => {
 	else {
 		let playerList = tournament.players;
 		let mancheList = storage.getManches();
-
-		$('.js-show-on-no-tournament').hide();
-		$('.js-hide-on-no-tournament').show();
-		$('.js-show-on-free-round').hide();
-		$('.js-hide-on-free-round').show();
 		$('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '//');
 		$('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '//');
 		$('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '//');
@@ -519,7 +482,7 @@ const drawRace = (cars, running) => {
 			// $(`#speed-lane${i}`).text('0.00 m/s');
 		}
 		else {
-			$(`#delay-lane${i}`).text(`+${car.delayFromFirst / 1000}`);
+			$(`#delay-lane${i}`).text(`+${utils.prettyTime(car.delayFromFirst)}`);
 			if (car.delayFromFirst > 0) {
 				$(`#delay-lane${i}`).addClass('is-danger');
 			}
@@ -543,7 +506,7 @@ const drawRace = (cars, running) => {
 		$(`#laps-lane${i}`).empty();
 		_.each(car.splitTimes, (t, ii) => {
 			let time = utils.prettyTime(t);
-			let speed = track.length / 3 / time;
+			let speed = (track.length / 3) / (t / 1000);
 			$(`#laps-lane${i}`).append(`<li class="is-size-5">${i18n.__('label-car-lap')} ${ii + 1} - <strong>${time}s</strong> - ${speed.toFixed(2)}m/s</li>`);
 		});
 
@@ -604,6 +567,40 @@ const disableRaceInput = (disabled) => {
 	$('#js-track-order-manual').prop('disabled', disabled);
 	$('#js-track-save-manual').prop('disabled', disabled);
 	$('#js-settings-round-laps').prop('disabled', disabled);
+};
+
+const updateUiState = (freeRound) => {
+	let track = storage.get('track');
+	let tournament = storage.get('tournament');
+
+	if (track == null) {
+		$('.js-show-on-no-track').show();
+		$('.js-hide-on-no-track').hide();
+		$('.js-show-on-no-tournament').show();
+		$('.js-hide-on-no-tournament').hide();
+	}
+	else {
+		$('.js-show-on-no-track').hide();
+		$('.js-hide-on-no-track').show();
+
+		if (tournament) {
+			$('.js-show-on-no-tournament').hide();
+			$('.js-hide-on-no-tournament').show();
+		}
+		else {
+			$('.js-show-on-no-tournament').show();
+			$('.js-hide-on-no-tournament').hide();
+		}
+
+		if (freeRound === true) {
+			$('.js-show-on-free-round').show();
+			$('.js-hide-on-free-round').hide();
+		}
+		else if (freeRound === false) {
+			$('.js-show-on-free-round').hide();
+			$('.js-hide-on-free-round').show();
+		}
+	}
 };
 
 module.exports = {

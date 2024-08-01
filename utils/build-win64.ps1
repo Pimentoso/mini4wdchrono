@@ -9,6 +9,6 @@ node node_modules/electron-packager/bin/electron-packager.js . Mini4wdChrono --o
 cd release-builds
 $relname = Get-ChildItem -Path . -Force -Recurse | Select-Object -First 1
 Write-Host "Creating zip archive"
-Compress-Archive -Path "$relname/" -DestinationPath "Mini4wdChrono-windows.zip"
+Compress-Archive -Path "$relname/" -DestinationPath "Mini4wdChrono-windows-x64.zip"
 cd ..
 Write-Host "Done"

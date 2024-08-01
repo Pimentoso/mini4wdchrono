@@ -54,7 +54,7 @@ class LedManagerLilypad extends LedManager {
 		} catch (e) { }
 	}
 
-	roundStart(startTimerCallback) {
+	roundStart(animationType, startTimerCallback) {
 		this.led1.on(); this.led2.on(); this.led3.on(); this.beep(1500);
 		utils
 			.delay(() => { this.led1.off(); this.led2.off(); this.led3.off(); }, 1500)
