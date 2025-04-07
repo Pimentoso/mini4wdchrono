@@ -19,7 +19,7 @@ const safeTime = (timeStr) => {
  */
 const delay = (fn, t) => {
     // private instance variables
-    let queue = [], self, timer;
+    let queue = [], timer;
 
     function schedule(fn, t) {
         timer = setTimeout(function () {
@@ -31,7 +31,8 @@ const delay = (fn, t) => {
             }
         }, t);
     }
-    self = {
+
+    const self = {
         delay: function (fn, t) {
             // if already queuing things or running a timer,
             //   then just add to the queue
@@ -49,6 +50,7 @@ const delay = (fn, t) => {
             return self;
         }
     };
+    
     return self.delay(fn, t);
 };
 

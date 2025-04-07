@@ -67,7 +67,7 @@ const reset = (name) => {
 const chronoInit = (reset) => {
     console.log('client.chronoInit called');
 
-    if (currTournament == null || freeRound) {
+    if (currTournament === null || freeRound) {
     // free round
         chrono.init(currTrack);
     }
@@ -114,7 +114,7 @@ const overrideTimes = () => {
                     if (time) {
                         newTime = utils.safeTime(time);
                         oldTime = cars[pindex].currTime;
-                        if (newTime != oldTime) {
+                        if (newTime !== oldTime) {
                             cars[pindex].originalTime = oldTime;
                             cars[pindex].currTime = newTime;
                         }
@@ -143,7 +143,7 @@ const initFinal = () => {
     // generate semifinal manche rounds
     if (ids.length >= 5) {
         const semifinalPlayerIds = ids.slice(3, 6);
-        if (semifinalPlayerIds.length == 2) {
+        if (semifinalPlayerIds.length === 2) {
             // only 5 players: pad array
             semifinalPlayerIds[2] = -1;
         }
@@ -196,7 +196,7 @@ const startRace = (debugMode) => {
     else {
     // production mode
         if (!freeRound && storage.get('tournament') && storage.loadRound()) {
-            if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-replay-round'), buttons: ['Ok', 'Cancel'] }) == 1) {
+            if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-replay-round'), buttons: ['Ok', 'Cancel'] }) === 1) {
                 return;
             }
         }
@@ -230,7 +230,7 @@ const startRound = () => {
     raceRunning = true;
 
     // if final mode, start all timers now
-    if (storage.get('raceMode') == 1) {
+    if (storage.get('raceMode') === 1) {
         startTimer(0);
         startTimer(1);
         startTimer(2);
@@ -251,17 +251,17 @@ const stopRace = () => {
 const prevRound = () => {
     console.log('client.prevRound called');
 
-    if (currTournament == null || currTrack == null) {
+    if (currTournament === null || currTrack === null) {
     // tournament not loaded
         dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
         return;
     }
-    if (currManche == 0 && currRound == 0) {
+    if (currManche === 0 && currRound === 0) {
     // first round, can't go back
         return;
     }
 
-    if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel'] }) == 0) {
+    if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel'] }) === 0) {
         currRound--;
         if (currRound < 0) {
             currManche--;
@@ -279,21 +279,21 @@ const prevRound = () => {
 const nextRound = () => {
     console.log('client.nextRound called');
 
-    if (currTournament == null || currTrack == null) {
+    if (currTournament === null || currTrack === null) {
     // tournament not loaded
         dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
         return;
     }
 
-    if (currTournament.finals && currManche == (mancheCount + currTournament.finals.length - 1) && currRound == 2) {
+    if (currTournament.finals && currManche === (mancheCount + currTournament.finals.length - 1) && currRound === 2) {
     // end of finals
         return;
     }
 
-    const dialogText = (currManche == (mancheCount - 1) && currRound == (mancheList[currManche].length - 1) && !currTournament.finals) ? i18n.__('dialog-enter-final') : i18n.__('dialog-change-round');
-    if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: dialogText, buttons: ['Ok', 'Cancel'] }) == 0) {
+    const dialogText = (currManche === (mancheCount - 1) && currRound === (mancheList[currManche].length - 1) && !currTournament.finals) ? i18n.__('dialog-enter-final') : i18n.__('dialog-change-round');
+    if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: dialogText, buttons: ['Ok', 'Cancel'] }) === 0) {
         currRound++;
-        if (currRound == mancheList[currManche].length) {
+        if (currRound === mancheList[currManche].length) {
             currManche++;
             currRound = 0;
 
@@ -317,13 +317,13 @@ const nextRound = () => {
 const gotoRound = (mindex, rindex) => {
     console.log('client.gotoRound called');
 
-    if (currTournament == null || currTrack == null) {
+    if (currTournament === null || currTrack === null) {
     // tournament not loaded
         dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
         return;
     }
 
-    if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel'] }) == 0) {
+    if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel'] }) === 0) {
         currManche = mindex;
         currRound = rindex;
         storage.set('currManche', currManche);
@@ -351,15 +351,15 @@ const toggleFreeRound = () => {
 // keyboard shortcuts for debug
 const keydown = (keyCode) => {
     if (raceRunning) {
-        if (keyCode == 49 || keyCode == 97) {
+        if (keyCode === 49 || keyCode === 97) {
             // pressed 1
             addLap(0);
         }
-        else if (keyCode == 50 || keyCode == 98) {
+        else if (keyCode === 50 || keyCode === 98) {
             // pressed 2
             addLap(1);
         }
-        else if (keyCode == 51 || keyCode == 99) {
+        else if (keyCode === 51 || keyCode === 99) {
             // pressed 3
             addLap(2);
         }
@@ -531,14 +531,14 @@ const updateRace = () => {
         if (car.outOfBounds || car.lapCount > storage.get('roundLaps')) {
             stopTimer(i);
         }
-        else if (car.lapCount == 1) {
+        else if (car.lapCount === 1) {
             startTimer(i);
         }
     });
 };
 
 const startTimer = (lane) => {
-    if (timerIntervals[lane] == null) {
+    if (timerIntervals[lane] === null) {
         timerSeconds[lane] = 0;
         timerIntervals[lane] = setInterval(timer, 100, lane);
     }

@@ -26,7 +26,10 @@ class LedManager {
         if (this.buzzerAvailable()) {
             try {
                 this.board.digitalWrite(this.pinBuzzer, 0);
-            } catch (e) { }
+            } catch (e) { 
+                // Safely ignore errors when disconnecting hardware
+                // This can happen when the board is already disconnected
+            }
         }
     }
 
@@ -50,7 +53,7 @@ class LedManager {
     }
 
     greenDelay() {
-        if (storage.get('raceMode') == 1) {
+        if (storage.get('raceMode') === 1) {
             // if final mode, delay is random between 0.25/4 sec
             return 250 + (Math.random() * 3750);
         }
@@ -61,10 +64,10 @@ class LedManager {
 
     laneIndex(lane) {
         if (this.reverse) {
-            if (lane == 0) {
+            if (lane === 0) {
                 return 2;
             }
-            else if (lane == 2) {
+            else if (lane === 2) {
                 return 0;
             }
             else {

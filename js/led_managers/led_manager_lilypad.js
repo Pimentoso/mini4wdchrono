@@ -51,7 +51,10 @@ class LedManagerLilypad extends LedManager {
             this.led1.stop().off();
             this.led2.stop().off();
             this.led3.stop().off();
-        } catch (e) { }
+        } catch (e) { 
+            // Safely ignore errors when disconnecting hardware
+            // This can happen when the board is already disconnected
+        }
     }
 
     roundStart(animationType, startTimerCallback) {
@@ -69,10 +72,10 @@ class LedManagerLilypad extends LedManager {
     roundFinish(cars) {
     // turn on winner car led
         const rLaps = storage.get('roundLaps');
-        const finishCars = _.filter(cars, (c) => { return !c.outOfBounds && c.lapCount == rLaps + 1; });
+        const finishCars = _.filter(cars, (c) => { return !c.outOfBounds && c.lapCount === rLaps + 1; });
         utils.delay(() => {
             _.each(finishCars, (c) => {
-                if (c.position == 1) {
+                if (c.position === 1) {
                     this.leds[this.laneIndex(c.startLane)].on();
                 }
             });

@@ -42,7 +42,7 @@ const init = (track, playerIds, cars) => {
         rTimeCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold) * 1000;
     }
 
-    if (cars == null) {
+    if (cars === null) {
     // init car 1
         rCar0 = clone(carObj);
         rCar0.startLane = rCar0.nextLane = 0;
@@ -80,18 +80,18 @@ const addLap = (lane) => {
 
     // find all cars that may have passes under this lane sensor
     const rTempCars = _.filter(rCars, (c) => {
-        return c.outOfBounds == false && lane == c.nextLane;
+        return c.outOfBounds === false && lane === c.nextLane;
     });
 
     // console.log(JSON.stringify(rTempCars, null, 2));
 
     // find the correct car removing the ones not validating thresholds
     const rTempCar = _.find(rTempCars, (c) => {
-        return c.outOfBounds == false && (c.startTimestamp == 0 || ((timestamp - c.currTimestamp < rTimeCutoffMax) && (timestamp - c.currTimestamp > rTimeCutoffMin)));
+        return c.outOfBounds === false && (c.startTimestamp === 0 || ((timestamp - c.currTimestamp < rTimeCutoffMax) && (timestamp - c.currTimestamp > rTimeCutoffMin)));
     });
 
     // false sensor read
-    if (rTempCar == null) {
+    if (rTempCar === null) {
         console.log(`error: no valid car for signal on lane ${lane}`);
         return;
     }
@@ -105,7 +105,7 @@ const addLap = (lane) => {
 
 const calculateCar = (car, timestamp) => {
     if (car.lapCount <= rLaps) {
-        if (car.lapCount == 0) {
+        if (car.lapCount === 0) {
             // start
             car.startTimestamp = timestamp;
         }
@@ -118,7 +118,7 @@ const calculateCar = (car, timestamp) => {
         car.currTimestamp = timestamp;
         car.currTime = timestamp - car.startTimestamp;
         car.speed = (rTrackLength / 3) * (car.lapCount - 1) / (car.currTime / 1000);
-        if (car.lapCount == rLaps + 1) {
+        if (car.lapCount === rLaps + 1) {
             // finish
             car.endTimestamp = timestamp;
         }
@@ -135,10 +135,10 @@ const calculateRace = () => {
     // first are the cars with the highest lap count,
     // then with same lapCount first is the one with lowest time
     _.each(lapsArr, (lap) => {
-        const runningCars = _.filter(rCars, (c) => { return c.lapCount == lap; });
+        const runningCars = _.filter(rCars, (c) => { return c.lapCount === lap; });
         _.each(_.sortBy(runningCars, 'currTime'), (c, i) => {
-            if (lap == bestLap) {
-                if (i == 0) {
+            if (lap === bestLap) {
+                if (i === 0) {
                     bestTime = c.currTime;
                     c.delayFromFirst = 0;
                 }
@@ -205,7 +205,7 @@ const checkNotStartedCars = () => {
     // check cars not started and set them as out
     let dirty = false;
     _.each(_.filter(rCars, (c) => {
-        return c.lapCount == 0;
+        return c.lapCount === 0;
     }), (c) => {
         c.currTime = 99999;
         c.outOfBounds = true;

@@ -144,7 +144,9 @@ const getPlayers = () => {
 	@return [Array]
 */
 const getPlayerData = () => {
-    let cars, playerTimes = [], mancheList = getManches();
+    let cars;
+    const playerTimes = [];
+    const mancheList = getManches();
     _.each(mancheList, (manche, mindex) => {
         _.each(manche, (round, rindex) => {
             cars = loadRound(mindex, rindex);
@@ -175,7 +177,8 @@ const getSortedPlayerList = () => {
     const playerData = getPlayerData();
 
     // calculate best time sums
-    let sums = [], times, pData, bestTimes, bestSum;
+    const sums = [];
+    let pData, bestTimes, bestSum;
     _.each(playerList, (_player, pindex) => {
         pData = playerData[pindex] || [];
         bestTimes = _.sortBy(_.filter(pData, (i) => { return i && i.time > 0; }), 'time').slice(0, 2);
@@ -184,14 +187,14 @@ const getSortedPlayerList = () => {
     });
 
     // sort list by sum desc
-    times = _.map(playerData, (data, index) => {
+    const playerTimes = _.map(playerData, (data, index) => {
         return {
             id: index,
             times: _.map(data, (i) => { return i ? i.time : null; }),
             best: sums[index]
         };
     });
-    return _.sortBy(times, 'best');
+    return _.sortBy(playerTimes, 'best');
 };
 
 module.exports = {

@@ -5,9 +5,8 @@
 const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
 const url = require('url');
-const isMac = process.platform === 'darwin';
 
-if (process.argv[2] == '--watch') {
+if (process.argv[2] === '--watch') {
     require('electron-reload')(__dirname, {
         electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
     });
@@ -15,7 +14,7 @@ if (process.argv[2] == '--watch') {
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow, devToolsWindow;
+let mainWindow;
 
 function createWindow() {
     // Create the browser window.
@@ -37,8 +36,6 @@ function createWindow() {
     mainWindow.setResizable(false);
 
     // Open the DevTools.
-    // devToolsWindow = new BrowserWindow();
-    // mainWindow.webContents.setDevToolsWebContents(devToolsWindow.webContents);
     // mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
@@ -83,7 +80,7 @@ app.allowRendererProcessReuse = false;
 // Prevent multiple instances of this app to run.
 const gotTheLock = app.requestSingleInstanceLock();
 
-app.on('second-instance', (_cl, _wd) => {
+app.on('second-instance', () => {
     // Someone tried to run a second instance, we should focus our window.
     if (mainWindow) {
         if (mainWindow.isMinimized()) mainWindow.restore();

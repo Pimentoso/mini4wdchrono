@@ -27,8 +27,8 @@ class LedManagerRgbStrip extends LedManager {
 
     static getInstance(board, pin, pinBuzzer, reverse) {
         if (LedManagerRgbStrip.instance) {
-      		return LedManagerRgbStrip.instance;
-    	}
+            return LedManagerRgbStrip.instance;
+        }
 
         LedManagerRgbStrip.instance = new LedManagerRgbStrip(board, pin, pinBuzzer, reverse);
         return LedManagerRgbStrip.instance;
@@ -56,18 +56,21 @@ class LedManagerRgbStrip extends LedManager {
         super.disconnected();
         try {
             this.strip.off();
-        } catch (e) { }
+        } catch (e) { 
+            // Safely ignore errors when disconnecting hardware
+            // This can happen when the board is already disconnected
+        }
     }
 
     roundStart(animationType, startTimerCallback) {
-        if (animationType == 0) {
+        if (animationType === 0) {
             // full animation
             this.beep(1500);
             this.kitt(COLOR_BLUE);
             this.countdown(2500);
             this.greenLight(2500 + 3200 + super.greenDelay(), startTimerCallback);
         }
-        else if (animationType == 1) {
+        else if (animationType === 1) {
             // countdown only
             this.countdown(0);
             this.greenLight(3200 + super.greenDelay(), startTimerCallback);
@@ -81,16 +84,16 @@ class LedManagerRgbStrip extends LedManager {
     roundFinish(cars) {
     // color lanes based on positions
         const rLaps = storage.get('roundLaps');
-        const finishCars = _.filter(cars, (c) => { return !c.outOfBounds && c.lapCount == rLaps + 1; });
+        const finishCars = _.filter(cars, (c) => { return !c.outOfBounds && c.lapCount === rLaps + 1; });
         utils.delay(() => {
             _.each(finishCars, (c) => {
-                if (c.position == 1) {
+                if (c.position === 1) {
                     this.colorLane(c.startLane, COLOR_POS1);
                 }
-                else if (c.position == 2) {
+                else if (c.position === 2) {
                     this.colorLane(c.startLane, COLOR_POS2);
                 }
-                else if (c.position == 3) {
+                else if (c.position === 3) {
                     this.colorLane(c.startLane, COLOR_POS3);
                 }
             });
@@ -162,7 +165,8 @@ class LedManagerRgbStrip extends LedManager {
 
     kitt(color) {
         const stripp = this.strip;
-        let direction = 0, curr = 0, prev = -1, millis = 50;
+        let direction = 0, curr = 0, prev = -1;
+        const millis = 50;
         const shift = setInterval(function () {
             stripp.pixel(curr).color(color);
             if (prev >= 0) {
@@ -170,7 +174,7 @@ class LedManagerRgbStrip extends LedManager {
             }
             stripp.show();
 
-            if (direction == 0) {
+            if (direction === 0) {
                 curr++; prev++;
                 if (curr > 8) {
                     direction = 1;

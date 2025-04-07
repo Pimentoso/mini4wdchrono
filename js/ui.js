@@ -94,16 +94,16 @@ const init = () => {
 };
 
 const initModal = (modalId) => {
-    if (modalId == 'modal-new') {
+    if (modalId === 'modal-new') {
         $('#modal-new-name').val('');
         $('#modal-new-name').focus();
     }
-    if (modalId == 'modal-open') {
+    if (modalId === 'modal-open') {
         $('#modal-open-files').empty();
         const data = storage.getRecentFiles(50);
         if (data.length) {
             data.forEach((race) => {
-                if (race.filename == configuration.get('raceFile')) {
+                if (race.filename === configuration.get('raceFile')) {
                     $('#modal-open-files').append(`
 					<tr>
 						<td style="width:165px;">${strftime('%Y-%m-%d, %H:%M', new Date(race.created * 1000))}</td>
@@ -306,13 +306,13 @@ const showPlayerList = () => {
             cells.push(_.times(tournament.manches.length, (i) => {
                 const playerTime = info.times[i] || 0;
                 let highlight = '';
-                if (playerTime == 0 || playerTime == 99999) {
+                if (playerTime === 0 || playerTime === 99999) {
                     highlight = 'has-text-grey-light is-out';
                 }
-                else if (playerTime == raceBestTime) {
+                else if (playerTime === raceBestTime) {
                     highlight = 'has-background-danger has-text-white is-race-best';
                 }
-                else if (playerTime == bestTime) {
+                else if (playerTime === bestTime) {
                     highlight = 'has-text-danger is-player-best';
                 }
                 return `<td class="has-text-centered ${highlight}">${utils.prettyTime(playerTime)}</td>`;
@@ -360,14 +360,14 @@ const showMancheList = () => {
                     playerNameTag = `<span class="tag is-large is-uppercase">${playerList[id] || ''}</span>`;
                     playerPositionTag = '';
 
-                    if (playerPosition != null) {
-                        if (cars[pindex].originalTime != null) {
+                    if (playerPosition !== null) {
+                        if (cars[pindex].originalTime !== null) {
                             playerPositionTag = '<span class="tag is-danger is-large">mod</span>';
                         }
                         else if (playerOut) {
                             playerPositionTag = '<span class="tag is-dark is-large">out</span>';
                         }
-                        else if (playerPosition == 1) {
+                        else if (playerPosition === 1) {
                             playerPositionTag = `<span class="tag is-warning is-large">${playerPosition}</span>`;
                         }
                         else {
@@ -384,7 +384,7 @@ const showMancheList = () => {
                     return '<td></td>';
                 }
             }).join();
-            isCurrentRound = (mindex == currManche && rindex == currRound);
+            isCurrentRound = (mindex === currManche && rindex === currRound);
             highlight = isCurrentRound ? 'class="is-highlighted"' : '';
             gotoButton = isCurrentRound ? '' : `<button class="button is-small is-info is-light js-goto-round tn" data-tn="button-goto-round" data-manche="${mindex}" data-round="${rindex}">&lt; play this</button>`;
             $('#tableMancheList').append(`<tr ${highlight}><td class="has-text-centered">Round ${mindex + 1}-${rindex + 1}<br />${gotoButton}</td>${mancheText}</tr>`);
@@ -403,13 +403,13 @@ const showNextRoundNames = () => {
     let r = currRound, m = currManche, names;
     let label = i18n.__('label-next-round');
     r += 1;
-    if (r == mancheList[currManche].length) {
+    if (r === mancheList[currManche].length) {
         m++;
         r = 0;
         label = i18n.__('label-next-round-end');
     }
 
-    if (m == mancheList.length) {
+    if (m === mancheList.length) {
         names = ['-'];
     }
     else {
@@ -423,10 +423,10 @@ const mancheName = (mindex) => {
     const tournament = storage.get('tournament');
     const mancheList = storage.getManches();
 
-    if (mindex == tournament.mancheCount) {
+    if (mindex === tournament.mancheCount) {
         return (mindex < mancheList.length) ? 'FINAL 4-5-6 PLACE' : 'FINAL 1-2-3 PLACE';
     }
-    else if (mindex == tournament.mancheCount + 1) {
+    else if (mindex === tournament.mancheCount + 1) {
         return 'FINAL 1-2-3 PLACE';
     }
     else {
@@ -442,7 +442,7 @@ const initRace = (freeRound) => {
     updateUiState(freeRound);
     $('.js-show-on-race-running').hide();
 
-    if (tournament == null) {
+    if (tournament === null) {
         $('#name-lane0').text(' ');
         $('#name-lane1').text(' ');
         $('#name-lane2').text(' ');
@@ -516,7 +516,7 @@ const drawRace = (cars, running) => {
             $(`#place-lane${i}`).text(i18n.__('label-car-out'));
             $(`#place-lane${i}`).addClass('is-dark');
         }
-        else if (car.lapCount == 0) {
+        else if (car.lapCount === 0) {
             if (running) {
                 $(`#place-lane${i}`).text(i18n.__('label-car-ready'));
             }
@@ -525,13 +525,13 @@ const drawRace = (cars, running) => {
             }
             $(`#place-lane${i}`).addClass('is-light');
         }
-        else if (car.lapCount == 1) {
+        else if (car.lapCount === 1) {
             $(`#place-lane${i}`).text(i18n.__('label-car-started'));
             $(`#place-lane${i}`).addClass('is-light');
         }
         else {
             $(`#place-lane${i}`).text(`${car.position} ${i18n.__('label-car-position')}`);
-            if (car.position == 1) {
+            if (car.position === 1) {
                 $(`#place-lane${i}`).addClass('is-warning');
             }
             else {
@@ -544,7 +544,7 @@ const drawRace = (cars, running) => {
             $(`#timer-lane${i}`).addClass('is-danger');
             $(`#timer-lane${i}`).text(utils.prettyTime(car.currTime));
         }
-        else if (car.lapCount == 0) {
+        else if (car.lapCount === 0) {
             $(`#timer-lane${i}`).text(utils.prettyTime(0));
         }
         else if (car.lapCount > laps) {
@@ -574,7 +574,7 @@ const updateUiState = (freeRound) => {
     const track = storage.get('track');
     const tournament = storage.get('tournament');
 
-    if (track == null) {
+    if (track === null) {
         $('.js-show-on-no-track').show();
         $('.js-hide-on-no-track').hide();
         $('.js-show-on-no-tournament').show();

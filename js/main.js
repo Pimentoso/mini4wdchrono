@@ -65,7 +65,7 @@ if (debugMode) {
     const LedManagerMock = require('./js/led_managers/led_manager_mock');
     ledManager = LedManagerMock.getInstance(board, configuration.get('piezoPin'));
 }
-else if (configuration.get('ledType') == 0) {
+else if (configuration.get('ledType') === 0) {
     const LedManagerLilypad = require('./js/led_managers/led_manager_lilypad');
     ledManager = LedManagerLilypad.getInstance(board, [
         configuration.get('ledPin1'),
@@ -76,7 +76,7 @@ else if (configuration.get('ledType') == 0) {
     configuration.get('reverse') > 0
     );
 }
-else if (configuration.get('ledType') == 1) {
+else if (configuration.get('ledType') === 1) {
     const LedManagerRgbStrip = require('./js/led_managers/led_manager_rgb_strip');
     ledManager = LedManagerRgbStrip.getInstance(
         board,
@@ -103,15 +103,15 @@ const startRace = () => {
             dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: i18n.__('dialog-disconnected'), buttons: ['Ok'] });
             return;
         }
-        else if (tag1.text() != '1') {
+        else if (tag1.text() !== '1') {
             dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: `${i18n.__('dialog-sensor-error')} 1`, buttons: ['Ok'] });
             return;
         }
-        else if (tag2.text() != '1') {
+        else if (tag2.text() !== '1') {
             dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: `${i18n.__('dialog-sensor-error')} 2`, buttons: ['Ok'] });
             return;
         }
-        else if (tag3.text() != '1') {
+        else if (tag3.text() !== '1') {
             dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: `${i18n.__('dialog-sensor-error')} 3`, buttons: ['Ok'] });
             return;
         }
@@ -152,7 +152,7 @@ board.on('ready', function () {
 
     this.digitalRead(sensorPin1, function (val) {
         tag1.text(val);
-        if (val == 0 && val1 == 1) {
+        if (val === 0 && val1 === 1) {
             reverse ? client.addLap(2) : client.addLap(0);
             reverse ? ledManager.lap(2) : ledManager.lap(0);
         }
@@ -161,7 +161,7 @@ board.on('ready', function () {
 
     this.digitalRead(sensorPin2, function (val) {
         tag2.text(val);
-        if (val == 0 && val2 == 1) {
+        if (val === 0 && val2 === 1) {
             client.addLap(1);
             ledManager.lap(1);
         }
@@ -170,7 +170,7 @@ board.on('ready', function () {
 
     this.digitalRead(sensorPin3, function (val) {
         tag3.text(val);
-        if (val == 0 && val3 == 1) {
+        if (val === 0 && val3 === 1) {
             reverse ? client.addLap(0) : client.addLap(2);
             reverse ? ledManager.lap(0) : ledManager.lap(2);
         }
