@@ -9,127 +9,127 @@ const configuration = require('./configuration');
 configuration.init();
 
 const setDefaults = () => {
-	let timestamp = parseInt(new Date().getTime() / 1000);
-	set('created', timestamp);
-	set('currManche', 0);
-	set('currRound', 0);
-	set('raceMode', 0);
-	set('timeThreshold', 40);
-	set('speedThreshold', 5);
-	set('startDelay', 3);
-	set('roundLaps', 3);
+    const timestamp = parseInt(new Date().getTime() / 1000);
+    set('created', timestamp);
+    set('currManche', 0);
+    set('currRound', 0);
+    set('raceMode', 0);
+    set('timeThreshold', 40);
+    set('speedThreshold', 5);
+    set('startDelay', 3);
+    set('roundLaps', 3);
 };
 
 const newRace = (raceName) => {
-	let userdir = app.getPath('userData');
-	let storagedir = path.join(userdir, 'races');
-	if (!fs.existsSync(storagedir)) {
-		fs.mkdirSync(storagedir);
-	}
+    const userdir = app.getPath('userData');
+    const storagedir = path.join(userdir, 'races');
+    if (!fs.existsSync(storagedir)) {
+        fs.mkdirSync(storagedir);
+    }
 
-	let timestamp = parseInt(new Date().getTime() / 1000);
-	let filename = `${timestamp}.json`;
-	let filepath = path.join(userdir, 'races', filename);
-	configuration.set('raceFile', filename);
-	fs.closeSync(fs.openSync(filepath, 'w')); // create empty file
-	storage.setPath(filepath);
-	set('name', raceName);
-	setDefaults();
+    const timestamp = parseInt(new Date().getTime() / 1000);
+    const filename = `${timestamp}.json`;
+    const filepath = path.join(userdir, 'races', filename);
+    configuration.set('raceFile', filename);
+    fs.closeSync(fs.openSync(filepath, 'w')); // create empty file
+    storage.setPath(filepath);
+    set('name', raceName);
+    setDefaults();
 };
 
 const loadRace = (filename) => {
-	filename = filename || configuration.get('raceFile');
-	if (filename) {
-		filename = filename.substr(filename.length - 15); // retrocompatibility
-		let userdir = app.getPath('userData');
-		let filepath = path.join(userdir, 'races', filename);
-		configuration.set('raceFile', filename);
-		storage.setPath(filepath);
-		if (get('created') == null) {
-			setDefaults();
-		}
-	}
-	else {
-		newRace();
-	}
+    filename = filename || configuration.get('raceFile');
+    if (filename) {
+        filename = filename.substr(filename.length - 15); // retrocompatibility
+        const userdir = app.getPath('userData');
+        const filepath = path.join(userdir, 'races', filename);
+        configuration.set('raceFile', filename);
+        storage.setPath(filepath);
+        if (get('created') == null) {
+            setDefaults();
+        }
+    }
+    else {
+        newRace();
+    }
 };
 
 const deleteRace = (filename) => {
-	let userdir = app.getPath('userData');
-	let filepath = path.join(userdir, 'races', filename);
-	fs.unlinkSync(filepath);
+    const userdir = app.getPath('userData');
+    const filepath = path.join(userdir, 'races', filename);
+    fs.unlinkSync(filepath);
 };
 
 const extension = (element) => {
-	var extName = path.extname(element);
-	return extName === '.json';
+    const extName = path.extname(element);
+    return extName === '.json';
 };
 
 const getRecentFiles = (num) => {
-	num = num || 10
-	let userdir = app.getPath('userData');
-	let storagedir = path.join(userdir, 'races');
-	let files = fs.readdirSync(storagedir);
-	files = files.filter(extension);
-	let recent = [];
-	files.forEach((filename) => {
-		let data = jsonfile.readFileSync(path.join(storagedir, filename));
-		if (data) {
-			recent.push({
-				filename: filename,
-				name: data.name,
-				created: data.created
-			});
-		}
-	});
-	return _.sortBy(recent, 'created').reverse().slice(0, num);
+    num = num || 10;
+    const userdir = app.getPath('userData');
+    const storagedir = path.join(userdir, 'races');
+    let files = fs.readdirSync(storagedir);
+    files = files.filter(extension);
+    const recent = [];
+    files.forEach((filename) => {
+        const data = jsonfile.readFileSync(path.join(storagedir, filename));
+        if (data) {
+            recent.push({
+                filename: filename,
+                name: data.name,
+                created: data.created
+            });
+        }
+    });
+    return _.sortBy(recent, 'created').reverse().slice(0, num);
 };
 
 const set = (key, value) => {
-	storage.set(key, value);
+    storage.set(key, value);
 };
 
 const get = (key) => {
-	return storage.get(key);
+    return storage.get(key);
 };
 
 const remove = (key) => {
-	return storage.delete(key);
+    return storage.delete(key);
 };
 
 const saveRound = (manche, round, cars) => {
-	set(`race.m${manche}.r${round}`, cars);
+    set(`race.m${manche}.r${round}`, cars);
 };
 
 const loadRound = (manche, round) => {
-	if (manche == null)
-		manche = get('currManche');
-	if (round == null)
-		round = get('currRound');
+    if (manche == null)
+        manche = get('currManche');
+    if (round == null)
+        round = get('currRound');
 
-	return get(`race.m${manche}.r${round}`);
+    return get(`race.m${manche}.r${round}`);
 };
 
 const deleteRound = (manche, round) => {
-	remove(`race.m${manche}.r${round}`);
+    remove(`race.m${manche}.r${round}`);
 };
 
 const getManches = () => {
-	let tournament = get('tournament');
-	if (!tournament) return null;
+    const tournament = get('tournament');
+    if (!tournament) return null;
 
-	let mancheList = tournament.manches;
-	if (tournament.finals) {
-		mancheList.push(...tournament.finals);
-	}
-	return mancheList;
+    const mancheList = tournament.manches;
+    if (tournament.finals) {
+        mancheList.push(...tournament.finals);
+    }
+    return mancheList;
 };
 
 const getPlayers = () => {
-	let tournament = get('tournament');
-	if (!tournament) return null;
+    const tournament = get('tournament');
+    if (!tournament) return null;
 
-	return tournament.players;
+    return tournament.players;
 };
 
 /*
@@ -144,68 +144,68 @@ const getPlayers = () => {
 	@return [Array]
 */
 const getPlayerData = () => {
-	let cars, playerTimes = [], mancheList = getManches();
-	_.each(mancheList, (manche, mindex) => {
-		_.each(manche, (round, rindex) => {
-			cars = loadRound(mindex, rindex);
-			_.each(round, (playerId, pindex) => {
-				playerTimes[playerId] = playerTimes[playerId] || [];
-				if (cars) {
-					playerTimes[playerId][mindex] = {
-						time: cars[pindex].currTime,
-						position: cars[pindex].position,
-						outOfBounds: cars[pindex].outOfBounds
-					};
-				}
-				else {
-					playerTimes[playerId][mindex] = {
-						time: 0,
-						position: 0,
-						outOfBounds: false
-					};
-				}
-			});
-		});
-	});
-	return playerTimes;
+    let cars, playerTimes = [], mancheList = getManches();
+    _.each(mancheList, (manche, mindex) => {
+        _.each(manche, (round, rindex) => {
+            cars = loadRound(mindex, rindex);
+            _.each(round, (playerId, pindex) => {
+                playerTimes[playerId] = playerTimes[playerId] || [];
+                if (cars) {
+                    playerTimes[playerId][mindex] = {
+                        time: cars[pindex].currTime,
+                        position: cars[pindex].position,
+                        outOfBounds: cars[pindex].outOfBounds
+                    };
+                }
+                else {
+                    playerTimes[playerId][mindex] = {
+                        time: 0,
+                        position: 0,
+                        outOfBounds: false
+                    };
+                }
+            });
+        });
+    });
+    return playerTimes;
 };
 
 const getSortedPlayerList = () => {
-	let playerList = getPlayers();
-	let playerData = getPlayerData();
+    const playerList = getPlayers();
+    const playerData = getPlayerData();
 
-	// calculate best time sums
-	let sums = [], times, pData, bestTimes, bestSum;
-	_.each(playerList, (_player, pindex) => {
-		pData = playerData[pindex] || [];
-		bestTimes = _.sortBy(_.filter(pData, (i) => { return i && i.time > 0; }), 'time').slice(0, 2);
-		bestSum = (bestTimes[0] ? bestTimes[0].time : 99999) + (bestTimes[1] ? bestTimes[1].time : 99999);
-		sums[pindex] = bestSum;
-	});
+    // calculate best time sums
+    let sums = [], times, pData, bestTimes, bestSum;
+    _.each(playerList, (_player, pindex) => {
+        pData = playerData[pindex] || [];
+        bestTimes = _.sortBy(_.filter(pData, (i) => { return i && i.time > 0; }), 'time').slice(0, 2);
+        bestSum = (bestTimes[0] ? bestTimes[0].time : 99999) + (bestTimes[1] ? bestTimes[1].time : 99999);
+        sums[pindex] = bestSum;
+    });
 
-	// sort list by sum desc
-	times = _.map(playerData, (data, index) => {
-		return {
-			id: index,
-			times: _.map(data, (i) => { return i ? i.time : null; }),
-			best: sums[index]
-		};
-	});
-	return _.sortBy(times, 'best');
+    // sort list by sum desc
+    times = _.map(playerData, (data, index) => {
+        return {
+            id: index,
+            times: _.map(data, (i) => { return i ? i.time : null; }),
+            best: sums[index]
+        };
+    });
+    return _.sortBy(times, 'best');
 };
 
 module.exports = {
-	newRace: newRace,
-	loadRace: loadRace,
-	deleteRace: deleteRace,
-	getRecentFiles: getRecentFiles,
-	set: set,
-	get: get,
-	saveRound: saveRound,
-	loadRound: loadRound,
-	deleteRound: deleteRound,
-	getManches: getManches,
-	getPlayers: getPlayers,
-	getPlayerData: getPlayerData,
-	getSortedPlayerList: getSortedPlayerList
+    newRace: newRace,
+    loadRace: loadRace,
+    deleteRace: deleteRace,
+    getRecentFiles: getRecentFiles,
+    set: set,
+    get: get,
+    saveRound: saveRound,
+    loadRound: loadRound,
+    deleteRound: deleteRound,
+    getManches: getManches,
+    getPlayers: getPlayers,
+    getPlayerData: getPlayerData,
+    getSortedPlayerList: getSortedPlayerList
 };

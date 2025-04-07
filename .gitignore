@@ -1,5 +1,9 @@
-/dist
-/node_modules
+node_modules/
+logs/
+.DS_Store
+.vscode/
+dist/
+release/
+bin/
 /release-builds
 /logs/*.log
-.DS_Store
