@@ -45,7 +45,7 @@ const loadRace = (filename) => {
         const filepath = path.join(userdir, 'races', filename);
         configuration.set('raceFile', filename);
         storage.setPath(filepath);
-        if (get('created') == null) {
+        if (get('created') === null) {
             setDefaults();
         }
     }
@@ -102,9 +102,9 @@ const saveRound = (manche, round, cars) => {
 };
 
 const loadRound = (manche, round) => {
-    if (manche == null)
+    if (manche === null)
         manche = get('currManche');
-    if (round == null)
+    if (round === null)
         round = get('currRound');
 
     return get(`race.m${manche}.r${round}`);

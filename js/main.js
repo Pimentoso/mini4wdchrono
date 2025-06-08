@@ -288,7 +288,7 @@ $(document).on('click', '.js-load-race', (e) => {
 $(document).on('click', '.js-delete-race', (e) => {
     const $this = $(e.currentTarget);
     if ($this.attr('disabled')) return;
-    if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-delete-race'), buttons: ['Ok', 'Cancel'] }) == 0) {
+    if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-delete-race'), buttons: ['Ok', 'Cancel'] }) === 0) {
         const filename = $this.data('filename');
         storage.deleteRace(filename);
         closeAllModals();
@@ -305,7 +305,7 @@ $('#js-load-track').on('click', (e) => {
 $('#js-track-save-manual').on('click', (e) => {
     const $this = $(e.currentTarget);
     if ($this.attr('disabled')) return;
-    if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-save-track'), buttons: ['Ok', 'Cancel'] }) == 0) {
+    if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-save-track'), buttons: ['Ok', 'Cancel'] }) === 0) {
         $('#js-track-length-manual').removeClass('is-danger');
         $('#js-track-order-manual').removeClass('is-danger');
         if (!$('#js-track-length-manual').val()) {
@@ -329,46 +329,46 @@ $('#js-load-tournament').on('click', (e) => {
     client.loadTournament(code);
 });
 
-$('#button-new-race').on('click', (e) => {
+$('#button-new-race').on('click', () => {
     const name = $('#modal-new-name').val().trim();
-    if (name == '') return false;
+    if (name === '') return false;
     client.reset(name);
     closeAllModals();
 });
 
 $('#button-start').on('click', startRace);
 
-$('#button-stop').on('click', (e) => {
+$('#button-stop').on('click', () => {
     client.stopRace();
 });
 
-$('#button-prev').on('click', (e) => {
+$('#button-prev').on('click', () => {
     client.prevRound();
 });
 
-$('#button-next').on('click', (e) => {
+$('#button-next').on('click', () => {
     client.nextRound();
 });
 
-$('#button-toggle-free-round').on('click', (e) => {
+$('#button-toggle-free-round').on('click', () => {
     client.toggleFreeRound();
 });
 
-$('#button-print').on('click', (e) => {
+$('#button-print').on('click', () => {
     webContents.getFocusedWebContents().print();
 });
 
-$('#button-xls').on('click', (e) => {
+$('#button-xls').on('click', () => {
     client.saveXls();
     $('#button-xls').attr('disabled', true);
 });
 
-$('#button-xls-folder').on('click', (e) => {
+$('#button-xls-folder').on('click', () => {
     const dir = xls.createDir();
     shell.openPath(dir);
 });
 
-$('#button-log-file').on('click', (e) => {
+$('#button-log-file').on('click', () => {
     shell.openPath(log.transports.file.findLogPath());
 });
 
@@ -463,7 +463,7 @@ $('.js-race-mode').on('click', (e) => {
 $('.js-invalidate').on('click', (e) => {
     const $this = $(e.currentTarget);
     if ($this.attr('disabled')) return;
-    if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-disqualify'), buttons: ['Ok', 'Cancel'] }) == 0) {
+    if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-disqualify'), buttons: ['Ok', 'Cancel'] }) === 0) {
         client.disqualify(null, null, parseInt($this.data('lane')));
     }
 });
