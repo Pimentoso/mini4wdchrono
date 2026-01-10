@@ -3,7 +3,8 @@
 **Date:** January 2026  
 **Target:** Electron 37.0.x + Node.js 22.x (Final target)  
 **Reason:** Enable Python 3 builds on Apple Silicon, remove Python 2 dependency  
-**Trade-off:** Drops Windows 7 support (acceptable)
+**Trade-off:** Drops Windows 7 support (Windows 10+ required, acceptable per requirements)
+**Status:** Phase 1 (Setup & Foundation) - ✅ COMPLETED
 
 ---
 
@@ -151,29 +152,32 @@
 
 ## Migration Steps (High Level)
 
-### Phase 1: Setup & Foundation
-1. Upgrade package.json: Electron 37, Node 22, rebuild serialport (v10+)
-2. Create preload.js with safe API exposure
-3. Enable contextIsolation: true and nodeIntegration: false in window.js
-4. Create IPC channel infrastructure in main.js
-5. Test that basic window creation works
+### Phase 1: Setup & Foundation - ✅ COMPLETED
+**See [step_1.md](step_1.md) for complete Phase 1 documentation.**
 
-### Phase 2: Storage/Config Refactoring
+1. ✅ Upgrade package.json: Electron 37, Node 22
+2. ✅ Create preload.js with safe API exposure
+3. ✅ Enable contextIsolation and disable nodeIntegration
+4. ✅ Create IPC channel infrastructure
+5. ✅ Resolve Arch Linux build environment
+
+### Phase 2: Storage/Config Refactoring - PENDING
 1. Move storage.js file operations to main process
 2. Move configuration.js settings read/write to main process
-3. Implement IPC handlers for all FS operations
+3. Implement full IPC handlers for FS operations
 4. Update renderer calls to use IPC instead of direct fs
 5. Test race data persistence
 
-### Phase 3: Hardware & System APIs
+### Phase 3: Hardware & System APIs - PENDING
 1. Move Johnny-Five initialization to main process
 2. Refactor serial port communication via IPC
-3. Move LED manager operations to main process
-4. Implement IPC channels for sensor reading/LED writing
-5. Move shell/dialog operations to main process
-6. Test hardware communication under race conditions
+3. Update serialport from v9 (nested in firmata) to v10.x (standalone)
+4. Move LED manager operations to main process
+5. Implement IPC channels for sensor reading/LED writing
+6. Move shell/dialog operations to main process
+7. Test hardware communication under race conditions
 
-### Phase 4: Security Hardening
+### Phase 4: Security Hardening - PENDING
 1. Remove all electron.remote calls from renderer
 2. Validate all IPC message handlers in main
 3. Add message validation/sanitization
@@ -182,15 +186,45 @@
 
 ---
 
-## Risk Areas & Mitigations
+## Risk Areas & Platform-Specific Considerations
 
-| Risk | Impact | Mitigation |
-|------|--------|-----------|
-| **Johnny-Five async IPC latency** | Race timing may be affected | Test with real lap timer, measure latency |
-| **Serialport v9 → v10 compatibility** | Hardware communication breaks | Test with target Arduino board before phase 3 |
-| **Synchronous → async file ops** | App responsiveness changes | Implement proper loading states in UI |
-| **IPC channel message ordering** | Race events out of sequence | Add sequence/timestamp validation |
-| **Windows 10 only** | Some users lose support | Clear communication in release notes |
+| Risk | Platforms Affected | Mitigation |
+|------|-------------------|-----------|
+| **Johnny-Five async IPC latency** | All | Test with real lap timer, measure latency |
+| **Serialport v9 C++ binding issues** | macOS ARM64 (unfixable), macOS Intel (Python 2 needed) | Phase 3 upgrade to serialport v10 |
+| **Python 3.13 distutils missing** | Arch/Debian/Ubuntu (fixable) | Install python3-distutils OR use Python 3.12 |
+| **Synchronous → async file ops** | All | Implement proper loading states in UI |
+| **IPC channel message ordering** | All | Add sequence/timestamp validation |
+| **Windows 10 only** | Windows users | Windows 7 no longer supported (deprecated in Electron 23) |
+
+### Platform Build Compatibility
+
+| Platform | Node 22 | Electron 37 | Python 3 | Status |
+|----------|---------|-------------|----------|--------|
+| **Arch Linux** | ✅ | ✅ | ✅ (3.13) | ✅ Works (distutils workaround in Phase 3) |
+| **Ubuntu/Debian** | ✅ | ✅ | ✅ (3.10+) | ✅ Works (install python3-distutils) |
+| **macOS Apple Silicon** | ✅ | ✅ | ✅ (3.10+) | ⚠️ Phase 3 needed (serialport v10 only) |
+| **macOS Intel** | ✅ | ✅ | ✅ (3.10+) | ⚠️ Phase 3 needed (Python 2 era blocker) |
+| **Windows 10** | ✅ | ✅ | ✅ (3.7+) | ✅ Works |
+| **Windows 7** | ✅ | ❌ | N/A | ❌ Electron 23+ drops support |
+
+### serialport v9 → v10 Upgrade (Phase 3 Task)
+
+**Why not upgrade now (Phase 1)?**
+- johnny-five v2.0.0 has firmata as a hard dependency that brings serialport v9
+- The v9 library is nested and cannot be easily replaced
+- Upgrading requires hardware refactoring (which Phase 3 does anyway)
+
+**Phase 3 Strategy:**
+1. Move hardware initialization from renderer to main process
+2. Remove dependency on firmata's nested serialport v9
+3. Use top-level serialport@10.x for all serial communication
+4. Rebuild native bindings for Electron 37
+5. **Benefits for all platforms:**
+   - Arch: distutils issue resolved (v10 has modern node-gyp)
+   - macOS ARM64: Finally works (prebuilt binaries available)
+   - macOS Intel: No Python 2 needed
+   - Windows 10: Modern C++ compiler compatibility
 
 ---
 
@@ -198,7 +232,7 @@
 
 ### Core Architecture
 - **window.js** - Enable context isolation, disable node integration, set preload
-- **js/main.js** - Create preload.js, add IPC handlers, move hardware logic
+- **js/main.js** - Add IPC handlers, move hardware logic
 - **js/client.js** - Update to use IPC for system calls
 - **js/ui.js** - Update file/dialog operations to use IPC
 
@@ -217,6 +251,27 @@
 
 ---
 
+## Phase Details
+
+- **Phase 1 Details:** See [step_1.md](step_1.md) - Setup & Foundation ✅ COMPLETED
+- **Phase 2 Details:** (step_2.md) - Storage/Config Refactoring (not yet started)
+- **Phase 3 Details:** (step_3.md) - Hardware & System APIs (not yet started)
+- **Phase 4 Details:** (step_4.md) - Security Hardening (not yet started)
+
+---
+
+## Next Steps
+
+**Current Status:** Phase 1 complete, ready to begin Phase 2
+
+**To proceed with Phase 2:**
+1. Read [step_1.md](step_1.md) for Phase 1 completion details
+2. Move to Phase 2: Storage/Config refactoring
+3. Implement IPC handlers in window.js for file operations
+4. Update storage.js, configuration.js, export.js to use IPC
+
+---
+
 ## Success Criteria
 
 - [ ] Application builds on Apple Silicon Mac with Python 3
@@ -231,10 +286,10 @@
 
 ---
 
-## Next Steps (Session 2+)
+## References & Resources
 
-1. **Step 1 (Phase 1):** Update package.json and dependencies, test build
-2. **Step 2 (Phase 1-2):** Create preload.js, enable context isolation, basic IPC setup
-3. **Step 3 (Phase 2):** Refactor storage.js and configuration.js to use IPC
-4. **Step 4 (Phase 3):** Move hardware I/O to main process
-5. **Step 5 (Phase 4):** Security hardening and final testing
+- Electron 37 Release Notes: https://github.com/electron/electron/releases/tag/v37.0.0
+- Node.js 22 LTS: https://nodejs.org/en/
+- Context Isolation Guide: https://www.electronjs.org/docs/tutorial/context-isolation
+- IPC Communication: https://www.electronjs.org/docs/api/ipc-main
+- Preload Script Best Practices: https://www.electronjs.org/docs/tutorial/preload
