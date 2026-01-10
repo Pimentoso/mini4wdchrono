@@ -20,7 +20,10 @@ function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: false,
+            contextIsolation: true,
+            enableRemoteModule: false,
+            preload: path.join(__dirname, 'preload.js')
         }
     });
 
@@ -74,8 +77,33 @@ function createWindow() {
     });
 }
 
-// Fix for running serialPort on renderer process. Remove when serialPort is updated
-app.allowRendererProcessReuse = false;
+// IPC handlers for system operations
+const { ipcMain, dialog } = require('electron');
+
+// Phase 2: File operations
+// Phase 2: Configuration
+// Phase 3: Hardware
+// Phase 4: Other system APIs
+
+// Placeholder: These handlers will be implemented in phases 2-4
+// For now, just log that they're being called
+ipcMain.handle('fs-ensure-dir', (event, dirPath) => {
+    console.log('[IPC] fs-ensure-dir:', dirPath);
+    return Promise.resolve();
+});
+
+ipcMain.handle('config-load', (event) => {
+    console.log('[IPC] config-load');
+    return Promise.resolve({});
+});
+
+ipcMain.handle('get-app-version', (event) => {
+    return app.getVersion();
+});
+
+ipcMain.handle('show-message-box', (event, options) => {
+    return dialog.showMessageBox(mainWindow, options);
+});
 
 // Prevent multiple instances of this app to run.
 const gotTheLock = app.requestSingleInstanceLock();
