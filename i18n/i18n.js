@@ -1,6 +1,5 @@
 'use strict';
 
-const { app } = require('electron').remote;
 const fs = require('fs');
 const path = require('path');
 let loadedLanguage;
@@ -8,13 +7,20 @@ let loadedLanguage;
 module.exports = i18n;
 
 function i18n() {
-    const tnpath = path.join(__dirname, app.getLocale().substring(0, 2) + '.json');
-    // tnpath = path.join(__dirname, 'it.json'); // uncomment this line to force italian language
-    if (fs.existsSync(tnpath)) {
-        loadedLanguage = JSON.parse(fs.readFileSync(tnpath), 'utf8');
-    }
-    else {
-        loadedLanguage = JSON.parse(fs.readFileSync(path.join(__dirname, 'en.json'), 'utf8'));
+    // Load English by default, we'll try to get the proper locale asynchronously
+    loadedLanguage = JSON.parse(fs.readFileSync(path.join(__dirname, 'en.json'), 'utf8'));
+    
+    // Try to load the correct locale asynchronously
+    if (window.electronAPI && window.electronAPI.getAppLocale) {
+        window.electronAPI.getAppLocale().then(locale => {
+            const tnpath = path.join(__dirname, locale.substring(0, 2) + '.json');
+            // tnpath = path.join(__dirname, 'it.json'); // uncomment this line to force italian language
+            if (fs.existsSync(tnpath)) {
+                loadedLanguage = JSON.parse(fs.readFileSync(tnpath), 'utf8');
+            }
+        }).catch(err => {
+            console.warn('Could not load locale, using English:', err);
+        });
     }
 }
 

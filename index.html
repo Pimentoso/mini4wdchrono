@@ -681,6 +681,11 @@
 
 </body>
 
+<script>
+// Load jQuery and Underscore before main.js loads (nodeIntegration:true allows require)
+window.$ = window.jQuery = require('jquery');
+window._ = require('underscore');
+</script>
 <script src="js/main.js"></script>
 
 </html>

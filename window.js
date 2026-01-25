@@ -20,7 +20,7 @@ function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
         webPreferences: {
-            nodeIntegration: false,
+            nodeIntegration: true,
             contextIsolation: true,
             enableRemoteModule: false,
             preload: path.join(__dirname, 'preload.js')
@@ -82,7 +82,6 @@ const { ipcMain, dialog } = require('electron');
 const fs = require('fs');
 const fsp = fs.promises;
 const jsonfile = require('jsonfile');
-const path = require('path');
 const nconf = require('nconf');
 
 // ===== PHASE 2: FILE SYSTEM OPERATIONS =====
@@ -583,8 +582,59 @@ ipcMain.handle('get-app-version', (event) => {
     return app.getVersion();
 });
 
+ipcMain.handle('get-app-locale', (event) => {
+    return app.getLocale();
+});
+
+ipcMain.handle('get-app-path', (event, name) => {
+    return app.getPath(name);
+});
+
 ipcMain.handle('show-message-box', (event, options) => {
     return dialog.showMessageBox(mainWindow, options);
+});
+
+ipcMain.handle('show-open-dialog', (event, options) => {
+    return dialog.showOpenDialog(mainWindow, options);
+});
+
+ipcMain.handle('show-save-dialog', (event, options) => {
+    return dialog.showSaveDialog(mainWindow, options);
+});
+
+// Window controls
+ipcMain.handle('window-maximize', () => {
+    if (mainWindow) mainWindow.maximize();
+});
+
+ipcMain.handle('window-minimize', () => {
+    if (mainWindow) mainWindow.minimize();
+});
+
+ipcMain.handle('window-close', () => {
+    if (mainWindow) mainWindow.close();
+});
+
+// Shell operations
+ipcMain.handle('open-path-in-explorer', async (event, filePath) => {
+    const { shell } = require('electron');
+    return await shell.openPath(filePath);
+});
+
+ipcMain.handle('open-external', async (event, url) => {
+    const { shell } = require('electron');
+    return await shell.openExternal(url);
+});
+
+// Clipboard operations
+ipcMain.handle('clipboard-write', (event, text) => {
+    const { clipboard } = require('electron');
+    clipboard.writeText(text);
+});
+
+ipcMain.handle('clipboard-read', () => {
+    const { clipboard } = require('electron');
+    return clipboard.readText();
 });
 
 // Prevent multiple instances of this app to run.

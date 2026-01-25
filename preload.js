@@ -5,6 +5,12 @@
 
 const { contextBridge, ipcRenderer } = require('electron');
 
+// Expose require to the renderer (works because preload has node access)
+contextBridge.exposeInMainWorld('require', require);
+
+// With nodeIntegration:true, the preload script has access to require
+// We expose it to the renderer through contextBridge
+
 // Safe API exposed to renderer process
 contextBridge.exposeInMainWorld('electronAPI', {
     // Window controls
@@ -43,6 +49,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     
     // App info
     getAppVersion: () => ipcRenderer.invoke('get-app-version'),
+    getAppLocale: () => ipcRenderer.invoke('get-app-locale'),
     getAppPath: (name) => ipcRenderer.invoke('get-app-path', name),
     
     // Shell

@@ -1,6 +1,5 @@
 'use strict';
 
-const { dialog, getCurrentWindow } = require('electron').remote;
 const ui = require('./ui');
 const utils = require('./utils');
 const storage = require('./storage');
@@ -14,11 +13,14 @@ let mancheList, mancheCount;
 let currManche = 0, currRound = 0, raceStarting = false, raceRunning = false, freeRound = true;
 
 let timerIntervals = [], timerSeconds = [];
-const pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
+let pageTimerSeconds; // Initialize in init() when $ is available
 let checkRaceTask;
 
 const init = (params) => {
     console.log('client.init called');
+
+    // Initialize jQuery selectors now that $ is available
+    pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
 
     ledManager = params.led_manager;
     ui.init();
@@ -169,12 +171,12 @@ const initFinal = () => {
 // ==========================================================================
 // ==== handle interface buttons
 
-const startRace = (debugMode) => {
+const startRace = async (debugMode) => {
     console.log('client.startRace called');
 
     if (!storage.get('track')) {
     // track not loaded
-        dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: i18n.__('dialog-track-not-loaded'), buttons: ['Ok'] });
+        await window.electronAPI.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-track-not-loaded'), buttons: ['Ok'] });
         return;
     }
     if ($('div[data-tab=race]').is(':hidden')) {
@@ -196,7 +198,8 @@ const startRace = (debugMode) => {
     else {
     // production mode
         if (!freeRound && storage.get('tournament') && storage.loadRound()) {
-            if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-replay-round'), buttons: ['Ok', 'Cancel'] }) === 1) {
+            const result = await window.electronAPI.showMessageBox({ type: 'warning', message: i18n.__('dialog-replay-round'), buttons: ['Ok', 'Cancel'] });
+            if (result.response === 1) {
                 return;
             }
         }
@@ -248,12 +251,12 @@ const stopRace = () => {
     checkRace();
 };
 
-const prevRound = () => {
+const prevRound = async () => {
     console.log('client.prevRound called');
 
     if (currTournament === null || currTrack === null) {
     // tournament not loaded
-        dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
+        await window.electronAPI.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
         return;
     }
     if (currManche === 0 && currRound === 0) {
@@ -261,7 +264,8 @@ const prevRound = () => {
         return;
     }
 
-    if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel'] }) === 0) {
+    const result = await window.electronAPI.showMessageBox({ type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel'] });
+    if (result.response === 0) {
         currRound--;
         if (currRound < 0) {
             currManche--;
@@ -276,12 +280,12 @@ const prevRound = () => {
     }
 };
 
-const nextRound = () => {
+const nextRound = async () => {
     console.log('client.nextRound called');
 
     if (currTournament === null || currTrack === null) {
     // tournament not loaded
-        dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
+        await window.electronAPI.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
         return;
     }
 
@@ -291,7 +295,8 @@ const nextRound = () => {
     }
 
     const dialogText = (currManche === (mancheCount - 1) && currRound === (mancheList[currManche].length - 1) && !currTournament.finals) ? i18n.__('dialog-enter-final') : i18n.__('dialog-change-round');
-    if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: dialogText, buttons: ['Ok', 'Cancel'] }) === 0) {
+    const result = await window.electronAPI.showMessageBox({ type: 'warning', message: dialogText, buttons: ['Ok', 'Cancel'] });
+    if (result.response === 0) {
         currRound++;
         if (currRound === mancheList[currManche].length) {
             currManche++;
@@ -314,16 +319,17 @@ const nextRound = () => {
     }
 };
 
-const gotoRound = (mindex, rindex) => {
+const gotoRound = async (mindex, rindex) => {
     console.log('client.gotoRound called');
 
     if (currTournament === null || currTrack === null) {
     // tournament not loaded
-        dialog.showMessageBoxSync(getCurrentWindow(), { type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
+        await window.electronAPI.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-tournament-not-loaded'), buttons: ['Ok'] });
         return;
     }
 
-    if (dialog.showMessageBoxSync(getCurrentWindow(), { type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel'] }) === 0) {
+    const result = await window.electronAPI.showMessageBox({ type: 'warning', message: i18n.__('dialog-change-round'), buttons: ['Ok', 'Cancel'] });
+    if (result.response === 0) {
         currManche = mindex;
         currRound = rindex;
         storage.set('currManche', currManche);
