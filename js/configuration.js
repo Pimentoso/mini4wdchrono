@@ -1,58 +1,76 @@
 'use strict';
 
-const { app } = require('electron').remote;
-const fs = require('fs');
-const path = require('path');
+// Phase 2: All settings operations now use IPC via electronAPI
+// This renderer-side module acts as a client to main-process config handlers
 
-// %APPDATA% on Windows
-// $XDG_CONFIG_HOME or ~/.config on Linux
-// ~/Library/Application Support on macOS
-const dir = app.getPath('userData');
-const filepath = path.join(dir, 'settings.json');
-let globalConf;
-
-const init = () => {
-    globalConf = require('nconf').file('global', { file: filepath });
-
-    globalConf.defaults({
-        'ledAnimation': 0,
-        'ledType': 0,
-        'sensorPin1': 6,
-        'sensorPin2': 7,
-        'sensorPin3': 8,
-        'ledPin1': 3,
-        'ledPin2': 4,
-        'ledPin3': 5,
-        'piezoPin': 2,
-        'startButtonPin': 0,
-        'reverse': 0,
-        // 'usbPort': 'COM3',
-        'title': 'MINI4WD CHRONO',
-        'tab': 'setup'
-    });
+/**
+ * Initializes configuration system
+ * Calls config-init handler in main process
+ * @returns {Promise<void>}
+ */
+const init = async () => {
+    try {
+        await window.electronAPI.configInit();
+    } catch (error) {
+        console.error('Error initializing configuration:', error);
+        throw error;
+    }
 };
 
-const reset = () => {
-    const backup_filepath = path.join(dir, 'settings.json.bak');
-    fs.copyFileSync(filepath, backup_filepath);
-    fs.unlinkSync(filepath);
-    init();
-    return backup_filepath;
+/**
+ * Resets configuration to defaults with backup
+ * @returns {Promise<string>} - Path to backup file
+ */
+const reset = async () => {
+    try {
+        return await window.electronAPI.configReset();
+    } catch (error) {
+        console.error('Error resetting configuration:', error);
+        throw error;
+    }
 };
 
-const set = (settingKey, settingValue) => {
-    globalConf.set(settingKey, settingValue);
-    globalConf.save();
+/**
+ * Sets a configuration value
+ * @param {string} settingKey - Setting key name
+ * @param {any} settingValue - Value to set
+ * @returns {Promise<void>}
+ */
+const set = async (settingKey, settingValue) => {
+    try {
+        await window.electronAPI.configSet(settingKey, settingValue);
+    } catch (error) {
+        console.error(`Error setting config ${settingKey}:`, error);
+        throw error;
+    }
 };
 
-const get = (settingKey) => {
-    globalConf.load();
-    return globalConf.get(settingKey);
+/**
+ * Gets a configuration value
+ * @param {settingKey} settingKey - Setting key name
+ * @returns {Promise<any>} - Setting value
+ */
+const get = async (settingKey) => {
+    try {
+        return await window.electronAPI.configGet(settingKey);
+    } catch (error) {
+        console.error(`Error getting config ${settingKey}:`, error);
+        throw error;
+    }
 };
 
-const del = (settingKey) => {
-    globalConf.clear(settingKey);
-    globalConf.save();
+/**
+ * Deletes a configuration value
+ * @param {string} settingKey - Setting key name
+ * @returns {Promise<void>}
+ */
+const del = async (settingKey) => {
+    try {
+        await window.electronAPI.configDel(settingKey);
+    } catch (error) {
+        console.error(`Error deleting config ${settingKey}:`, error);
+        throw error;
+    }
 };
 
 module.exports = {

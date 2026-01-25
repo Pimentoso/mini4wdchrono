@@ -79,23 +79,505 @@ function createWindow() {
 
 // IPC handlers for system operations
 const { ipcMain, dialog } = require('electron');
+const fs = require('fs');
+const fsp = fs.promises;
+const jsonfile = require('jsonfile');
+const path = require('path');
+const nconf = require('nconf');
 
-// Phase 2: File operations
-// Phase 2: Configuration
-// Phase 3: Hardware
-// Phase 4: Other system APIs
+// ===== PHASE 2: FILE SYSTEM OPERATIONS =====
 
-// Placeholder: These handlers will be implemented in phases 2-4
-// For now, just log that they're being called
-ipcMain.handle('fs-ensure-dir', (event, dirPath) => {
-    console.log('[IPC] fs-ensure-dir:', dirPath);
-    return Promise.resolve();
+/**
+ * Ensures a directory exists, creating it recursively if needed
+ * @param {string} dirPath - Absolute path to directory
+ * @returns {Promise<string>} - The directory path
+ */
+ipcMain.handle('fs-ensure-dir', async (event, dirPath) => {
+    try {
+        await fsp.mkdir(dirPath, { recursive: true });
+        return dirPath;
+    } catch (error) {
+        console.error('[IPC] fs-ensure-dir error:', error);
+        throw error;
+    }
 });
 
-ipcMain.handle('config-load', (event) => {
-    console.log('[IPC] config-load');
-    return Promise.resolve({});
+/**
+ * Writes data to a JSON file
+ * @param {string} filePath - Absolute path to file
+ * @param {object} data - Data to write
+ * @returns {Promise<void>}
+ */
+ipcMain.handle('fs-write-file', async (event, filePath, data) => {
+    try {
+        // Ensure parent directory exists
+        const dir = path.dirname(filePath);
+        await fsp.mkdir(dir, { recursive: true });
+        // Write file using jsonfile for consistency
+        await jsonfile.writeFile(filePath, data, { spaces: 2 });
+    } catch (error) {
+        console.error('[IPC] fs-write-file error:', error);
+        throw error;
+    }
 });
+
+/**
+ * Reads a JSON file
+ * @param {string} filePath - Absolute path to file
+ * @returns {Promise<object>} - File contents
+ */
+ipcMain.handle('fs-read-file', async (event, filePath) => {
+    try {
+        return await jsonfile.readFile(filePath);
+    } catch (error) {
+        console.error('[IPC] fs-read-file error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Deletes a file
+ * @param {string} filePath - Absolute path to file
+ * @returns {Promise<void>}
+ */
+ipcMain.handle('fs-delete-file', async (event, filePath) => {
+    try {
+        await fsp.unlink(filePath);
+    } catch (error) {
+        console.error('[IPC] fs-delete-file error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Lists files in a directory
+ * @param {string} dirPath - Absolute path to directory
+ * @param {string} extension - Optional extension filter (e.g., '.json')
+ * @returns {Promise<Array>} - Array of filenames
+ */
+ipcMain.handle('fs-list-files', async (event, dirPath, extension) => {
+    try {
+        let files = await fsp.readdir(dirPath);
+        if (extension) {
+            files = files.filter(f => path.extname(f) === extension);
+        }
+        return files;
+    } catch (error) {
+        console.error('[IPC] fs-list-files error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Checks if a file exists
+ * @param {string} filePath - Absolute path to file
+ * @returns {Promise<boolean>}
+ */
+ipcMain.handle('fs-file-exists', async (event, filePath) => {
+    try {
+        await fsp.access(filePath);
+        return true;
+    } catch {
+        return false;
+    }
+});
+
+// ===== PHASE 2: CONFIGURATION OPERATIONS =====
+
+// Global nconf instance for settings
+let globalConf = null;
+
+/**
+ * Initializes nconf with settings file
+ * @returns {Promise<void>}
+ */
+ipcMain.handle('config-init', async (event) => {
+    try {
+        const configDir = app.getPath('userData');
+        const configPath = path.join(configDir, 'settings.json');
+        
+        // Ensure directory exists
+        await fsp.mkdir(configDir, { recursive: true });
+        
+        globalConf = nconf.file('global', { file: configPath });
+        
+        globalConf.defaults({
+            'ledAnimation': 0,
+            'ledType': 0,
+            'sensorPin1': 6,
+            'sensorPin2': 7,
+            'sensorPin3': 8,
+            'ledPin1': 3,
+            'ledPin2': 4,
+            'ledPin3': 5,
+            'piezoPin': 2,
+            'startButtonPin': 0,
+            'reverse': 0,
+            'title': 'MINI4WD CHRONO',
+            'tab': 'setup'
+        });
+    } catch (error) {
+        console.error('[IPC] config-init error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Gets a configuration value
+ * @param {string} key - Configuration key
+ * @returns {Promise<any>} - Configuration value
+ */
+ipcMain.handle('config-get', async (event, key) => {
+    try {
+        if (!globalConf) {
+            await ipcMain.emit('config-init');
+        }
+        globalConf.load();
+        return globalConf.get(key);
+    } catch (error) {
+        console.error('[IPC] config-get error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Sets a configuration value
+ * @param {string} key - Configuration key
+ * @param {any} value - Configuration value
+ * @returns {Promise<void>}
+ */
+ipcMain.handle('config-set', async (event, key, value) => {
+    try {
+        if (!globalConf) {
+            await ipcMain.emit('config-init');
+        }
+        globalConf.set(key, value);
+        globalConf.save();
+    } catch (error) {
+        console.error('[IPC] config-set error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Deletes a configuration value
+ * @param {string} key - Configuration key
+ * @returns {Promise<void>}
+ */
+ipcMain.handle('config-del', async (event, key) => {
+    try {
+        if (!globalConf) {
+            await ipcMain.emit('config-init');
+        }
+        globalConf.clear(key);
+        globalConf.save();
+    } catch (error) {
+        console.error('[IPC] config-del error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Resets configuration to defaults (with backup)
+ * @returns {Promise<string>} - Path to backup file
+ */
+ipcMain.handle('config-reset', async (event) => {
+    try {
+        const configDir = app.getPath('userData');
+        const configPath = path.join(configDir, 'settings.json');
+        const backupPath = path.join(configDir, 'settings.json.bak');
+        
+        // Backup current settings
+        if (await new Promise(resolve => {
+            fsp.access(configPath).then(() => resolve(true)).catch(() => resolve(false));
+        })) {
+            await fsp.copyFile(configPath, backupPath);
+        }
+        
+        // Delete current and reinit
+        try {
+            await fsp.unlink(configPath);
+        } catch {
+            // File may not exist, that's ok
+        }
+        
+        globalConf = null; // Reset global instance
+        await ipcMain.emit('config-init');
+        
+        return backupPath;
+    } catch (error) {
+        console.error('[IPC] config-reset error:', error);
+        throw error;
+    }
+});
+
+// ===== PHASE 2: STORAGE OPERATIONS (Race Data) =====
+
+// Global electron-settings instance for race data
+let raceStorage = null;
+let currentRaceFile = null;
+
+/**
+ * Loads a race file into storage
+ * @param {string} filename - Race filename (e.g., '1234567890.json')
+ * @returns {Promise<void>}
+ */
+ipcMain.handle('storage-load-race', async (event, filename) => {
+    try {
+        const userdir = app.getPath('userData');
+        const raceDir = path.join(userdir, 'races');
+        
+        // Ensure races directory exists
+        await fsp.mkdir(raceDir, { recursive: true });
+        
+        const raceFilePath = path.join(raceDir, filename);
+        
+        // Check if file exists
+        const exists = await new Promise(resolve => {
+            fsp.access(raceFilePath).then(() => resolve(true)).catch(() => resolve(false));
+        });
+        
+        if (!exists) {
+            throw new Error(`Race file not found: ${filename}`);
+        }
+        
+        // Load race data using require() for synchronous access (matches original behavior)
+        // OR read from JSON - we'll use fs for consistency
+        const raceData = await jsonfile.readFile(raceFilePath);
+        currentRaceFile = raceFilePath;
+        
+        // Store in memory for fast access (matches original electron-settings behavior)
+        raceStorage = raceData;
+        
+        // Update config with current race file
+        if (globalConf) {
+            globalConf.set('raceFile', filename);
+            globalConf.save();
+        }
+    } catch (error) {
+        console.error('[IPC] storage-load-race error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Creates a new race
+ * @param {string} raceName - Name of the race
+ * @returns {Promise<string>} - Filename of created race
+ */
+ipcMain.handle('storage-new-race', async (event, raceName) => {
+    try {
+        const userdir = app.getPath('userData');
+        const raceDir = path.join(userdir, 'races');
+        
+        // Ensure races directory exists
+        await fsp.mkdir(raceDir, { recursive: true });
+        
+        const timestamp = parseInt(new Date().getTime() / 1000);
+        const filename = `${timestamp}.json`;
+        const filePath = path.join(raceDir, filename);
+        
+        // Create initial race data
+        const raceData = {
+            name: raceName,
+            created: timestamp,
+            currManche: 0,
+            currRound: 0,
+            raceMode: 0,
+            timeThreshold: 40,
+            speedThreshold: 5,
+            startDelay: 3,
+            roundLaps: 3
+        };
+        
+        // Write race file
+        await jsonfile.writeFile(filePath, raceData, { spaces: 2 });
+        
+        // Load into storage
+        raceStorage = raceData;
+        currentRaceFile = filePath;
+        
+        // Update config
+        if (globalConf) {
+            globalConf.set('raceFile', filename);
+            globalConf.save();
+        }
+        
+        return filename;
+    } catch (error) {
+        console.error('[IPC] storage-new-race error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Sets a storage value
+ * @param {string} key - Key path (e.g., 'race.m0.r0')
+ * @param {any} value - Value to set
+ * @returns {Promise<void>}
+ */
+ipcMain.handle('storage-set', async (event, key, value) => {
+    try {
+        if (!raceStorage) {
+            raceStorage = {};
+        }
+        
+        // Handle nested keys like 'race.m0.r0'
+        const keys = key.split('.');
+        let current = raceStorage;
+        
+        for (let i = 0; i < keys.length - 1; i++) {
+            if (!current[keys[i]]) {
+                current[keys[i]] = {};
+            }
+            current = current[keys[i]];
+        }
+        
+        current[keys[keys.length - 1]] = value;
+        
+        // Persist to disk
+        if (currentRaceFile) {
+            await jsonfile.writeFile(currentRaceFile, raceStorage, { spaces: 2 });
+        }
+    } catch (error) {
+        console.error('[IPC] storage-set error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Gets a storage value
+ * @param {string} key - Key path (e.g., 'race.m0.r0')
+ * @returns {Promise<any>} - Value or null if not found
+ */
+ipcMain.handle('storage-get', async (event, key) => {
+    try {
+        if (!raceStorage) {
+            return null;
+        }
+        
+        // Handle nested keys
+        const keys = key.split('.');
+        let current = raceStorage;
+        
+        for (let i = 0; i < keys.length; i++) {
+            current = current[keys[i]];
+            if (current === undefined || current === null) {
+                return null;
+            }
+        }
+        
+        return current;
+    } catch (error) {
+        console.error('[IPC] storage-get error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Removes a storage value
+ * @param {string} key - Key path
+ * @returns {Promise<void>}
+ */
+ipcMain.handle('storage-remove', async (event, key) => {
+    try {
+        if (!raceStorage) {
+            return;
+        }
+        
+        const keys = key.split('.');
+        let current = raceStorage;
+        
+        for (let i = 0; i < keys.length - 1; i++) {
+            current = current[keys[i]];
+            if (!current) return;
+        }
+        
+        delete current[keys[keys.length - 1]];
+        
+        // Persist to disk
+        if (currentRaceFile) {
+            await jsonfile.writeFile(currentRaceFile, raceStorage, { spaces: 2 });
+        }
+    } catch (error) {
+        console.error('[IPC] storage-remove error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Lists recent race files
+ * @param {number} num - Number of recent files to return
+ * @returns {Promise<Array>} - Array of race metadata objects
+ */
+ipcMain.handle('storage-list-races', async (event, num) => {
+    try {
+        num = num || 10;
+        const userdir = app.getPath('userData');
+        const raceDir = path.join(userdir, 'races');
+        
+        // Ensure directory exists
+        await fsp.mkdir(raceDir, { recursive: true });
+        
+        let files = await fsp.readdir(raceDir);
+        files = files.filter(f => path.extname(f) === '.json');
+        
+        const recent = [];
+        
+        for (const filename of files) {
+            try {
+                const filePath = path.join(raceDir, filename);
+                const data = await jsonfile.readFile(filePath);
+                if (data) {
+                    recent.push({
+                        filename: filename,
+                        name: data.name,
+                        created: data.created
+                    });
+                }
+            } catch (err) {
+                console.warn(`[IPC] Could not read race file ${filename}:`, err);
+            }
+        }
+        
+        // Sort by created date descending
+        recent.sort((a, b) => b.created - a.created);
+        
+        return recent.slice(0, num);
+    } catch (error) {
+        console.error('[IPC] storage-list-races error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Deletes a race file
+ * @param {string} filename - Filename to delete
+ * @returns {Promise<void>}
+ */
+ipcMain.handle('storage-delete-race', async (event, filename) => {
+    try {
+        const userdir = app.getPath('userData');
+        const filePath = path.join(userdir, 'races', filename);
+        
+        await fsp.unlink(filePath);
+        
+        // Clear storage if this was the current race
+        if (currentRaceFile === filePath) {
+            raceStorage = null;
+            currentRaceFile = null;
+            if (globalConf) {
+                globalConf.del('raceFile');
+                globalConf.save();
+            }
+        }
+    } catch (error) {
+        console.error('[IPC] storage-delete-race error:', error);
+        throw error;
+    }
+});
+
+// ===== EXISTING HANDLERS (from Phase 1) =====
 
 ipcMain.handle('get-app-version', (event) => {
     return app.getVersion();

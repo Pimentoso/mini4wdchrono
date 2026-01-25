@@ -17,19 +17,29 @@ contextBridge.exposeInMainWorld('electronAPI', {
     showSaveDialog: (options) => ipcRenderer.invoke('show-save-dialog', options),
     showMessageBox: (options) => ipcRenderer.invoke('show-message-box', options),
     
-    // File operations (storage)
+    // File System Operations
     ensureDir: (dirPath) => ipcRenderer.invoke('fs-ensure-dir', dirPath),
     writeFile: (filePath, data) => ipcRenderer.invoke('fs-write-file', filePath, data),
     readFile: (filePath) => ipcRenderer.invoke('fs-read-file', filePath),
     deleteFile: (filePath) => ipcRenderer.invoke('fs-delete-file', filePath),
-    listRaces: () => ipcRenderer.invoke('fs-list-races'),
+    listFiles: (dirPath, extension) => ipcRenderer.invoke('fs-list-files', dirPath, extension),
+    fileExists: (filePath) => ipcRenderer.invoke('fs-file-exists', filePath),
     
-    // Configuration
-    configLoad: () => ipcRenderer.invoke('config-load'),
-    configSave: (data) => ipcRenderer.invoke('config-save', data),
-    configReset: () => ipcRenderer.invoke('config-reset'),
+    // Configuration Operations
+    configInit: () => ipcRenderer.invoke('config-init'),
     configGet: (key) => ipcRenderer.invoke('config-get', key),
     configSet: (key, value) => ipcRenderer.invoke('config-set', key, value),
+    configDel: (key) => ipcRenderer.invoke('config-del', key),
+    configReset: () => ipcRenderer.invoke('config-reset'),
+    
+    // Storage Operations (Race Data)
+    storageNewRace: (raceName) => ipcRenderer.invoke('storage-new-race', raceName),
+    storageLoadRace: (filename) => ipcRenderer.invoke('storage-load-race', filename),
+    storageDeleteRace: (filename) => ipcRenderer.invoke('storage-delete-race', filename),
+    storageListRaces: (num) => ipcRenderer.invoke('storage-list-races', num),
+    storageSet: (key, value) => ipcRenderer.invoke('storage-set', key, value),
+    storageGet: (key) => ipcRenderer.invoke('storage-get', key),
+    storageRemove: (key) => ipcRenderer.invoke('storage-remove', key),
     
     // App info
     getAppVersion: () => ipcRenderer.invoke('get-app-version'),
