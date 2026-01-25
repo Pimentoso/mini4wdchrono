@@ -1,18 +1,14 @@
-// Preload script for context isolation
-// This script bridges the gap between the isolated renderer process and main process via IPC
-
+// Preload script - with contextIsolation: false, we can directly modify window
 'use strict';
 
-const { contextBridge, ipcRenderer } = require('electron');
+const { ipcRenderer } = require('electron');
 
-// Expose require to the renderer (works because preload has node access)
-contextBridge.exposeInMainWorld('require', require);
-
-// With nodeIntegration:true, the preload script has access to require
-// We expose it to the renderer through contextBridge
+// With contextIsolation: false, we can directly set window properties
+// No need for contextBridge - just set window properties directly
+window.nodeRequire = require;
 
 // Safe API exposed to renderer process
-contextBridge.exposeInMainWorld('electronAPI', {
+window.electronAPI = {
     // Window controls
     maximizeWindow: () => ipcRenderer.invoke('window-maximize'),
     minimizeWindow: () => ipcRenderer.invoke('window-minimize'),
@@ -73,11 +69,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     
     // Export
     writeExcel: (filePath, workbook) => ipcRenderer.invoke('fs-write-excel', filePath, workbook),
-});
+};
 
 // Expose a logging function
-contextBridge.exposeInMainWorld('logger', {
+window.logger = {
     info: (message) => ipcRenderer.send('log-info', message),
     warn: (message) => ipcRenderer.send('log-warn', message),
     error: (message) => ipcRenderer.send('log-error', message),
-});
+};

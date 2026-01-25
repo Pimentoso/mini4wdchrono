@@ -5,7 +5,7 @@ const strftime = require('strftime');
 const utils = require('./utils');
 const i18n = new (require('../i18n/i18n'))();
 const configuration = require('./configuration');
-configuration.init();
+// configuration.init() is now called in main.js during async initialization
 const storage = require('./storage');
 
 const boardConnected = () => {

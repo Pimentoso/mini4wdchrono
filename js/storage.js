@@ -54,6 +54,11 @@ const getCached = (key) => {
  */
 const initAsync = async () => {
     try {
+        // Check if electronAPI is available
+        if (!window.electronAPI) {
+            throw new Error('window.electronAPI is not available. Preload script may not have run.');
+        }
+        
         // Initialize main process config
         await window.electronAPI.configInit();
         

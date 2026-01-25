@@ -21,7 +21,7 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         webPreferences: {
             nodeIntegration: true,
-            contextIsolation: true,
+            contextIsolation: false,
             enableRemoteModule: false,
             preload: path.join(__dirname, 'preload.js')
         }
@@ -81,7 +81,6 @@ function createWindow() {
 const { ipcMain, dialog } = require('electron');
 const fs = require('fs');
 const fsp = fs.promises;
-const jsonfile = require('jsonfile');
 const nconf = require('nconf');
 
 // ===== PHASE 2: FILE SYSTEM OPERATIONS =====
@@ -112,8 +111,8 @@ ipcMain.handle('fs-write-file', async (event, filePath, data) => {
         // Ensure parent directory exists
         const dir = path.dirname(filePath);
         await fsp.mkdir(dir, { recursive: true });
-        // Write file using jsonfile for consistency
-        await jsonfile.writeFile(filePath, data, { spaces: 2 });
+        // Write file with formatted JSON
+        await fsp.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8');
     } catch (error) {
         console.error('[IPC] fs-write-file error:', error);
         throw error;
@@ -127,7 +126,8 @@ ipcMain.handle('fs-write-file', async (event, filePath, data) => {
  */
 ipcMain.handle('fs-read-file', async (event, filePath) => {
     try {
-        return await jsonfile.readFile(filePath);
+        const content = await fsp.readFile(filePath, 'utf8');
+        return JSON.parse(content);
     } catch (error) {
         console.error('[IPC] fs-read-file error:', error);
         throw error;
@@ -340,9 +340,9 @@ ipcMain.handle('storage-load-race', async (event, filename) => {
             throw new Error(`Race file not found: ${filename}`);
         }
         
-        // Load race data using require() for synchronous access (matches original behavior)
-        // OR read from JSON - we'll use fs for consistency
-        const raceData = await jsonfile.readFile(raceFilePath);
+        // Load race data
+        const content = await fsp.readFile(raceFilePath, 'utf8');
+        const raceData = JSON.parse(content);
         currentRaceFile = raceFilePath;
         
         // Store in memory for fast access (matches original electron-settings behavior)
@@ -390,7 +390,7 @@ ipcMain.handle('storage-new-race', async (event, raceName) => {
         };
         
         // Write race file
-        await jsonfile.writeFile(filePath, raceData, { spaces: 2 });
+        await fsp.writeFile(filePath, JSON.stringify(raceData, null, 2), 'utf8');
         
         // Load into storage
         raceStorage = raceData;
@@ -436,7 +436,7 @@ ipcMain.handle('storage-set', async (event, key, value) => {
         
         // Persist to disk
         if (currentRaceFile) {
-            await jsonfile.writeFile(currentRaceFile, raceStorage, { spaces: 2 });
+            await fsp.writeFile(currentRaceFile, JSON.stringify(raceStorage, null, 2), 'utf8');
         }
     } catch (error) {
         console.error('[IPC] storage-set error:', error);
@@ -496,7 +496,7 @@ ipcMain.handle('storage-remove', async (event, key) => {
         
         // Persist to disk
         if (currentRaceFile) {
-            await jsonfile.writeFile(currentRaceFile, raceStorage, { spaces: 2 });
+            await fsp.writeFile(currentRaceFile, JSON.stringify(raceStorage, null, 2), 'utf8');
         }
     } catch (error) {
         console.error('[IPC] storage-remove error:', error);
@@ -526,7 +526,8 @@ ipcMain.handle('storage-list-races', async (event, num) => {
         for (const filename of files) {
             try {
                 const filePath = path.join(raceDir, filename);
-                const data = await jsonfile.readFile(filePath);
+                const content = await fsp.readFile(filePath, 'utf8');
+                const data = JSON.parse(content);
                 if (data) {
                     recent.push({
                         filename: filename,

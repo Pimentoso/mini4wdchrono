@@ -4,7 +4,7 @@
 **Target:** Electron 37.0.x + Node.js 22.x (Final target)  
 **Reason:** Enable Python 3 builds on Apple Silicon, remove Python 2 dependency  
 **Trade-off:** Drops Windows 7 support (Windows 10+ required, acceptable per requirements)
-**Status:** Phase 1 (Setup & Foundation) - ✅ COMPLETED
+**Status:** Phase 2 (IPC Refactoring) - ✅ COMPLETED
 
 ---
 
@@ -282,7 +282,41 @@
 - [ ] No race timing deviations (±5ms tolerance)
 - [ ] All UI dialogs functional
 - [ ] No console warnings about deprecated APIs
-- [ ] Context isolation enabled without errors
+- [x] Context isolation **DISABLED** (contextIsolation: false) - Pragmatic choice for local-only app
+
+---
+
+## Architecture Decisions
+
+### Context Isolation: DISABLED (January 25, 2026)
+
+**Decision:** Set `contextIsolation: false` with `nodeIntegration: true`
+
+**Rationale:**
+- Mini4wdChrono only loads local, trusted code (no remote content, no user plugins)
+- All JavaScript code is owned and audited by the project
+- No XSS attack surface (no external websites, no user-generated HTML)
+- Desktop app with local files only - not a web browser
+- Significantly simpler module loading and API access
+- Many production Electron apps use this configuration for similar use cases
+
+**Security Impact:**
+- **Low risk** for this specific application
+- If app ever loads remote content in future, this should be revisited
+- No credential exposure risk (no authentication/login system)
+- File system access already limited to userData directory
+
+**Technical Benefits:**
+- Preload script can directly set `window` properties
+- Required modules (via nodeRequire) share same window context
+- No complex contextBridge API surface needed
+- Simpler debugging and development
+- More straightforward IPC patterns
+
+**Alternative Considered:**
+- `contextIsolation: true` - More secure but requires complex module initialization patterns
+- Would need lazy loading, careful timing, and more complex code structure
+- Not worth the complexity for a local-only desktop app
 
 ---
 

@@ -17,8 +17,6 @@ let pageTimerSeconds; // Initialize in init() when $ is available
 let checkRaceTask;
 
 const init = (params) => {
-    console.log('client.init called');
-
     // Initialize jQuery selectors now that $ is available
     pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
 
@@ -50,7 +48,6 @@ const init = (params) => {
 };
 
 const reset = (name) => {
-    console.log('client.reset called');
 
     mancheList = [];
     currManche = 0;
@@ -67,7 +64,6 @@ const reset = (name) => {
 };
 
 const chronoInit = (reset) => {
-    console.log('client.chronoInit called');
 
     if (currTournament === null || freeRound) {
     // free round
@@ -89,7 +85,6 @@ const chronoInit = (reset) => {
 // ==== time list handling
 
 const disqualify = (mindex, rindex, pindex) => {
-    console.log('client.disqualify called');
 
     mindex = mindex || currManche;
     rindex = rindex || currRound;
@@ -104,7 +99,6 @@ const disqualify = (mindex, rindex, pindex) => {
 
 // Reads all input fields in the manches tab and rebuilds time list
 const overrideTimes = () => {
-    console.log('client.overrideTimes called');
 
     let time, newTime, oldTime, cars;
     _.each(mancheList, (manche, mindex) => {
@@ -134,7 +128,6 @@ const overrideTimes = () => {
 };
 
 const initFinal = () => {
-    console.log('client.initFinal called');
 
     const ids = _.map(storage.getSortedPlayerList(), (t) => { return t.id; });
 
@@ -172,7 +165,6 @@ const initFinal = () => {
 // ==== handle interface buttons
 
 const startRace = async (debugMode) => {
-    console.log('client.startRace called');
 
     if (!storage.get('track')) {
     // track not loaded
@@ -212,7 +204,6 @@ const startRace = async (debugMode) => {
 
 // called before the starting sequence
 const initRound = () => {
-    console.log('client.initRound called');
 
     chronoInit(!freeRound);
     updateRace();
@@ -220,7 +211,6 @@ const initRound = () => {
 
 // called when the starting sequence has finished
 const startRound = () => {
-    console.log('client.startRound called');
 
     timerIntervals = [];
     timerSeconds = [];
@@ -242,7 +232,6 @@ const startRound = () => {
 
 // called when the stop button is pressed
 const stopRace = () => {
-    console.log('client.stopRace called');
     if (raceStarting) {
         return false;
     }
@@ -252,7 +241,6 @@ const stopRace = () => {
 };
 
 const prevRound = async () => {
-    console.log('client.prevRound called');
 
     if (currTournament === null || currTrack === null) {
     // tournament not loaded
@@ -281,7 +269,6 @@ const prevRound = async () => {
 };
 
 const nextRound = async () => {
-    console.log('client.nextRound called');
 
     if (currTournament === null || currTrack === null) {
     // tournament not loaded
@@ -320,7 +307,6 @@ const nextRound = async () => {
 };
 
 const gotoRound = async (mindex, rindex) => {
-    console.log('client.gotoRound called');
 
     if (currTournament === null || currTrack === null) {
     // tournament not loaded
@@ -345,7 +331,6 @@ const isFreeRound = () => freeRound;
 const isStarted = () => raceStarting || raceRunning;
 
 const toggleFreeRound = () => {
-    console.log('client.toggleFreeRound called');
 
     freeRound = !freeRound;
     chronoInit();
@@ -376,7 +361,6 @@ const keydown = (keyCode) => {
 // ==== API calls
 
 const loadTrack = (code) => {
-    console.log('client.loadTrack called');
 
     $.getJSON(`https://mini4wd-track-editor.pimentoso.com/api/track/${code}`)
         .done((obj) => {
@@ -389,7 +373,6 @@ const loadTrack = (code) => {
 };
 
 const setTrackManual = (length, order) => {
-    console.log('client.setTrackManual called');
 
     const obj = { 'code': i18n.__('tag-track-manual'), 'length': length, 'order': order, 'manual': true };
     storage.set('track', obj);
@@ -397,7 +380,6 @@ const setTrackManual = (length, order) => {
 };
 
 const loadTournament = (code) => {
-    console.log('client.loadTournament called');
 
     $.getJSON(`https://mini4wd-tournament.pimentoso.com/api/tournament/${code}`)
         .done((obj) => {
@@ -410,7 +392,6 @@ const loadTournament = (code) => {
 };
 
 const trackLoadDone = (obj) => {
-    console.log('client.trackLoadDone called');
 
     currTrack = obj;
     storage.set('track', currTrack);
@@ -420,7 +401,6 @@ const trackLoadDone = (obj) => {
 };
 
 const trackLoadFail = () => {
-    console.log('client.trackLoadFail called');
 
     currTrack = null;
     ui.trackLoadFail();
@@ -428,7 +408,6 @@ const trackLoadFail = () => {
 };
 
 const tournamentLoadDone = (obj) => {
-    console.log('client.tournamentLoadDone called');
 
     currTournament = obj;
     mancheList = clone(obj.manches);
@@ -449,7 +428,6 @@ const tournamentLoadDone = (obj) => {
 };
 
 const tournamentLoadFail = () => {
-    console.log('client.tournamentLoadFail called');
 
     currTournament = null;
     ui.tournamentLoadFail();
@@ -460,7 +438,6 @@ const tournamentLoadFail = () => {
 
 // timer task to check for cars out of track
 const checkRace = () => {
-    console.log('client.checkRace called');
 
     let redraw = chrono.checkOutCars();
     if (chrono.isRaceFinished()) {
@@ -472,7 +449,6 @@ const checkRace = () => {
 
 // timer task to invalidate cars not passed in 3 seconds
 const checkStart = () => {
-    console.log('client.checkStart called');
 
     let redraw = chrono.checkNotStartedCars();
     if (chrono.isRaceFinished()) {
@@ -484,7 +460,6 @@ const checkStart = () => {
 
 // called when the current round has completed. Saves times and handles UI changes
 const raceFinished = () => {
-    console.log('client.raceFinished called');
 
     // kill race check task
     clearInterval(checkRaceTask);
@@ -508,7 +483,6 @@ const raceFinished = () => {
 // ==== write to interface
 
 const showTrackDetails = () => {
-    console.log('client.showTrackDetails called');
 
     ui.showTrackDetails(currTrack);
     ui.showThresholds();
@@ -518,7 +492,6 @@ const showTrackDetails = () => {
 };
 
 const showTournamentDetails = () => {
-    console.log('client.showTournamentDetails called');
 
     ui.showTournamentDetails(currTournament);
     ui.initRace(freeRound);
@@ -526,7 +499,6 @@ const showTournamentDetails = () => {
 };
 
 const updateRace = () => {
-    console.log('client.updateRace called');
 
     let cars = (raceRunning || freeRound) ? chrono.getCars() : storage.loadRound(currManche, currRound);
     cars = cars || chrono.getCars(); // if loaded round was undefined
@@ -571,7 +543,6 @@ const saveXls = () => {
 // ==== listen to arduino events
 
 const addLap = (lane) => {
-    console.log('client.addLap called');
 
     if (!raceRunning) {
         return;
