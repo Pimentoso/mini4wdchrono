@@ -8,11 +8,11 @@
     "electron-log": "^4.4.8",
     "electron-settings": "^4.0.2",
     "exceljs": "^4.3.0",
-    "johnny-five": "2.0.0",
+    "johnny-five": "^2.1.0",
     "jquery": "^3.6.0",
     "nconf": "^0.12.0",
     "node-pixel": "^0.11.0",
-    "serialport": "^10.4.0",
+    "serialport": "^13.0.0",
     "strftime": "^0.10.2",
     "underscore": "^1.13.6"
   },
@@ -47,5 +47,8 @@
   "directories": {
     "test": "test"
   },
-  "keywords": []
+  "keywords": [],
+  "overrides": {
+    "serialport": "^13.0.0"
+  }
 }
