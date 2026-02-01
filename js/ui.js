@@ -33,8 +33,8 @@ const gotoTab = (tab) => {
     $(`div[data-tab=${tab}]`).show();
 };
 
-const init = () => {
-    const title_text = _.compact([configuration.get('title'), storage.get('name')]).join(' - ');
+const init = async () => {
+    const title_text = _.compact([await configuration.get('title'), storage.get('name')]).join(' - ');
     $('#js-title').text(title_text);
 
     $('#js-race-name').text(storage.get('name') || i18n.__('label-untitled'));
@@ -46,20 +46,20 @@ const init = () => {
     showRaceModeDetails();
 
     $('.js-led-animation').removeClass('is-primary');
-    $(`#js-led-animation-${configuration.get('ledAnimation')}`).addClass('is-primary');
+    $(`#js-led-animation-${await configuration.get('ledAnimation')}`).addClass('is-primary');
     $('.js-led-type').removeClass('is-primary');
-    $(`#js-led-type-${configuration.get('ledType')}`).addClass('is-primary');
-    $('#js-config-reverse').prop('checked', configuration.get('reverse') > 0);
-    $('#js-config-sensor-pin-1').val(configuration.get('sensorPin1'));
-    $('#js-config-sensor-pin-2').val(configuration.get('sensorPin2'));
-    $('#js-config-sensor-pin-3').val(configuration.get('sensorPin3'));
-    $('#js-config-led-pin-1').val(configuration.get('ledPin1'));
-    $('#js-config-led-pin-2').val(configuration.get('ledPin2'));
-    $('#js-config-led-pin-3').val(configuration.get('ledPin3'));
-    $('#js-config-piezo-pin').val(configuration.get('piezoPin'));
-    $('#js-config-start-button-pin').val(configuration.get('startButtonPin'));
-    $('#js-config-title').val(configuration.get('title'));
-    $('#js-config-starting-tab').val(configuration.get('tab'));
+    $(`#js-led-type-${await configuration.get('ledType')}`).addClass('is-primary');
+    $('#js-config-reverse').prop('checked', (await configuration.get('reverse')) > 0);
+    $('#js-config-sensor-pin-1').val(await configuration.get('sensorPin1'));
+    $('#js-config-sensor-pin-2').val(await configuration.get('sensorPin2'));
+    $('#js-config-sensor-pin-3').val(await configuration.get('sensorPin3'));
+    $('#js-config-led-pin-1').val(await configuration.get('ledPin1'));
+    $('#js-config-led-pin-2').val(await configuration.get('ledPin2'));
+    $('#js-config-led-pin-3').val(await configuration.get('ledPin3'));
+    $('#js-config-piezo-pin').val(await configuration.get('piezoPin'));
+    $('#js-config-start-button-pin').val(await configuration.get('startButtonPin'));
+    $('#js-config-title').val(await configuration.get('title'));
+    $('#js-config-starting-tab').val(await configuration.get('tab'));
 
     $('#button-toggle-free-round').hide();
     $('#js-input-track-code').removeClass('is-danger');
@@ -80,7 +80,7 @@ const init = () => {
         disableRaceInput(true);
     }
 
-    window.electronAPI.hardwareListPorts().then(ports => {
+    window.electronAPI.hardwareListPorts().then(async ports => {
         ports.forEach(function (port) {
             $('#js-config-usb-port').append($('<option>', {
                 value: port.path,
@@ -88,11 +88,11 @@ const init = () => {
             }));
             console.log(port.path);
         });
-        $('#js-config-usb-port').val(configuration.get('usbPort'));
+        $('#js-config-usb-port').val(await configuration.get('usbPort'));
     });
 };
 
-const initModal = (modalId) => {
+const initModal = async (modalId) => {
     if (modalId === 'modal-new') {
         $('#modal-new-name').val('');
         $('#modal-new-name').focus();
@@ -101,8 +101,9 @@ const initModal = (modalId) => {
         $('#modal-open-files').empty();
         const data = storage.getRecentFiles(50);
         if (data.length) {
+            const currentRaceFile = await configuration.get('raceFile');
             data.forEach((race) => {
-                if (race.filename === configuration.get('raceFile')) {
+                if (race.filename === currentRaceFile) {
                     $('#modal-open-files').append(`
 					<tr>
 						<td style="width:165px;">${strftime('%Y-%m-%d, %H:%M', new Date(race.created * 1000))}</td>

@@ -84,26 +84,26 @@ async function initializeApplication() {
     // TODO: Will be refactored in Step 4
     if (debugMode) {
         const LedManagerMock = require('./js/led_managers/led_manager_mock');
-        ledManager = LedManagerMock.getInstance(null, configuration.get('piezoPin'));
+        ledManager = LedManagerMock.getInstance(null, await configuration.get('piezoPin'));
     }
-    else if (configuration.get('ledType') === 0) {
+    else if (await configuration.get('ledType') === 0) {
         const LedManagerLilypad = require('./js/led_managers/led_manager_lilypad');
         ledManager = LedManagerLilypad.getInstance(null, [
-            configuration.get('ledPin1'),
-            configuration.get('ledPin2'),
-            configuration.get('ledPin3')
+            await configuration.get('ledPin1'),
+            await configuration.get('ledPin2'),
+            await configuration.get('ledPin3')
         ],
-        configuration.get('piezoPin'),
-        configuration.get('reverse') > 0
+        await configuration.get('piezoPin'),
+        (await configuration.get('reverse')) > 0
         );
     }
-    else if (configuration.get('ledType') === 1) {
+    else if (await configuration.get('ledType') === 1) {
         const LedManagerRgbStrip = require('./js/led_managers/led_manager_rgb_strip');
         ledManager = LedManagerRgbStrip.getInstance(
             null,
-            configuration.get('ledPin1'),
-            configuration.get('piezoPin'),
-            configuration.get('reverse') > 0
+            await configuration.get('ledPin1'),
+            await configuration.get('piezoPin'),
+            (await configuration.get('reverse')) > 0
         );
     }
 
@@ -111,7 +111,7 @@ async function initializeApplication() {
     ui.translate();
 
     // init client
-    client.init({ led_manager: ledManager });
+    await client.init({ led_manager: ledManager });
 
     // show interface
     $('#main').show();
@@ -174,11 +174,11 @@ async function initializeApplication() {
             tag3 = $('#sensor-reading-3');
         
             // Get sensor pin configuration
-            sensorPin1 = configuration.get('sensorPin1');
-            sensorPin2 = configuration.get('sensorPin2');
-            sensorPin3 = configuration.get('sensorPin3');
+            sensorPin1 = await configuration.get('sensorPin1');
+            sensorPin2 = await configuration.get('sensorPin2');
+            sensorPin3 = await configuration.get('sensorPin3');
         
-            reverse = configuration.get('reverse') > 0;
+            reverse = (await configuration.get('reverse')) > 0;
             
             // Set up sensors in main process
             await window.electronAPI.hardwareSetupSensors({
@@ -189,16 +189,16 @@ async function initializeApplication() {
             
             // Set up LEDs in main process
             await window.electronAPI.hardwareSetupLeds({
-                ledType: configuration.get('ledType'),
-                ledPin1: configuration.get('ledPin1'),
-                ledPin2: configuration.get('ledPin2'),
-                ledPin3: configuration.get('ledPin3'),
-                reverse: configuration.get('reverse') > 0
+                ledType: await configuration.get('ledType'),
+                ledPin1: await configuration.get('ledPin1'),
+                ledPin2: await configuration.get('ledPin2'),
+                ledPin3: await configuration.get('ledPin3'),
+                reverse: (await configuration.get('reverse')) > 0
             });
             
             // Set up buzzer in main process
             await window.electronAPI.hardwareSetupBuzzer({
-                piezoPin: configuration.get('piezoPin')
+                piezoPin: await configuration.get('piezoPin')
             });
             
             log.info('Hardware components configured');
@@ -294,12 +294,12 @@ async function initializeApplication() {
     };
     
     // ui observers
-    $(document).on('click', '.js-load-race', (e) => {
+    $(document).on('click', '.js-load-race', async (e) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
         const filename = $this.data('filename');
         storage.loadRace(filename);
-        client.init({ led_manager: ledManager });
+        await client.init({ led_manager: ledManager });
         closeAllModals();
     });
     

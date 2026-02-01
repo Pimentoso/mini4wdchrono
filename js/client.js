@@ -16,13 +16,13 @@ let timerIntervals = [], timerSeconds = [];
 let pageTimerSeconds; // Initialize in init() when $ is available
 let checkRaceTask;
 
-const init = (params) => {
+const init = async (params) => {
     // Initialize jQuery selectors now that $ is available
     pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
 
     ledManager = params.led_manager;
-    ui.init();
-    ui.gotoTab(configuration.get('tab'));
+    await ui.init();
+    ui.gotoTab(await configuration.get('tab'));
 
     // init variables
     mancheList = [];
@@ -198,7 +198,7 @@ const startRace = async (debugMode) => {
         raceStarting = true;
         ui.raceStarted(freeRound);
         initRound();
-        ledManager.roundStart(configuration.get('ledAnimation'), startRound);
+        ledManager.roundStart(await configuration.get('ledAnimation'), startRound);
     }
 };
 
