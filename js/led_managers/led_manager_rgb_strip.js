@@ -1,6 +1,6 @@
 'use strict';
 
-const pixel = require('node-pixel');
+// Phase 3: No direct node-pixel - use IPC instead
 const LedManager = require('./led_manager');
 const utils = require('../utils');
 const storage = require('../storage');
@@ -18,6 +18,7 @@ const COLOR_TAMIYA_WHITE = '#f8f8f8';
 const COLOR_TAMIYA_BLUE = COLOR_BLUE;
 
 // Manager for a 9 LEDs WS2812b strip and a buzzer.
+// Phase 3: Uses IPC to control hardware in main process
 class LedManagerRgbStrip extends LedManager {
     constructor(board, pin, pinBuzzer, reverse) {
         super(board, pinBuzzer, reverse);
@@ -34,188 +35,212 @@ class LedManagerRgbStrip extends LedManager {
         return LedManagerRgbStrip.instance;
     }
 
-    connected() {
-        super.connected();
-
-        // board is connected, init hardware
-        this.strip = new pixel.Strip({
-            board: this.board,
-            controller: 'FIRMATA',
-            strips: [{ pin: this.pin, length: 9 }],
-            gamma: 2.8
-        });
-
-        // light animation
-        const manager = this;
-        this.strip.on('ready', function () {
-            manager.tamiyaSlide();
-        });
+    async connected() {
+        await super.connected();
+        
+        // Phase 3: LED strip is initialized in main process
+        // Simulate tamiya slide animation
+        await this.tamiyaSlide();
+        this.ready = true;
     }
 
-    disconnected() {
-        super.disconnected();
+    async disconnected() {
+        await super.disconnected();
         try {
-            this.strip.off();
+            await window.electronAPI.hardwareLedOff({});
         } catch (e) { 
             // Safely ignore errors when disconnecting hardware
-            // This can happen when the board is already disconnected
         }
     }
 
-    roundStart(animationType, startTimerCallback) {
+    async roundStart(animationType, startTimerCallback) {
         if (animationType === 0) {
             // full animation
-            this.beep(1500);
-            this.kitt(COLOR_BLUE);
-            this.countdown(2500);
-            this.greenLight(2500 + 3200 + super.greenDelay(), startTimerCallback);
+            await this.beep(1500);
+            await this.kitt(COLOR_BLUE);
+            await this.countdown(2500);
+            await this.greenLight(2500 + 3200 + super.greenDelay(), startTimerCallback);
         }
         else if (animationType === 1) {
             // countdown only
-            this.countdown(0);
-            this.greenLight(3200 + super.greenDelay(), startTimerCallback);
+            await this.countdown(0);
+            await this.greenLight(3200 + super.greenDelay(), startTimerCallback);
         }
         else {
             // no animations
-            this.greenLight(0, startTimerCallback);
+            await this.greenLight(0, startTimerCallback);
         }
     }
 
     roundFinish(cars) {
-    // color lanes based on positions
+        // color lanes based on positions
         const rLaps = storage.get('roundLaps');
         const finishCars = _.filter(cars, (c) => { return !c.outOfBounds && c.lapCount === rLaps + 1; });
-        utils.delay(() => {
-            _.each(finishCars, (c) => {
+        utils.delay(async () => {
+            for (const c of finishCars) {
+                let color;
                 if (c.position === 1) {
-                    this.colorLane(c.startLane, COLOR_POS1);
+                    color = COLOR_POS1;
+                } else if (c.position === 2) {
+                    color = COLOR_POS2;
+                } else if (c.position === 3) {
+                    color = COLOR_POS3;
                 }
-                else if (c.position === 2) {
-                    this.colorLane(c.startLane, COLOR_POS2);
+                if (color) {
+                    await this.colorLane(c.startLane, color);
                 }
-                else if (c.position === 3) {
-                    this.colorLane(c.startLane, COLOR_POS3);
-                }
-            });
+            }
         }, 1500);
     }
 
     lap(lane) {
-    // flash lane led for 1 sec
+        // flash lane led for 1 sec
         if (this.ready) {
             this.colorLane(lane, COLOR_GREEN);
-            utils.delay(() => {
-                this.clearLane(lane);
+            utils.delay(async () => {
+                await this.clearLane(lane);
             }, 1000);
         }
     }
 
-    colorLane(lane, color) {
+    async colorLane(lane, color) {
         lane = this.laneIndex(lane);
-        const start = lane * 3;
-        for (let i = start; i <= start + 2; i++) {
-            this.strip.pixel(i).color(color);
+        try {
+            await window.electronAPI.hardwareWriteLeds({
+                lane: lane,
+                color: color
+            });
+        } catch (error) {
+            console.warn('Failed to color lane:', error);
         }
-        this.strip.show();
     }
 
-    clearLane(lane) {
+    async clearLane(lane) {
         lane = this.laneIndex(lane);
-        const start = lane * 3;
-        for (let i = start; i <= start + 2; ++i) {
-            this.strip.pixel(i).off();
-        }
-        this.strip.show();
-    }
-
-    greenLight(delay, callback) {
-        const stripp = this.strip;
-        utils
-            .delay(() => { stripp.color(COLOR_GREEN); stripp.show(); this.beep(1000); callback(); }, delay)
-            .delay(() => { stripp.off(); }, storage.get('startDelay') * 1000);
-    }
-
-    countdown(delay) {
-        const stripp = this.strip;
-        if (this.reverse) {
-            utils
-                .delay(() => { stripp.pixel(8).color(COLOR_RED); stripp.show(); this.beep(200); }, delay)
-                .delay(() => { stripp.pixel(7).color(COLOR_RED); stripp.show(); }, 400)
-                .delay(() => { stripp.pixel(6).color(COLOR_RED); stripp.show(); }, 400)
-                .delay(() => { stripp.pixel(5).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
-                .delay(() => { stripp.pixel(4).color(COLOR_RED); stripp.show(); }, 400)
-                .delay(() => { stripp.pixel(3).color(COLOR_RED); stripp.show(); }, 400)
-                .delay(() => { stripp.pixel(2).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
-                .delay(() => { stripp.pixel(1).color(COLOR_RED); stripp.show(); }, 400)
-                .delay(() => { stripp.pixel(0).color(COLOR_RED); stripp.show(); }, 400);
-        }
-        else {
-            utils
-                .delay(() => { stripp.pixel(0).color(COLOR_RED); stripp.show(); this.beep(200); }, delay)
-                .delay(() => { stripp.pixel(1).color(COLOR_RED); stripp.show(); }, 400)
-                .delay(() => { stripp.pixel(2).color(COLOR_RED); stripp.show(); }, 400)
-                .delay(() => { stripp.pixel(3).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
-                .delay(() => { stripp.pixel(4).color(COLOR_RED); stripp.show(); }, 400)
-                .delay(() => { stripp.pixel(5).color(COLOR_RED); stripp.show(); }, 400)
-                .delay(() => { stripp.pixel(6).color(COLOR_RED); stripp.show(); this.beep(200); }, 400)
-                .delay(() => { stripp.pixel(7).color(COLOR_RED); stripp.show(); }, 400)
-                .delay(() => { stripp.pixel(8).color(COLOR_RED); stripp.show(); }, 400);
+        try {
+            await window.electronAPI.hardwareLedOff({
+                lane: lane
+            });
+        } catch (error) {
+            console.warn('Failed to clear lane:', error);
         }
     }
 
-    kitt(color) {
-        const stripp = this.strip;
-        let direction = 0, curr = 0, prev = -1;
-        const millis = 50;
-        const shift = setInterval(function () {
-            stripp.pixel(curr).color(color);
-            if (prev >= 0) {
-                stripp.pixel(prev).off();
-            }
-            stripp.show();
-
-            if (direction === 0) {
-                curr++; prev++;
-                if (curr > 8) {
-                    direction = 1;
-                    curr = 7;
+    async greenLight(delay, callback) {
+        try {
+            await utils.delayAsync(async () => {
+                // Turn all LEDs green
+                for (let i = 0; i < 9; i++) {
+                    await window.electronAPI.hardwareWriteLeds({
+                        pixelIndex: i,
+                        color: COLOR_GREEN,
+                        show: false
+                    });
                 }
-            }
-            else {
-                curr--; prev--;
-                if (curr < 0) {
-                    direction = 0;
-                    curr = 1;
-                }
-            }
-        }, millis);
-        utils
-            .delay(() => { clearInterval(shift); }, 1650)
-            .delay(() => { stripp.off(); }, millis);
+                await window.electronAPI.hardwareLedShow();
+                await this.beep(1000);
+                callback();
+            }, delay);
+            
+            await utils.delayAsync(async () => {
+                await window.electronAPI.hardwareLedOff({});
+            }, storage.get('startDelay') * 1000);
+        } catch (error) {
+            console.warn('Failed in greenLight:', error);
+        }
     }
 
-    tamiyaSlide() {
-        const manager = this;
-        const stripp = this.strip;
-        const millis = 100;
-        stripp.pixel(0).color(COLOR_TAMIYA_BLUE);
-        stripp.pixel(1).color(COLOR_TAMIYA_BLUE);
-        stripp.pixel(2).color(COLOR_TAMIYA_BLUE);
-        stripp.pixel(3).color(COLOR_TAMIYA_RED);
-        stripp.pixel(4).color(COLOR_TAMIYA_RED);
-        stripp.pixel(5).color(COLOR_TAMIYA_RED);
-        stripp.pixel(6).color(COLOR_TAMIYA_WHITE);
-        stripp.pixel(7).color(COLOR_TAMIYA_WHITE);
-        stripp.pixel(8).color(COLOR_TAMIYA_WHITE);
-        stripp.show();
+    async countdown(delay) {
+        try {
+            const pixels = this.reverse ? [8,7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7,8];
+            let currentDelay = delay;
+            
+            for (let i = 0; i < pixels.length; i++) {
+                await utils.delayAsync(async () => {
+                    await window.electronAPI.hardwareWriteLeds({
+                        pixelIndex: pixels[i],
+                        color: COLOR_RED
+                    });
+                    if (i % 3 === 0) {
+                        await this.beep(200);
+                    }
+                }, currentDelay);
+                currentDelay = 400;
+            }
+        } catch (error) {
+            console.warn('Failed in countdown:', error);
+        }
+    }
 
-        const shift = setInterval(function () {
-            stripp.shift(1, pixel.FORWARD, true);
-            stripp.show();
-        }, millis);
-        utils
-            .delay(() => { clearInterval(shift); }, 3000)
-            .delay(() => { stripp.off(); manager.ready = true; }, millis);
+    async kitt(color) {
+        try {
+            let direction = 0, curr = 0, prev = -1;
+            const millis = 50;
+            const iterations = Math.floor(1650 / millis);
+            
+            for (let i = 0; i < iterations; i++) {
+                await utils.delayAsync(async () => {
+                    await window.electronAPI.hardwareWriteLeds({
+                        pixelIndex: curr,
+                        color: color,
+                        show: false
+                    });
+                    if (prev >= 0) {
+                        await window.electronAPI.hardwareLedOff({
+                            pixelIndex: prev,
+                            show: false
+                        });
+                    }
+                    await window.electronAPI.hardwareLedShow();
+
+                    if (direction === 0) {
+                        curr++; prev++;
+                        if (curr > 8) {
+                            direction = 1;
+                            curr = 7;
+                        }
+                    } else {
+                        curr--; prev--;
+                        if (curr < 0) {
+                            direction = 0;
+                            curr = 1;
+                        }
+                    }
+                }, i * millis);
+            }
+            
+            await utils.delayAsync(async () => {
+                await window.electronAPI.hardwareLedOff({});
+            }, iterations * millis + millis);
+        } catch (error) {
+            console.warn('Failed in kitt:', error);
+        }
+    }
+
+    async tamiyaSlide() {
+        try {
+            const millis = 100;
+            
+            // Set initial colors
+            await window.electronAPI.hardwareWriteLeds({ pixelIndex: 0, color: COLOR_TAMIYA_BLUE, show: false });
+            await window.electronAPI.hardwareWriteLeds({ pixelIndex: 1, color: COLOR_TAMIYA_BLUE, show: false });
+            await window.electronAPI.hardwareWriteLeds({ pixelIndex: 2, color: COLOR_TAMIYA_BLUE, show: false });
+            await window.electronAPI.hardwareWriteLeds({ pixelIndex: 3, color: COLOR_TAMIYA_RED, show: false });
+            await window.electronAPI.hardwareWriteLeds({ pixelIndex: 4, color: COLOR_TAMIYA_RED, show: false });
+            await window.electronAPI.hardwareWriteLeds({ pixelIndex: 5, color: COLOR_TAMIYA_RED, show: false });
+            await window.electronAPI.hardwareWriteLeds({ pixelIndex: 6, color: COLOR_TAMIYA_WHITE, show: false });
+            await window.electronAPI.hardwareWriteLeds({ pixelIndex: 7, color: COLOR_TAMIYA_WHITE, show: false });
+            await window.electronAPI.hardwareWriteLeds({ pixelIndex: 8, color: COLOR_TAMIYA_WHITE, show: false });
+            await window.electronAPI.hardwareLedShow();
+
+            // Note: Full shift animation is complex to do via IPC
+            // For now, just show the Tamiya colors and fade out
+            await utils.delayAsync(async () => {
+                await window.electronAPI.hardwareLedOff({});
+            }, 3000);
+        } catch (error) {
+            console.warn('Failed in tamiyaSlide:', error);
+        }
     }
 }
 

@@ -1,6 +1,5 @@
 'use strict';
 
-const serialport = require('serialport');
 const strftime = require('strftime');
 const utils = require('./utils');
 const i18n = new (require('../i18n/i18n'))();
@@ -81,7 +80,7 @@ const init = () => {
         disableRaceInput(true);
     }
 
-    serialport.list().then(ports => {
+    window.electronAPI.hardwareListPorts().then(ports => {
         ports.forEach(function (port) {
             $('#js-config-usb-port').append($('<option>', {
                 value: port.path,

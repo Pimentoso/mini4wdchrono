@@ -1,6 +1,5 @@
 'use strict';
 
-const j5 = require('johnny-five');
 const LedManager = require('./led_manager');
 const utils = require('../utils');
 const storage = require('../storage');
@@ -22,73 +21,125 @@ class LedManagerLilypad extends LedManager {
         return LedManagerLilypad.instance;
     }
 
-    connected() {
-        super.connected();
+    async connected() {
+        await super.connected();
 
-        // board is connected, init hardware
-        this.led1 = new j5.Led({
-            board: this.board,
-            pin: this.pinLeds[0]
-        });
-        this.led2 = new j5.Led({
-            board: this.board,
-            pin: this.pinLeds[1]
-        });
-        this.led3 = new j5.Led({
-            board: this.board,
-            pin: this.pinLeds[2]
-        });
-        this.leds = [this.led1, this.led2, this.led3];
-
-        // blink all leds for 3 sec
-        this.led1.blink(125); this.led2.blink(125); this.led3.blink(125);
-        utils.delay(() => { this.led1.stop().off(); this.led2.stop().off(); this.led3.stop().off(); this.ready = true; }, 3000);
+        // board is connected, start blink animation
+        try {
+            // Blink all 3 LEDs for 3 seconds
+            await Promise.all(this.pinLeds.map(pin => 
+                window.electronAPI.hardwareSimpleLed({ pin, operation: 'blink', interval: 125 })
+            ));
+            
+            await utils.delayAsync(async () => {
+                // Stop blinking and turn off
+                await Promise.all(this.pinLeds.map(async pin => {
+                    await window.electronAPI.hardwareSimpleLed({ pin, operation: 'stop' });
+                    await window.electronAPI.hardwareSimpleLed({ pin, operation: 'off' });
+                }));
+                this.ready = true;
+            }, 3000);
+        } catch (error) {
+            console.warn('Failed in connected animation:', error);
+            this.ready = true;
+        }
     }
 
     disconnected() {
         super.disconnected();
+        // Cleanup happens in main process
+    }
+
+    async roundStart(animationType, startTimerCallback) {
         try {
-            this.led1.stop().off();
-            this.led2.stop().off();
-            this.led3.stop().off();
-        } catch (e) { 
-            // Safely ignore errors when disconnecting hardware
-            // This can happen when the board is already disconnected
+            // Turn on all LEDs and beep
+            await Promise.all(this.pinLeds.map(pin => 
+                window.electronAPI.hardwareSimpleLed({ pin, operation: 'on' })
+            ));
+            await this.beep(1500);
+            
+            // Turn off all
+            await utils.delayAsync(async () => {
+                await Promise.all(this.pinLeds.map(pin => 
+                    window.electronAPI.hardwareSimpleLed({ pin, operation: 'off' })
+                ));
+            }, 1500);
+            
+            // Countdown sequence: LED 1
+            await utils.delayAsync(async () => {
+                await window.electronAPI.hardwareSimpleLed({ pin: this.pinLeds[0], operation: 'on' });
+                await this.beep(500);
+            }, 1000);
+            
+            // LED 2
+            await utils.delayAsync(async () => {
+                await window.electronAPI.hardwareSimpleLed({ pin: this.pinLeds[0], operation: 'off' });
+                await window.electronAPI.hardwareSimpleLed({ pin: this.pinLeds[1], operation: 'on' });
+                await this.beep(500);
+            }, 1000);
+            
+            // LED 3
+            await utils.delayAsync(async () => {
+                await window.electronAPI.hardwareSimpleLed({ pin: this.pinLeds[1], operation: 'off' });
+                await window.electronAPI.hardwareSimpleLed({ pin: this.pinLeds[2], operation: 'on' });
+                await this.beep(500);
+            }, 1000);
+            
+            // Turn off LED 3
+            await utils.delayAsync(async () => {
+                await window.electronAPI.hardwareSimpleLed({ pin: this.pinLeds[2], operation: 'off' });
+            }, 1000);
+            
+            // Green light - all on, start timer
+            await utils.delayAsync(async () => {
+                await Promise.all(this.pinLeds.map(pin => 
+                    window.electronAPI.hardwareSimpleLed({ pin, operation: 'on' })
+                ));
+                await this.beep(1000);
+                startTimerCallback();
+            }, super.greenDelay());
+            
+            // Turn off after start delay
+            await utils.delayAsync(async () => {
+                await Promise.all(this.pinLeds.map(pin => 
+                    window.electronAPI.hardwareSimpleLed({ pin, operation: 'off' })
+                ));
+            }, storage.get('startDelay') * 1000);
+        } catch (error) {
+            console.warn('Failed in roundStart:', error);
         }
     }
 
-    roundStart(animationType, startTimerCallback) {
-        this.led1.on(); this.led2.on(); this.led3.on(); this.beep(1500);
-        utils
-            .delay(() => { this.led1.off(); this.led2.off(); this.led3.off(); }, 1500)
-            .delay(() => { this.led1.on(); this.beep(500); }, 1000)
-            .delay(() => { this.led1.off(); this.led2.on(); this.beep(500); }, 1000)
-            .delay(() => { this.led2.off(); this.led3.on(); this.beep(500); }, 1000)
-            .delay(() => { this.led3.off(); }, 1000)
-            .delay(() => { this.led1.on(); this.led2.on(); this.led3.on(); this.beep(1000); startTimerCallback(); }, super.greenDelay())
-            .delay(() => { this.led1.off(); this.led2.off(); this.led3.off(); }, storage.get('startDelay') * 1000);
-    }
-
-    roundFinish(cars) {
-    // turn on winner car led
+    async roundFinish(cars) {
+        // turn on winner car led
         const rLaps = storage.get('roundLaps');
         const finishCars = _.filter(cars, (c) => { return !c.outOfBounds && c.lapCount === rLaps + 1; });
-        utils.delay(() => {
-            _.each(finishCars, (c) => {
-                if (c.position === 1) {
-                    this.leds[this.laneIndex(c.startLane)].on();
+        await utils.delayAsync(async () => {
+            for (const car of finishCars) {
+                if (car.position === 1) {
+                    const laneIdx = this.laneIndex(car.startLane);
+                    await window.electronAPI.hardwareSimpleLed({ 
+                        pin: this.pinLeds[laneIdx], 
+                        operation: 'on' 
+                    });
                 }
-            });
+            }
         }, 1500);
     }
 
-    lap(lane) {
-    // flash lane led for 1 sec
+    async lap(lane) {
+        // flash lane led for 1 sec
         if (this.ready) {
-            lane = this.laneIndex(lane);
-            const led = this.leds[lane];
-            led.on();
-            utils.delay(() => { led.off(); }, 1000);
+            try {
+                const laneIdx = this.laneIndex(lane);
+                const pin = this.pinLeds[laneIdx];
+                await window.electronAPI.hardwareSimpleLed({ pin, operation: 'on' });
+                await utils.delayAsync(async () => {
+                    await window.electronAPI.hardwareSimpleLed({ pin, operation: 'off' });
+                }, 1000);
+            } catch (error) {
+                console.warn('Failed in lap:', error);
+            }
         }
     }
 }

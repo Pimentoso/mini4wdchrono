@@ -65,9 +65,22 @@ const delay = (fn, t) => {
     return self.delay(fn, t);
 };
 
+// Phase 3: Async version of delay for async/await patterns
+const delayAsync = (fn, t) => {
+    return new Promise((resolve) => {
+        setTimeout(async () => {
+            if (fn) {
+                await fn();
+            }
+            resolve();
+        }, t);
+    });
+};
+
 module.exports = {
     initLocale: initLocale,
     prettyTime: prettyTime,
     delay: delay,
+    delayAsync: delayAsync,
     safeTime: safeTime
 };

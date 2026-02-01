@@ -577,6 +577,464 @@ ipcMain.handle('storage-delete-race', async (event, filename) => {
     }
 });
 
+// ===== PHASE 3: HARDWARE OPERATIONS =====
+
+// Global hardware state
+let board = null;
+let sensors = { lane0: null, lane1: null, lane2: null };
+let ledManager = null;
+let buzzer = null;
+let isHardwareReady = false;
+
+/**
+ * Initializes Johnny-Five board and hardware components
+ * @param {object} options - Hardware configuration options
+ * @returns {Promise<object>} - Success status and message
+ */
+ipcMain.handle('hardware-initialize', async (event, options) => {
+    try {
+        // Lazy load johnny-five only when needed
+        const five = require('johnny-five');
+        
+        // Board initialization happens asynchronously
+        return new Promise((resolve, reject) => {
+            board = new five.Board({ repl: false });
+            
+            board.on('ready', () => {
+                try {
+                    console.log('[Hardware] Board ready');
+                    isHardwareReady = true;
+                    
+                    // Notify renderer that board is ready
+                    if (mainWindow) {
+                        mainWindow.webContents.send('hardware-board-ready');
+                    }
+                    
+                    resolve({ success: true, message: 'Hardware initialized' });
+                } catch (err) {
+                    reject(err);
+                }
+            });
+            
+            board.on('fail', (error) => {
+                console.error('[Hardware] Board failed:', error);
+                isHardwareReady = false;
+                if (mainWindow) {
+                    mainWindow.webContents.send('hardware-board-error', error.message);
+                }
+                reject(error);
+            });
+            
+            board.on('error', (error) => {
+                console.error('[Hardware] Board error:', error);
+                if (mainWindow) {
+                    mainWindow.webContents.send('hardware-board-error', error.message);
+                }
+            });
+            
+            board.on('close', () => {
+                console.log('[Hardware] Board closed');
+                isHardwareReady = false;
+                if (mainWindow) {
+                    mainWindow.webContents.send('hardware-board-closed');
+                }
+            });
+        });
+    } catch (error) {
+        console.error('[IPC] hardware-initialize error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Sets up sensors after board initialization
+ * @param {object} config - Sensor pin configuration
+ * @returns {Promise<object>} - Success status
+ */
+ipcMain.handle('hardware-setup-sensors', async (event, config) => {
+    try {
+        if (!board || !isHardwareReady) {
+            throw new Error('Board not ready');
+        }
+        
+        const five = require('johnny-five');
+        
+        // Set up sensors on specified pins
+        sensors.lane0 = new five.Sensor({
+            pin: config.sensorPin1 || 6,
+            freq: 25
+        });
+        
+        sensors.lane1 = new five.Sensor({
+            pin: config.sensorPin2 || 7,
+            freq: 25
+        });
+        
+        sensors.lane2 = new five.Sensor({
+            pin: config.sensorPin3 || 8,
+            freq: 25
+        });
+        
+        // Set up change listeners that send events to renderer
+        sensors.lane0.on('change', function() {
+            if (mainWindow) {
+                mainWindow.webContents.send('hardware-sensor-change', {
+                    lane: 0,
+                    value: this.value
+                });
+            }
+        });
+        
+        sensors.lane1.on('change', function() {
+            if (mainWindow) {
+                mainWindow.webContents.send('hardware-sensor-change', {
+                    lane: 1,
+                    value: this.value
+                });
+            }
+        });
+        
+        sensors.lane2.on('change', function() {
+            if (mainWindow) {
+                mainWindow.webContents.send('hardware-sensor-change', {
+                    lane: 2,
+                    value: this.value
+                });
+            }
+        });
+        
+        console.log('[Hardware] Sensors configured');
+        return { success: true };
+    } catch (error) {
+        console.error('[IPC] hardware-setup-sensors error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Sets up LED manager after board initialization
+ * @param {object} config - LED configuration
+ * @returns {Promise<object>} - Success status
+ */
+ipcMain.handle('hardware-setup-leds', async (event, config) => {
+    try {
+        if (!board || !isHardwareReady) {
+            throw new Error('Board not ready');
+        }
+        
+        const ledType = config.ledType || 0;
+        
+        // For RGB Strip (ledType 0), initialize node-pixel in main process
+        if (ledType === 0 || ledType === 1) {
+            const pixel = require('node-pixel');
+            
+            // Initialize the LED strip
+            return new Promise((resolve, reject) => {
+                try {
+                    ledManager = new pixel.Strip({
+                        board: board,
+                        controller: 'FIRMATA',
+                        strips: [{ pin: config.ledPin1 || 3, length: 9 }],
+                        gamma: 2.8
+                    });
+                    
+                    ledManager.on('ready', function() {
+                        console.log('[Hardware] LED strip ready');
+                        resolve({ success: true, ready: true });
+                    });
+                    
+                    ledManager.on('error', function(err) {
+                        console.error('[Hardware] LED strip error:', err);
+                        reject(err);
+                    });
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        } else {
+            // Mock mode - no hardware
+            console.log('[Hardware] LED manager configured (mock mode)');
+            return { success: true, ready: true };
+        }
+    } catch (error) {
+        console.error('[IPC] hardware-setup-leds error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Sets up buzzer after board initialization
+ * @param {object} config - Buzzer pin configuration
+ * @returns {Promise<object>} - Success status
+ */
+ipcMain.handle('hardware-setup-buzzer', async (event, config) => {
+    try {
+        if (!board || !isHardwareReady) {
+            throw new Error('Board not ready');
+        }
+        
+        const five = require('johnny-five');
+        
+        buzzer = new five.Piezo(config.piezoPin || 2);
+        
+        console.log('[Hardware] Buzzer configured');
+        return { success: true };
+    } catch (error) {
+        console.error('[IPC] hardware-setup-buzzer error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Reads current sensor values
+ * @returns {Promise<object>} - Sensor values for all lanes
+ */
+ipcMain.handle('hardware-read-sensors', async () => {
+    try {
+        if (!sensors.lane0 || !sensors.lane1 || !sensors.lane2) {
+            return { lane0: 0, lane1: 0, lane2: 0 };
+        }
+        
+        return {
+            lane0: sensors.lane0.value,
+            lane1: sensors.lane1.value,
+            lane2: sensors.lane2.value
+        };
+    } catch (error) {
+        console.error('[IPC] hardware-read-sensors error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Updates LED strip colors
+ * @param {object} laneData - LED data { lane, color } or { pixelIndex, color }
+ * @returns {Promise<void>}
+ */
+ipcMain.handle('hardware-write-leds', async (event, laneData) => {
+    try {
+        if (!ledManager) {
+            console.warn('[Hardware] LED manager not initialized');
+            return;
+        }
+        
+        // Support multiple formats
+        if (laneData.pixelIndex !== undefined) {
+            // Direct pixel control: { pixelIndex: 0-8, color: '#ff0000' or {r, g, b} }
+            const pixel = ledManager.pixel(laneData.pixelIndex);
+            if (pixel) {
+                pixel.color(laneData.color);
+            }
+        } else if (laneData.lane !== undefined) {
+            // Lane-based control: { lane: 0-2, color: '#ff0000' or {r, g, b} }
+            const start = laneData.lane * 3;
+            for (let i = start; i < start + 3; i++) {
+                ledManager.pixel(i).color(laneData.color);
+            }
+        }
+        
+        // Auto-show after setting colors
+        if (laneData.show !== false) {
+            ledManager.show();
+        }
+    } catch (error) {
+        console.error('[IPC] hardware-write-leds error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Shows the LED strip (applies queued changes)
+ * @returns {Promise<void>}
+ */
+ipcMain.handle('hardware-led-show', async () => {
+    try {
+        if (ledManager && ledManager.show) {
+            ledManager.show();
+        }
+    } catch (error) {
+        console.error('[IPC] hardware-led-show error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Turns off specific LED(s)
+ * @param {object} data - { pixelIndex } or { lane } or empty for all
+ * @returns {Promise<void>}
+ */
+ipcMain.handle('hardware-led-off', async (event, data = {}) => {
+    try {
+        if (!ledManager) {
+            console.warn('[Hardware] LED manager not initialized');
+            return;
+        }
+        
+        if (data.pixelIndex !== undefined) {
+            // Turn off specific pixel
+            ledManager.pixel(data.pixelIndex).off();
+        } else if (data.lane !== undefined) {
+            // Turn off specific lane
+            const start = data.lane * 3;
+            for (let i = start; i < start + 3; i++) {
+                ledManager.pixel(i).off();
+            }
+        } else {
+            // Turn off all
+            ledManager.off();
+        }
+        
+        if (data.show !== false) {
+            ledManager.show();
+        }
+    } catch (error) {
+        console.error('[IPC] hardware-led-off error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Plays a buzzer tone
+ * @param {number} duration - Duration in milliseconds
+ * @param {number} frequency - Optional frequency in Hz
+ * @returns {Promise<void>}
+ */
+ipcMain.handle('hardware-buzz', async (event, duration, frequency) => {
+    try {
+        if (!buzzer) {
+            console.warn('[Hardware] Buzzer not initialized');
+            return;
+        }
+        
+        if (frequency) {
+            buzzer.frequency(frequency, duration);
+        } else {
+            buzzer.tone(frequency || 2000, duration || 100);
+        }
+    } catch (error) {
+        console.error('[IPC] hardware-buzz error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Controls simple LED operations (for Lilypad manager)
+ * @param {Object} config
+ * @param {number} config.pin - LED pin number
+ * @param {string} config.operation - 'on', 'off', 'blink', 'stop'
+ * @param {number} config.interval - Blink interval in ms (optional)
+ * @returns {Promise<void>}
+ */
+ipcMain.handle('hardware-simple-led', async (event, config) => {
+    try {
+        const j5 = require('johnny-five');
+        
+        if (!board) {
+            throw new Error('Board not initialized');
+        }
+        
+        const { pin, operation, interval } = config;
+        
+        // Create or retrieve LED instance
+        if (!board._simpleLeds) {
+            board._simpleLeds = {};
+        }
+        
+        if (!board._simpleLeds[pin]) {
+            board._simpleLeds[pin] = new j5.Led({ board, pin });
+        }
+        
+        const led = board._simpleLeds[pin];
+        
+        switch (operation) {
+            case 'on':
+                led.on();
+                break;
+            case 'off':
+                led.off();
+                break;
+            case 'blink':
+                led.blink(interval || 500);
+                break;
+            case 'stop':
+                led.stop();
+                break;
+            default:
+                throw new Error(`Unknown LED operation: ${operation}`);
+        }
+    } catch (error) {
+        console.error('[IPC] hardware-simple-led error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Calls a method on the LED manager
+ * @param {string} method - Method name to call
+ * @param {Array} args - Arguments to pass
+ * @returns {Promise<any>} - Method return value
+ */
+ipcMain.handle('hardware-led-method', async (event, method, ...args) => {
+    try {
+        if (!ledManager) {
+            throw new Error('LED manager not initialized');
+        }
+        
+        if (typeof ledManager[method] !== 'function') {
+            throw new Error(`LED manager method '${method}' not found`);
+        }
+        
+        return await ledManager[method](...args);
+    } catch (error) {
+        console.error('[IPC] hardware-led-method error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Lists available serial ports
+ * @returns {Promise<Array>} - Array of port objects
+ */
+ipcMain.handle('hardware-list-ports', async () => {
+    try {
+        const { SerialPort } = require('serialport');
+        const ports = await SerialPort.list();
+        return ports;
+    } catch (error) {
+        console.error('[IPC] hardware-list-ports error:', error);
+        throw error;
+    }
+});
+
+/**
+ * Gets hardware readiness status
+ * @returns {Promise<boolean>}
+ */
+ipcMain.handle('hardware-is-ready', async () => {
+    return isHardwareReady;
+});
+
+/**
+ * Closes hardware connections
+ * @returns {Promise<void>}
+ */
+ipcMain.handle('hardware-close', async () => {
+    try {
+        if (board) {
+            board.close();
+            board = null;
+        }
+        sensors = { lane0: null, lane1: null, lane2: null };
+        ledManager = null;
+        buzzer = null;
+        isHardwareReady = false;
+        console.log('[Hardware] Closed');
+    } catch (error) {
+        console.error('[IPC] hardware-close error:', error);
+        throw error;
+    }
+});
+
 // ===== EXISTING HANDLERS (from Phase 1) =====
 
 ipcMain.handle('get-app-version', (_event) => {

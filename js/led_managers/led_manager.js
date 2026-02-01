@@ -1,11 +1,12 @@
 'use strict';
 
-const j5 = require('johnny-five');
+// Phase 3: No direct johnny-five in LED managers - use IPC instead
 const utils = require('../utils');
 const storage = require('../storage');
 
 class LedManager {
     constructor(board, pinBuzzer, reverse) {
+        // Phase 3: board can be null - we use IPC for hardware control
         this.board = board;
         this.pinBuzzer = pinBuzzer;
         this.reverse = reverse;
@@ -15,40 +16,38 @@ class LedManager {
         return this.pinBuzzer > 0;
     }
 
-    connected() {
+    async connected() {
         if (this.buzzerAvailable()) {
-            this.board.pinMode(this.pinBuzzer, j5.Pin.OUTPUT);
-            this.beep(100);
+            // Phase 3: Use IPC instead of direct board access
+            await this.beep(100);
         }
     }
 
-    disconnected() {
-        if (this.buzzerAvailable()) {
-            try {
-                this.board.digitalWrite(this.pinBuzzer, 0);
-            } catch (e) { 
-                // Safely ignore errors when disconnecting hardware
-                // This can happen when the board is already disconnected
-            }
-        }
+    async disconnected() {
+        // Phase 3: Hardware cleanup happens in main process
+        // Nothing to do here in renderer
     }
 
     roundStart(_animationType, _startTimerCallback) {
-        throw 'not implemented';
+        throw new Error('not implemented');
     }
 
     roundFinish(_cars) {
-        throw 'not implemented';
+        throw new Error('not implemented');
     }
 
     lap(_lane) {
-        throw 'not implemented';
+        throw new Error('not implemented');
     }
 
-    beep(millis) {
+    async beep(millis) {
         if (this.buzzerAvailable()) {
-            this.board.digitalWrite(this.pinBuzzer, 1);
-            utils.delay(() => { this.board.digitalWrite(this.pinBuzzer, 0); }, millis);
+            // Phase 3: Use IPC to control buzzer in main process
+            try {
+                await window.electronAPI.hardwareBuzz(millis);
+            } catch (error) {
+                console.warn('Failed to beep:', error);
+            }
         }
     }
 

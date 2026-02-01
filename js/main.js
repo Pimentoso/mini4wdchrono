@@ -14,7 +14,7 @@ window.electronAPI.getAppVersion().then(version => {
 });
 log.catchErrors();
 
-const j5 = require('johnny-five');
+// Phase 3: No direct johnny-five in renderer - use IPC instead
 const configuration = require('./js/configuration');
 const i18n = new (require('./i18n/i18n'));
 
@@ -72,28 +72,23 @@ async function initializeApplication() {
         window.electronAPI.openExternal(this.href);
     });
 
-    // Johnny-Five initialize
-    const board = new j5.Board({
-        port: configuration.get('usbPort'),
-        timeout: 1e5,
-        repl: false // does not work with browser console
-    });
+    // Phase 3: Hardware initialization via IPC
     let connected = false;
     let reverse;
     let ledManager;
-    let button1;
     let sensorPin1, sensorPin2, sensorPin3;
     let tag1, tag2, tag3;
     let val1 = 0, val2 = 0, val3 = 0;
 
-    // led manager instance
+    // LED manager instance - temporarily keep in renderer
+    // TODO: Will be refactored in Step 4
     if (debugMode) {
         const LedManagerMock = require('./js/led_managers/led_manager_mock');
-        ledManager = LedManagerMock.getInstance(board, configuration.get('piezoPin'));
+        ledManager = LedManagerMock.getInstance(null, configuration.get('piezoPin'));
     }
     else if (configuration.get('ledType') === 0) {
         const LedManagerLilypad = require('./js/led_managers/led_manager_lilypad');
-        ledManager = LedManagerLilypad.getInstance(board, [
+        ledManager = LedManagerLilypad.getInstance(null, [
             configuration.get('ledPin1'),
             configuration.get('ledPin2'),
             configuration.get('ledPin3')
@@ -105,7 +100,7 @@ async function initializeApplication() {
     else if (configuration.get('ledType') === 1) {
         const LedManagerRgbStrip = require('./js/led_managers/led_manager_rgb_strip');
         ledManager = LedManagerRgbStrip.getInstance(
-            board,
+            null,
             configuration.get('ledPin1'),
             configuration.get('piezoPin'),
             configuration.get('reverse') > 0
@@ -145,122 +140,119 @@ async function initializeApplication() {
         client.startRace(debugMode);
     };
     
-    const buttonPressed = () => {
-        client.isStarted() ? client.stopRace() : startRace();
-    };
+    // TODO: Re-implement start button via IPC in Phase 3
+    // const buttonPressed = () => {
+    //     client.isStarted() ? client.stopRace() : startRace();
+    // };
     
-    // board events
-    board.on('ready', function () {
-        connected = true;
-        log.info(`Board READY at ${new Date()}`);
-    
-        tag1 = $('#sensor-reading-1');
-        tag2 = $('#sensor-reading-2');
-        tag3 = $('#sensor-reading-3');
-    
-        // init start button if present
-        if (configuration.get('startButtonPin') > 0) {
-            button1 = new j5.Button(configuration.get('startButtonPin'));
-            button1.on('release', buttonPressed);
+    // Phase 3: Initialize hardware via IPC
+    try {
+        // Initialize board in main process
+        await window.electronAPI.hardwareInitialize();
+        log.info('Hardware initialization started');
+    } catch (error) {
+        log.error('Failed to initialize hardware:', error);
+        if (!debugMode) {
+            await window.electronAPI.showMessageBox({ 
+                type: 'error', 
+                title: 'Error', 
+                message: i18n.__('dialog-connection-error'), 
+                detail: error.message, 
+                buttons: ['Ok'] 
+            });
         }
+    }
     
-        // raw reading from digital pins because it's faster
-        sensorPin1 = configuration.get('sensorPin1');
-        sensorPin2 = configuration.get('sensorPin2');
-        sensorPin3 = configuration.get('sensorPin3');
+    // Listen for board ready event from main process
+    window.electronAPI.onBoardReady(async () => {
+        try {
+            connected = true;
+            log.info(`Board READY at ${new Date()}`);
+        
+            tag1 = $('#sensor-reading-1');
+            tag2 = $('#sensor-reading-2');
+            tag3 = $('#sensor-reading-3');
+        
+            // Get sensor pin configuration
+            sensorPin1 = configuration.get('sensorPin1');
+            sensorPin2 = configuration.get('sensorPin2');
+            sensorPin3 = configuration.get('sensorPin3');
+        
+            reverse = configuration.get('reverse') > 0;
+            
+            // Set up sensors in main process
+            await window.electronAPI.hardwareSetupSensors({
+                sensorPin1: sensorPin1,
+                sensorPin2: sensorPin2,
+                sensorPin3: sensorPin3
+            });
+            
+            // Set up LEDs in main process
+            await window.electronAPI.hardwareSetupLeds({
+                ledType: configuration.get('ledType'),
+                ledPin1: configuration.get('ledPin1'),
+                ledPin2: configuration.get('ledPin2'),
+                ledPin3: configuration.get('ledPin3'),
+                reverse: configuration.get('reverse') > 0
+            });
+            
+            // Set up buzzer in main process
+            await window.electronAPI.hardwareSetupBuzzer({
+                piezoPin: configuration.get('piezoPin')
+            });
+            
+            log.info('Hardware components configured');
+        
+            ledManager.connected();
+            ui.boardConnected();
+        } catch (error) {
+            log.error('Error during board ready setup:', error);
+        }
+    });
     
-        reverse = configuration.get('reverse') > 0;
-    
-        this.samplingInterval(1);
-        this.pinMode(sensorPin1, j5.Pin.INPUT);
-        this.pinMode(sensorPin2, j5.Pin.INPUT);
-        this.pinMode(sensorPin3, j5.Pin.INPUT);
-    
-        this.digitalRead(sensorPin1, function (val) {
-            tag1.text(val);
-            if (val === 0 && val1 === 1) {
+    // Listen for sensor changes from main process
+    window.electronAPI.onSensorChange((event, data) => {
+        const { lane, value } = data;
+        
+        if (lane === 0) {
+            tag1.text(value);
+            if (value === 0 && val1 === 1) {
                 reverse ? client.addLap(2) : client.addLap(0);
                 reverse ? ledManager.lap(2) : ledManager.lap(0);
             }
-            val1 = val;
-        });
-    
-        this.digitalRead(sensorPin2, function (val) {
-            tag2.text(val);
-            if (val === 0 && val2 === 1) {
+            val1 = value;
+        } else if (lane === 1) {
+            tag2.text(value);
+            if (value === 0 && val2 === 1) {
                 client.addLap(1);
                 ledManager.lap(1);
             }
-            val2 = val;
-        });
-    
-        this.digitalRead(sensorPin3, function (val) {
-            tag3.text(val);
-            if (val === 0 && val3 === 1) {
+            val2 = value;
+        } else if (lane === 2) {
+            tag3.text(value);
+            if (value === 0 && val3 === 1) {
                 reverse ? client.addLap(0) : client.addLap(2);
                 reverse ? ledManager.lap(0) : ledManager.lap(2);
             }
-            val3 = val;
-        });
-    
-        ledManager.connected();
-        ui.boardConnected();
-    });
-    
-    board.on('info', function (event) {
-        if (event) {
-            log.info(`Board INFO at ${new Date()} - ${event.message}`);
+            val3 = value;
         }
     });
     
-    board.on('warn', function (event) {
-        if (event) {
-            log.warn(`Board WARN at ${new Date()} - ${event.message}`);
-        }
-    });
-    
-    board.on('fail', async function (event) {
+    // Listen for board errors from main process
+    window.electronAPI.onBoardError(async (event, errorMessage) => {
         connected = false;
         ledManager.disconnected();
-        ui.boardDisonnected();
+        ui.boardDisconnected();
     
-        if (event) {
-            log.error(`Board FAIL at ${new Date()} - ${event.message}`);
-            if (!debugMode) {
-                await window.electronAPI.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message, buttons: ['Ok'] });
-            }
-        }
-    });
-    
-    board.on('error', async function (event) {
-        connected = false;
-        ledManager.disconnected();
-        ui.boardDisonnected();
-    
-        if (event) {
-            log.error(`Board ERROR at ${new Date()} - ${event.message}`);
-            if (!debugMode) {
-                await window.electronAPI.showMessageBox({ type: 'error', title: 'Error', message: i18n.__('dialog-connection-error'), detail: event.message, buttons: ['Ok'] });
-            }
-        }
-    });
-    
-    // TODO does not work
-    board.on('close', function (event) {
-        connected = false;
-        ui.boardDisonnected();
-        ledManager.disconnected();
-        if (event) {
-            log.error(`Board CLOSE at ${new Date()} - ${event.message}`);
-        }
-    });
-    
-    board.on('exit', function (event) {
-        connected = false;
-        ui.boardDisonnected();
-        ledManager.disconnected();
-        if (event) {
-            log.error(`Board EXIT at ${new Date()} - ${event.message}`);
+        log.error(`Board ERROR at ${new Date()} - ${errorMessage}`);
+        if (!debugMode) {
+            await window.electronAPI.showMessageBox({ 
+                type: 'error', 
+                title: 'Error', 
+                message: i18n.__('dialog-connection-error'), 
+                detail: errorMessage, 
+                buttons: ['Ok'] 
+            });
         }
     });
     

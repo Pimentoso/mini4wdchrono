@@ -58,9 +58,18 @@ window.electronAPI = {
     
     // Hardware (placeholder for phase 3)
     hardwareInitialize: () => ipcRenderer.invoke('hardware-initialize'),
+    hardwareSetupSensors: (config) => ipcRenderer.invoke('hardware-setup-sensors', config),
+    hardwareSetupLeds: (config) => ipcRenderer.invoke('hardware-setup-leds', config),
+    hardwareSetupBuzzer: (config) => ipcRenderer.invoke('hardware-setup-buzzer', config),
     hardwareReadSensors: () => ipcRenderer.invoke('hardware-read-sensors'),
-    hardwareWriteLeds: (laneData) => ipcRenderer.invoke('hardware-write-leds', laneData),
-    hardwareBuzz: (duration) => ipcRenderer.invoke('hardware-buzz', duration),
+    hardwareWriteLeds: (laneData) => ipcRenderer.invoke('hardware-write-leds', laneData),    hardwareLedShow: () => ipcRenderer.invoke('hardware-led-show'),
+    hardwareLedOff: (data) => ipcRenderer.invoke('hardware-led-off', data),    hardwareBuzz: (duration, frequency) => ipcRenderer.invoke('hardware-buzz', duration, frequency),
+    hardwareSimpleLed: (config) => ipcRenderer.invoke('hardware-simple-led', config),
+    hardwareLedMethod: (method, ...args) => ipcRenderer.invoke('hardware-led-method', method, ...args),
+    hardwareListPorts: () => ipcRenderer.invoke('hardware-list-ports'),
+    hardwareIsReady: () => ipcRenderer.invoke('hardware-is-ready'),
+    hardwareClose: () => ipcRenderer.invoke('hardware-close'),
+
     
     // Hardware status listeners (events)
     onBoardReady: (callback) => ipcRenderer.on('hardware-board-ready', callback),
