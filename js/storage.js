@@ -5,7 +5,7 @@
 // for backward compatibility with existing code during transition
 
 // In-memory cache of current race data
-let cachedRaceData = {};
+const cachedRaceData = {};
 let cacheReady = false;
 
 /**
@@ -190,7 +190,7 @@ const set = (key, value) => {
 /**
  * Gets a storage value (async)
  */
-const getAsync = async (key) => {
+const getAsync = async (key) => { // eslint-disable-line no-unused-vars
     try {
         return await window.electronAPI.storageGet(key);
     } catch (error) {

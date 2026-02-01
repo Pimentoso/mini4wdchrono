@@ -176,7 +176,7 @@ ipcMain.handle('fs-file-exists', async (event, filePath) => {
     try {
         await fsp.access(filePath);
         return true;
-    } catch {
+    } catch (_error) {
         return false;
     }
 });
@@ -190,7 +190,7 @@ let globalConf = null;
  * Initializes nconf with settings file
  * @returns {Promise<void>}
  */
-ipcMain.handle('config-init', async (event) => {
+ipcMain.handle('config-init', async (_event) => {
     try {
         const configDir = app.getPath('userData');
         const configPath = path.join(configDir, 'settings.json');
@@ -226,7 +226,7 @@ ipcMain.handle('config-init', async (event) => {
  * @param {string} key - Configuration key
  * @returns {Promise<any>} - Configuration value
  */
-ipcMain.handle('config-get', async (event, key) => {
+ipcMain.handle('config-get', async (_event, key) => {
     try {
         if (!globalConf) {
             await ipcMain.emit('config-init');
@@ -280,7 +280,7 @@ ipcMain.handle('config-del', async (event, key) => {
  * Resets configuration to defaults (with backup)
  * @returns {Promise<string>} - Path to backup file
  */
-ipcMain.handle('config-reset', async (event) => {
+ipcMain.handle('config-reset', async (_event) => {
     try {
         const configDir = app.getPath('userData');
         const configPath = path.join(configDir, 'settings.json');
@@ -296,7 +296,7 @@ ipcMain.handle('config-reset', async (event) => {
         // Delete current and reinit
         try {
             await fsp.unlink(configPath);
-        } catch {
+        } catch (_error) {
             // File may not exist, that's ok
         }
         
@@ -579,27 +579,27 @@ ipcMain.handle('storage-delete-race', async (event, filename) => {
 
 // ===== EXISTING HANDLERS (from Phase 1) =====
 
-ipcMain.handle('get-app-version', (event) => {
+ipcMain.handle('get-app-version', (_event) => {
     return app.getVersion();
 });
 
-ipcMain.handle('get-app-locale', (event) => {
+ipcMain.handle('get-app-locale', (_event) => {
     return app.getLocale();
 });
 
-ipcMain.handle('get-app-path', (event, name) => {
+ipcMain.handle('get-app-path', (_event, name) => {
     return app.getPath(name);
 });
 
-ipcMain.handle('show-message-box', (event, options) => {
+ipcMain.handle('show-message-box', (_event, options) => {
     return dialog.showMessageBox(mainWindow, options);
 });
 
-ipcMain.handle('show-open-dialog', (event, options) => {
+ipcMain.handle('show-open-dialog', (_event, options) => {
     return dialog.showOpenDialog(mainWindow, options);
 });
 
-ipcMain.handle('show-save-dialog', (event, options) => {
+ipcMain.handle('show-save-dialog', (_event, options) => {
     return dialog.showSaveDialog(mainWindow, options);
 });
 

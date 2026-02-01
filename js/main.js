@@ -383,7 +383,7 @@ async function initializeApplication() {
     });
     
     $('#button-print').on('click', () => {
-        webContents.getFocusedWebContents().print();
+        // TODO webContents.getFocusedWebContents().print();
     });
     
     $('#button-xls').on('click', () => {
