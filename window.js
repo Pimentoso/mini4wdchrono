@@ -585,51 +585,93 @@ ipcMain.handle('storage-delete-race', async (event, filename) => {
  */
 ipcMain.handle('hardware-initialize', async (event, options) => {
     try {
-        // Lazy load johnny-five only when needed
+        // Lazy load dependencies
         const five = require('johnny-five');
+        const { SerialPort } = require('serialport');
+        const Firmata = require('firmata-io');
+
+        // Auto-detect Arduino port
+        const ports = await SerialPort.list();
+        const arduinoPort = ports.find(port =>
+            port.manufacturer && (
+                port.manufacturer.includes('Arduino') ||
+                port.manufacturer.includes('Silicon Labs') ||
+                port.manufacturer.includes('FTDI') ||
+                port.manufacturer.includes('QinHeng')
+            )
+        );
+
+        if (!arduinoPort) {
+            throw new Error('No Arduino found. Please connect your Arduino with Firmata firmware.');
+        }
+
+        console.log(`[Hardware] Found Arduino at ${arduinoPort.path}`);
+
+        // Create SerialPort instance with v13 API
+        const serialPort = new SerialPort({
+            path: arduinoPort.path,
+            baudRate: 57600
+        });
+
+        // Create Firmata IO instance
+        const io = new Firmata(serialPort);
 
         // Board initialization happens asynchronously
         return new Promise((resolve, reject) => {
-            board = new five.Board({ repl: false });
+            // Wait for Firmata to be ready
+            io.on('ready', () => {
+                console.log('[Hardware] Firmata ready');
 
-            board.on('ready', () => {
-                try {
-                    console.log('[Hardware] Board ready');
-                    isHardwareReady = true;
+                // Create Johnny-Five board with custom IO
+                board = new five.Board({
+                    io: io,
+                    repl: false
+                });
 
-                    // Notify renderer that board is ready
-                    if (mainWindow) {
-                        mainWindow.webContents.send('hardware-board-ready');
+                board.on('ready', () => {
+                    try {
+                        console.log('[Hardware] Board ready');
+                        isHardwareReady = true;
+
+                        // Notify renderer that board is ready
+                        if (mainWindow) {
+                            mainWindow.webContents.send('hardware-board-ready');
+                        }
+
+                        resolve({ success: true, message: 'Hardware initialized' });
+                    } catch (err) {
+                        reject(err);
                     }
+                });
 
-                    resolve({ success: true, message: 'Hardware initialized' });
-                } catch (err) {
-                    reject(err);
-                }
+                board.on('fail', (error) => {
+                    console.error('[Hardware] Board failed:', error);
+                    isHardwareReady = false;
+                    if (mainWindow) {
+                        mainWindow.webContents.send('hardware-board-error', error.message);
+                    }
+                    reject(error);
+                });
+
+                board.on('error', (error) => {
+                    console.error('[Hardware] Board error:', error);
+                    if (mainWindow) {
+                        mainWindow.webContents.send('hardware-board-error', error.message);
+                    }
+                });
+
+                board.on('close', () => {
+                    console.log('[Hardware] Board closed');
+                    isHardwareReady = false;
+                    if (mainWindow) {
+                        mainWindow.webContents.send('hardware-board-closed');
+                    }
+                });
             });
 
-            board.on('fail', (error) => {
-                console.error('[Hardware] Board failed:', error);
-                isHardwareReady = false;
-                if (mainWindow) {
-                    mainWindow.webContents.send('hardware-board-error', error.message);
-                }
+            io.on('error', (error) => {
+                console.error('[Hardware] Firmata error:', error);
                 reject(error);
-            });
-
-            board.on('error', (error) => {
-                console.error('[Hardware] Board error:', error);
-                if (mainWindow) {
-                    mainWindow.webContents.send('hardware-board-error', error.message);
-                }
-            });
-
-            board.on('close', () => {
-                console.log('[Hardware] Board closed');
-                isHardwareReady = false;
-                if (mainWindow) {
-                    mainWindow.webContents.send('hardware-board-closed');
-                }
             });
         });
     } catch (error) {
@@ -1028,9 +1070,17 @@ ipcMain.handle('hardware-led-method', async (event, method, ...args) => {
  */
 ipcMain.handle('hardware-list-ports', async () => {
     try {
-        const { SerialPort } = require('serialport');
-        const ports = await SerialPort.list();
-        return ports;
+        // In serialport v10+, list is exported separately
+        const { SerialPort: PortList } = require('serialport');
+
+        // Check if list is available as a static method
+        if (typeof PortList.list === 'function') {
+            const ports = await PortList.list();
+            return ports;
+        }
+
+        // Fallback for older serialport versions or different exports
+        throw new Error('SerialPort.list() is not available');
     } catch (error) {
         console.error('[IPC] hardware-list-ports error:', error);
         throw error;
