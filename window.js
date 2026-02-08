@@ -16,6 +16,26 @@ if (process.argv[2] === '--watch') {
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
+// Global nconf instance for settings
+let globalConf = null;
+
+// IPC handlers for system operations
+const { ipcMain, dialog } = require('electron');
+const fs = require('fs');
+const fsp = fs.promises;
+const nconf = require('nconf');
+
+// Global electron-settings instance for race data
+let raceStorage = null;
+let currentRaceFile = null;
+
+// Global hardware state
+let board = null;
+let sensors = { lane0: null, lane1: null, lane2: null };
+let ledManager = null;
+let buzzer = null;
+let isHardwareReady = false;
+
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
@@ -39,7 +59,7 @@ function createWindow() {
     mainWindow.setResizable(false);
 
     // Open the DevTools.
-    // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
@@ -76,12 +96,6 @@ function createWindow() {
         }
     });
 }
-
-// IPC handlers for system operations
-const { ipcMain, dialog } = require('electron');
-const fs = require('fs');
-const fsp = fs.promises;
-const nconf = require('nconf');
 
 /**
  * Ensures a directory exists, creating it recursively if needed
@@ -178,9 +192,6 @@ ipcMain.handle('fs-file-exists', async (event, filePath) => {
         return false;
     }
 });
-
-// Global nconf instance for settings
-let globalConf = null;
 
 /**
  * Initializes nconf with settings file
@@ -305,10 +316,6 @@ ipcMain.handle('config-reset', async (_event) => {
         throw error;
     }
 });
-
-// Global electron-settings instance for race data
-let raceStorage = null;
-let currentRaceFile = null;
 
 /**
  * Loads a race file into storage
@@ -570,13 +577,6 @@ ipcMain.handle('storage-delete-race', async (event, filename) => {
         throw error;
     }
 });
-
-// Global hardware state
-let board = null;
-let sensors = { lane0: null, lane1: null, lane2: null };
-let ledManager = null;
-let buzzer = null;
-let isHardwareReady = false;
 
 /**
  * Initializes Johnny-Five board and hardware components
