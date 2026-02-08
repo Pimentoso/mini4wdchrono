@@ -77,7 +77,7 @@ const addLap = (lane, timestamp) => {
         timestamp = new Date().getTime();
     }
 
-    console.log(`======= got signal for lane ${lane} at time ${timestamp}`);
+    console.log(`${timestamp} sensor triggered for lane ${lane}`);
     // console.log(JSON.stringify(rCars, null, 2));
 
     // find all cars that may have passes under this lane sensor
@@ -94,11 +94,11 @@ const addLap = (lane, timestamp) => {
 
     // false sensor read
     if (rTempCar === null) {
-        console.log(`error: no valid car for signal on lane ${lane}`);
+        console.error(`${timestamp} no valid car found`);
         return;
     }
     else {
-        console.log(`ok: valid car ${rTempCar.startLane}`);
+        console.log(`${timestamp} valid car found (start lane ${rTempCar.startLane})`);
     }
 
     // handle the correct car

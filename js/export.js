@@ -86,14 +86,14 @@ const generateXls = async () => {
 
         const dir = await createDir();
         const filename = dir + `/mini4wd_race_${strftime('%Y-%m-%d_%H-%M-%S', new Date())}.xlsx`;
-        
+
         // Write Excel file
         await workbook.xlsx.writeFile(filename);
-        
+
         // Update UI
         $('#button-xls').removeAttr('disabled');
         $('#status-xls').text(`saved ${filename}`);
-        
+
         return filename;
     } catch (error) {
         console.error('Error generating Excel file:', error);

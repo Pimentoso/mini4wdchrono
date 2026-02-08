@@ -35,7 +35,7 @@ class LedManagerRgbStrip extends LedManager {
 
     async connected() {
         await super.connected();
-        
+
         // Simulate tamiya slide animation
         await this.tamiyaSlide();
         this.ready = true;
@@ -45,7 +45,7 @@ class LedManagerRgbStrip extends LedManager {
         await super.disconnected();
         try {
             await window.electronAPI.hardwareLedOff({});
-        } catch (e) { 
+        } catch (e) {
             // Safely ignore errors when disconnecting hardware
         }
     }
@@ -138,7 +138,7 @@ class LedManagerRgbStrip extends LedManager {
                 await this.beep(1000);
                 callback();
             }, delay);
-            
+
             await utils.delayAsync(async () => {
                 await window.electronAPI.hardwareLedOff({});
             }, storage.get('startDelay') * 1000);
@@ -151,7 +151,7 @@ class LedManagerRgbStrip extends LedManager {
         try {
             const pixels = this.reverse ? [8,7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7,8];
             let currentDelay = delay;
-            
+
             for (let i = 0; i < pixels.length; i++) {
                 await utils.delayAsync(async () => {
                     await window.electronAPI.hardwareWriteLeds({
@@ -174,7 +174,7 @@ class LedManagerRgbStrip extends LedManager {
             let direction = 0, curr = 0, prev = -1;
             const millis = 50;
             const iterations = Math.floor(1650 / millis);
-            
+
             for (let i = 0; i < iterations; i++) {
                 await utils.delayAsync(async () => {
                     await window.electronAPI.hardwareWriteLeds({
@@ -205,7 +205,7 @@ class LedManagerRgbStrip extends LedManager {
                     }
                 }, i * millis);
             }
-            
+
             await utils.delayAsync(async () => {
                 await window.electronAPI.hardwareLedOff({});
             }, iterations * millis + millis);
@@ -217,7 +217,7 @@ class LedManagerRgbStrip extends LedManager {
     async tamiyaSlide() {
         try {
             const millis = 100;
-            
+
             // Set initial colors
             await window.electronAPI.hardwareWriteLeds({ pixelIndex: 0, color: COLOR_TAMIYA_BLUE, show: false });
             await window.electronAPI.hardwareWriteLeds({ pixelIndex: 1, color: COLOR_TAMIYA_BLUE, show: false });

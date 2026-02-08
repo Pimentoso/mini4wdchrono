@@ -13,12 +13,12 @@ window.electronAPI = {
     maximizeWindow: () => ipcRenderer.invoke('window-maximize'),
     minimizeWindow: () => ipcRenderer.invoke('window-minimize'),
     closeWindow: () => ipcRenderer.invoke('window-close'),
-    
+
     // Dialogs
     showOpenDialog: (options) => ipcRenderer.invoke('show-open-dialog', options),
     showSaveDialog: (options) => ipcRenderer.invoke('show-save-dialog', options),
     showMessageBox: (options) => ipcRenderer.invoke('show-message-box', options),
-    
+
     // File System Operations
     ensureDir: (dirPath) => ipcRenderer.invoke('fs-ensure-dir', dirPath),
     writeFile: (filePath, data) => ipcRenderer.invoke('fs-write-file', filePath, data),
@@ -26,14 +26,14 @@ window.electronAPI = {
     deleteFile: (filePath) => ipcRenderer.invoke('fs-delete-file', filePath),
     listFiles: (dirPath, extension) => ipcRenderer.invoke('fs-list-files', dirPath, extension),
     fileExists: (filePath) => ipcRenderer.invoke('fs-file-exists', filePath),
-    
+
     // Configuration Operations
     configInit: () => ipcRenderer.invoke('config-init'),
     configGet: (key) => ipcRenderer.invoke('config-get', key),
     configSet: (key, value) => ipcRenderer.invoke('config-set', key, value),
     configDel: (key) => ipcRenderer.invoke('config-del', key),
     configReset: () => ipcRenderer.invoke('config-reset'),
-    
+
     // Storage Operations (Race Data)
     storageNewRace: (raceName) => ipcRenderer.invoke('storage-new-race', raceName),
     storageLoadRace: (filename) => ipcRenderer.invoke('storage-load-race', filename),
@@ -42,20 +42,20 @@ window.electronAPI = {
     storageSet: (key, value) => ipcRenderer.invoke('storage-set', key, value),
     storageGet: (key) => ipcRenderer.invoke('storage-get', key),
     storageRemove: (key) => ipcRenderer.invoke('storage-remove', key),
-    
+
     // App info
     getAppVersion: () => ipcRenderer.invoke('get-app-version'),
     getAppLocale: () => ipcRenderer.invoke('get-app-locale'),
     getAppPath: (name) => ipcRenderer.invoke('get-app-path', name),
-    
+
     // Shell
     openPath: (filePath) => ipcRenderer.invoke('open-path-in-explorer', filePath),
     openExternal: (url) => ipcRenderer.invoke('open-external', url),
-    
+
     // Clipboard
     clipboardWrite: (text) => ipcRenderer.invoke('clipboard-write', text),
     clipboardRead: () => ipcRenderer.invoke('clipboard-read'),
-    
+
     // Hardware
     hardwareInitialize: () => ipcRenderer.invoke('hardware-initialize'),
     hardwareSetupSensors: (config) => ipcRenderer.invoke('hardware-setup-sensors', config),
@@ -63,22 +63,22 @@ window.electronAPI = {
     hardwareSetupLeds: (config) => ipcRenderer.invoke('hardware-setup-leds', config),
     hardwareSetupBuzzer: (config) => ipcRenderer.invoke('hardware-setup-buzzer', config),
     hardwareReadSensors: () => ipcRenderer.invoke('hardware-read-sensors'),
-    hardwareWriteLeds: (laneData) => ipcRenderer.invoke('hardware-write-leds', laneData),    
+    hardwareWriteLeds: (laneData) => ipcRenderer.invoke('hardware-write-leds', laneData),
     hardwareLedShow: () => ipcRenderer.invoke('hardware-led-show'),
-    hardwareLedOff: (data) => ipcRenderer.invoke('hardware-led-off', data),    
+    hardwareLedOff: (data) => ipcRenderer.invoke('hardware-led-off', data),
     hardwareBuzz: (duration, frequency) => ipcRenderer.invoke('hardware-buzz', duration, frequency),
     hardwareSimpleLed: (config) => ipcRenderer.invoke('hardware-simple-led', config),
     hardwareLedMethod: (method, ...args) => ipcRenderer.invoke('hardware-led-method', method, ...args),
     hardwareListPorts: () => ipcRenderer.invoke('hardware-list-ports'),
     hardwareIsReady: () => ipcRenderer.invoke('hardware-is-ready'),
     hardwareClose: () => ipcRenderer.invoke('hardware-close'),
-    
+
     // Hardware status listeners (events)
     onBoardReady: (callback) => ipcRenderer.on('hardware-board-ready', callback),
     onBoardError: (callback) => ipcRenderer.on('hardware-board-error', callback),
     onSensorChange: (callback) => ipcRenderer.on('hardware-sensor-change', callback),
     onButtonPress: (callback) => ipcRenderer.on('hardware-button-press', callback),
-    
+
     // Export
     writeExcel: (filePath, workbook) => ipcRenderer.invoke('fs-write-excel', filePath, workbook),
 };

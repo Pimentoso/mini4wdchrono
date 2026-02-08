@@ -28,7 +28,7 @@ const utils = require('./js/utils');
     try {
         // Initialize locale for utils
         await utils.initLocale();
-        
+
         // Initialize configuration and storage via IPC
         await storage.initAsync();
         log.info('Configuration and storage initialized successfully');
@@ -101,7 +101,7 @@ async function initializeApplication() {
 
     // show interface
     $('#main').show();
-    
+
     // Start race function. Handles all hardware checks.
     const startRace = async () => {
         log.info(`Starting race at ${new Date()}`);
@@ -125,16 +125,16 @@ async function initializeApplication() {
         }
         client.startRace(debugMode);
     };
-    
+
     const buttonPressed = () => {
         client.isStarted() ? client.stopRace() : startRace();
     };
-    
+
     // Set up button press listener
     window.electronAPI.onButtonPress(() => {
         buttonPressed();
     });
-    
+
     try {
         // Initialize board in main process
         await window.electronAPI.hardwareInitialize();
@@ -142,46 +142,46 @@ async function initializeApplication() {
     } catch (error) {
         log.error('Failed to initialize hardware:', error);
         if (!debugMode) {
-            await window.electronAPI.showMessageBox({ 
-                type: 'error', 
-                title: 'Error', 
-                message: i18n.__('dialog-connection-error'), 
-                detail: error.message, 
-                buttons: ['Ok'] 
+            await window.electronAPI.showMessageBox({
+                type: 'error',
+                title: 'Error',
+                message: i18n.__('dialog-connection-error'),
+                detail: error.message,
+                buttons: ['Ok']
             });
         }
     }
-    
+
     // Listen for board ready event from main process
     window.electronAPI.onBoardReady(async () => {
         try {
             connected = true;
             log.info(`Board READY at ${new Date()}`);
-        
+
             tag1 = $('#sensor-reading-1');
             tag2 = $('#sensor-reading-2');
             tag3 = $('#sensor-reading-3');
-        
+
             // Get sensor pin configuration
             sensorPin1 = await configuration.get('sensorPin1');
             sensorPin2 = await configuration.get('sensorPin2');
             sensorPin3 = await configuration.get('sensorPin3');
-        
+
             reverse = (await configuration.get('reverse')) > 0;
-            
+
             // Set up sensors in main process
             await window.electronAPI.hardwareSetupSensors({
                 sensorPin1: sensorPin1,
                 sensorPin2: sensorPin2,
                 sensorPin3: sensorPin3
             });
-            
+
             // Set up start button in main process
             await window.electronAPI.hardwareSetupButton({
                 startButtonPin: await configuration.get('startButtonPin')
             });
             log.info('Start button configured');
-            
+
             // Set up LEDs in main process
             await window.electronAPI.hardwareSetupLeds({
                 ledPin1: await configuration.get('ledPin1'),
@@ -189,25 +189,25 @@ async function initializeApplication() {
                 ledPin3: await configuration.get('ledPin3'),
                 reverse: (await configuration.get('reverse')) > 0
             });
-            
+
             // Set up buzzer in main process
             await window.electronAPI.hardwareSetupBuzzer({
                 piezoPin: await configuration.get('piezoPin')
             });
-            
+
             log.info('Hardware components configured');
-        
+
             ledManager.connected();
             ui.boardConnected();
         } catch (error) {
             log.error('Error during board ready setup:', error);
         }
     });
-    
+
     // Listen for sensor changes from main process
     window.electronAPI.onSensorChange((event, data) => {
         const { lane, value, timestamp } = data;
-        
+
         if (lane === 0) {
             tag1.text(value);
             if (value === 0 && val1 === 1) {
@@ -231,54 +231,54 @@ async function initializeApplication() {
             val3 = value;
         }
     });
-    
+
     // Listen for board errors from main process
     window.electronAPI.onBoardError(async (event, errorMessage) => {
         connected = false;
         ledManager.disconnected();
         ui.boardDisconnected();
-    
+
         log.error(`Board ERROR at ${new Date()} - ${errorMessage}`);
         if (!debugMode) {
-            await window.electronAPI.showMessageBox({ 
-                type: 'error', 
-                title: 'Error', 
-                message: i18n.__('dialog-connection-error'), 
-                detail: errorMessage, 
-                buttons: ['Ok'] 
+            await window.electronAPI.showMessageBox({
+                type: 'error',
+                title: 'Error',
+                message: i18n.__('dialog-connection-error'),
+                detail: errorMessage,
+                buttons: ['Ok']
             });
         }
     });
-    
+
     // ==========================================================================
     // ==== listen to interface events and propagate to client
-    
+
     // tabs
     $('.tabs a').on('click', (e) => {
         const $this = $(e.currentTarget);
         const tab = $this.closest('li').data('tab');
         ui.gotoTab(tab);
     });
-    
+
     // modals
     const openModal = (modal) => {
         $(`#${modal}`).addClass('is-active');
         $(document.documentElement).addClass('is-clipped');
     };
-    
+
     const closeAllModals = () => {
         $('.modal').removeClass('is-active');
         $(document.documentElement).removeClass('is-clipped');
     };
-    
+
     $('.open-modal').on('click', (e) => {
         const $this = $(e.currentTarget);
         openModal($this.data('modal'));
         ui.initModal($this.data('modal'));
     });
-    
+
     $('.close-modal').on('click', closeAllModals);
-    
+
     // keydown
     document.onkeydown = (e) => {
         if (!debugMode) {
@@ -286,7 +286,7 @@ async function initializeApplication() {
         }
         client.keydown(e.keyCode);
     };
-    
+
     // ui observers
     $(document).on('click', '.js-load-race', async (e) => {
         const $this = $(e.currentTarget);
@@ -296,7 +296,7 @@ async function initializeApplication() {
         await client.init({ led_manager: ledManager });
         closeAllModals();
     });
-    
+
     $(document).on('click', '.js-delete-race', async (e) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
@@ -307,14 +307,14 @@ async function initializeApplication() {
             closeAllModals();
         }
     });
-    
+
     $('#js-load-track').on('click', (e) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
         const code = $('#js-input-track-code').val().slice(-6);
         client.loadTrack(code);
     });
-    
+
     $('#js-track-save-manual').on('click', async (e) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
@@ -335,57 +335,57 @@ async function initializeApplication() {
             client.setTrackManual(length, order);
         }
     });
-    
+
     $('#js-load-tournament').on('click', (e) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
         const code = $('#js-input-tournament-code').val().slice(-6);
         client.loadTournament(code);
     });
-    
+
     $('#button-new-race').on('click', () => {
         const name = $('#modal-new-name').val().trim();
         if (name === '') return false;
         client.reset(name);
         closeAllModals();
     });
-    
+
     $('#button-start').on('click', startRace);
-    
+
     $('#button-stop').on('click', () => {
         client.stopRace();
     });
-    
+
     $('#button-prev').on('click', () => {
         client.prevRound();
     });
-    
+
     $('#button-next').on('click', () => {
         client.nextRound();
     });
-    
+
     $('#button-toggle-free-round').on('click', () => {
         client.toggleFreeRound();
     });
-    
+
     $('#button-print').on('click', () => {
         // TODO webContents.getFocusedWebContents().print();
     });
-    
+
     $('#button-xls').on('click', () => {
         client.saveXls();
         $('#button-xls').attr('disabled', true);
     });
-    
+
     $('#button-xls-folder').on('click', () => {
         const dir = xls.createDir();
         window.electronAPI.openPath(dir);
     });
-    
+
     $('#button-log-file').on('click', () => {
         window.electronAPI.openPath(log.transports.file.findLogPath());
     });
-    
+
     const updateThresholds = () => {
         const timeThreshold = parseFloat($('#js-settings-time-threshold').val().replace(',', '.'));
         const speedThreshold = parseFloat($('#js-settings-speed-threshold').val().replace(',', '.'));
@@ -393,13 +393,13 @@ async function initializeApplication() {
         if (isNaN(timeThreshold) || isNaN(speedThreshold)) return;
         ui.showThresholds(timeThreshold, speedThreshold, roundLaps);
     };
-    
+
     $('#js-settings-speed-threshold').on('keyup', updateThresholds);
-    
+
     $('#js-settings-time-threshold').on('keyup', updateThresholds);
-    
+
     $('#js-settings-round-laps').on('change', updateThresholds);
-    
+
     $('#button-save-settings').on('click', (e) => {
         const timeThreshold = parseFloat($('#js-settings-time-threshold').val().replace(',', '.'));
         const speedThreshold = parseFloat($('#js-settings-speed-threshold').val().replace(',', '.'));
@@ -412,7 +412,7 @@ async function initializeApplication() {
         ui.showThresholds();
         e.preventDefault();
     });
-    
+
     $('#button-save-config').on('click', async (e) => {
         configuration.set('reverse', $('#js-config-reverse').is(':checked') ? 1 : 0);
         configuration.set('sensorPin1', parseInt($('#js-config-sensor-pin-1').val()));
@@ -430,14 +430,14 @@ async function initializeApplication() {
         location.reload();
         e.preventDefault();
     });
-    
+
     $('#button-manches-save').on('click', async (e) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
         client.overrideTimes();
         await window.electronAPI.showMessageBox({ type: 'warning', message: i18n.__('dialog-saved'), buttons: ['Ok'] });
     });
-    
+
     $(document).on('click', '.js-goto-round', (e) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
@@ -445,7 +445,7 @@ async function initializeApplication() {
         const rindex = $this.data('round');
         client.gotoRound(mindex, rindex);
     });
-    
+
     $('.js-led-animation').on('click', (e) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
@@ -454,7 +454,7 @@ async function initializeApplication() {
         const type = $this.data('led-animation');
         configuration.set('ledAnimation', type);
     });
-    
+
     $('.js-race-mode').on('click', (e) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
@@ -464,7 +464,7 @@ async function initializeApplication() {
         storage.set('raceMode', mode);
         ui.showRaceModeDetails();
     });
-    
+
     $('.js-invalidate').on('click', async (e) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
@@ -473,5 +473,4 @@ async function initializeApplication() {
             client.disqualify(null, null, parseInt($this.data('lane')));
         }
     });
-    
 } // End of initializeApplication function

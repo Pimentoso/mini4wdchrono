@@ -9,7 +9,7 @@ module.exports = i18n;
 function i18n() {
     // Load English by default, we'll try to get the proper locale asynchronously
     loadedLanguage = JSON.parse(fs.readFileSync(path.join(__dirname, 'en.json'), 'utf8'));
-    
+
     // Try to load the correct locale asynchronously
     if (window.electronAPI && window.electronAPI.getAppLocale) {
         window.electronAPI.getAppLocale().then(locale => {

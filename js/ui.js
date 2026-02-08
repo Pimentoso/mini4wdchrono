@@ -84,7 +84,6 @@ const init = async () => {
                 value: port.path,
                 text: port.manufacturer ? `${port.path} (${port.manufacturer})` : port.path
             }));
-            console.log(port.path);
         });
         $('#js-config-usb-port').val(await configuration.get('usbPort'));
     });
@@ -341,7 +340,6 @@ const showMancheList = () => {
         _.each(manche, (group, rindex) => {
             cars = storage.loadRound(mindex, rindex);
             mancheText = _.map(group, (id, pindex) => {
-
                 playerName = playerList[id];
                 if (playerName) {
                     if (cars) {

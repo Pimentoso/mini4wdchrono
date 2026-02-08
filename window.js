@@ -201,12 +201,12 @@ ipcMain.handle('config-init', async (_event) => {
     try {
         const configDir = app.getPath('userData');
         const configPath = path.join(configDir, 'settings.json');
-        
+
         // Ensure directory exists
         await fsp.mkdir(configDir, { recursive: true });
-        
+
         globalConf = nconf.file('global', { file: configPath });
-        
+
         globalConf.defaults({
             'ledAnimation': 0,
             'ledType': 0, // deprecated
@@ -292,24 +292,24 @@ ipcMain.handle('config-reset', async (_event) => {
         const configDir = app.getPath('userData');
         const configPath = path.join(configDir, 'settings.json');
         const backupPath = path.join(configDir, 'settings.json.bak');
-        
+
         // Backup current settings
         if (await new Promise(resolve => {
             fsp.access(configPath).then(() => resolve(true)).catch(() => resolve(false));
         })) {
             await fsp.copyFile(configPath, backupPath);
         }
-        
+
         // Delete current and reinit
         try {
             await fsp.unlink(configPath);
         } catch (_error) {
             // File may not exist, that's ok
         }
-        
+
         globalConf = null; // Reset global instance
         await ipcMain.emit('config-init');
-        
+
         return backupPath;
     } catch (error) {
         console.error('[IPC] config-reset error:', error);
@@ -326,29 +326,29 @@ ipcMain.handle('storage-load-race', async (event, filename) => {
     try {
         const userdir = app.getPath('userData');
         const raceDir = path.join(userdir, 'races');
-        
+
         // Ensure races directory exists
         await fsp.mkdir(raceDir, { recursive: true });
-        
+
         const raceFilePath = path.join(raceDir, filename);
-        
+
         // Check if file exists
         const exists = await new Promise(resolve => {
             fsp.access(raceFilePath).then(() => resolve(true)).catch(() => resolve(false));
         });
-        
+
         if (!exists) {
             throw new Error(`Race file not found: ${filename}`);
         }
-        
+
         // Load race data
         const content = await fsp.readFile(raceFilePath, 'utf8');
         const raceData = JSON.parse(content);
         currentRaceFile = raceFilePath;
-        
+
         // Store in memory for fast access (matches original electron-settings behavior)
         raceStorage = raceData;
-        
+
         // Update config with current race file
         if (globalConf) {
             globalConf.set('raceFile', filename);
@@ -369,14 +369,14 @@ ipcMain.handle('storage-new-race', async (event, raceName) => {
     try {
         const userdir = app.getPath('userData');
         const raceDir = path.join(userdir, 'races');
-        
+
         // Ensure races directory exists
         await fsp.mkdir(raceDir, { recursive: true });
-        
+
         const timestamp = parseInt(new Date().getTime() / 1000);
         const filename = `${timestamp}.json`;
         const filePath = path.join(raceDir, filename);
-        
+
         // Create initial race data
         const raceData = {
             name: raceName,
@@ -389,20 +389,20 @@ ipcMain.handle('storage-new-race', async (event, raceName) => {
             startDelay: 3,
             roundLaps: 3
         };
-        
+
         // Write race file
         await fsp.writeFile(filePath, JSON.stringify(raceData, null, 2), 'utf8');
-        
+
         // Load into storage
         raceStorage = raceData;
         currentRaceFile = filePath;
-        
+
         // Update config
         if (globalConf) {
             globalConf.set('raceFile', filename);
             globalConf.save();
         }
-        
+
         return filename;
     } catch (error) {
         console.error('[IPC] storage-new-race error:', error);
@@ -421,20 +421,20 @@ ipcMain.handle('storage-set', async (event, key, value) => {
         if (!raceStorage) {
             raceStorage = {};
         }
-        
+
         // Handle nested keys like 'race.m0.r0'
         const keys = key.split('.');
         let current = raceStorage;
-        
+
         for (let i = 0; i < keys.length - 1; i++) {
             if (!current[keys[i]]) {
                 current[keys[i]] = {};
             }
             current = current[keys[i]];
         }
-        
+
         current[keys[keys.length - 1]] = value;
-        
+
         // Persist to disk
         if (currentRaceFile) {
             await fsp.writeFile(currentRaceFile, JSON.stringify(raceStorage, null, 2), 'utf8');
@@ -455,18 +455,18 @@ ipcMain.handle('storage-get', async (event, key) => {
         if (!raceStorage) {
             return null;
         }
-        
+
         // Handle nested keys
         const keys = key.split('.');
         let current = raceStorage;
-        
+
         for (let i = 0; i < keys.length; i++) {
             current = current[keys[i]];
             if (current === undefined || current === null) {
                 return null;
             }
         }
-        
+
         return current;
     } catch (error) {
         console.error('[IPC] storage-get error:', error);
@@ -484,17 +484,17 @@ ipcMain.handle('storage-remove', async (event, key) => {
         if (!raceStorage) {
             return;
         }
-        
+
         const keys = key.split('.');
         let current = raceStorage;
-        
+
         for (let i = 0; i < keys.length - 1; i++) {
             current = current[keys[i]];
             if (!current) return;
         }
-        
+
         delete current[keys[keys.length - 1]];
-        
+
         // Persist to disk
         if (currentRaceFile) {
             await fsp.writeFile(currentRaceFile, JSON.stringify(raceStorage, null, 2), 'utf8');
@@ -515,15 +515,15 @@ ipcMain.handle('storage-list-races', async (event, num) => {
         num = num || 10;
         const userdir = app.getPath('userData');
         const raceDir = path.join(userdir, 'races');
-        
+
         // Ensure directory exists
         await fsp.mkdir(raceDir, { recursive: true });
-        
+
         let files = await fsp.readdir(raceDir);
         files = files.filter(f => path.extname(f) === '.json');
-        
+
         const recent = [];
-        
+
         for (const filename of files) {
             try {
                 const filePath = path.join(raceDir, filename);
@@ -540,10 +540,10 @@ ipcMain.handle('storage-list-races', async (event, num) => {
                 console.warn(`[IPC] Could not read race file ${filename}:`, err);
             }
         }
-        
+
         // Sort by created date descending
         recent.sort((a, b) => b.created - a.created);
-        
+
         return recent.slice(0, num);
     } catch (error) {
         console.error('[IPC] storage-list-races error:', error);
@@ -560,9 +560,9 @@ ipcMain.handle('storage-delete-race', async (event, filename) => {
     try {
         const userdir = app.getPath('userData');
         const filePath = path.join(userdir, 'races', filename);
-        
+
         await fsp.unlink(filePath);
-        
+
         // Clear storage if this was the current race
         if (currentRaceFile === filePath) {
             raceStorage = null;
@@ -587,27 +587,27 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
     try {
         // Lazy load johnny-five only when needed
         const five = require('johnny-five');
-        
+
         // Board initialization happens asynchronously
         return new Promise((resolve, reject) => {
             board = new five.Board({ repl: false });
-            
+
             board.on('ready', () => {
                 try {
                     console.log('[Hardware] Board ready');
                     isHardwareReady = true;
-                    
+
                     // Notify renderer that board is ready
                     if (mainWindow) {
                         mainWindow.webContents.send('hardware-board-ready');
                     }
-                    
+
                     resolve({ success: true, message: 'Hardware initialized' });
                 } catch (err) {
                     reject(err);
                 }
             });
-            
+
             board.on('fail', (error) => {
                 console.error('[Hardware] Board failed:', error);
                 isHardwareReady = false;
@@ -616,14 +616,14 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
                 }
                 reject(error);
             });
-            
+
             board.on('error', (error) => {
                 console.error('[Hardware] Board error:', error);
                 if (mainWindow) {
                     mainWindow.webContents.send('hardware-board-error', error.message);
                 }
             });
-            
+
             board.on('close', () => {
                 console.log('[Hardware] Board closed');
                 isHardwareReady = false;
@@ -648,25 +648,25 @@ ipcMain.handle('hardware-setup-sensors', async (event, config) => {
         if (!board || !isHardwareReady) {
             throw new Error('Board not ready');
         }
-        
+
         const five = require('johnny-five');
-        
+
         // Set up sensors on specified pins
         sensors.lane0 = new five.Sensor({
             pin: config.sensorPin1 || 6,
             freq: 25
         });
-        
+
         sensors.lane1 = new five.Sensor({
             pin: config.sensorPin2 || 7,
             freq: 25
         });
-        
+
         sensors.lane2 = new five.Sensor({
             pin: config.sensorPin3 || 8,
             freq: 25
         });
-        
+
         // Set up change listeners that send events to renderer
         sensors.lane0.on('change', function() {
             if (mainWindow) {
@@ -678,7 +678,7 @@ ipcMain.handle('hardware-setup-sensors', async (event, config) => {
                 });
             }
         });
-        
+
         sensors.lane1.on('change', function() {
             if (mainWindow) {
                 const timestamp = Date.now(); // Capture immediately for timing accuracy
@@ -689,7 +689,7 @@ ipcMain.handle('hardware-setup-sensors', async (event, config) => {
                 });
             }
         });
-        
+
         sensors.lane2.on('change', function() {
             if (mainWindow) {
                 const timestamp = Date.now(); // Capture immediately for timing accuracy
@@ -700,7 +700,7 @@ ipcMain.handle('hardware-setup-sensors', async (event, config) => {
                 });
             }
         });
-        
+
         console.log('[Hardware] Sensors configured');
         return { success: true };
     } catch (error) {
@@ -719,30 +719,30 @@ ipcMain.handle('hardware-setup-button', async (event, config) => {
         if (!board || !isHardwareReady) {
             throw new Error('Board not ready');
         }
-        
+
         const buttonPin = config.startButtonPin || 0;
-        
+
         // If pin is 0, button is disabled
         if (buttonPin === 0) {
             console.log('[Hardware] Start button disabled (pin = 0)');
             return { success: true, message: 'Button disabled' };
         }
-        
+
         const five = require('johnny-five');
-        
+
         // Set up button on specified pin
         const button = new five.Button({
             pin: buttonPin,
             isPullup: true
         });
-        
+
         // Set up press listener that sends event to renderer
         button.on('press', function() {
             if (mainWindow) {
                 mainWindow.webContents.send('hardware-button-press');
             }
         });
-        
+
         console.log(`[Hardware] Start button configured on pin ${buttonPin}`);
         return { success: true };
     } catch (error) {
@@ -761,9 +761,9 @@ ipcMain.handle('hardware-setup-leds', async (event, config) => {
         if (!board || !isHardwareReady) {
             throw new Error('Board not ready');
         }
-        
+
         const pixel = require('node-pixel');
-            
+
         // Initialize the LED strip
         return new Promise((resolve, reject) => {
             try {
@@ -773,12 +773,12 @@ ipcMain.handle('hardware-setup-leds', async (event, config) => {
                     strips: [{ pin: config.ledPin1 || 3, length: 9 }],
                     gamma: 2.8
                 });
-                    
+
                 ledManager.on('ready', function() {
                     console.log('[Hardware] LED strip ready');
                     resolve({ success: true, ready: true });
                 });
-                    
+
                 ledManager.on('error', function(err) {
                     console.error('[Hardware] LED strip error:', err);
                     reject(err);
@@ -803,11 +803,11 @@ ipcMain.handle('hardware-setup-buzzer', async (event, config) => {
         if (!board || !isHardwareReady) {
             throw new Error('Board not ready');
         }
-        
+
         const five = require('johnny-five');
-        
+
         buzzer = new five.Piezo(config.piezoPin || 2);
-        
+
         console.log('[Hardware] Buzzer configured');
         return { success: true };
     } catch (error) {
@@ -825,7 +825,7 @@ ipcMain.handle('hardware-read-sensors', async () => {
         if (!sensors.lane0 || !sensors.lane1 || !sensors.lane2) {
             return { lane0: 0, lane1: 0, lane2: 0 };
         }
-        
+
         return {
             lane0: sensors.lane0.value,
             lane1: sensors.lane1.value,
@@ -848,7 +848,7 @@ ipcMain.handle('hardware-write-leds', async (event, laneData) => {
             console.warn('[Hardware] LED manager not initialized');
             return;
         }
-        
+
         // Support multiple formats
         if (laneData.pixelIndex !== undefined) {
             // Direct pixel control: { pixelIndex: 0-8, color: '#ff0000' or {r, g, b} }
@@ -863,7 +863,7 @@ ipcMain.handle('hardware-write-leds', async (event, laneData) => {
                 ledManager.pixel(i).color(laneData.color);
             }
         }
-        
+
         // Auto-show after setting colors
         if (laneData.show !== false) {
             ledManager.show();
@@ -900,7 +900,7 @@ ipcMain.handle('hardware-led-off', async (event, data = {}) => {
             console.warn('[Hardware] LED manager not initialized');
             return;
         }
-        
+
         if (data.pixelIndex !== undefined) {
             // Turn off specific pixel
             ledManager.pixel(data.pixelIndex).off();
@@ -914,7 +914,7 @@ ipcMain.handle('hardware-led-off', async (event, data = {}) => {
             // Turn off all
             ledManager.off();
         }
-        
+
         if (data.show !== false) {
             ledManager.show();
         }
@@ -936,7 +936,7 @@ ipcMain.handle('hardware-buzz', async (event, duration, frequency) => {
             console.warn('[Hardware] Buzzer not initialized');
             return;
         }
-        
+
         if (frequency) {
             buzzer.frequency(frequency, duration);
         } else {
@@ -959,24 +959,24 @@ ipcMain.handle('hardware-buzz', async (event, duration, frequency) => {
 ipcMain.handle('hardware-simple-led', async (event, config) => {
     try {
         const j5 = require('johnny-five');
-        
+
         if (!board) {
             throw new Error('Board not initialized');
         }
-        
+
         const { pin, operation, interval } = config;
-        
+
         // Create or retrieve LED instance
         if (!board._simpleLeds) {
             board._simpleLeds = {};
         }
-        
+
         if (!board._simpleLeds[pin]) {
             board._simpleLeds[pin] = new j5.Led({ board, pin });
         }
-        
+
         const led = board._simpleLeds[pin];
-        
+
         switch (operation) {
             case 'on':
                 led.on();
@@ -1010,11 +1010,11 @@ ipcMain.handle('hardware-led-method', async (event, method, ...args) => {
         if (!ledManager) {
             throw new Error('LED manager not initialized');
         }
-        
+
         if (typeof ledManager[method] !== 'function') {
             throw new Error(`LED manager method '${method}' not found`);
         }
-        
+
         return await ledManager[method](...args);
     } catch (error) {
         console.error('[IPC] hardware-led-method error:', error);

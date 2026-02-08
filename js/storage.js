@@ -13,14 +13,14 @@ let cacheReady = false;
 const setCached = (key, value) => {
     const keys = key.split('.');
     let current = cachedRaceData;
-    
+
     for (let i = 0; i < keys.length - 1; i++) {
         if (!current[keys[i]]) {
             current[keys[i]] = {};
         }
         current = current[keys[i]];
     }
-    
+
     current[keys[keys.length - 1]] = value;
 };
 
@@ -32,17 +32,17 @@ const getCached = (key) => {
         console.warn(`[Storage] Cache not ready for key: ${key}`);
         return null;
     }
-    
+
     const keys = key.split('.');
     let current = cachedRaceData;
-    
+
     for (let i = 0; i < keys.length; i++) {
         current = current[keys[i]];
         if (current === undefined || current === null) {
             return null;
         }
     }
-    
+
     return current;
 };
 
@@ -57,15 +57,14 @@ const initAsync = async () => {
         if (!window.electronAPI) {
             throw new Error('window.electronAPI is not available. Preload script may not have run.');
         }
-        
+
         // Initialize main process config
         await window.electronAPI.configInit();
-        
+
         // Load current race file
         await loadRaceAsync();
-        
+
         cacheReady = true;
-        console.log('[Storage] Initialized and ready');
     } catch (error) {
         console.error('[Storage] Initialization error:', error);
         throw error;
@@ -101,7 +100,7 @@ const loadRaceAsync = async (filename) => {
         if (!filename) {
             filename = await window.electronAPI.configGet('raceFile');
         }
-        
+
         if (filename) {
             // Retrocompatibility: trim filename if needed
             filename = filename.substr(filename.length - 15);
@@ -288,7 +287,7 @@ const getManches = () => {
     try {
         const tournament = get('tournament');
         if (!tournament) return null;
-        
+
         const mancheList = tournament.manches || [];
         if (tournament.finals) {
             mancheList.push(...tournament.finals);
@@ -330,7 +329,7 @@ const getPlayerData = () => {
         let cars;
         const playerTimes = [];
         const mancheList = getManches();
-        
+
         _.each(mancheList, (manche, mindex) => {
             _.each(manche, (round, rindex) => {
                 cars = loadRound(mindex, rindex);
