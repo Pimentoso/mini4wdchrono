@@ -65,7 +65,6 @@ const delay = (fn, t) => {
     return self.delay(fn, t);
 };
 
-// Phase 3: Async version of delay for async/await patterns
 const delayAsync = (fn, t) => {
     return new Promise((resolve) => {
         setTimeout(async () => {

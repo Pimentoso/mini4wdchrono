@@ -1,6 +1,5 @@
 'use strict';
 
-// Phase 2: File operations now use IPC via electronAPI
 // Excel generation stays in renderer since it's DOM-related
 
 const xls = require('exceljs');

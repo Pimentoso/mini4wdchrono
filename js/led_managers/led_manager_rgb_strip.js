@@ -1,6 +1,5 @@
 'use strict';
 
-// Phase 3: No direct node-pixel - use IPC instead
 const LedManager = require('./led_manager');
 const utils = require('../utils');
 const storage = require('../storage');
@@ -18,27 +17,25 @@ const COLOR_TAMIYA_WHITE = '#f8f8f8';
 const COLOR_TAMIYA_BLUE = COLOR_BLUE;
 
 // Manager for a 9 LEDs WS2812b strip and a buzzer.
-// Phase 3: Uses IPC to control hardware in main process
 class LedManagerRgbStrip extends LedManager {
-    constructor(board, pin, pinBuzzer, reverse) {
-        super(board, pinBuzzer, reverse);
+    constructor(pin, pinBuzzer, reverse) {
+        super(pinBuzzer, reverse);
         this.pin = pin;
         this.ready = false;
     }
 
-    static getInstance(board, pin, pinBuzzer, reverse) {
+    static getInstance(pin, pinBuzzer, reverse) {
         if (LedManagerRgbStrip.instance) {
             return LedManagerRgbStrip.instance;
         }
 
-        LedManagerRgbStrip.instance = new LedManagerRgbStrip(board, pin, pinBuzzer, reverse);
+        LedManagerRgbStrip.instance = new LedManagerRgbStrip(pin, pinBuzzer, reverse);
         return LedManagerRgbStrip.instance;
     }
 
     async connected() {
         await super.connected();
         
-        // Phase 3: LED strip is initialized in main process
         // Simulate tamiya slide animation
         await this.tamiyaSlide();
         this.ready = true;

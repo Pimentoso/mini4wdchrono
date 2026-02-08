@@ -47,8 +47,6 @@ const init = async () => {
 
     $('.js-led-animation').removeClass('is-primary');
     $(`#js-led-animation-${await configuration.get('ledAnimation')}`).addClass('is-primary');
-    $('.js-led-type').removeClass('is-primary');
-    $(`#js-led-type-${await configuration.get('ledType')}`).addClass('is-primary');
     $('#js-config-reverse').prop('checked', (await configuration.get('reverse')) > 0);
     $('#js-config-sensor-pin-1').val(await configuration.get('sensorPin1'));
     $('#js-config-sensor-pin-2').val(await configuration.get('sensorPin2'));

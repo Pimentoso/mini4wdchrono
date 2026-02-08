@@ -1,13 +1,9 @@
 'use strict';
 
-// Phase 3: No direct johnny-five in LED managers - use IPC instead
-const utils = require('../utils');
 const storage = require('../storage');
 
 class LedManager {
-    constructor(board, pinBuzzer, reverse) {
-        // Phase 3: board can be null - we use IPC for hardware control
-        this.board = board;
+    constructor(pinBuzzer, reverse) {
         this.pinBuzzer = pinBuzzer;
         this.reverse = reverse;
     }
@@ -18,13 +14,11 @@ class LedManager {
 
     async connected() {
         if (this.buzzerAvailable()) {
-            // Phase 3: Use IPC instead of direct board access
             await this.beep(100);
         }
     }
 
     async disconnected() {
-        // Phase 3: Hardware cleanup happens in main process
         // Nothing to do here in renderer
     }
 
@@ -42,7 +36,6 @@ class LedManager {
 
     async beep(millis) {
         if (this.buzzerAvailable()) {
-            // Phase 3: Use IPC to control buzzer in main process
             try {
                 await window.electronAPI.hardwareBuzz(millis);
             } catch (error) {

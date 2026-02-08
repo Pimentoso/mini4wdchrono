@@ -56,9 +56,10 @@ window.electronAPI = {
     clipboardWrite: (text) => ipcRenderer.invoke('clipboard-write', text),
     clipboardRead: () => ipcRenderer.invoke('clipboard-read'),
     
-    // Hardware (placeholder for phase 3)
+    // Hardware
     hardwareInitialize: () => ipcRenderer.invoke('hardware-initialize'),
     hardwareSetupSensors: (config) => ipcRenderer.invoke('hardware-setup-sensors', config),
+    hardwareSetupButton: (config) => ipcRenderer.invoke('hardware-setup-button', config),
     hardwareSetupLeds: (config) => ipcRenderer.invoke('hardware-setup-leds', config),
     hardwareSetupBuzzer: (config) => ipcRenderer.invoke('hardware-setup-buzzer', config),
     hardwareReadSensors: () => ipcRenderer.invoke('hardware-read-sensors'),
@@ -69,12 +70,12 @@ window.electronAPI = {
     hardwareListPorts: () => ipcRenderer.invoke('hardware-list-ports'),
     hardwareIsReady: () => ipcRenderer.invoke('hardware-is-ready'),
     hardwareClose: () => ipcRenderer.invoke('hardware-close'),
-
     
     // Hardware status listeners (events)
     onBoardReady: (callback) => ipcRenderer.on('hardware-board-ready', callback),
     onBoardError: (callback) => ipcRenderer.on('hardware-board-error', callback),
     onSensorChange: (callback) => ipcRenderer.on('hardware-sensor-change', callback),
+    onButtonPress: (callback) => ipcRenderer.on('hardware-button-press', callback),
     
     // Export
     writeExcel: (filePath, workbook) => ipcRenderer.invoke('fs-write-excel', filePath, workbook),

@@ -1,6 +1,5 @@
 'use strict';
 
-// Phase 2: All settings operations now use IPC via electronAPI
 // This renderer-side module acts as a client to main-process config handlers
 
 /**

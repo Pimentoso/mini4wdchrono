@@ -1,6 +1,5 @@
 'use strict';
 
-// Phase 2: All file operations now use IPC via electronAPI
 // This module provides both async and sync-like (cached) access patterns
 // for backward compatibility with existing code during transition
 

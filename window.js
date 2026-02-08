@@ -83,8 +83,6 @@ const fs = require('fs');
 const fsp = fs.promises;
 const nconf = require('nconf');
 
-// ===== PHASE 2: FILE SYSTEM OPERATIONS =====
-
 /**
  * Ensures a directory exists, creating it recursively if needed
  * @param {string} dirPath - Absolute path to directory
@@ -181,8 +179,6 @@ ipcMain.handle('fs-file-exists', async (event, filePath) => {
     }
 });
 
-// ===== PHASE 2: CONFIGURATION OPERATIONS =====
-
 // Global nconf instance for settings
 let globalConf = null;
 
@@ -202,7 +198,7 @@ ipcMain.handle('config-init', async (_event) => {
         
         globalConf.defaults({
             'ledAnimation': 0,
-            'ledType': 0,
+            'ledType': 0, // deprecated
             'sensorPin1': 6,
             'sensorPin2': 7,
             'sensorPin3': 8,
@@ -309,8 +305,6 @@ ipcMain.handle('config-reset', async (_event) => {
         throw error;
     }
 });
-
-// ===== PHASE 2: STORAGE OPERATIONS (Race Data) =====
 
 // Global electron-settings instance for race data
 let raceStorage = null;
@@ -577,8 +571,6 @@ ipcMain.handle('storage-delete-race', async (event, filename) => {
     }
 });
 
-// ===== PHASE 3: HARDWARE OPERATIONS =====
-
 // Global hardware state
 let board = null;
 let sensors = { lane0: null, lane1: null, lane2: null };
@@ -712,6 +704,48 @@ ipcMain.handle('hardware-setup-sensors', async (event, config) => {
 });
 
 /**
+ * Sets up start button after board initialization
+ * @param {object} config - Button pin configuration
+ * @returns {Promise<object>} - Success status
+ */
+ipcMain.handle('hardware-setup-button', async (event, config) => {
+    try {
+        if (!board || !isHardwareReady) {
+            throw new Error('Board not ready');
+        }
+        
+        const buttonPin = config.startButtonPin || 0;
+        
+        // If pin is 0, button is disabled
+        if (buttonPin === 0) {
+            console.log('[Hardware] Start button disabled (pin = 0)');
+            return { success: true, message: 'Button disabled' };
+        }
+        
+        const five = require('johnny-five');
+        
+        // Set up button on specified pin
+        const button = new five.Button({
+            pin: buttonPin,
+            isPullup: true
+        });
+        
+        // Set up press listener that sends event to renderer
+        button.on('press', function() {
+            if (mainWindow) {
+                mainWindow.webContents.send('hardware-button-press');
+            }
+        });
+        
+        console.log(`[Hardware] Start button configured on pin ${buttonPin}`);
+        return { success: true };
+    } catch (error) {
+        console.error('[IPC] hardware-setup-button error:', error);
+        throw error;
+    }
+});
+
+/**
  * Sets up LED manager after board initialization
  * @param {object} config - LED configuration
  * @returns {Promise<object>} - Success status
@@ -722,40 +756,31 @@ ipcMain.handle('hardware-setup-leds', async (event, config) => {
             throw new Error('Board not ready');
         }
         
-        const ledType = config.ledType || 0;
-        
-        // For RGB Strip (ledType 0), initialize node-pixel in main process
-        if (ledType === 0 || ledType === 1) {
-            const pixel = require('node-pixel');
+        const pixel = require('node-pixel');
             
-            // Initialize the LED strip
-            return new Promise((resolve, reject) => {
-                try {
-                    ledManager = new pixel.Strip({
-                        board: board,
-                        controller: 'FIRMATA',
-                        strips: [{ pin: config.ledPin1 || 3, length: 9 }],
-                        gamma: 2.8
-                    });
+        // Initialize the LED strip
+        return new Promise((resolve, reject) => {
+            try {
+                ledManager = new pixel.Strip({
+                    board: board,
+                    controller: 'FIRMATA',
+                    strips: [{ pin: config.ledPin1 || 3, length: 9 }],
+                    gamma: 2.8
+                });
                     
-                    ledManager.on('ready', function() {
-                        console.log('[Hardware] LED strip ready');
-                        resolve({ success: true, ready: true });
-                    });
+                ledManager.on('ready', function() {
+                    console.log('[Hardware] LED strip ready');
+                    resolve({ success: true, ready: true });
+                });
                     
-                    ledManager.on('error', function(err) {
-                        console.error('[Hardware] LED strip error:', err);
-                        reject(err);
-                    });
-                } catch (error) {
-                    reject(error);
-                }
-            });
-        } else {
-            // Mock mode - no hardware
-            console.log('[Hardware] LED manager configured (mock mode)');
-            return { success: true, ready: true };
-        }
+                ledManager.on('error', function(err) {
+                    console.error('[Hardware] LED strip error:', err);
+                    reject(err);
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
     } catch (error) {
         console.error('[IPC] hardware-setup-leds error:', error);
         throw error;
@@ -1034,8 +1059,6 @@ ipcMain.handle('hardware-close', async () => {
         throw error;
     }
 });
-
-// ===== EXISTING HANDLERS (from Phase 1) =====
 
 ipcMain.handle('get-app-version', (_event) => {
     return app.getVersion();

@@ -14,7 +14,6 @@ window.electronAPI.getAppVersion().then(version => {
 });
 log.catchErrors();
 
-// Phase 3: No direct johnny-five in renderer - use IPC instead
 const configuration = require('./js/configuration');
 const i18n = new (require('./i18n/i18n'));
 
@@ -24,7 +23,6 @@ const ui = require('./js/ui');
 const xls = require('./js/export');
 const utils = require('./js/utils');
 
-// Phase 2: Async initialization wrapper
 // Handles loading configuration and storage via IPC
 (async () => {
     try {
@@ -72,7 +70,6 @@ async function initializeApplication() {
         window.electronAPI.openExternal(this.href);
     });
 
-    // Phase 3: Hardware initialization via IPC
     let connected = false;
     let reverse;
     let ledManager;
@@ -84,20 +81,9 @@ async function initializeApplication() {
     // TODO: Will be refactored in Step 4
     if (debugMode) {
         const LedManagerMock = require('./js/led_managers/led_manager_mock');
-        ledManager = LedManagerMock.getInstance(null, await configuration.get('piezoPin'));
+        ledManager = LedManagerMock.getInstance(await configuration.get('piezoPin'));
     }
-    else if (await configuration.get('ledType') === 0) {
-        const LedManagerLilypad = require('./js/led_managers/led_manager_lilypad');
-        ledManager = LedManagerLilypad.getInstance(null, [
-            await configuration.get('ledPin1'),
-            await configuration.get('ledPin2'),
-            await configuration.get('ledPin3')
-        ],
-        await configuration.get('piezoPin'),
-        (await configuration.get('reverse')) > 0
-        );
-    }
-    else if (await configuration.get('ledType') === 1) {
+    else {
         const LedManagerRgbStrip = require('./js/led_managers/led_manager_rgb_strip');
         ledManager = LedManagerRgbStrip.getInstance(
             null,
@@ -140,12 +126,15 @@ async function initializeApplication() {
         client.startRace(debugMode);
     };
     
-    // TODO: Re-implement start button via IPC in Phase 3
-    // const buttonPressed = () => {
-    //     client.isStarted() ? client.stopRace() : startRace();
-    // };
+    const buttonPressed = () => {
+        client.isStarted() ? client.stopRace() : startRace();
+    };
     
-    // Phase 3: Initialize hardware via IPC
+    // Set up button press listener
+    window.electronAPI.onButtonPress(() => {
+        buttonPressed();
+    });
+    
     try {
         // Initialize board in main process
         await window.electronAPI.hardwareInitialize();
@@ -187,9 +176,14 @@ async function initializeApplication() {
                 sensorPin3: sensorPin3
             });
             
+            // Set up start button in main process
+            await window.electronAPI.hardwareSetupButton({
+                startButtonPin: await configuration.get('startButtonPin')
+            });
+            log.info('Start button configured');
+            
             // Set up LEDs in main process
             await window.electronAPI.hardwareSetupLeds({
-                ledType: await configuration.get('ledType'),
                 ledPin1: await configuration.get('ledPin1'),
                 ledPin2: await configuration.get('ledPin2'),
                 ledPin3: await configuration.get('ledPin3'),
@@ -459,15 +453,6 @@ async function initializeApplication() {
         $this.addClass('is-primary');
         const type = $this.data('led-animation');
         configuration.set('ledAnimation', type);
-    });
-    
-    $('.js-led-type').on('click', (e) => {
-        const $this = $(e.currentTarget);
-        if ($this.attr('disabled')) return;
-        $('.js-led-type').removeClass('is-primary');
-        $this.addClass('is-primary');
-        const type = $this.data('led-type');
-        configuration.set('ledType', type);
     });
     
     $('.js-race-mode').on('click', (e) => {
