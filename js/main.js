@@ -206,26 +206,26 @@ async function initializeApplication() {
     
     // Listen for sensor changes from main process
     window.electronAPI.onSensorChange((event, data) => {
-        const { lane, value } = data;
+        const { lane, value, timestamp } = data;
         
         if (lane === 0) {
             tag1.text(value);
             if (value === 0 && val1 === 1) {
-                reverse ? client.addLap(2) : client.addLap(0);
+                reverse ? client.addLap(2, timestamp) : client.addLap(0, timestamp);
                 reverse ? ledManager.lap(2) : ledManager.lap(0);
             }
             val1 = value;
         } else if (lane === 1) {
             tag2.text(value);
             if (value === 0 && val2 === 1) {
-                client.addLap(1);
+                client.addLap(1, timestamp);
                 ledManager.lap(1);
             }
             val2 = value;
         } else if (lane === 2) {
             tag3.text(value);
             if (value === 0 && val3 === 1) {
-                reverse ? client.addLap(0) : client.addLap(2);
+                reverse ? client.addLap(0, timestamp) : client.addLap(2, timestamp);
                 reverse ? ledManager.lap(0) : ledManager.lap(2);
             }
             val3 = value;

@@ -542,13 +542,13 @@ const saveXls = () => {
 // ==========================================================================
 // ==== listen to arduino events
 
-const addLap = (lane) => {
+const addLap = (lane, timestamp) => {
 
     if (!raceRunning) {
         return;
     }
 
-    chrono.addLap(lane);
+    chrono.addLap(lane, timestamp);
     if (chrono.isRaceFinished()) {
         raceFinished();
     }

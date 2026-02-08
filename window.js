@@ -670,27 +670,33 @@ ipcMain.handle('hardware-setup-sensors', async (event, config) => {
         // Set up change listeners that send events to renderer
         sensors.lane0.on('change', function() {
             if (mainWindow) {
+                const timestamp = Date.now(); // Capture immediately for timing accuracy
                 mainWindow.webContents.send('hardware-sensor-change', {
                     lane: 0,
-                    value: this.value
+                    value: this.value,
+                    timestamp: timestamp
                 });
             }
         });
         
         sensors.lane1.on('change', function() {
             if (mainWindow) {
+                const timestamp = Date.now(); // Capture immediately for timing accuracy
                 mainWindow.webContents.send('hardware-sensor-change', {
                     lane: 1,
-                    value: this.value
+                    value: this.value,
+                    timestamp: timestamp
                 });
             }
         });
         
         sensors.lane2.on('change', function() {
             if (mainWindow) {
+                const timestamp = Date.now(); // Capture immediately for timing accuracy
                 mainWindow.webContents.send('hardware-sensor-change', {
                     lane: 2,
-                    value: this.value
+                    value: this.value,
+                    timestamp: timestamp
                 });
             }
         });

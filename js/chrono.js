@@ -71,9 +71,11 @@ const init = (track, playerIds, cars) => {
 };
 
 // method called when a sensor receives a signal
-const addLap = (lane) => {
-    // current time in milliseconds
-    const timestamp = new Date().getTime();
+const addLap = (lane, timestamp) => {
+    // Use provided timestamp (captured at hardware level) or fallback to current time
+    if (!timestamp) {
+        timestamp = new Date().getTime();
+    }
 
     console.log(`======= got signal for lane ${lane} at time ${timestamp}`);
     // console.log(JSON.stringify(rCars, null, 2));
