@@ -699,6 +699,7 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
 
 /**
  * Sets up sensors after board initialization
+ * Uses raw digitalRead for maximum speed (faster than Johnny-Five Sensors)
  * @param {object} config - Sensor pin configuration
  * @returns {Promise<object>} - Success status
  */
@@ -710,48 +711,49 @@ ipcMain.handle('hardware-setup-sensors', async (event, config) => {
 
         const five = require('johnny-five');
 
-        // Set up sensors on specified pins
-        sensors.lane0 = new five.Sensor({
-            pin: config.sensorPin1 || 6,
-            freq: 25
-        });
+        const sensorPin1 = config.sensorPin1 || 6;
+        const sensorPin2 = config.sensorPin2 || 7;
+        const sensorPin3 = config.sensorPin3 || 8;
 
-        sensors.lane1 = new five.Sensor({
-            pin: config.sensorPin2 || 7,
-            freq: 25
-        });
+        // Store sensor state for tracking
+        sensors.lane0 = { pin: sensorPin1, lastValue: 1 };
+        sensors.lane1 = { pin: sensorPin2, lastValue: 1 };
+        sensors.lane2 = { pin: sensorPin3, lastValue: 1 };
 
-        sensors.lane2 = new five.Sensor({
-            pin: config.sensorPin3 || 8,
-            freq: 25
-        });
+        // Set fast sampling interval (1ms) for accurate lap timing
+        board.samplingInterval(1);
 
-        // Set up data listeners for continuous updates (for configuration screen)
-        sensors.lane0.on('data', function() {
+        // Set pins to INPUT mode
+        board.pinMode(sensorPin1, five.Pin.INPUT);
+        board.pinMode(sensorPin2, five.Pin.INPUT);
+        board.pinMode(sensorPin3, five.Pin.INPUT);
+
+        // Raw digital read with callbacks
+        board.digitalRead(sensorPin1, function(value) {
             if (mainWindow) {
                 mainWindow.webContents.send('hardware-sensor-change', {
                     lane: 0,
-                    value: this.value,
+                    value: value,
                     timestamp: Date.now()
                 });
             }
         });
 
-        sensors.lane1.on('data', function() {
+        board.digitalRead(sensorPin2, function(value) {
             if (mainWindow) {
                 mainWindow.webContents.send('hardware-sensor-change', {
                     lane: 1,
-                    value: this.value,
+                    value: value,
                     timestamp: Date.now()
                 });
             }
         });
 
-        sensors.lane2.on('data', function() {
+        board.digitalRead(sensorPin3, function(value) {
             if (mainWindow) {
                 mainWindow.webContents.send('hardware-sensor-change', {
                     lane: 2,
-                    value: this.value,
+                    value: value,
                     timestamp: Date.now()
                 });
             }
@@ -878,14 +880,14 @@ ipcMain.handle('hardware-setup-buzzer', async (event, config) => {
  */
 ipcMain.handle('hardware-read-sensors', async () => {
     try {
-        if (!sensors.lane0 || !sensors.lane1 || !sensors.lane2) {
+        if (!board || !isHardwareReady || !sensors.lane0 || !sensors.lane1 || !sensors.lane2) {
             return { lane0: 0, lane1: 0, lane2: 0 };
         }
 
         return {
-            lane0: sensors.lane0.value,
-            lane1: sensors.lane1.value,
-            lane2: sensors.lane2.value
+            lane0: sensors.lane0.lastValue || 0,
+            lane1: sensors.lane1.lastValue || 0,
+            lane2: sensors.lane2.lastValue || 0
         };
     } catch (error) {
         console.error('[IPC] hardware-read-sensors error:', error);
