@@ -135,24 +135,7 @@ async function initializeApplication() {
         buttonPressed();
     });
 
-    try {
-        // Initialize board in main process
-        await window.electronAPI.hardwareInitialize();
-        log.info('Hardware initialization started');
-    } catch (error) {
-        log.error('Failed to initialize hardware:', error);
-        if (!debugMode) {
-            await window.electronAPI.showMessageBox({
-                type: 'error',
-                title: 'Error',
-                message: i18n.__('dialog-connection-error'),
-                detail: error.message,
-                buttons: ['Ok']
-            });
-        }
-    }
-
-    // Listen for board ready event from main process
+    // Listen for board ready event from main process (MUST be set up BEFORE initializing)
     window.electronAPI.onBoardReady(async () => {
         try {
             connected = true;
@@ -204,6 +187,24 @@ async function initializeApplication() {
         }
     });
 
+    // Listen for board errors from main process
+    window.electronAPI.onBoardError(async (event, errorMessage) => {
+        connected = false;
+        ledManager.disconnected();
+        ui.boardDisconnected();
+
+        log.error(`Board ERROR at ${new Date()} - ${errorMessage}`);
+        if (!debugMode) {
+            await window.electronAPI.showMessageBox({
+                type: 'error',
+                title: 'Error',
+                message: i18n.__('dialog-connection-error'),
+                detail: errorMessage,
+                buttons: ['Ok']
+            });
+        }
+    });
+
     // Listen for sensor changes from main process
     window.electronAPI.onSensorChange((event, data) => {
         const { lane, value, timestamp } = data;
@@ -232,23 +233,23 @@ async function initializeApplication() {
         }
     });
 
-    // Listen for board errors from main process
-    window.electronAPI.onBoardError(async (event, errorMessage) => {
-        connected = false;
-        ledManager.disconnected();
-        ui.boardDisconnected();
-
-        log.error(`Board ERROR at ${new Date()} - ${errorMessage}`);
+    // Now initialize hardware (after all event listeners are set up)
+    try {
+        // Initialize board in main process
+        await window.electronAPI.hardwareInitialize();
+        log.info('Hardware initialization started');
+    } catch (error) {
+        log.error('Failed to initialize hardware:', error);
         if (!debugMode) {
             await window.electronAPI.showMessageBox({
                 type: 'error',
                 title: 'Error',
                 message: i18n.__('dialog-connection-error'),
-                detail: errorMessage,
+                detail: error.message,
                 buttons: ['Ok']
             });
         }
-    });
+    }
 
     // ==========================================================================
     // ==== listen to interface events and propagate to client
@@ -419,8 +420,6 @@ async function initializeApplication() {
         configuration.set('sensorPin2', parseInt($('#js-config-sensor-pin-2').val()));
         configuration.set('sensorPin3', parseInt($('#js-config-sensor-pin-3').val()));
         configuration.set('ledPin1', parseInt($('#js-config-led-pin-1').val()));
-        configuration.set('ledPin2', parseInt($('#js-config-led-pin-2').val()));
-        configuration.set('ledPin3', parseInt($('#js-config-led-pin-3').val()));
         configuration.set('piezoPin', parseInt($('#js-config-piezo-pin').val()));
         configuration.set('startButtonPin', parseInt($('#js-config-start-button-pin').val()));
         configuration.set('title', $('#js-config-title').val());

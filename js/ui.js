@@ -52,8 +52,6 @@ const init = async () => {
     $('#js-config-sensor-pin-2').val(await configuration.get('sensorPin2'));
     $('#js-config-sensor-pin-3').val(await configuration.get('sensorPin3'));
     $('#js-config-led-pin-1').val(await configuration.get('ledPin1'));
-    $('#js-config-led-pin-2').val(await configuration.get('ledPin2'));
-    $('#js-config-led-pin-3').val(await configuration.get('ledPin3'));
     $('#js-config-piezo-pin').val(await configuration.get('piezoPin'));
     $('#js-config-start-button-pin').val(await configuration.get('startButtonPin'));
     $('#js-config-title').val(await configuration.get('title'));
