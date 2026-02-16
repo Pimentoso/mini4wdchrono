@@ -33,7 +33,7 @@ let currentRaceFile = null;
 let board = null;
 let sensors = { lane0: null, lane1: null, lane2: null };
 let ledManager = null;
-let buzzer = null;
+let buzzerPin = null;
 let isHardwareReady = false;
 
 function createWindow() {
@@ -864,9 +864,12 @@ ipcMain.handle('hardware-setup-buzzer', async (event, config) => {
 
         const five = require('johnny-five');
 
-        buzzer = new five.Piezo(config.piezoPin || 2);
+        buzzerPin = config.piezoPin || 2;
 
-        console.log('[Hardware] Buzzer configured');
+        // Set pin to OUTPUT mode for buzzer control
+        board.pinMode(buzzerPin, five.Pin.OUTPUT);
+
+        console.log(`[Hardware] Buzzer configured on pin ${buzzerPin}`);
         return { success: true };
     } catch (error) {
         console.error('[IPC] hardware-setup-buzzer error:', error);
@@ -983,23 +986,24 @@ ipcMain.handle('hardware-led-off', async (event, data = {}) => {
 });
 
 /**
- * Plays a buzzer tone
+ * Plays the buzzer
  * @param {number} duration - Duration in milliseconds
- * @param {number} frequency - Optional frequency in Hz
  * @returns {Promise<void>}
  */
-ipcMain.handle('hardware-buzz', async (event, duration, frequency) => {
+ipcMain.handle('hardware-buzz', async (event, duration) => {
     try {
-        if (!buzzer) {
+        if (!buzzerPin || !board || !isHardwareReady) {
             console.warn('[Hardware] Buzzer not initialized');
             return;
         }
 
-        if (frequency) {
-            buzzer.frequency(frequency, duration);
-        } else {
-            buzzer.tone(frequency || 2000, duration || 100);
-        }
+        // Turn buzzer on
+        board.digitalWrite(buzzerPin, 1);
+        
+        // Turn buzzer off after duration
+        setTimeout(() => {
+            board.digitalWrite(buzzerPin, 0);
+        }, duration || 100);
     } catch (error) {
         console.error('[IPC] hardware-buzz error:', error);
         throw error;
@@ -1072,7 +1076,7 @@ ipcMain.handle('hardware-close', async () => {
         }
         sensors = { lane0: null, lane1: null, lane2: null };
         ledManager = null;
-        buzzer = null;
+        buzzerPin = null;
         isHardwareReady = false;
         console.log('[Hardware] Closed');
     } catch (error) {
