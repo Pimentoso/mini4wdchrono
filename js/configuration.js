@@ -3,20 +3,6 @@
 // This renderer-side module acts as a client to main-process config handlers
 
 /**
- * Initializes configuration system
- * Calls config-init handler in main process
- * @returns {Promise<void>}
- */
-const init = async () => {
-    try {
-        await window.electronAPI.configInit();
-    } catch (error) {
-        console.error('Error initializing configuration:', error);
-        throw error;
-    }
-};
-
-/**
  * Resets configuration to defaults with backup
  * @returns {Promise<string>} - Path to backup file
  */
@@ -73,7 +59,6 @@ const del = async (settingKey) => {
 };
 
 module.exports = {
-    init: init,
     reset: reset,
     set: set,
     get: get,

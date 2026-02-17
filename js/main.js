@@ -77,8 +77,7 @@ async function initializeApplication() {
     let tag1, tag2, tag3;
     let val1 = 0, val2 = 0, val3 = 0;
 
-    // LED manager instance - temporarily keep in renderer
-    // TODO: Will be refactored in Step 4
+    // LED manager instance
     if (debugMode) {
         const LedManagerMock = require('./js/led_managers/led_manager_mock');
         ledManager = LedManagerMock.getInstance(await configuration.get('piezoPin'));
