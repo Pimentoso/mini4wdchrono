@@ -597,6 +597,268 @@ const updateUiState = (freeRound) => {
     }
 };
 
+/**
+ * Sets up all UI event handlers
+ * Should be called once during initialization
+ * @param {object} deps - Dependencies { client, storage, configuration, startRaceCallback }
+ */
+const setupEventHandlers = (deps) => {
+    const { client, storage, configuration, startRaceCallback } = deps;
+
+    // tabs
+    $('.tabs a').on('click', (e) => {
+        const $this = $(e.currentTarget);
+        const tab = $this.closest('li').data('tab');
+        gotoTab(tab);
+    });
+
+    // modals
+    const openModal = (modal) => {
+        $(`#${modal}`).addClass('is-active');
+        $(document.documentElement).addClass('is-clipped');
+    };
+
+    const closeAllModals = () => {
+        $('.modal').removeClass('is-active');
+        $(document.documentElement).removeClass('is-clipped');
+    };
+
+    $('.open-modal').on('click', (e) => {
+        const $this = $(e.currentTarget);
+        openModal($this.data('modal'));
+        initModal($this.data('modal'));
+    });
+
+    $('.close-modal').on('click', closeAllModals);
+
+    // Load race
+    $(document).on('click', '.js-load-race', async (e) => {
+        const $this = $(e.currentTarget);
+        if ($this.attr('disabled')) return;
+        const filename = $this.data('filename');
+        storage.loadRace(filename);
+        await client.init({ led_manager: deps.ledManager });
+        closeAllModals();
+    });
+
+    // Delete race
+    $(document).on('click', '.js-delete-race', async (e) => {
+        const $this = $(e.currentTarget);
+        if ($this.attr('disabled')) return;
+        const result = await window.electronAPI.showMessageBox({
+            type: 'warning',
+            message: i18n.__('dialog-delete-race'),
+            buttons: ['Ok', 'Cancel']
+        });
+        if (result.response === 0) {
+            const filename = $this.data('filename');
+            storage.deleteRace(filename);
+            closeAllModals();
+        }
+    });
+
+    // Load track
+    $('#js-load-track').on('click', (e) => {
+        const $this = $(e.currentTarget);
+        if ($this.attr('disabled')) return;
+        const code = $('#js-input-track-code').val().slice(-6);
+        client.loadTrack(code);
+    });
+
+    // Save manual track
+    $('#js-track-save-manual').on('click', async (e) => {
+        const $this = $(e.currentTarget);
+        if ($this.attr('disabled')) return;
+        const result = await window.electronAPI.showMessageBox({
+            type: 'warning',
+            message: i18n.__('dialog-save-track'),
+            buttons: ['Ok', 'Cancel']
+        });
+        if (result.response === 0) {
+            $('#js-track-length-manual').removeClass('is-danger');
+            $('#js-track-order-manual').removeClass('is-danger');
+            if (!$('#js-track-length-manual').val()) {
+                $('#js-track-length-manual').addClass('is-danger');
+                return;
+            }
+            if (!$('#js-track-order-manual').val()) {
+                $('#js-track-order-manual').addClass('is-danger');
+                return;
+            }
+            const length = parseFloat($('#js-track-length-manual').val().replace(',', '.'));
+            const order = _.map($('#js-track-order-manual').val().split('-'), (i) => { return parseInt(i); });
+            client.setTrackManual(length, order);
+        }
+    });
+
+    // Load tournament
+    $('#js-load-tournament').on('click', (e) => {
+        const $this = $(e.currentTarget);
+        if ($this.attr('disabled')) return;
+        const code = $('#js-input-tournament-code').val().slice(-6);
+        client.loadTournament(code);
+    });
+
+    // New race
+    $('#button-new-race').on('click', () => {
+        const name = $('#modal-new-name').val().trim();
+        if (name === '') return false;
+        client.reset(name);
+        closeAllModals();
+    });
+
+    // Start race
+    $('#button-start').on('click', startRaceCallback);
+
+    // Stop race
+    $('#button-stop').on('click', () => {
+        client.stopRace();
+    });
+
+    // Previous round
+    $('#button-prev').on('click', () => {
+        client.prevRound();
+    });
+
+    // Next round
+    $('#button-next').on('click', () => {
+        client.nextRound();
+    });
+
+    // Toggle free round
+    $('#button-toggle-free-round').on('click', () => {
+        client.toggleFreeRound();
+    });
+
+    // Print (TODO)
+    $('#button-print').on('click', () => {
+        // TODO webContents.getFocusedWebContents().print();
+    });
+
+    // Export XLS
+    $('#button-xls').on('click', () => {
+        client.saveXls();
+        $('#button-xls').attr('disabled', true);
+    });
+
+    // Open XLS folder
+    $('#button-xls-folder').on('click', () => {
+        const xls = require('./export');
+        const dir = xls.createDir();
+        window.electronAPI.openPath(dir);
+    });
+
+    // Open log file
+    $('#button-log-file').on('click', () => {
+        const log = require('electron-log');
+        window.electronAPI.openPath(log.transports.file.findLogPath());
+    });
+
+    // Update thresholds
+    const updateThresholds = () => {
+        const timeThreshold = parseFloat($('#js-settings-time-threshold').val().replace(',', '.'));
+        const speedThreshold = parseFloat($('#js-settings-speed-threshold').val().replace(',', '.'));
+        const roundLaps = parseInt($('#js-settings-round-laps').val());
+        if (isNaN(timeThreshold) || isNaN(speedThreshold)) return;
+        showThresholds(timeThreshold, speedThreshold, roundLaps);
+    };
+
+    $('#js-settings-speed-threshold').on('keyup', updateThresholds);
+    $('#js-settings-time-threshold').on('keyup', updateThresholds);
+    $('#js-settings-round-laps').on('change', updateThresholds);
+
+    // Save settings
+    $('#button-save-settings').on('click', (e) => {
+        const timeThreshold = parseFloat($('#js-settings-time-threshold').val().replace(',', '.'));
+        const speedThreshold = parseFloat($('#js-settings-speed-threshold').val().replace(',', '.'));
+        const startDelay = parseFloat($('#js-settings-start-delay').val().replace(',', '.'));
+        const roundLaps = parseInt($('#js-settings-round-laps').val());
+        storage.set('timeThreshold', timeThreshold);
+        storage.set('speedThreshold', speedThreshold);
+        storage.set('startDelay', startDelay);
+        storage.set('roundLaps', roundLaps);
+        showThresholds();
+        e.preventDefault();
+    });
+
+    // Save configuration
+    $('#button-save-config').on('click', async (e) => {
+        configuration.set('reverse', $('#js-config-reverse').is(':checked') ? 1 : 0);
+        configuration.set('sensorPin1', parseInt($('#js-config-sensor-pin-1').val()));
+        configuration.set('sensorPin2', parseInt($('#js-config-sensor-pin-2').val()));
+        configuration.set('sensorPin3', parseInt($('#js-config-sensor-pin-3').val()));
+        configuration.set('ledPin1', parseInt($('#js-config-led-pin-1').val()));
+        configuration.set('piezoPin', parseInt($('#js-config-piezo-pin').val()));
+        configuration.set('startButtonPin', parseInt($('#js-config-start-button-pin').val()));
+        configuration.set('title', $('#js-config-title').val());
+        configuration.set('tab', $('#js-config-starting-tab').val());
+        configuration.set('usbPort', $('#js-config-usb-port').val());
+        await window.electronAPI.showMessageBox({
+            type: 'warning',
+            message: i18n.__('dialog-restart'),
+            buttons: ['Ok']
+        });
+        location.reload();
+        e.preventDefault();
+    });
+
+    // Save manches
+    $('#button-manches-save').on('click', async (e) => {
+        const $this = $(e.currentTarget);
+        if ($this.attr('disabled')) return;
+        client.overrideTimes();
+        await window.electronAPI.showMessageBox({
+            type: 'warning',
+            message: i18n.__('dialog-saved'),
+            buttons: ['Ok']
+        });
+    });
+
+    // Go to round
+    $(document).on('click', '.js-goto-round', (e) => {
+        const $this = $(e.currentTarget);
+        if ($this.attr('disabled')) return;
+        const mindex = $this.data('manche');
+        const rindex = $this.data('round');
+        client.gotoRound(mindex, rindex);
+    });
+
+    // LED animation selection
+    $('.js-led-animation').on('click', (e) => {
+        const $this = $(e.currentTarget);
+        if ($this.attr('disabled')) return;
+        $('.js-led-animation').removeClass('is-primary');
+        $this.addClass('is-primary');
+        const type = $this.data('led-animation');
+        configuration.set('ledAnimation', type);
+    });
+
+    // Race mode selection
+    $('.js-race-mode').on('click', (e) => {
+        const $this = $(e.currentTarget);
+        if ($this.attr('disabled')) return;
+        $('.js-race-mode').removeClass('is-primary');
+        $this.addClass('is-primary');
+        const mode = $this.data('race-mode');
+        storage.set('raceMode', mode);
+        showRaceModeDetails();
+    });
+
+    // Invalidate/disqualify
+    $('.js-invalidate').on('click', async (e) => {
+        const $this = $(e.currentTarget);
+        if ($this.attr('disabled')) return;
+        const result = await window.electronAPI.showMessageBox({
+            type: 'warning',
+            message: i18n.__('dialog-disqualify'),
+            buttons: ['Ok', 'Cancel']
+        });
+        if (result.response === 0) {
+            client.disqualify(null, null, parseInt($this.data('lane')));
+        }
+    });
+};
+
 module.exports = {
     boardConnected: boardConnected,
     boardDisonnected: boardDisonnected,
@@ -604,6 +866,7 @@ module.exports = {
     gotoTab: gotoTab,
     init: init,
     initModal: initModal,
+    setupEventHandlers: setupEventHandlers,
     toggleFreeRound: toggleFreeRound,
     trackLoadDone: trackLoadDone,
     trackLoadFail: trackLoadFail,

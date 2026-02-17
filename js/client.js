@@ -13,18 +13,16 @@ let mancheList, mancheCount;
 let currManche = 0, currRound = 0, raceStarting = false, raceRunning = false, freeRound = true;
 
 let timerIntervals = [], timerSeconds = [];
-let pageTimerSeconds; // Initialize in init() when $ is available
+let pageTimerSeconds;
 let checkRaceTask;
 
 const init = async (params) => {
-    // Initialize jQuery selectors now that $ is available
-    pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
-
-    ledManager = params.led_manager;
     await ui.init();
     ui.gotoTab(await configuration.get('tab'));
 
     // init variables
+    pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
+    ledManager = params.led_manager;
     mancheList = [];
     currManche = storage.get('currManche') || 0;
     currRound = storage.get('currRound') || 0;
