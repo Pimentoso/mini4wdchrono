@@ -36,6 +36,23 @@ let ledManager = null;
 let buzzerPin = null;
 let isHardwareReady = false;
 
+// Configuration defaults
+const CONFIG_DEFAULTS = {
+    'ledAnimation': 0,
+    'ledType': 0, // deprecated
+    'sensorPin1': 6,
+    'sensorPin2': 7,
+    'sensorPin3': 8,
+    'ledPin1': 3,
+    'ledPin2': 4, // deprecated
+    'ledPin3': 5, // deprecated
+    'piezoPin': 2,
+    'startButtonPin': 0,
+    'reverse': 0,
+    'title': 'MINI4WD CHRONO',
+    'tab': 'setup'
+};
+
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
@@ -207,21 +224,7 @@ ipcMain.handle('config-init', async (_event) => {
 
         globalConf = nconf.file('global', { file: configPath });
 
-        globalConf.defaults({
-            'ledAnimation': 0,
-            'ledType': 0, // deprecated
-            'sensorPin1': 6,
-            'sensorPin2': 7,
-            'sensorPin3': 8,
-            'ledPin1': 3,
-            'ledPin2': 4, // deprecated
-            'ledPin3': 5, // deprecated
-            'piezoPin': 2,
-            'startButtonPin': 0,
-            'reverse': 0,
-            'title': 'MINI4WD CHRONO',
-            'tab': 'setup'
-        });
+        globalConf.defaults(CONFIG_DEFAULTS);
     } catch (error) {
         console.error('[IPC] config-init error:', error);
         throw error;
@@ -236,7 +239,12 @@ ipcMain.handle('config-init', async (_event) => {
 ipcMain.handle('config-get', async (_event, key) => {
     try {
         if (!globalConf) {
-            await ipcMain.emit('config-init');
+            // Initialize config if not already done
+            const configDir = app.getPath('userData');
+            const configPath = path.join(configDir, 'settings.json');
+            await fsp.mkdir(configDir, { recursive: true });
+            globalConf = nconf.file('global', { file: configPath });
+            globalConf.defaults(CONFIG_DEFAULTS);
         }
         globalConf.load();
         return globalConf.get(key);
@@ -255,7 +263,12 @@ ipcMain.handle('config-get', async (_event, key) => {
 ipcMain.handle('config-set', async (event, key, value) => {
     try {
         if (!globalConf) {
-            await ipcMain.emit('config-init');
+            // Initialize config if not already done
+            const configDir = app.getPath('userData');
+            const configPath = path.join(configDir, 'settings.json');
+            await fsp.mkdir(configDir, { recursive: true });
+            globalConf = nconf.file('global', { file: configPath });
+            globalConf.defaults(CONFIG_DEFAULTS);
         }
         globalConf.set(key, value);
         globalConf.save();
@@ -293,11 +306,11 @@ ipcMain.handle('config-reset', async (_event) => {
         const configPath = path.join(configDir, 'settings.json');
         const backupPath = path.join(configDir, 'settings.json.bak');
 
-        // Backup current settings
-        if (await new Promise(resolve => {
-            fsp.access(configPath).then(() => resolve(true)).catch(() => resolve(false));
-        })) {
+        // Backup current settings if file exists
+        try {
             await fsp.copyFile(configPath, backupPath);
+        } catch (_error) {
+            // File may not exist, that's ok
         }
 
         // Delete current and reinit
@@ -332,28 +345,13 @@ ipcMain.handle('storage-load-race', async (event, filename) => {
 
         const raceFilePath = path.join(raceDir, filename);
 
-        // Check if file exists
-        const exists = await new Promise(resolve => {
-            fsp.access(raceFilePath).then(() => resolve(true)).catch(() => resolve(false));
-        });
-
-        if (!exists) {
-            throw new Error(`Race file not found: ${filename}`);
-        }
-
-        // Load race data
+        // Load race data (will throw if file doesn't exist)
         const content = await fsp.readFile(raceFilePath, 'utf8');
         const raceData = JSON.parse(content);
         currentRaceFile = raceFilePath;
 
-        // Store in memory for fast access (matches original electron-settings behavior)
+        // Store in memory for fast access
         raceStorage = raceData;
-
-        // Update config with current race file
-        if (globalConf) {
-            globalConf.set('raceFile', filename);
-            globalConf.save();
-        }
     } catch (error) {
         console.error('[IPC] storage-load-race error:', error);
         throw error;
@@ -396,12 +394,6 @@ ipcMain.handle('storage-new-race', async (event, raceName) => {
         // Load into storage
         raceStorage = raceData;
         currentRaceFile = filePath;
-
-        // Update config
-        if (globalConf) {
-            globalConf.set('raceFile', filename);
-            globalConf.save();
-        }
 
         return filename;
     } catch (error) {
@@ -567,10 +559,6 @@ ipcMain.handle('storage-delete-race', async (event, filename) => {
         if (currentRaceFile === filePath) {
             raceStorage = null;
             currentRaceFile = null;
-            if (globalConf) {
-                globalConf.del('raceFile');
-                globalConf.save();
-            }
         }
     } catch (error) {
         console.error('[IPC] storage-delete-race error:', error);
@@ -730,6 +718,7 @@ ipcMain.handle('hardware-setup-sensors', async (event, config) => {
 
         // Raw digital read with callbacks
         board.digitalRead(sensorPin1, function(value) {
+            sensors.lane0.lastValue = value;
             if (mainWindow) {
                 mainWindow.webContents.send('hardware-sensor-change', {
                     lane: 0,
@@ -740,6 +729,7 @@ ipcMain.handle('hardware-setup-sensors', async (event, config) => {
         });
 
         board.digitalRead(sensorPin2, function(value) {
+            sensors.lane1.lastValue = value;
             if (mainWindow) {
                 mainWindow.webContents.send('hardware-sensor-change', {
                     lane: 1,
@@ -750,6 +740,7 @@ ipcMain.handle('hardware-setup-sensors', async (event, config) => {
         });
 
         board.digitalRead(sensorPin3, function(value) {
+            sensors.lane2.lastValue = value;
             if (mainWindow) {
                 mainWindow.webContents.send('hardware-sensor-change', {
                     lane: 2,
