@@ -10,6 +10,9 @@ const boardConnected = () => {
     $('#tag-board-status').removeClass('is-danger');
     $('#tag-board-status').addClass('is-success');
     $('#tag-board-status').text(i18n.__('tag-connected'));
+
+    // show interface
+    $('#main').show();
 };
 
 const boardDisonnected = () => {
@@ -33,15 +36,17 @@ const gotoTab = (tab) => {
 };
 
 const init = async () => {
+    translate();
+
     const title_text = _.compact([await configuration.get('title'), storage.get('name')]).join(' - ');
     $('#js-title').text(title_text);
 
     $('#js-race-name').text(storage.get('name') || i18n.__('label-untitled'));
     $('#js-race-created').text(`${i18n.__('label-created')} ${strftime('%Y-%m-%d, %H:%M', new Date(storage.get('created') * 1000))}`);
-    $('#js-settings-time-threshold').val(storage.get('timeThreshold'));
-    $('#js-settings-speed-threshold').val(storage.get('speedThreshold'));
-    $('#js-settings-start-delay').val(storage.get('startDelay'));
-    $('#js-settings-round-laps').val(storage.get('roundLaps'));
+    $('#js-settings-time-threshold').val(storage.get('timeThreshold') || 40);
+    $('#js-settings-speed-threshold').val(storage.get('speedThreshold') || 5);
+    $('#js-settings-start-delay').val(storage.get('startDelay') || 3);
+    $('#js-settings-round-laps').val(storage.get('roundLaps') || 3);
     showRaceModeDetails();
 
     $('.js-led-animation').removeClass('is-primary');

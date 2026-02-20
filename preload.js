@@ -76,6 +76,7 @@ window.electronAPI = {
     // Hardware status listeners (events)
     onBoardReady: (callback) => ipcRenderer.on('hardware-board-ready', callback),
     onBoardError: (callback) => ipcRenderer.on('hardware-board-error', callback),
+    onBoardClosed: (callback) => ipcRenderer.on('hardware-board-closed', callback),
     onSensorChange: (callback) => ipcRenderer.on('hardware-sensor-change', callback),
     onButtonPress: (callback) => ipcRenderer.on('hardware-button-press', callback),
 

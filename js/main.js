@@ -58,17 +58,6 @@ const utils = require('./js/utils');
  * Main application initialization (called after async setup)
  */
 async function initializeApplication() {
-    // Show version in about tab (async)
-    window.electronAPI.getAppVersion().then(version => {
-        $('#js-about-version').text(`Version ${version}`);
-    });
-
-    // open links externally by default
-    $(document).on('click', 'a[href^="http"]', function (event) {
-        event.preventDefault();
-        window.electronAPI.openExternal(this.href);
-    });
-
     // Hardware state variables
     let connected = false;
     let reverse;
@@ -91,18 +80,21 @@ async function initializeApplication() {
         );
     }
 
-    // translate ui
-    ui.translate();
-
     // init client
     await client.init({ led_manager: ledManager });
 
-    // show interface
-    $('#main').show();
+    // Close hardware connections before page unload/reload
+    // window.onbeforeunload = () => {
+    //     console.log('[Main] Page unloading, closing hardware...');
+    //     try {
+    //         // Notify main process to close hardware synchronously
+    //         window.electronAPI.invoke('hardware-close');
+    //     } catch (err) {
+    //         console.error('[Main] Error closing hardware:', err);
+    //     }
+    // };
 
-    /**
-     * Start race handler - validates hardware state before starting
-     */
+    // Start race handler - validates hardware state before starting
     const startRace = async () => {
         log.info(`Starting race at ${new Date()}`);
         if (!debugMode) {
@@ -146,9 +138,7 @@ async function initializeApplication() {
         client.startRace(debugMode);
     };
 
-    /**
-     * Hardware button press handler
-     */
+    // Hardware button press handler
     const buttonPressed = () => {
         client.isStarted() ? client.stopRace() : startRace();
     };
@@ -162,14 +152,23 @@ async function initializeApplication() {
         startRaceCallback: startRace
     });
 
+    // Show version in about tab (async)
+    window.electronAPI.getAppVersion().then(version => {
+        $('#js-about-version').text(`Version ${version}`);
+    });
+
+    // Open links externally by default
+    $(document).on('click', 'a[href^="http"]', function (event) {
+        event.preventDefault();
+        window.electronAPI.openExternal(this.href);
+    });
+
     // Set up hardware button press listener
     window.electronAPI.onButtonPress(() => {
         buttonPressed();
     });
 
-    /**
-     * Sets up hardware components after board is ready
-     */
+    // Sets up hardware components after board is ready
     const setupHardwareComponents = async () => {
         try {
             tag1 = $('#sensor-reading-1');
@@ -238,6 +237,15 @@ async function initializeApplication() {
         }
     });
 
+    // Listen for board closed event from main process
+    window.electronAPI.onBoardClosed(async (event, errorMessage) => {
+        connected = false;
+        ledManager.disconnected();
+        ui.boardDisconnected();
+
+        log.error(`Board closed at ${new Date()}`);
+    });
+
     // Listen for sensor changes from main process
     window.electronAPI.onSensorChange((event, data) => {
         const { lane, value, timestamp } = data;
@@ -290,4 +298,4 @@ async function initializeApplication() {
             });
         }
     }
-} // End of initializeApplication function
+}

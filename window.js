@@ -218,13 +218,10 @@ ipcMain.handle('config-init', async (_event) => {
     try {
         const configDir = app.getPath('userData');
         const configPath = path.join(configDir, 'settings.json');
-
-        // Ensure directory exists
         await fsp.mkdir(configDir, { recursive: true });
-
         globalConf = nconf.file('global', { file: configPath });
-
         globalConf.defaults(CONFIG_DEFAULTS);
+        console.log('[IPC] config-init initialized');
     } catch (error) {
         console.error('[IPC] config-init error:', error);
         throw error;
@@ -239,12 +236,7 @@ ipcMain.handle('config-init', async (_event) => {
 ipcMain.handle('config-get', async (_event, key) => {
     try {
         if (!globalConf) {
-            // Initialize config if not already done
-            const configDir = app.getPath('userData');
-            const configPath = path.join(configDir, 'settings.json');
-            await fsp.mkdir(configDir, { recursive: true });
-            globalConf = nconf.file('global', { file: configPath });
-            globalConf.defaults(CONFIG_DEFAULTS);
+            await ipcMain.emit('config-init');
         }
         globalConf.load();
         return globalConf.get(key);
@@ -263,12 +255,7 @@ ipcMain.handle('config-get', async (_event, key) => {
 ipcMain.handle('config-set', async (event, key, value) => {
     try {
         if (!globalConf) {
-            // Initialize config if not already done
-            const configDir = app.getPath('userData');
-            const configPath = path.join(configDir, 'settings.json');
-            await fsp.mkdir(configDir, { recursive: true });
-            globalConf = nconf.file('global', { file: configPath });
-            globalConf.defaults(CONFIG_DEFAULTS);
+            await ipcMain.emit('config-init');
         }
         globalConf.set(key, value);
         globalConf.save();
@@ -352,6 +339,12 @@ ipcMain.handle('storage-load-race', async (event, filename) => {
 
         // Store in memory for fast access
         raceStorage = raceData;
+
+        // Save current race file to config so it can be loaded on next startup
+        if (globalConf) {
+            globalConf.set('raceFile', filename);
+            globalConf.save();
+        }
     } catch (error) {
         console.error('[IPC] storage-load-race error:', error);
         throw error;
@@ -394,6 +387,12 @@ ipcMain.handle('storage-new-race', async (event, raceName) => {
         // Load into storage
         raceStorage = raceData;
         currentRaceFile = filePath;
+
+        // Save current race file to config
+        if (globalConf) {
+            globalConf.set('raceFile', filename);
+            globalConf.save();
+        }
 
         return filename;
     } catch (error) {
@@ -559,6 +558,10 @@ ipcMain.handle('storage-delete-race', async (event, filename) => {
         if (currentRaceFile === filePath) {
             raceStorage = null;
             currentRaceFile = null;
+            if (globalConf) {
+                globalConf.del('raceFile');
+                globalConf.save();
+            }
         }
     } catch (error) {
         console.error('[IPC] storage-delete-race error:', error);
@@ -750,7 +753,7 @@ ipcMain.handle('hardware-setup-sensors', async (event, config) => {
             }
         });
 
-        console.log('[Hardware] Sensors configured');
+        console.log('[Hardware] Sensors ready');
         return { success: true };
     } catch (error) {
         console.error('[IPC] hardware-setup-sensors error:', error);
@@ -773,7 +776,7 @@ ipcMain.handle('hardware-setup-button', async (event, config) => {
 
         // If pin is 0, button is disabled
         if (buttonPin === 0) {
-            console.log('[Hardware] Start button disabled (pin = 0)');
+            console.log('[Hardware] Start button disabled');
             return { success: true, message: 'Button disabled' };
         }
 
@@ -860,7 +863,7 @@ ipcMain.handle('hardware-setup-buzzer', async (event, config) => {
         // Set pin to OUTPUT mode for buzzer control
         board.pinMode(buzzerPin, five.Pin.OUTPUT);
 
-        console.log(`[Hardware] Buzzer configured on pin ${buzzerPin}`);
+        console.log('[Hardware] Buzzer ready');
         return { success: true };
     } catch (error) {
         console.error('[IPC] hardware-setup-buzzer error:', error);
@@ -990,7 +993,7 @@ ipcMain.handle('hardware-buzz', async (event, duration) => {
 
         // Turn buzzer on
         board.digitalWrite(buzzerPin, 1);
-        
+
         // Turn buzzer off after duration
         setTimeout(() => {
             board.digitalWrite(buzzerPin, 0);
@@ -1068,7 +1071,6 @@ ipcMain.handle('hardware-close', async () => {
         sensors = { lane0: null, lane1: null, lane2: null };
         ledManager = null;
         buzzerPin = null;
-        isHardwareReady = false;
         console.log('[Hardware] Closed');
     } catch (error) {
         console.error('[IPC] hardware-close error:', error);
