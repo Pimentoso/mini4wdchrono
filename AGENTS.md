@@ -24,7 +24,7 @@ It is a standalone program which is meant to be paired with a hardware lap timer
   - `js/led_managers/` - LED abstraction layer (talks to main process via IPC)
 
 ## Boundaries
-- Only change code in the `js/` folder, and other javascript files in the root directory.
+- Only change code in the `js/` folder, and other javascript files in the root directory, and package.json if needed.
 - Do not change `js/chrono.js` which contains battle-tested lap timer logic.
 - Do not change the `index.html` and css files.
 - Hardware operations must go through IPC - never use johnny-five or serialport directly in renderer

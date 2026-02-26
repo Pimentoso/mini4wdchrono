@@ -49,6 +49,9 @@
     "test": "test"
   },
   "keywords": [],
+  "engines": {
+    "node": ">=20"
+  },
   "overrides": {
     "serialport": "^13.0.0"
   }
