@@ -10,8 +10,6 @@ const boardConnected = () => {
     $('#tag-board-status').removeClass('is-danger');
     $('#tag-board-status').addClass('is-success');
     $('#tag-board-status').text(i18n.__('tag-connected'));
-
-    // show interface
     $('#main').show();
 };
 
@@ -19,6 +17,7 @@ const boardDisonnected = () => {
     $('#tag-board-status').removeClass('is-success');
     $('#tag-board-status').addClass('is-danger');
     $('#tag-board-status').text(i18n.__('tag-disconnected'));
+    $('#main').show();
 };
 
 const translate = () => {
