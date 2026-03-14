@@ -6,6 +6,7 @@
 // In-memory cache of current race data
 const cachedRaceData = {};
 let cacheReady = false;
+let cachedRecentFiles = [];
 
 /**
  * Internal: Sets values in the local cache
@@ -22,6 +23,16 @@ const setCached = (key, value) => {
     }
 
     current[keys[keys.length - 1]] = value;
+};
+
+/**
+ * Internal: Replaces entire local cache with provided race data
+ */
+const replaceCachedData = (data) => {
+    _.each(_.keys(cachedRaceData), (key) => {
+        delete cachedRaceData[key];
+    });
+    _.extend(cachedRaceData, data || {});
 };
 
 /**
@@ -63,6 +74,7 @@ const initAsync = async () => {
 
         // Load current race file
         await loadRaceAsync();
+        cachedRecentFiles = await getRecentFilesAsync(50);
 
         cacheReady = true;
     } catch (error) {
@@ -105,6 +117,7 @@ const loadRaceAsync = async (filename) => {
             // Retrocompatibility: trim filename if needed
             filename = filename.substr(filename.length - 15);
             await window.electronAPI.storageLoadRace(filename);
+            replaceCachedData(await window.electronAPI.storageGetAll());
             cacheReady = true;
         } else {
             // No race file, create a new one
@@ -149,7 +162,8 @@ const getRecentFilesAsync = async (num) => {
     try {
         num = num || 10;
         const recent = await window.electronAPI.storageListRaces(num);
-        return _.sortBy(recent, 'created').reverse().slice(0, num);
+        cachedRecentFiles = _.sortBy(recent, 'created').reverse().slice(0, num);
+        return cachedRecentFiles;
     } catch (error) {
         console.error('Error getting recent files:', error);
         throw error;
@@ -161,7 +175,8 @@ const getRecentFilesAsync = async (num) => {
  */
 const getRecentFiles = (num) => {
     getRecentFilesAsync(num).catch(err => console.error('Async getRecentFiles failed:', err));
-    return [];
+    num = num || 10;
+    return cachedRecentFiles.slice(0, num);
 };
 
 /**
@@ -255,10 +270,10 @@ const saveRound = (manche, round, cars) => {
  */
 const loadRound = (manche, round) => {
     try {
-        if (manche === null) {
+        if (manche == null) {
             manche = get('currManche');
         }
-        if (round === null) {
+        if (round == null) {
             round = get('currRound');
         }
         return get(`race.m${manche}.r${round}`);
@@ -288,9 +303,9 @@ const getManches = () => {
         const tournament = get('tournament');
         if (!tournament) return null;
 
-        const mancheList = tournament.manches || [];
-        if (tournament.finals) {
-            mancheList.push(...tournament.finals);
+        let mancheList = _.clone(tournament.manches || []);
+        if (tournament.finals && tournament.finals.length) {
+            mancheList = mancheList.concat(tournament.finals);
         }
         return mancheList;
     } catch (error) {

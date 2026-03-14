@@ -45,7 +45,7 @@ const init = async (params) => {
     showTournamentDetails();
 };
 
-const reset = (name) => {
+const reset = async (name) => {
     mancheList = [];
     currManche = 0;
     currRound = 0;
@@ -53,7 +53,7 @@ const reset = (name) => {
     currTournament = null;
     raceRunning = false;
 
-    storage.newRace(name);
+    await storage.newRaceAsync(name);
     ui.init();
 
     showTrackDetails();

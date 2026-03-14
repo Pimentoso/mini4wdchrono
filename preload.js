@@ -41,6 +41,7 @@ window.electronAPI = {
     storageListRaces: (num) => ipcRenderer.invoke('storage-list-races', num),
     storageSet: (key, value) => ipcRenderer.invoke('storage-set', key, value),
     storageGet: (key) => ipcRenderer.invoke('storage-get', key),
+    storageGetAll: () => ipcRenderer.invoke('storage-get-all'),
     storageRemove: (key) => ipcRenderer.invoke('storage-remove', key),
 
     // App info

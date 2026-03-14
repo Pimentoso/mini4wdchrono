@@ -466,6 +466,19 @@ ipcMain.handle('storage-get', async (event, key) => {
 });
 
 /**
+ * Gets all race storage data
+ * @returns {Promise<object>} - Full race storage payload
+ */
+ipcMain.handle('storage-get-all', async () => {
+    try {
+        return raceStorage || {};
+    } catch (error) {
+        console.error('[IPC] storage-get-all error:', error);
+        throw error;
+    }
+});
+
+/**
  * Removes a storage value
  * @param {string} key - Key path
  * @returns {Promise<void>}
