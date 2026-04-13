@@ -2,6 +2,7 @@
 
 // This module provides both async and sync-like (cached) access patterns
 // for backward compatibility with existing code during transition
+const configuration = require('./configuration');
 
 // In-memory cache of current race data
 const cachedRaceData = {};
@@ -89,6 +90,7 @@ const initAsync = async () => {
 const newRaceAsync = async (raceName) => {
     try {
         const filename = await window.electronAPI.storageNewRace(raceName);
+        configuration.set('raceFile', filename);
         await loadRaceAsync(filename);
         return filename;
     } catch (error) {
@@ -110,13 +112,14 @@ const newRace = (raceName) => {
 const loadRaceAsync = async (filename) => {
     try {
         if (!filename) {
-            filename = await window.electronAPI.configGet('raceFile');
+            filename = configuration.get('raceFile');
         }
 
         if (filename) {
             // Retrocompatibility: trim filename if needed
             filename = filename.substr(filename.length - 15);
             await window.electronAPI.storageLoadRace(filename);
+            configuration.set('raceFile', filename);
             replaceCachedData(await window.electronAPI.storageGetAll());
             cacheReady = true;
         } else {
@@ -142,6 +145,9 @@ const loadRace = (filename) => {
 const deleteRaceAsync = async (filename) => {
     try {
         await window.electronAPI.storageDeleteRace(filename);
+        if (filename === configuration.get('raceFile')) {
+            configuration.del('raceFile');
+        }
     } catch (error) {
         console.error('Error deleting race:', error);
         throw error;

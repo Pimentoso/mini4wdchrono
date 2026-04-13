@@ -28,7 +28,8 @@ const utils = require('./js/utils');
         // Initialize locale for utils
         await utils.initLocale();
 
-        // Initialize configuration and storage via IPC
+        // Initialize configuration and storage caches via IPC
+        await configuration.initAsync();
         await storage.initAsync();
         log.info('Configuration and storage initialized successfully');
     } catch (e) {
@@ -68,20 +69,20 @@ async function initializeApplication() {
     let ledManager;
     if (debugMode) {
         const LedManagerMock = require('./js/led_managers/led_manager_mock');
-        ledManager = LedManagerMock.getInstance(await configuration.get('piezoPin'));
+        ledManager = LedManagerMock.getInstance(configuration.get('piezoPin'));
     }
     else {
         const LedManagerRgbStrip = require('./js/led_managers/led_manager_rgb_strip');
         ledManager = LedManagerRgbStrip.getInstance(
             null,
-            await configuration.get('ledPin1'),
-            await configuration.get('piezoPin'),
-            (await configuration.get('reverse')) > 0
+            configuration.get('ledPin1'),
+            configuration.get('piezoPin'),
+            configuration.get('reverse') > 0
         );
     }
 
     // init client
-    await client.init({ led_manager: ledManager });
+    client.init({ led_manager: ledManager });
 
     // Close hardware connections before page unload/reload
     // window.onbeforeunload = () => {
@@ -175,32 +176,32 @@ async function initializeApplication() {
             tag2 = $('#sensor-reading-2');
             tag3 = $('#sensor-reading-3');
 
-            reverse = (await configuration.get('reverse')) > 0;
+            reverse = configuration.get('reverse') > 0;
 
             // Set up sensors in main process
             await window.electronAPI.hardwareSetupSensors({
-                sensorPin1: await configuration.get('sensorPin1'),
-                sensorPin2: await configuration.get('sensorPin2'),
-                sensorPin3: await configuration.get('sensorPin3')
+                sensorPin1: configuration.get('sensorPin1'),
+                sensorPin2: configuration.get('sensorPin2'),
+                sensorPin3: configuration.get('sensorPin3')
             });
 
             // Set up start button in main process
             await window.electronAPI.hardwareSetupButton({
-                startButtonPin: await configuration.get('startButtonPin')
+                startButtonPin: configuration.get('startButtonPin')
             });
             log.info('Start button configured');
 
             // Set up LEDs in main process
             await window.electronAPI.hardwareSetupLeds({
-                ledPin1: await configuration.get('ledPin1'),
-                ledPin2: await configuration.get('ledPin2'),
-                ledPin3: await configuration.get('ledPin3'),
-                reverse: (await configuration.get('reverse')) > 0
+                ledPin1: configuration.get('ledPin1'),
+                ledPin2: configuration.get('ledPin2'),
+                ledPin3: configuration.get('ledPin3'),
+                reverse: configuration.get('reverse') > 0
             });
 
             // Set up buzzer in main process
             await window.electronAPI.hardwareSetupBuzzer({
-                piezoPin: await configuration.get('piezoPin')
+                piezoPin: configuration.get('piezoPin')
             });
 
             log.info('Hardware components configured');

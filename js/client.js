@@ -2,6 +2,7 @@
 
 const ui = require('./ui');
 const utils = require('./utils');
+const configuration = require('./configuration');
 const storage = require('./storage');
 const chrono = require('./chrono');
 const xls = require('./export');
@@ -16,9 +17,9 @@ let timerIntervals = [], timerSeconds = [];
 let pageTimerSeconds;
 let checkRaceTask;
 
-const init = async (params) => {
-    await ui.init();
-    ui.gotoTab(await configuration.get('tab'));
+const init = (params) => {
+    ui.init();
+    ui.gotoTab(configuration.get('tab'));
 
     // init variables
     pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
@@ -190,7 +191,7 @@ const startRace = async (debugMode) => {
         raceStarting = true;
         ui.raceStarted(freeRound);
         initRound();
-        ledManager.roundStart(await configuration.get('ledAnimation'), startRound);
+        ledManager.roundStart(configuration.get('ledAnimation'), startRound);
     }
 };
 
