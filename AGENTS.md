@@ -32,3 +32,6 @@ It is a standalone program which is meant to be paired with a hardware lap timer
 
 ## Lap timer hardware
 Mini4wdChrono connects via usb to a physical lap timer. The lap timer looks like a bridge over the three lanes of a mini4wd track. It is powered by an arduino with firmata firmware, and has 3 light sensor to detect the cars passing under the lap timer. It also sports an rgb led strip for visual feedback and a buzzer for alerts.
+
+## Tools
+- Linting: use `npm run lint:fix`
