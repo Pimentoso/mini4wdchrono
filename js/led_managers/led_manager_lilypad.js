@@ -51,7 +51,7 @@ class LedManagerLilypad extends LedManager {
             this.led1.stop().off();
             this.led2.stop().off();
             this.led3.stop().off();
-        } catch (e) { 
+        } catch (e) {
             // Safely ignore errors when disconnecting hardware
             // This can happen when the board is already disconnected
         }

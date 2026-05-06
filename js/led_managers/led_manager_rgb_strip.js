@@ -56,7 +56,7 @@ class LedManagerRgbStrip extends LedManager {
         super.disconnected();
         try {
             this.strip.off();
-        } catch (e) { 
+        } catch (e) {
             // Safely ignore errors when disconnecting hardware
             // This can happen when the board is already disconnected
         }

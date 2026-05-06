@@ -343,7 +343,6 @@ const showMancheList = () => {
         _.each(manche, (group, rindex) => {
             cars = storage.loadRound(mindex, rindex);
             mancheText = _.map(group, (id, pindex) => {
-
                 playerName = playerList[id];
                 if (playerName) {
                     if (cars) {

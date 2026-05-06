@@ -50,7 +50,7 @@ const delay = (fn, t) => {
             return self;
         }
     };
-    
+
     return self.delay(fn, t);
 };
 

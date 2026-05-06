@@ -26,7 +26,7 @@ class LedManager {
         if (this.buzzerAvailable()) {
             try {
                 this.board.digitalWrite(this.pinBuzzer, 0);
-            } catch (e) { 
+            } catch (e) {
                 // Safely ignore errors when disconnecting hardware
                 // This can happen when the board is already disconnected
             }
