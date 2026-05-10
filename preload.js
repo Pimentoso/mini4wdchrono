@@ -48,6 +48,7 @@ window.electronAPI = {
     hardwareSetupLeds: (config) => ipcRenderer.invoke('hardware-setup-leds', config),
     hardwareSetupBuzzer: (config) => ipcRenderer.invoke('hardware-setup-buzzer', config),
     hardwareWriteLeds: (laneData) => ipcRenderer.invoke('hardware-write-leds', laneData),
+    hardwareRunLedAnimation: (animation) => ipcRenderer.invoke('hardware-run-led-animation', animation),
     hardwareLedShow: () => ipcRenderer.invoke('hardware-led-show'),
     hardwareLedOff: (data) => ipcRenderer.invoke('hardware-led-off', data),
     hardwareBuzz: (duration) => ipcRenderer.invoke('hardware-buzz', duration),

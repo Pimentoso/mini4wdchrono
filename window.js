@@ -35,6 +35,7 @@ let sensors = { lane0: null, lane1: null, lane2: null };
 let ledManager = null;
 let buzzerPin = null;
 let isHardwareReady = false;
+let pixel = null;
 
 // Configuration defaults
 const CONFIG_DEFAULTS = {
@@ -44,14 +45,134 @@ const CONFIG_DEFAULTS = {
     'sensorPin2': 7,
     'sensorPin3': 8,
     'ledPin1': 3,
-    'ledPin2': 4, // deprecated
-    'ledPin3': 5, // deprecated
+    'ledPin2': 0, // deprecated
+    'ledPin3': 0, // deprecated
     'piezoPin': 2,
     'startButtonPin': 0,
     'reverse': 0,
     'title': 'MINI4WD CHRONO',
     'tab': 'setup'
 };
+
+function sleep(millis) {
+    return new Promise((resolve) => setTimeout(resolve, millis));
+}
+
+function ensureLedManagerReady() {
+    if (!ledManager) {
+        throw new Error('LED manager not initialized');
+    }
+}
+
+function buzz(duration) {
+    if (!buzzerPin || !board || !isHardwareReady) {
+        console.warn('[Hardware] Buzzer not initialized');
+        return;
+    }
+
+    board.digitalWrite(buzzerPin, 1);
+    setTimeout(() => {
+        if (board && isHardwareReady) {
+            board.digitalWrite(buzzerPin, 0);
+        }
+    }, duration || 100);
+}
+
+async function runLedAnimation(animation) {
+    ensureLedManagerReady();
+
+    const delay = animation.delay || 0;
+
+    if (delay > 0) {
+        await sleep(delay);
+    }
+
+    if (animation.type === 'greenLight') {
+        ledManager.color(animation.color);
+        ledManager.show();
+        buzz(animation.buzzDuration);
+
+        setTimeout(() => {
+            if (ledManager) {
+                ledManager.off();
+            }
+        }, animation.offDelay || 0);
+        return;
+    }
+
+    if (animation.type === 'countdown') {
+        const pixels = animation.reverse ? [8, 7, 6, 5, 4, 3, 2, 1, 0] : [0, 1, 2, 3, 4, 5, 6, 7, 8];
+        for (let i = 0; i < pixels.length; i++) {
+            ledManager.pixel(pixels[i]).color(animation.color);
+            ledManager.show();
+            if (i % 3 === 0) {
+                buzz(animation.buzzDuration);
+            }
+            if (i < pixels.length - 1) {
+                await sleep(animation.stepDelay);
+            }
+        }
+        return;
+    }
+
+    if (animation.type === 'kitt') {
+        let direction = 0;
+        let curr = 0;
+        let prev = -1;
+        const iterations = Math.floor(animation.duration / animation.stepDelay);
+
+        for (let i = 0; i < iterations; i++) {
+            ledManager.pixel(curr).color(animation.color);
+            if (prev >= 0) {
+                ledManager.pixel(prev).off();
+            }
+            ledManager.show();
+
+            if (direction === 0) {
+                curr++;
+                prev++;
+                if (curr > 8) {
+                    direction = 1;
+                    curr = 7;
+                }
+            }
+            else {
+                curr--;
+                prev--;
+                if (curr < 0) {
+                    direction = 0;
+                    curr = 1;
+                }
+            }
+
+            await sleep(animation.stepDelay);
+        }
+
+        ledManager.off();
+        return;
+    }
+
+    if (animation.type === 'tamiyaSlide') {
+        const colors = animation.colors;
+        for (let i = 0; i < colors.length; i++) {
+            ledManager.pixel(i).color(colors[i]);
+        }
+        ledManager.show();
+
+        const iterations = Math.floor(animation.duration / animation.stepDelay);
+        for (let i = 0; i < iterations; i++) {
+            await sleep(animation.stepDelay);
+            ledManager.shift(1, pixel.FORWARD, true);
+            ledManager.show();
+        }
+
+        await sleep(animation.stepDelay);
+        ledManager.off();
+        return;
+    }
+
+    throw new Error(`Unknown LED animation type: ${animation.type}`);
+}
 
 function createWindow() {
     // Create the browser window.
@@ -827,7 +948,7 @@ ipcMain.handle('hardware-setup-leds', async (event, config) => {
             throw new Error('Board not ready');
         }
 
-        const pixel = require('node-pixel');
+        pixel = require('node-pixel');
 
         // Initialize the LED strip
         return new Promise((resolve, reject) => {
@@ -943,6 +1064,20 @@ ipcMain.handle('hardware-write-leds', async (event, laneData) => {
 });
 
 /**
+ * Runs a full LED animation on the main process
+ * @param {object} animation - Animation definition
+ * @returns {Promise<void>}
+ */
+ipcMain.handle('hardware-run-led-animation', async (_event, animation) => {
+    try {
+        await runLedAnimation(animation);
+    } catch (error) {
+        console.error('[IPC] hardware-run-led-animation error:', error);
+        throw error;
+    }
+});
+
+/**
  * Shows the LED strip (applies queued changes)
  * @returns {Promise<void>}
  */
@@ -999,18 +1134,7 @@ ipcMain.handle('hardware-led-off', async (event, data = {}) => {
  */
 ipcMain.handle('hardware-buzz', async (event, duration) => {
     try {
-        if (!buzzerPin || !board || !isHardwareReady) {
-            console.warn('[Hardware] Buzzer not initialized');
-            return;
-        }
-
-        // Turn buzzer on
-        board.digitalWrite(buzzerPin, 1);
-
-        // Turn buzzer off after duration
-        setTimeout(() => {
-            board.digitalWrite(buzzerPin, 0);
-        }, duration || 100);
+        buzz(duration);
     } catch (error) {
         console.error('[IPC] hardware-buzz error:', error);
         throw error;
@@ -1083,6 +1207,7 @@ ipcMain.handle('hardware-close', async () => {
         }
         sensors = { lane0: null, lane1: null, lane2: null };
         ledManager = null;
+        pixel = null;
         buzzerPin = null;
         console.log('[Hardware] Closed');
     } catch (error) {

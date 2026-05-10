@@ -66,20 +66,12 @@ async function initializeApplication() {
     let val1 = 0, val2 = 0, val3 = 0;
 
     // Initialize LED manager
-    let ledManager;
-    if (debugMode) {
-        const LedManagerMock = require('./js/led_managers/led_manager_mock');
-        ledManager = LedManagerMock.getInstance(configuration.get('piezoPin'));
-    }
-    else {
-        const LedManagerRgbStrip = require('./js/led_managers/led_manager_rgb_strip');
-        ledManager = LedManagerRgbStrip.getInstance(
-            null,
-            configuration.get('ledPin1'),
-            configuration.get('piezoPin'),
-            configuration.get('reverse') > 0
-        );
-    }
+    const LedManager = require('./js/led_manager');
+    const ledManager = LedManager.getInstance(
+        configuration.get('ledPin1'),
+        configuration.get('piezoPin'),
+        configuration.get('reverse') > 0
+    );
 
     // init client
     client.init({ led_manager: ledManager });
