@@ -31,7 +31,7 @@ const carObj = {
 
 const init = (track, playerIds, cars) => {
     if (track) {
-    // cutoff time calculation
+        // cutoff time calculation
         rTrackLength = track.length;
         rLaneOrder = _.map(track.order, (i) => { return i - 1; });
         rTimeThreshold = storage.get('timeThreshold') / 100;
@@ -42,8 +42,8 @@ const init = (track, playerIds, cars) => {
         rTimeCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold) * 1000;
     }
 
-    if (cars === null) {
-    // init car 1
+    if (cars === undefined) {
+        // init car 1
         rCar0 = clone(carObj);
         rCar0.startLane = rCar0.nextLane = 0;
 
