@@ -1228,17 +1228,17 @@ ipcMain.handle('get-app-path', (_event, name) => {
     return app.getPath(name);
 });
 
-ipcMain.handle('show-message-box', (_event, options) => {
-    return dialog.showMessageBox(mainWindow, options);
+ipcMain.on('show-message-box-sync', (event, options) => {
+    event.returnValue = dialog.showMessageBoxSync(mainWindow, options);
 });
 
-ipcMain.handle('show-open-dialog', (_event, options) => {
-    return dialog.showOpenDialog(mainWindow, options);
-});
+// ipcMain.on('show-open-dialog-sync', (event, options) => {
+//     event.returnValue = dialog.showOpenDialogSync(mainWindow, options);
+// });
 
-ipcMain.handle('show-save-dialog', (_event, options) => {
-    return dialog.showSaveDialog(mainWindow, options);
-});
+// ipcMain.on('show-save-dialog-sync', (event, options) => {
+//     event.returnValue = dialog.showSaveDialogSync(mainWindow, options);
+// });
 
 // Window controls
 ipcMain.handle('window-maximize', () => {

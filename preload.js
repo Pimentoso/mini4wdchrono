@@ -10,7 +10,9 @@ window.nodeRequire = require;
 // Safe API exposed to renderer process
 window.electronAPI = {
     // Dialogs
-    showMessageBox: (options) => ipcRenderer.invoke('show-message-box', options),
+    showMessageBoxSync: (options) => ipcRenderer.sendSync('show-message-box-sync', options),
+    // showOpenDialogSync: (options) => ipcRenderer.sendSync('show-open-dialog-sync', options),
+    // showSaveDialogSync: (options) => ipcRenderer.sendSync('show-save-dialog-sync', options),
 
     // File System Operations
     ensureDir: (dirPath) => ipcRenderer.invoke('fs-ensure-dir', dirPath),

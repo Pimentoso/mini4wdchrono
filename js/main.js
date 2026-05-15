@@ -41,7 +41,7 @@ const utils = require('./js/utils');
         } catch (resetErr) {
             log.error('Error resetting configuration:', resetErr.message);
         }
-        await window.electronAPI.showMessageBox({
+        window.electronAPI.showMessageBoxSync({
             type: 'error',
             title: 'Error',
             message: i18n.__('dialog-configuration-error'),
@@ -88,11 +88,11 @@ async function initializeApplication() {
     // };
 
     // Start race handler - validates hardware state before starting
-    const startRace = async () => {
+    const startRace = () => {
         log.info(`Starting race at ${new Date()}`);
         if (!debugMode) {
             if (!connected) {
-                await window.electronAPI.showMessageBox({
+                window.electronAPI.showMessageBoxSync({
                     type: 'error',
                     title: 'Error',
                     message: i18n.__('dialog-disconnected'),
@@ -101,7 +101,7 @@ async function initializeApplication() {
                 return;
             }
             else if (tag1.text() !== '1') {
-                await window.electronAPI.showMessageBox({
+                window.electronAPI.showMessageBoxSync({
                     type: 'error',
                     title: 'Error',
                     message: `${i18n.__('dialog-sensor-error')} 1`,
@@ -110,7 +110,7 @@ async function initializeApplication() {
                 return;
             }
             else if (tag2.text() !== '1') {
-                await window.electronAPI.showMessageBox({
+                window.electronAPI.showMessageBoxSync({
                     type: 'error',
                     title: 'Error',
                     message: `${i18n.__('dialog-sensor-error')} 2`,
@@ -119,7 +119,7 @@ async function initializeApplication() {
                 return;
             }
             else if (tag3.text() !== '1') {
-                await window.electronAPI.showMessageBox({
+                window.electronAPI.showMessageBoxSync({
                     type: 'error',
                     title: 'Error',
                     message: `${i18n.__('dialog-sensor-error')} 3`,
@@ -213,14 +213,14 @@ async function initializeApplication() {
     });
 
     // Listen for board errors from main process
-    window.electronAPI.onBoardError(async (event, errorMessage) => {
+    window.electronAPI.onBoardError((event, errorMessage) => {
         connected = false;
         ledManager.disconnected();
         ui.boardDisconnected();
 
         log.error(`Board ERROR at ${new Date()} - ${errorMessage}`);
         if (!debugMode) {
-            await window.electronAPI.showMessageBox({
+            window.electronAPI.showMessageBoxSync({
                 type: 'error',
                 title: 'Error',
                 message: i18n.__('dialog-connection-error'),
@@ -231,7 +231,7 @@ async function initializeApplication() {
     });
 
     // Listen for board closed event from main process
-    window.electronAPI.onBoardClosed(async (event, errorMessage) => {
+    window.electronAPI.onBoardClosed((event, errorMessage) => {
         connected = false;
         ledManager.disconnected();
         ui.boardDisconnected();
@@ -282,7 +282,7 @@ async function initializeApplication() {
     } catch (error) {
         log.error('Failed to initialize hardware:', error);
         if (!debugMode) {
-            await window.electronAPI.showMessageBox({
+            window.electronAPI.showMessageBoxSync({
                 type: 'error',
                 title: 'Error',
                 message: i18n.__('dialog-connection-error'),

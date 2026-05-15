@@ -646,15 +646,15 @@ const setupEventHandlers = (deps) => {
     });
 
     // Delete race
-    $(document).on('click', '.js-delete-race', async (e) => {
+    $(document).on('click', '.js-delete-race', (e) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
-        const result = await window.electronAPI.showMessageBox({
+        const result = window.electronAPI.showMessageBoxSync({
             type: 'warning',
             message: i18n.__('dialog-delete-race'),
             buttons: ['Ok', 'Cancel']
         });
-        if (result.response === 0) {
+        if (result === 0) {
             const filename = $this.data('filename');
             storage.deleteRace(filename);
             closeAllModals();
@@ -670,15 +670,15 @@ const setupEventHandlers = (deps) => {
     });
 
     // Save manual track
-    $('#js-track-save-manual').on('click', async (e) => {
+    $('#js-track-save-manual').on('click', (e) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
-        const result = await window.electronAPI.showMessageBox({
+        const result = window.electronAPI.showMessageBoxSync({
             type: 'warning',
             message: i18n.__('dialog-save-track'),
             buttons: ['Ok', 'Cancel']
         });
-        if (result.response === 0) {
+        if (result === 0) {
             $('#js-track-length-manual').removeClass('is-danger');
             $('#js-track-order-manual').removeClass('is-danger');
             if (!$('#js-track-length-manual').val()) {
@@ -786,7 +786,7 @@ const setupEventHandlers = (deps) => {
     });
 
     // Save configuration
-    $('#button-save-config').on('click', async (e) => {
+    $('#button-save-config').on('click', (e) => {
         configuration.set('reverse', $('#js-config-reverse').is(':checked') ? 1 : 0);
         configuration.set('sensorPin1', parseInt($('#js-config-sensor-pin-1').val()));
         configuration.set('sensorPin2', parseInt($('#js-config-sensor-pin-2').val()));
@@ -797,7 +797,7 @@ const setupEventHandlers = (deps) => {
         configuration.set('title', $('#js-config-title').val());
         configuration.set('tab', $('#js-config-starting-tab').val());
         configuration.set('usbPort', $('#js-config-usb-port').val());
-        await window.electronAPI.showMessageBox({
+        window.electronAPI.showMessageBoxSync({
             type: 'warning',
             message: i18n.__('dialog-restart'),
             buttons: ['Ok']
@@ -807,11 +807,11 @@ const setupEventHandlers = (deps) => {
     });
 
     // Save manches
-    $('#button-manches-save').on('click', async (e) => {
+    $('#button-manches-save').on('click', (e) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
         client.overrideTimes();
-        await window.electronAPI.showMessageBox({
+        window.electronAPI.showMessageBoxSync({
             type: 'warning',
             message: i18n.__('dialog-saved'),
             buttons: ['Ok']
@@ -849,15 +849,15 @@ const setupEventHandlers = (deps) => {
     });
 
     // Invalidate/disqualify
-    $('.js-invalidate').on('click', async (e) => {
+    $('.js-invalidate').on('click', (e) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
-        const result = await window.electronAPI.showMessageBox({
+        const result = window.electronAPI.showMessageBoxSync({
             type: 'warning',
             message: i18n.__('dialog-disqualify'),
             buttons: ['Ok', 'Cancel']
         });
-        if (result.response === 0) {
+        if (result === 0) {
             client.disqualify(null, null, parseInt($this.data('lane')));
         }
     });
