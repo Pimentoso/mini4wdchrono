@@ -10,9 +10,11 @@ if (isNaN(nodeMajor) || nodeMajor < 20) {
     process.exitCode = 1;
 } else {
     try {
-    // Run electron-rebuild via npx to rebuild native modules for the installed Electron.
+        // Run the project-local CLI directly. On Windows, `npx` may not be available
+        // to a child process spawned from an npm lifecycle script.
+        const electronRebuildCli = require.resolve('electron-rebuild/lib/src/cli.js');
         console.log('Running electron-rebuild to compile native modules...');
-        const res = spawnSync('npx', ['electron-rebuild', '--force', '--parallel'], { stdio: 'inherit' });
+        const res = spawnSync(process.execPath, [electronRebuildCli, '--force', '--parallel'], { stdio: 'inherit' });
         if (res.error) {
             console.error('\npostinstall: failed to run electron-rebuild:', res.error.message);
             process.exitCode = 1;
