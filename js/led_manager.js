@@ -104,7 +104,7 @@ class LedManager {
             try {
                 await window.electronAPI.hardwareBuzz(millis);
             } catch (error) {
-                console.warn('Failed to beep:', error);
+                console.warn('[LED] Failed to beep:', error);
             }
         }
     }
@@ -138,7 +138,7 @@ class LedManager {
                 color: color
             });
         } catch (error) {
-            console.warn('Failed to color lane:', error);
+            console.warn('[LED] Failed to color lane:', error);
         }
     }
 
@@ -149,7 +149,7 @@ class LedManager {
                 lane: lane
             });
         } catch (error) {
-            console.warn('Failed to clear lane:', error);
+            console.warn('[LED] Failed to clear lane:', error);
         }
     }
 
@@ -164,7 +164,7 @@ class LedManager {
             });
             callback();
         } catch (error) {
-            console.warn('Failed in greenLight:', error);
+            console.warn('[LED] Green-light animation failed:', error);
         }
     }
 
@@ -179,7 +179,7 @@ class LedManager {
                 stepDelay: 400
             });
         } catch (error) {
-            console.warn('Failed in countdown:', error);
+            console.warn('[LED] Countdown animation failed:', error);
         }
     }
 
@@ -192,7 +192,7 @@ class LedManager {
                 duration: 1650
             });
         } catch (error) {
-            console.warn('Failed in kitt:', error);
+            console.warn('[LED] KITT animation failed:', error);
         }
     }
 
@@ -215,7 +215,7 @@ class LedManager {
                 ]
             });
         } catch (error) {
-            console.warn('Failed in tamiyaSlide:', error);
+            console.warn('[LED] Tamiya slide animation failed:', error);
         }
     }
 }

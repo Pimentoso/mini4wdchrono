@@ -15,7 +15,7 @@ const getXlsFilePath = async () => {
     try {
         return await window.electronAPI.getAppPath('home');
     } catch (error) {
-        console.error('Error getting export path:', error);
+        console.error('[Export] Failed to get export path:', error);
         throw error;
     }
 };
@@ -31,7 +31,7 @@ const createDir = async () => {
         await window.electronAPI.ensureDir(exportDir);
         return exportDir;
     } catch (error) {
-        console.error('Error creating export directory:', error);
+        console.error('[Export] Failed to create export directory:', error);
         throw error;
     }
 };
@@ -96,7 +96,7 @@ const generateXls = async () => {
 
         return filename;
     } catch (error) {
-        console.error('Error generating Excel file:', error);
+        console.error('[Export] Failed to generate Excel file:', error);
         $('#button-xls').removeAttr('disabled');
         $('#status-xls').text(`Error: ${error.message}`);
         throw error;

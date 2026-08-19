@@ -7,7 +7,7 @@ const initLocale = async () => {
     try {
         appLocale = await window.electronAPI.getAppLocale();
     } catch (err) {
-        console.warn('Could not get app locale, using default:', err);
+        console.warn('[Locale] Could not get app locale; using default:', err);
         appLocale = 'en-US';
     }
 };

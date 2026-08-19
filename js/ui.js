@@ -640,6 +640,7 @@ const setupEventHandlers = (deps) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
         const filename = $this.data('filename');
+        console.log('[Race setup] Opening race', { filename: filename });
         client.openRace(filename, closeAllModals);
     });
 
@@ -664,6 +665,7 @@ const setupEventHandlers = (deps) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
         const code = $('#js-input-track-code').val().slice(-6);
+        console.log('[Race setup] Loading remote track', { code: code });
         client.loadTrack(code);
     });
 
@@ -689,6 +691,7 @@ const setupEventHandlers = (deps) => {
             }
             const length = parseFloat($('#js-track-length-manual').val().replace(',', '.'));
             const order = _.map($('#js-track-order-manual').val().split('-'), (i) => { return parseInt(i); });
+            console.log('[Race setup] Saving manual track', { length: length, order: order });
             client.setTrackManual(length, order);
         }
     });
@@ -698,6 +701,7 @@ const setupEventHandlers = (deps) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
         const code = $('#js-input-tournament-code').val().slice(-6);
+        console.log('[Race setup] Loading remote tournament', { code: code });
         client.loadTournament(code);
     });
 
@@ -705,6 +709,7 @@ const setupEventHandlers = (deps) => {
     $('#button-new-race').on('click', () => {
         const name = $('#modal-new-name').val().trim();
         if (name === '') return false;
+        console.log('[Race setup] Creating new race', { name: name });
         client.reset(name, closeAllModals);
     });
 
@@ -774,6 +779,12 @@ const setupEventHandlers = (deps) => {
         const speedThreshold = parseFloat($('#js-settings-speed-threshold').val().replace(',', '.'));
         const startDelay = parseFloat($('#js-settings-start-delay').val().replace(',', '.'));
         const roundLaps = parseInt($('#js-settings-round-laps').val());
+        console.log('[Race setup] Saving race settings', {
+            timeThreshold: timeThreshold,
+            speedThreshold: speedThreshold,
+            startDelay: startDelay,
+            roundLaps: roundLaps
+        });
         storage.set('timeThreshold', timeThreshold);
         storage.set('speedThreshold', speedThreshold);
         storage.set('startDelay', startDelay);

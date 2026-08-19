@@ -88,16 +88,11 @@ const initAsync = async () => {
  * Creates a new race (async)
  */
 const newRaceAsync = async (raceName) => {
-    try {
-        const filename = await window.electronAPI.storageNewRace(raceName);
-        configuration.set('raceFile', filename);
-        await loadRaceAsync(filename);
-        await getRecentFilesAsync(50);
-        return filename;
-    } catch (error) {
-        console.error('Error creating new race:', error);
-        throw error;
-    }
+    const filename = await window.electronAPI.storageNewRace(raceName);
+    configuration.set('raceFile', filename);
+    await loadRaceAsync(filename);
+    await getRecentFilesAsync(50);
+    return filename;
 };
 
 /**
@@ -108,32 +103,27 @@ const newRace = (raceName, onComplete) => {
         .then((filename) => {
             if (onComplete) onComplete(filename);
         })
-        .catch(err => console.error('Async newRace failed:', err));
+        .catch(err => console.error('[Race setup] New race creation failed:', err));
 };
 
 /**
  * Loads an existing race (async version)
  */
 const loadRaceAsync = async (filename) => {
-    try {
-        if (!filename) {
-            filename = configuration.get('raceFile');
-        }
+    if (!filename) {
+        filename = configuration.get('raceFile');
+    }
 
-        if (filename) {
-            // Retrocompatibility: trim filename if needed
-            filename = filename.substr(filename.length - 15);
-            await window.electronAPI.storageLoadRace(filename);
-            configuration.set('raceFile', filename);
-            replaceCachedData(await window.electronAPI.storageGetAll());
-            cacheReady = true;
-        } else {
-            // No race file, create a new one
-            await newRaceAsync('Unnamed Race');
-        }
-    } catch (error) {
-        console.error('Error loading race:', error);
-        throw error;
+    if (filename) {
+        // Retrocompatibility: trim filename if needed
+        filename = filename.substr(filename.length - 15);
+        await window.electronAPI.storageLoadRace(filename);
+        configuration.set('raceFile', filename);
+        replaceCachedData(await window.electronAPI.storageGetAll());
+        cacheReady = true;
+    } else {
+        // No race file, create a new one
+        await newRaceAsync('Unnamed Race');
     }
 };
 
@@ -145,21 +135,16 @@ const loadRace = (filename, onComplete) => {
         .then(() => {
             if (onComplete) onComplete();
         })
-        .catch(err => console.error('Async loadRace failed:', err));
+        .catch(err => console.error('[Race setup] Race open failed:', { filename: filename, error: err }));
 };
 
 /**
  * Deletes a race file (async)
  */
 const deleteRaceAsync = async (filename) => {
-    try {
-        await window.electronAPI.storageDeleteRace(filename);
-        if (filename === configuration.get('raceFile')) {
-            configuration.del('raceFile');
-        }
-    } catch (error) {
-        console.error('Error deleting race:', error);
-        throw error;
+    await window.electronAPI.storageDeleteRace(filename);
+    if (filename === configuration.get('raceFile')) {
+        configuration.del('raceFile');
     }
 };
 
@@ -167,30 +152,25 @@ const deleteRaceAsync = async (filename) => {
  * Deletes a race file (sync wrapper)
  */
 const deleteRace = (filename) => {
-    deleteRaceAsync(filename).catch(err => console.error('Async deleteRace failed:', err));
+    deleteRaceAsync(filename).catch(err => console.error('[Storage] Failed to delete race:', { filename: filename, error: err }));
 };
 
 /**
  * Gets recent race files (async)
  */
 const getRecentFilesAsync = async (num) => {
-    try {
-        num = num || 10;
-        const recent = await window.electronAPI.storageListRaces(num);
-        cachedRecentFiles = _.sortBy(recent, 'created').reverse().slice(0, num);
-        return cachedRecentFiles;
-    } catch (error) {
-        console.error('Error getting recent files:', error);
-        throw error;
-    }
+    num = num || 10;
+    const recent = await window.electronAPI.storageListRaces(num);
+    cachedRecentFiles = _.sortBy(recent, 'created').reverse().slice(0, num);
+    return cachedRecentFiles;
 };
 
 /**
  * Gets recent race files (sync wrapper)
  */
 const getRecentFiles = (num) => {
-    getRecentFilesAsync(num).catch(err => console.error('Async getRecentFiles failed:', err));
     num = num || 10;
+    getRecentFilesAsync(num).catch(err => console.error('[Storage] Failed to list recent races:', { limit: num, error: err }));
     return cachedRecentFiles.slice(0, num);
 };
 
@@ -198,13 +178,8 @@ const getRecentFiles = (num) => {
  * Sets a storage value (async)
  */
 const setAsync = async (key, value) => {
-    try {
-        await window.electronAPI.storageSet(key, value);
-        setCached(key, value);
-    } catch (error) {
-        console.error(`Error setting storage key ${key}:`, error);
-        throw error;
-    }
+    await window.electronAPI.storageSet(key, value);
+    setCached(key, value);
 };
 
 /**
@@ -212,7 +187,7 @@ const setAsync = async (key, value) => {
  */
 const set = (key, value) => {
     setCached(key, value);
-    setAsync(key, value).catch(err => console.error(`Async set(${key}) failed:`, err));
+    setAsync(key, value).catch(err => console.error('[Storage] Failed to save value:', { key: key, error: err }));
 };
 
 /**
@@ -222,7 +197,7 @@ const getAsync = async (key) => { // eslint-disable-line no-unused-vars
     try {
         return await window.electronAPI.storageGet(key);
     } catch (error) {
-        console.error(`Error getting storage key ${key}:`, error);
+        console.error('[Storage] Failed to get value:', { key: key, error: error });
         throw error;
     }
 };
@@ -238,20 +213,15 @@ const get = (key) => {
  * Removes a storage value (async)
  */
 const removeAsync = async (key) => {
-    try {
-        await window.electronAPI.storageRemove(key);
-        // Remove from cache
-        const keys = key.split('.');
-        let current = cachedRaceData;
-        for (let i = 0; i < keys.length - 1; i++) {
-            current = current[keys[i]];
-            if (!current) return;
-        }
-        delete current[keys[keys.length - 1]];
-    } catch (error) {
-        console.error(`Error removing storage key ${key}:`, error);
-        throw error;
+    await window.electronAPI.storageRemove(key);
+    // Remove from cache
+    const keys = key.split('.');
+    let current = cachedRaceData;
+    for (let i = 0; i < keys.length - 1; i++) {
+        current = current[keys[i]];
+        if (!current) return;
     }
+    delete current[keys[keys.length - 1]];
 };
 
 /**
@@ -265,7 +235,7 @@ const remove = (key) => {
         if (!current) return;
     }
     delete current[keys[keys.length - 1]];
-    removeAsync(key).catch(err => console.error(`Async remove(${key}) failed:`, err));
+    removeAsync(key).catch(err => console.error('[Storage] Failed to remove value:', { key: key, error: err }));
 };
 
 /**
@@ -275,7 +245,7 @@ const saveRound = (manche, round, cars) => {
     try {
         set(`race.m${manche}.r${round}`, cars);
     } catch (error) {
-        console.error(`Error saving round m${manche}.r${round}:`, error);
+        console.error('[Storage] Failed to save round:', { manche: manche, round: round, error: error });
         throw error;
     }
 };
@@ -293,7 +263,7 @@ const loadRound = (manche, round) => {
         }
         return get(`race.m${manche}.r${round}`);
     } catch (error) {
-        console.error(`Error loading round m${manche}.r${round}:`, error);
+        console.error('[Storage] Failed to load round:', { manche: manche, round: round, error: error });
         throw error;
     }
 };
@@ -305,7 +275,7 @@ const deleteRound = (manche, round) => {
     try {
         remove(`race.m${manche}.r${round}`);
     } catch (error) {
-        console.error(`Error deleting round m${manche}.r${round}:`, error);
+        console.error('[Storage] Failed to delete round:', { manche: manche, round: round, error: error });
         throw error;
     }
 };
@@ -324,7 +294,7 @@ const getManches = () => {
         }
         return mancheList;
     } catch (error) {
-        console.error('Error getting manches:', error);
+        console.error('[Storage] Failed to get manches:', error);
         throw error;
     }
 };
@@ -338,7 +308,7 @@ const getPlayers = () => {
         if (!tournament) return null;
         return tournament.players;
     } catch (error) {
-        console.error('Error getting players:', error);
+        console.error('[Storage] Failed to get players:', error);
         throw error;
     }
 };
@@ -383,7 +353,7 @@ const getPlayerData = () => {
         });
         return playerTimes;
     } catch (error) {
-        console.error('Error getting player data:', error);
+        console.error('[Storage] Failed to get player data:', error);
         throw error;
     }
 };
@@ -413,7 +383,7 @@ const getSortedPlayerList = () => {
         });
         return _.sortBy(playerTimes, 'best');
     } catch (error) {
-        console.error('Error getting sorted player list:', error);
+        console.error('[Storage] Failed to get sorted player list:', error);
         throw error;
     }
 };

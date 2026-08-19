@@ -54,7 +54,8 @@ const reset = (name, onComplete) => {
     currTournament = null;
     raceRunning = false;
 
-    storage.newRace(name, () => {
+    storage.newRace(name, (filename) => {
+        console.log('[Race setup] New race created', { name: name, filename: filename });
         ui.init();
 
         showTrackDetails();
@@ -352,9 +353,13 @@ const keydown = (keyCode) => {
 const loadTrack = (code) => {
     $.getJSON(`https://mini4wd-track-editor.pimentoso.com/api/track/${code}`)
         .done((obj) => {
+            console.log('[Race setup] Remote track loaded', { code: obj.code, length: obj.length, order: obj.order });
             trackLoadDone(obj);
         })
-        .fail(trackLoadFail)
+        .fail(() => {
+            console.error('[Race setup] Remote track load failed', { code: code });
+            trackLoadFail();
+        })
         .always(() => {
             showTrackDetails();
         });
@@ -369,9 +374,13 @@ const setTrackManual = (length, order) => {
 const loadTournament = (code) => {
     $.getJSON(`https://mini4wd-tournament.pimentoso.com/api/tournament/${code}`)
         .done((obj) => {
+            console.log('[Race setup] Remote tournament loaded', { code: obj.code, manches: obj.manches ? obj.manches.length : 0 });
             tournamentLoadDone(obj);
         })
-        .fail(tournamentLoadFail)
+        .fail(() => {
+            console.error('[Race setup] Remote tournament load failed', { code: code });
+            tournamentLoadFail();
+        })
         .always(() => {
             showTournamentDetails();
         });
@@ -387,6 +396,7 @@ const trackLoadDone = (obj) => {
 
 const openRace = (filename, onComplete) => {
     storage.loadRace(filename, () => {
+        console.log('[Race setup] Race opened', { filename: filename });
         init({ led_manager: ledManager });
         if (onComplete) onComplete();
     });
@@ -534,7 +544,7 @@ const addLap = (lane, timestamp) => {
         chrono.addLap(lane, timestamp);
     } catch (error) {
         if (error instanceof TypeError && error.message.includes('startLane')) {
-            console.warn(`Ignoring invalid sensor read for lane ${lane}`);
+            console.warn('[Race] Ignoring invalid sensor read:', { lane: lane });
             return;
         }
         throw error;

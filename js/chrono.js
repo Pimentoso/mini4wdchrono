@@ -94,7 +94,7 @@ const addLap = (lane, timestamp) => {
 
     // false sensor read
     if (rTempCar === null) {
-        console.error(`${timestamp} no valid car found`);
+        console.warn(`${timestamp} no valid car found`);
         return;
     }
     else {

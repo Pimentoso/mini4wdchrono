@@ -60,7 +60,7 @@ const initAsync = async () => {
         await hydrateCache();
         cacheReady = true;
     } catch (error) {
-        console.error('Error initializing configuration cache:', error);
+        console.error('[Configuration] Failed to initialize cache:', error);
         throw error;
     }
 };
@@ -83,7 +83,7 @@ const getAsync = async (settingKey) => {
     try {
         return await window.electronAPI.configGet(settingKey);
     } catch (error) {
-        console.error(`Error getting config ${settingKey}:`, error);
+        console.error('[Configuration] Failed to get value:', { settingKey: settingKey, error: error });
         throw error;
     }
 };
@@ -108,13 +108,8 @@ const get = (settingKey) => {
  * @returns {Promise<void>}
  */
 const setAsync = async (settingKey, settingValue) => {
-    try {
-        await window.electronAPI.configSet(settingKey, settingValue);
-        cachedConfig[settingKey] = settingValue;
-    } catch (error) {
-        console.error(`Error setting config ${settingKey}:`, error);
-        throw error;
-    }
+    await window.electronAPI.configSet(settingKey, settingValue);
+    cachedConfig[settingKey] = settingValue;
 };
 
 /**
@@ -126,11 +121,11 @@ const setAsync = async (settingKey, settingValue) => {
 const set = (settingKey, settingValue) => {
     cachedConfig[settingKey] = settingValue;
     setAsync(settingKey, settingValue).catch(async (error) => {
-        console.error(`Async set(${settingKey}) failed:`, error);
+        console.error('[Configuration] Failed to save value:', { settingKey: settingKey, error: error });
         try {
             await hydrateCache();
         } catch (rehydrateError) {
-            console.error('Error rehydrating configuration cache:', rehydrateError);
+            console.error('[Configuration] Failed to rehydrate cache:', rehydrateError);
         }
     });
 };
@@ -141,13 +136,8 @@ const set = (settingKey, settingValue) => {
  * @returns {Promise<void>}
  */
 const delAsync = async (settingKey) => {
-    try {
-        await window.electronAPI.configDel(settingKey);
-        delete cachedConfig[settingKey];
-    } catch (error) {
-        console.error(`Error deleting config ${settingKey}:`, error);
-        throw error;
-    }
+    await window.electronAPI.configDel(settingKey);
+    delete cachedConfig[settingKey];
 };
 
 /**
@@ -158,11 +148,11 @@ const delAsync = async (settingKey) => {
 const del = (settingKey) => {
     delete cachedConfig[settingKey];
     delAsync(settingKey).catch(async (error) => {
-        console.error(`Async del(${settingKey}) failed:`, error);
+        console.error('[Configuration] Failed to delete value:', { settingKey: settingKey, error: error });
         try {
             await hydrateCache();
         } catch (rehydrateError) {
-            console.error('Error rehydrating configuration cache:', rehydrateError);
+            console.error('[Configuration] Failed to rehydrate cache:', rehydrateError);
         }
     });
 };
@@ -179,7 +169,7 @@ const reset = async () => {
         cacheReady = true;
         return backupPath;
     } catch (error) {
-        console.error('Error resetting configuration:', error);
+        console.error('[Configuration] Failed to reset:', error);
         throw error;
     }
 };
