@@ -77,7 +77,11 @@ const chronoInit = (reset) => {
     else {
     // load existing round
         const cars = storage.loadRound(currManche, currRound);
-        chrono.init(currTrack, mancheList[currManche][currRound], cars);
+        if (cars) {
+            chrono.init(currTrack, mancheList[currManche][currRound], cars);
+        } else {
+            chrono.init(currTrack, mancheList[currManche][currRound]);
+        }
     }
 };
 
@@ -539,7 +543,6 @@ const addLap = (lane, timestamp) => {
     if (!raceRunning) {
         return;
     }
-
 
     chrono.addLap(lane, timestamp);
     if (chrono.isRaceFinished()) {
