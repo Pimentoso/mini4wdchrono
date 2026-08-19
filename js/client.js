@@ -540,15 +540,8 @@ const addLap = (lane, timestamp) => {
         return;
     }
 
-    try {
-        chrono.addLap(lane, timestamp);
-    } catch (error) {
-        if (error instanceof TypeError && error.message.includes('startLane')) {
-            console.warn('[Race] Ignoring invalid sensor read:', { lane: lane });
-            return;
-        }
-        throw error;
-    }
+
+    chrono.addLap(lane, timestamp);
     if (chrono.isRaceFinished()) {
         raceFinished();
     }
