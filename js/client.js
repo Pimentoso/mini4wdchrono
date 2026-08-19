@@ -205,7 +205,7 @@ const initRound = () => {
 
 // called when the starting sequence has finished
 const startRound = () => {
-    timerIntervals = [];
+    timerIntervals = [null, null, null];
     timerSeconds = [];
 
     // run tasks periodically
@@ -530,7 +530,15 @@ const addLap = (lane, timestamp) => {
         return;
     }
 
-    chrono.addLap(lane, timestamp);
+    try {
+        chrono.addLap(lane, timestamp);
+    } catch (error) {
+        if (error instanceof TypeError && error.message.includes('startLane')) {
+            console.warn(`Ignoring invalid sensor read for lane ${lane}`);
+            return;
+        }
+        throw error;
+    }
     if (chrono.isRaceFinished()) {
         raceFinished();
     }
