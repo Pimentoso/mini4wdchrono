@@ -9,8 +9,30 @@ $Arch = 'x64'
 $PackageDir = Join-Path $ReleaseDir "$AppName-$Platform-$Arch"
 $Artifact = Join-Path $ReleaseDir 'Mini4wdChrono-windows-x64.zip'
 
+function Assert-BuildToolchain {
+    $NodeVersion = (& node --version).Trim()
+    if ($LASTEXITCODE -ne 0) {
+        throw 'Unable to run Node.js. Install Node.js 20 LTS or newer, then reopen PowerShell.'
+    }
+
+    $NpmVersion = (& npm --version).Trim()
+    if ($LASTEXITCODE -ne 0) {
+        throw 'Unable to run npm. Install Node.js 20 LTS or newer, then reopen PowerShell.'
+    }
+
+    $NodeMajor = [int](($NodeVersion -replace '^v', '').Split('.')[0])
+    $NpmMajor = [int]($NpmVersion.Split('.')[0])
+    Write-Host "Using Node.js $NodeVersion and npm $NpmVersion"
+
+    if ($NodeMajor -lt 20 -or $NpmMajor -lt 9) {
+        throw "This build requires Node.js 20+ and npm 9+ (found Node.js $NodeVersion and npm $NpmVersion). Install Node.js 20 LTS or newer, then reopen PowerShell."
+    }
+}
+
 Push-Location $ProjectDir
 try {
+    Assert-BuildToolchain
+
     Write-Host 'Installing locked dependencies'
     npm ci
     if ($LASTEXITCODE -ne 0) {

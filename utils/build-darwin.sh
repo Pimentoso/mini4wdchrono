@@ -11,7 +11,33 @@ ARCH="x64"
 PACKAGE_DIR="$RELEASE_DIR/$APP_NAME-$PLATFORM-$ARCH"
 ARTIFACT="$RELEASE_DIR/Mini4wdChrono-mac-x64.zip"
 
+assert_build_toolchain() {
+    local node_version npm_version node_major npm_major
+
+    if ! node_version="$(node --version)"; then
+        echo "ERROR: Unable to run Node.js. Install Node.js 20 LTS or newer, then reopen the terminal." >&2
+        exit 1
+    fi
+
+    if ! npm_version="$(npm --version)"; then
+        echo "ERROR: Unable to run npm. Install Node.js 20 LTS or newer, then reopen the terminal." >&2
+        exit 1
+    fi
+
+    node_major="${node_version#v}"
+    node_major="${node_major%%.*}"
+    npm_major="${npm_version%%.*}"
+    echo "Using Node.js $node_version and npm $npm_version"
+
+    if ! [[ "$node_major" =~ ^[0-9]+$ && "$npm_major" =~ ^[0-9]+$ ]] || (( node_major < 20 || npm_major < 9 )); then
+        echo "ERROR: This build requires Node.js 20+ and npm 9+ (found Node.js $node_version and npm $npm_version). Install Node.js 20 LTS or newer, then reopen the terminal." >&2
+        exit 1
+    fi
+}
+
 cd "$PROJECT_DIR"
+
+assert_build_toolchain
 
 echo "Installing locked dependencies"
 npm ci
