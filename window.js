@@ -36,6 +36,7 @@ let ledManager = null;
 let buzzerPin = null;
 let isHardwareReady = false;
 let pixel = null;
+let hardwareInitialization = null;
 
 // Configuration defaults
 const CONFIG_DEFAULTS = {
@@ -709,6 +710,18 @@ ipcMain.handle('storage-delete-race', async (event, filename) => {
  * @returns {Promise<object>} - Success status and message
  */
 ipcMain.handle('hardware-initialize', async (event, options) => {
+    if (board && isHardwareReady) {
+        console.log('[Hardware] Board already initialized');
+        if (mainWindow) {
+            mainWindow.webContents.send('hardware-board-ready');
+        }
+        return { success: true, message: 'Hardware already initialized' };
+    }
+
+    if (hardwareInitialization) {
+        return hardwareInitialization;
+    }
+
     try {
         // Lazy load dependencies
         const five = require('johnny-five');
@@ -733,7 +746,7 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
         console.log(`[Hardware] Found Arduino at ${arduinoPort.path}`);
 
         // Board initialization happens asynchronously
-        return new Promise((resolve, reject) => {
+        hardwareInitialization = new Promise((resolve, reject) => {
             // Create SerialPort instance with v13 API
             const serialPort = new SerialPort({
                 path: arduinoPort.path,
@@ -816,9 +829,13 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
                 reject(error);
             });
         });
+
+        return await hardwareInitialization;
     } catch (error) {
         console.error('[IPC] hardware-initialize error:', error);
         throw error;
+    } finally {
+        hardwareInitialization = null;
     }
 });
 
