@@ -636,13 +636,11 @@ const setupEventHandlers = (deps) => {
     $('.close-modal').on('click', closeAllModals);
 
     // Load race
-    $(document).on('click', '.js-load-race', async (e) => {
+    $(document).on('click', '.js-load-race', (e) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
         const filename = $this.data('filename');
-        storage.loadRace(filename);
-        client.init({ led_manager: deps.ledManager });
-        closeAllModals();
+        client.openRace(filename, closeAllModals);
     });
 
     // Delete race
@@ -707,8 +705,7 @@ const setupEventHandlers = (deps) => {
     $('#button-new-race').on('click', () => {
         const name = $('#modal-new-name').val().trim();
         if (name === '') return false;
-        client.reset(name);
-        closeAllModals();
+        client.reset(name, closeAllModals);
     });
 
     // Start race

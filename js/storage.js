@@ -92,6 +92,7 @@ const newRaceAsync = async (raceName) => {
         const filename = await window.electronAPI.storageNewRace(raceName);
         configuration.set('raceFile', filename);
         await loadRaceAsync(filename);
+        await getRecentFilesAsync(50);
         return filename;
     } catch (error) {
         console.error('Error creating new race:', error);
@@ -102,8 +103,12 @@ const newRaceAsync = async (raceName) => {
 /**
  * Creates a new race (sync wrapper - fire and forget)
  */
-const newRace = (raceName) => {
-    newRaceAsync(raceName).catch(err => console.error('Async newRace failed:', err));
+const newRace = (raceName, onComplete) => {
+    newRaceAsync(raceName)
+        .then((filename) => {
+            if (onComplete) onComplete(filename);
+        })
+        .catch(err => console.error('Async newRace failed:', err));
 };
 
 /**
@@ -135,8 +140,12 @@ const loadRaceAsync = async (filename) => {
 /**
  * Loads an existing race (sync wrapper)
  */
-const loadRace = (filename) => {
-    loadRaceAsync(filename).catch(err => console.error('Async loadRace failed:', err));
+const loadRace = (filename, onComplete) => {
+    loadRaceAsync(filename)
+        .then(() => {
+            if (onComplete) onComplete();
+        })
+        .catch(err => console.error('Async loadRace failed:', err));
 };
 
 /**
@@ -412,10 +421,13 @@ const getSortedPlayerList = () => {
 module.exports = {
     initAsync: initAsync,
     newRace: newRace,
+    newRaceAsync: newRaceAsync,
     loadRace: loadRace,
+    loadRaceAsync: loadRaceAsync,
     deleteRace: deleteRace,
     getRecentFiles: getRecentFiles,
     set: set,
+    setAsync: setAsync,
     get: get,
     saveRound: saveRound,
     loadRound: loadRound,

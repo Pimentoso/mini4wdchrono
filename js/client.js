@@ -46,7 +46,7 @@ const init = (params) => {
     showTournamentDetails();
 };
 
-const reset = async (name) => {
+const reset = (name, onComplete) => {
     mancheList = [];
     currManche = 0;
     currRound = 0;
@@ -54,11 +54,13 @@ const reset = async (name) => {
     currTournament = null;
     raceRunning = false;
 
-    await storage.newRaceAsync(name);
-    ui.init();
+    storage.newRace(name, () => {
+        ui.init();
 
-    showTrackDetails();
-    showTournamentDetails();
+        showTrackDetails();
+        showTournamentDetails();
+        if (onComplete) onComplete();
+    });
 };
 
 const chronoInit = (reset) => {
@@ -383,6 +385,13 @@ const trackLoadDone = (obj) => {
     showTrackDetails();
 };
 
+const openRace = (filename, onComplete) => {
+    storage.loadRace(filename, () => {
+        init({ led_manager: ledManager });
+        if (onComplete) onComplete();
+    });
+};
+
 const trackLoadFail = () => {
     currTrack = null;
     ui.trackLoadFail();
@@ -531,6 +540,7 @@ const addLap = (lane, timestamp) => {
 module.exports = {
     init: init,
     reset: reset,
+    openRace: openRace,
     keydown: keydown,
     loadTrack: loadTrack,
     setTrackManual: setTrackManual,
