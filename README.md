@@ -125,6 +125,6 @@ If you get an error when running the program like
 Serialport was compiled against a different Node.js version using NODE_MODULE_VERSION 72. This version of Node.js requires NODE_MODULE_VERSION 70. Please try re-compiling or re-installing the module (for instance, using npm rebuild or npm install).
 ```
 
-it means you need to run `electron-rebuild` on the project. Please run `npm run postinstall` inside the project directory.
+it means the installed native module does not match Electron. Reinstall the locked dependencies with `npm ci` inside the project directory.
 
 Related issue: https://github.com/serialport/node-serialport/issues/1910

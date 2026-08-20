@@ -20,7 +20,6 @@ Electron app for Mini4WD race timing and race management. Vanilla JS, HTML, Bulm
 - `js/led_manager.js`: renderer LED abstraction.
 - `window.js`: Electron main process, IPC, hardware.
 - `preload.js`: renderer IPC surface.
-- `scripts/postinstall.js`: native Electron module rebuild.
 - `utils/build-*`: GitHub Release artifacts.
 
 ## Rules
@@ -36,7 +35,7 @@ Electron app for Mini4WD race timing and race management. Vanilla JS, HTML, Bulm
 ## Build and validation
 
 - Require Node.js 20+ and npm 9+.
-- `npm ci` runs `postinstall`, which rebuilds native SerialPort bindings for Electron.
+- `npm ci` installs SerialPort's shipped native prebuilds.
 - Release scripts create uploadable zip artifacts:
   - `utils/build-darwin.sh`
   - `utils/build-linux-x64.sh`
