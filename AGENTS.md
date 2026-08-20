@@ -1,37 +1,49 @@
-Mini4wdChrono is a Mini4wd lap timer program with race management. It is aimed at Mini4wd clubs who want to host races.
-It is a standalone program which is meant to be paired with a hardware lap timer.
+# Mini4wdChrono
 
-## Your role
-- You are a backend developer, expert in plain javascript and electron.
-- Your job is to help upgrading parts of the program and to develop new features.
+Electron app for Mini4WD race timing and race management. Vanilla JS, HTML, Bulma.
 
-## Project knowledge
-- **Tech Stack:** Electron with vanilla javascript. Plain html with Bulma for css.
-- **Architecture:** IPC-based separation between main and renderer processes
-  - Main process handles all hardware communication (johnny-five, serialport v13, firmata)
-  - Renderer process handles UI and race logic
-  - Communication via Electron IPC (contextIsolation: false)
-  
-- **File Structure:**
-  - `index.html` - main frontend
-  - `window.js` - Electron main process entry point (handles IPC, hardware, file system)
-  - `preload.js` - Exposes IPC APIs to renderer via `window.electronAPI`
-  - `js/` – Application source code (renderer process)
-  - `js/main.js` – Renderer initialization and IPC event handlers
-  - `js/client.js` - Race handling logic and program orchestrator
-  - `js/chrono.js` - Lap timer logic with microsecond-precision timestamps (DO NOT change this file)
-  - `js/ui.js` - Frontend rendering logic
-  - `js/led_managers/` - LED abstraction layer (talks to main process via IPC)
+## Architecture
 
-## Boundaries
-- Only change code in the `js/` folder, and other javascript files in the root directory, and package.json if needed.
-- Do not change `js/chrono.js` which contains battle-tested lap timer logic.
-- Do not change the `index.html` and css files.
-- Hardware operations must go through IPC - never use johnny-five or serialport directly in renderer
-- Timestamps for lap timing are captured in main process at sensor trigger for accuracy
+- Main: `window.js`; filesystem, config/storage persistence, serial hardware, IPC.
+- Preload: `preload.js`; exposes `window.electronAPI`.
+- Renderer: `js/`; UI and race logic.
+- Renderer hardware access only through `window.electronAPI` / IPC.
+- Sensor timestamps originate in main process. Do not create renderer-side timing timestamps.
 
-## Lap timer hardware
-Mini4wdChrono connects via usb to a physical lap timer. The lap timer looks like a bridge over the three lanes of a mini4wd track. It is powered by an arduino with firmata firmware, and has 3 light sensor to detect the cars passing under the lap timer. It also sports an rgb led strip for visual feedback and a buzzer for alerts.
+## Key files
 
-## Tools
-- Linting: use `npm run lint:fix`
+- `js/main.js`: renderer bootstrap, IPC event handlers.
+- `js/client.js`: race orchestration.
+- `js/chrono.js`: timing engine. **Never modify.**
+- `js/ui.js`: DOM rendering and user flows.
+- `js/configuration.js`, `js/storage.js`: cached renderer APIs backed by async IPC.
+- `js/led_manager.js`: renderer LED abstraction.
+- `window.js`: Electron main process, IPC, hardware.
+- `preload.js`: renderer IPC surface.
+- `scripts/postinstall.js`: native Electron module rebuild.
+- `utils/build-*`: GitHub Release artifacts.
+
+## Rules
+
+- Use plain JavaScript; preserve existing CommonJS style.
+- Keep async IPC in configuration/storage/hardware layers.
+- Client/UI APIs should use synchronous cache wrappers and callbacks, not expose async persistence races.
+- Preserve IPC separation; never import `johnny-five`, `serialport`, or `firmata` in renderer code.
+- Do not change `js/chrono.js`, `index.html`, or CSS.
+- Log with stable area prefixes, e.g. `[Hardware]`, `[IPC]`, `[Storage]`, `[Race setup]`.
+- Preserve unrelated working-tree changes.
+
+## Build and validation
+
+- Require Node.js 20+ and npm 9+.
+- `npm ci` runs `postinstall`, which rebuilds native SerialPort bindings for Electron.
+- Release scripts create uploadable zip artifacts:
+  - `utils/build-darwin.sh`
+  - `utils/build-linux-x64.sh`
+  - `utils/build-win64.ps1`
+- Run `npm run lint:fix` after JavaScript changes.
+- Run relevant build script after packaging/dependency changes.
+
+## Scope
+
+Change `js/`, root JavaScript files, `package.json`/lockfile, build scripts, or documentation only when task requires it.
