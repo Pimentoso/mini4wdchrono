@@ -2,14 +2,8 @@
 
 let appLocale = null;
 
-// Initialize locale (call once at startup)
-const initLocale = async () => {
-    try {
-        appLocale = await window.electronAPI.getAppLocale();
-    } catch (err) {
-        console.warn('[Locale] Could not get app locale; using default:', err);
-        appLocale = 'en-US';
-    }
+const setLocale = (locale) => {
+    appLocale = locale || 'en-US';
 };
 
 // converts a milliseconds integer in a readable string like '12.345'
@@ -24,7 +18,7 @@ const safeTime = (timeStr) => {
 };
 
 module.exports = {
-    initLocale: initLocale,
+    setLocale: setLocale,
     prettyTime: prettyTime,
     safeTime: safeTime
 };

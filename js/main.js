@@ -25,8 +25,12 @@ const utils = require('./js/utils');
 // Handles loading configuration and storage via IPC
 (async () => {
     try {
-        // Initialize locale for utils
-        await utils.initLocale();
+        try {
+            utils.setLocale(await window.electronAPI.getAppLocale());
+        } catch (err) {
+            console.warn('[Locale] Could not get app locale; using default:', err);
+            utils.setLocale('en-US');
+        }
 
         // Initialize configuration and storage caches via IPC
         await configuration.initAsync();
