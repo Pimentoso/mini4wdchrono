@@ -17,6 +17,7 @@ let timerIntervals = [], timerSeconds = [];
 let pageTimerSeconds;
 let checkRaceTask;
 
+// Initializes renderer state from cached race data and dependencies.
 const init = (params) => {
     ui.init();
     ui.gotoTab(configuration.get('tab'));
@@ -49,6 +50,7 @@ const init = (params) => {
     showTournamentDetails();
 };
 
+// Resets client state and creates a named race.
 const reset = (name, onComplete) => {
     mancheList = [];
     mancheCount = 0;
@@ -70,6 +72,7 @@ const reset = (name, onComplete) => {
     });
 };
 
+// Initializes the timing engine for the active round.
 const chronoInit = (reset) => {
     if (currTournament === null || freeRound) {
     // free round
@@ -94,9 +97,10 @@ const chronoInit = (reset) => {
 // ==========================================================================
 // ==== time list handling
 
+// Disqualifies a player in the specified or current round.
 const disqualify = (mindex, rindex, pindex) => {
-    mindex = mindex || currManche;
-    rindex = rindex || currRound;
+    mindex = mindex === undefined || mindex === null ? currManche : mindex;
+    rindex = rindex === undefined || rindex === null ? currRound : rindex;
     const cars = storage.loadRound(mindex, rindex);
     cars[pindex].originalTime = cars[pindex].currTime;
     cars[pindex].currTime = 99999;
@@ -106,7 +110,7 @@ const disqualify = (mindex, rindex, pindex) => {
     updateRace();
 };
 
-// Reads all input fields in the manches tab and rebuilds time list
+// Reads edited round times from the UI and persists them.
 const overrideTimes = () => {
     let time, newTime, oldTime, cars;
     _.each(mancheList, (manche, mindex) => {
@@ -135,6 +139,7 @@ const overrideTimes = () => {
     updateRace();
 };
 
+// Generates tournament final rounds from the current rankings.
 const initFinal = () => {
     const ids = _.map(storage.getSortedPlayerList(), (t) => { return t.id; });
 
@@ -171,6 +176,7 @@ const initFinal = () => {
 // ==========================================================================
 // ==== handle interface buttons
 
+// Validates race state and starts the configured race sequence.
 const startRace = (debugMode) => {
     if (!storage.get('track')) {
     // track not loaded
@@ -208,13 +214,13 @@ const startRace = (debugMode) => {
     }
 };
 
-// called before the starting sequence
+// Prepares the timing engine before the starting sequence.
 const initRound = () => {
     chronoInit(!freeRound);
     updateRace();
 };
 
-// called when the starting sequence has finished
+// Starts race timers after the starting sequence finishes.
 const startRound = () => {
     timerIntervals = [null, null, null];
     timerSeconds = [];
@@ -234,7 +240,7 @@ const startRound = () => {
     }
 };
 
-// called when the stop button is pressed
+// Stops an active race when the stop control is pressed.
 const stopRace = () => {
     if (raceStarting) {
         return false;
@@ -244,6 +250,7 @@ const stopRace = () => {
     checkRace();
 };
 
+// Navigates to the previous tournament round after confirmation.
 const prevRound = () => {
     if (currTournament === null || currTrack === null) {
     // tournament not loaded
@@ -271,6 +278,7 @@ const prevRound = () => {
     }
 };
 
+// Navigates to the next tournament round after confirmation.
 const nextRound = () => {
     if (currTournament === null || currTrack === null) {
     // tournament not loaded
@@ -308,6 +316,7 @@ const nextRound = () => {
     }
 };
 
+// Navigates to a selected tournament round after confirmation.
 const gotoRound = (mindex, rindex) => {
     if (currTournament === null || currTrack === null) {
     // tournament not loaded
@@ -327,10 +336,13 @@ const gotoRound = (mindex, rindex) => {
     }
 };
 
+// Reports whether the current race is a free round.
 const isFreeRound = () => freeRound;
 
+// Reports whether a race is starting or currently running.
 const isStarted = () => raceStarting || raceRunning;
 
+// Switches between free-round and tournament-round modes.
 const toggleFreeRound = () => {
     freeRound = !freeRound;
     chronoInit();
@@ -339,7 +351,7 @@ const toggleFreeRound = () => {
     updateRace();
 };
 
-// keyboard shortcuts for debug
+// Handles debug keyboard shortcuts for adding laps.
 const keydown = (keyCode) => {
     if (raceRunning) {
         if (keyCode === 49 || keyCode === 97) {
@@ -360,6 +372,7 @@ const keydown = (keyCode) => {
 // ==========================================================================
 // ==== API calls
 
+// Loads a track definition from the remote track service.
 const loadTrack = (code) => {
     $.getJSON(`https://mini4wd-track-editor.pimentoso.com/api/track/${code}`)
         .done((obj) => {
@@ -375,12 +388,14 @@ const loadTrack = (code) => {
         });
 };
 
+// Stores a manually entered track definition.
 const setTrackManual = (length, order) => {
     const obj = { 'code': i18n.__('tag-track-manual'), 'length': length, 'order': order, 'manual': true };
     storage.set('track', obj);
     trackLoadDone(obj);
 };
 
+// Loads a tournament definition from the remote tournament service.
 const loadTournament = (code) => {
     $.getJSON(`https://mini4wd-tournament.pimentoso.com/api/tournament/${code}`)
         .done((obj) => {
@@ -396,6 +411,7 @@ const loadTournament = (code) => {
         });
 };
 
+// Applies a successfully loaded track to the client state.
 const trackLoadDone = (obj) => {
     currTrack = obj;
     storage.set('track', currTrack);
@@ -404,6 +420,7 @@ const trackLoadDone = (obj) => {
     showTrackDetails();
 };
 
+// Opens a persisted race and rebuilds client state.
 const openRace = (filename, onComplete) => {
     storage.loadRace(filename, () => {
         console.log('[Race setup] Race opened', { filename: filename });
@@ -412,12 +429,14 @@ const openRace = (filename, onComplete) => {
     });
 };
 
+// Clears track state after a failed track load.
 const trackLoadFail = () => {
     currTrack = null;
     ui.trackLoadFail();
     showTrackDetails();
 };
 
+// Applies a successfully loaded tournament to the client state.
 const tournamentLoadDone = (obj) => {
     currTournament = obj;
     mancheList = clone(obj.manches);
@@ -437,6 +456,7 @@ const tournamentLoadDone = (obj) => {
     ui.tournamentLoadDone(currTournament);
 };
 
+// Clears tournament state after a failed tournament load.
 const tournamentLoadFail = () => {
     currTournament = null;
     ui.tournamentLoadFail();
@@ -445,7 +465,7 @@ const tournamentLoadFail = () => {
 // ==========================================================================
 // ==== race status
 
-// timer task to check for cars out of track
+// Checks whether cars have left the track or finished the race.
 const checkRace = () => {
     let redraw = chrono.checkOutCars();
     if (chrono.isRaceFinished()) {
@@ -455,7 +475,7 @@ const checkRace = () => {
     if (redraw) updateRace();
 };
 
-// timer task to invalidate cars not passed in 3 seconds
+// Marks cars that did not start within the allowed time.
 const checkStart = () => {
     let redraw = chrono.checkNotStartedCars();
     if (chrono.isRaceFinished()) {
@@ -465,7 +485,7 @@ const checkStart = () => {
     if (redraw) updateRace();
 };
 
-// called when the current round has completed. Saves times and handles UI changes
+// Finalizes the current round, persists results, and updates the UI.
 const raceFinished = () => {
     // kill race check task
     clearInterval(checkRaceTask);
@@ -488,6 +508,7 @@ const raceFinished = () => {
 // ==========================================================================
 // ==== write to interface
 
+// Refreshes UI and timing state after a track change.
 const showTrackDetails = () => {
     ui.showTrackDetails(currTrack);
     ui.showThresholds();
@@ -496,12 +517,14 @@ const showTrackDetails = () => {
     updateRace();
 };
 
+// Refreshes UI and timing state after a tournament change.
 const showTournamentDetails = () => {
     ui.showTournamentDetails(currTournament);
     ui.initRace(freeRound);
     updateRace();
 };
 
+// Renders current cars and synchronizes per-lane timers.
 const updateRace = () => {
     let cars = (raceRunning || freeRound) ? chrono.getCars() : storage.loadRound(currManche, currRound);
     cars = cars || chrono.getCars(); // if loaded round was undefined
@@ -518,6 +541,7 @@ const updateRace = () => {
     });
 };
 
+// Starts the display timer for a lane when it is idle.
 const startTimer = (lane) => {
     if (timerIntervals[lane] === null) {
         timerSeconds[lane] = 0;
@@ -525,10 +549,12 @@ const startTimer = (lane) => {
     }
 };
 
+// Stops the display timer for a lane.
 const stopTimer = (lane) => {
     clearInterval(timerIntervals[lane]);
 };
 
+// Advances and renders the display timer for a lane.
 const timer = (lane) => {
     pageTimerSeconds[lane].text((timerSeconds[lane]++ / 10).toFixed(3));
 };
@@ -536,6 +562,7 @@ const timer = (lane) => {
 // ==========================================================================
 // ==== export excel
 
+// Exports the current tournament when one is loaded.
 const saveXls = () => {
     if (currTournament) {
         xls.generateXls();
@@ -545,6 +572,7 @@ const saveXls = () => {
 // ==========================================================================
 // ==== listen to arduino events
 
+// Sends a main-process sensor timestamp to the timing engine.
 const addLap = (lane, timestamp) => {
     if (!raceRunning) {
         return;

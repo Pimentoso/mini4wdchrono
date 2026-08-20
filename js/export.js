@@ -7,10 +7,7 @@ const utils = require('./utils');
 const storage = require('./storage');
 const strftime = require('strftime');
 
-/**
- * Gets the export directory path
- * @returns {Promise<string>} - Export directory path
- */
+// Retrieves the base directory used for race exports.
 const getXlsFilePath = async () => {
     try {
         return await window.electronAPI.getAppPath('home');
@@ -20,10 +17,7 @@ const getXlsFilePath = async () => {
     }
 };
 
-/**
- * Ensures export directory exists
- * @returns {Promise<string>} - Export directory path
- */
+// Ensures the application's export directory exists.
 const createDir = async () => {
     try {
         const dir = await getXlsFilePath();
@@ -36,10 +30,7 @@ const createDir = async () => {
     }
 };
 
-/**
- * Generates and saves Excel export file
- * @returns {Promise<string>} - Path to saved Excel file
- */
+// Generates and saves an Excel workbook for the current tournament.
 const generateXls = async () => {
     try {
         const track = await storage.get('track');

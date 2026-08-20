@@ -6,6 +6,7 @@ const i18n = new (require('../i18n/i18n'))();
 const configuration = require('./configuration');
 const storage = require('./storage');
 
+// Updates the board status UI after a successful connection.
 const boardConnected = () => {
     $('#tag-board-status').removeClass('is-danger');
     $('#tag-board-status').addClass('is-success');
@@ -13,6 +14,7 @@ const boardConnected = () => {
     $('#main').show();
 };
 
+// Updates the board status UI after a disconnection.
 const boardDisconnected = () => {
     $('#tag-board-status').removeClass('is-success');
     $('#tag-board-status').addClass('is-danger');
@@ -20,12 +22,14 @@ const boardDisconnected = () => {
     $('#main').show();
 };
 
+// Translates all elements marked for localization.
 const translate = () => {
     $('.tn').each(function () {
         $(this).html(i18n.__($(this).data('tn')));
     });
 };
 
+// Activates the requested application tab.
 const gotoTab = (tab) => {
     $('.tabs li').removeClass('is-active');
     $(`li[data-tab=${tab}]`).addClass('is-active');
@@ -34,6 +38,7 @@ const gotoTab = (tab) => {
     $(`div[data-tab=${tab}]`).show();
 };
 
+// Initializes UI controls from cached configuration and race data.
 const init = () => {
     translate();
 
@@ -90,6 +95,7 @@ const init = () => {
     });
 };
 
+// Prepares the contents of the requested modal.
 const initModal = (modalId) => {
     if (modalId === 'modal-new') {
         $('#modal-new-name').val('');
@@ -125,6 +131,7 @@ const initModal = (modalId) => {
     }
 };
 
+// Updates the free-round toggle and dependent UI state.
 const toggleFreeRound = (freeRound) => {
     if (freeRound) {
         $('#button-toggle-free-round').text(i18n.__('button-goto-race'));
@@ -136,6 +143,7 @@ const toggleFreeRound = (freeRound) => {
     $('#button-toggle-free-round').trigger('blur');
 };
 
+// Shows a successfully loaded track in the UI.
 const trackLoadDone = (track) => {
     $('#js-input-track-code').removeClass('is-danger');
     $('#tag-track-status').removeClass('is-danger');
@@ -143,6 +151,7 @@ const trackLoadDone = (track) => {
     $('#tag-track-status').text(track.code);
 };
 
+// Shows a failed track-load state in the UI.
 const trackLoadFail = () => {
     $('#js-input-track-code').addClass('is-danger');
     $('#tag-track-status').addClass('is-danger');
@@ -150,6 +159,7 @@ const trackLoadFail = () => {
     $('#tag-track-status').text(i18n.__('tag-not-loaded'));
 };
 
+// Shows a successfully loaded tournament in the UI.
 const tournamentLoadDone = (tournament) => {
     $('#button-toggle-free-round').show();
     $('#tag-tournament-status').removeClass('is-danger');
@@ -159,6 +169,7 @@ const tournamentLoadDone = (tournament) => {
     $('#js-input-tournament-code').val(tournament.code);
 };
 
+// Shows a failed tournament-load state in the UI.
 const tournamentLoadFail = () => {
     $('#js-input-tournament-code').addClass('is-danger');
     $('#tag-tournament-status').addClass('is-danger');
@@ -166,12 +177,14 @@ const tournamentLoadFail = () => {
     $('#tag-tournament-status').text(i18n.__('tag-not-loaded'));
 };
 
+// Updates UI controls for a race that has started.
 const raceStarted = (freeRound) => {
     updateUiState(freeRound);
     $('.js-show-on-race-running').show();
     $('.js-hide-on-race-running').hide();
 };
 
+// Updates UI controls after a race finishes.
 const raceFinished = (freeRound) => {
     updateUiState(freeRound);
     $('.js-show-on-race-running').hide();
@@ -182,6 +195,7 @@ const raceFinished = (freeRound) => {
     }
 };
 
+// Renders the selected track's details.
 const showTrackDetails = (track) => {
     if (track) {
         if (track.manual) {
@@ -208,6 +222,7 @@ const showTrackDetails = (track) => {
     }
 };
 
+// Renders the selected tournament's details.
 const showTournamentDetails = (tournament) => {
     if (tournament) {
         $('#js-input-tournament-code').val(tournament.url);
@@ -222,6 +237,7 @@ const showTournamentDetails = (tournament) => {
     }
 };
 
+// Calculates and renders race-time threshold estimates.
 const showThresholds = (timeThreshold, speedThreshold, roundLaps) => {
     const track = storage.get('track');
     if (track) {
@@ -256,6 +272,7 @@ const showThresholds = (timeThreshold, speedThreshold, roundLaps) => {
     }
 };
 
+// Renders the selected race mode and its description.
 const showRaceModeDetails = () => {
     const race_mode = storage.get('raceMode');
     $('.js-race-mode').removeClass('is-primary');
@@ -273,6 +290,7 @@ const showRaceModeDetails = () => {
     }
 };
 
+// Renders the tournament ranking table.
 const showPlayerList = () => {
     const track = storage.get('track');
     const tournament = storage.get('tournament');
@@ -323,6 +341,7 @@ const showPlayerList = () => {
     }
 };
 
+// Renders every tournament round and its recorded results.
 const showMancheList = () => {
     const track = storage.get('track');
     const tournament = storage.get('tournament');
@@ -390,6 +409,7 @@ const showMancheList = () => {
     translate();
 };
 
+// Displays the players scheduled for the next round.
 const showNextRoundNames = () => {
     const currManche = storage.get('currManche');
     const currRound = storage.get('currRound');
@@ -416,6 +436,7 @@ const showNextRoundNames = () => {
     $('#next-round-names').text(`${label} ${names.join(', ').toUpperCase()}`);
 };
 
+// Returns the display name for a manche or final.
 const mancheName = (mindex) => {
     const tournament = storage.get('tournament');
     const mancheList = storage.getManches();
@@ -431,6 +452,7 @@ const mancheName = (mindex) => {
     }
 };
 
+// Initializes the race screen for the current round.
 const initRace = (freeRound) => {
     const tournament = storage.get('tournament');
     const currManche = storage.get('currManche');
@@ -461,6 +483,7 @@ const initRace = (freeRound) => {
     }
 };
 
+// Renders lane positions, laps, split times, and timers.
 const drawRace = (cars, running) => {
     $('.js-place').removeClass('is-dark is-light is-primary is-warning');
     $('.js-delay').removeClass('is-danger');
@@ -552,6 +575,7 @@ const drawRace = (cars, running) => {
     });
 };
 
+// Enables or disables controls that change race setup.
 const disableRaceInput = (disabled) => {
     $('#js-input-tournament-code').prop('disabled', disabled);
     $('#js-load-tournament').prop('disabled', disabled);
@@ -563,6 +587,7 @@ const disableRaceInput = (disabled) => {
     $('#js-settings-round-laps').prop('disabled', disabled);
 };
 
+// Updates visibility for the loaded track, tournament, and race mode.
 const updateUiState = (freeRound) => {
     const track = storage.get('track');
     const tournament = storage.get('tournament');
@@ -597,11 +622,7 @@ const updateUiState = (freeRound) => {
     }
 };
 
-/**
- * Sets up all UI event handlers
- * Should be called once during initialization
- * @param {object} deps - Dependencies { client, storage, configuration, startRaceCallback }
- */
+// Registers UI event handlers using the supplied renderer dependencies.
 const setupEventHandlers = (deps) => {
     const { client, storage, configuration, startRaceCallback } = deps;
 
@@ -613,11 +634,13 @@ const setupEventHandlers = (deps) => {
     });
 
     // modals
+    // Opens a modal and prevents page scrolling.
     const openModal = (modal) => {
         $(`#${modal}`).addClass('is-active');
         $(document.documentElement).addClass('is-clipped');
     };
 
+    // Closes every modal and restores page scrolling.
     const closeAllModals = () => {
         $('.modal').removeClass('is-active');
         $(document.documentElement).removeClass('is-clipped');
@@ -744,9 +767,9 @@ const setupEventHandlers = (deps) => {
     });
 
     // Open XLS folder
-    $('#button-xls-folder').on('click', () => {
+    $('#button-xls-folder').on('click', async () => {
         const xls = require('./export');
-        const dir = xls.createDir();
+        const dir = await xls.createDir();
         window.electronAPI.openPath(dir);
     });
 
@@ -756,7 +779,7 @@ const setupEventHandlers = (deps) => {
         window.electronAPI.openPath(log.transports.file.findLogPath());
     });
 
-    // Update thresholds
+    // Updates threshold estimates from the settings form.
     const updateThresholds = () => {
         const timeThreshold = parseFloat($('#js-settings-time-threshold').val().replace(',', '.'));
         const speedThreshold = parseFloat($('#js-settings-speed-threshold').val().replace(',', '.'));

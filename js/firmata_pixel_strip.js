@@ -10,6 +10,7 @@ const PIXEL_SET_STRIP = 0x04;
 const MASK_7BIT = 0x7F;
 
 class FirmataPixelStrip {
+    // Configures a Firmata-backed WS2812 pixel strip.
     constructor({ firmata, pin, length, gamma = 2.8 }) {
         this.port = firmata.transport || firmata.sp || firmata;
         this.pin = pin;
@@ -17,6 +18,7 @@ class FirmataPixelStrip {
         this.gamma = gamma;
     }
 
+    // Sends the strip configuration command to the board.
     initialize() {
         return new Promise((resolve, reject) => {
             this.port.write(Buffer.from([
@@ -39,6 +41,7 @@ class FirmataPixelStrip {
         });
     }
 
+    // Returns controls for one pixel in the strip.
     pixel(index) {
         return {
             color: (color) => this.setPixel(index, color),
@@ -46,19 +49,23 @@ class FirmataPixelStrip {
         };
     }
 
+    // Sets every pixel to the requested color.
     color(color) {
         this.writeColorCommand(PIXEL_SET_STRIP, this.toColorValue(color));
     }
 
+    // Turns off every pixel and applies the change.
     off() {
         this.color('#000000');
         this.show();
     }
 
+    // Flushes pending pixel changes to the strip.
     show() {
         this.write([START_SYSEX, PIXEL_COMMAND, PIXEL_SHOW, END_SYSEX]);
     }
 
+    // Sets one pixel to the requested color.
     setPixel(index, color) {
         const colorValue = this.toColorValue(color);
         this.write([
@@ -75,6 +82,7 @@ class FirmataPixelStrip {
         ]);
     }
 
+    // Sends a strip-wide color command.
     writeColorCommand(command, colorValue) {
         this.write([
             START_SYSEX,
@@ -88,6 +96,7 @@ class FirmataPixelStrip {
         ]);
     }
 
+    // Converts an RGB color to the gamma-corrected Firmata value.
     toColorValue(color) {
         const { r, g, b } = this.parseColor(color);
         const gamma = (value) => Math.floor(Math.pow(value / 255, this.gamma) * 255 + 0.5);
@@ -95,6 +104,7 @@ class FirmataPixelStrip {
         return (gamma(r) << 16) + (gamma(g) << 8) + gamma(b);
     }
 
+    // Parses a hex string or RGB object into RGB channels.
     parseColor(color) {
         if (typeof color === 'object' && color !== null) {
             return color;
@@ -112,6 +122,7 @@ class FirmataPixelStrip {
         };
     }
 
+    // Writes raw Firmata bytes to the hardware transport.
     write(data, callback) {
         this.port.write(Buffer.from(data), callback);
     }

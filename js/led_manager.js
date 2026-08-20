@@ -16,12 +16,14 @@ const COLOR_TAMIYA_BLUE = COLOR_BLUE;
 
 // Manager for a 9 LEDs WS2812b strip and a buzzer.
 class LedManager {
+    // Creates an LED and buzzer controller for the connected hardware.
     constructor(_pin, pinBuzzer, reverse) {
         this.pinBuzzer = pinBuzzer;
         this.reverse = reverse;
         this.ready = false;
     }
 
+    // Returns the shared LED manager instance.
     static getInstance(pin, pinBuzzer, reverse) {
         if (LedManager.instance) {
             return LedManager.instance;
@@ -31,10 +33,12 @@ class LedManager {
         return LedManager.instance;
     }
 
+    // Reports whether a buzzer pin is configured.
     buzzerAvailable() {
         return this.pinBuzzer > 0;
     }
 
+    // Plays the connection animation and marks the controller ready.
     async connected() {
         if (this.buzzerAvailable()) {
             await this.beep(100);
@@ -44,6 +48,7 @@ class LedManager {
         this.ready = true;
     }
 
+    // Clears hardware state after the controller disconnects.
     async disconnected() {
         this.ready = false;
         try {
@@ -53,6 +58,7 @@ class LedManager {
         }
     }
 
+    // Runs the configured start sequence before invoking the race callback.
     roundStart(animationType, startTimerCallback) {
         if (animationType === 0) {
             this.beep(1500);
@@ -69,6 +75,7 @@ class LedManager {
         }
     }
 
+    // Displays finishing positions after a completed round.
     roundFinish(cars) {
         const rLaps = storage.get('roundLaps');
         const finishCars = _.filter(cars, (c) => !c.outOfBounds && c.lapCount === rLaps + 1);
@@ -89,6 +96,7 @@ class LedManager {
         }, 1500);
     }
 
+    // Briefly highlights a lane after it records a lap.
     lap(lane) {
         if (this.ready) {
             this.colorLane(lane, COLOR_GREEN);
@@ -98,6 +106,7 @@ class LedManager {
         }
     }
 
+    // Plays the buzzer for the requested duration.
     async beep(millis) {
         if (this.buzzerAvailable()) {
             try {
@@ -108,6 +117,7 @@ class LedManager {
         }
     }
 
+    // Returns the random or fixed delay before the green light.
     greenDelay() {
         if (storage.get('raceMode') === 1) {
             return 250 + (Math.random() * 3750);
@@ -116,6 +126,7 @@ class LedManager {
         return 1500;
     }
 
+    // Maps a race lane to its physical LED lane.
     laneIndex(lane) {
         if (this.reverse) {
             if (lane === 0) {
@@ -129,6 +140,7 @@ class LedManager {
         return lane === 1 ? 1 : lane;
     }
 
+    // Sets the LED color for one lane.
     async colorLane(lane, color) {
         lane = this.laneIndex(lane);
         try {
@@ -141,6 +153,7 @@ class LedManager {
         }
     }
 
+    // Turns off the LEDs for one lane.
     async clearLane(lane) {
         lane = this.laneIndex(lane);
         try {
@@ -152,6 +165,7 @@ class LedManager {
         }
     }
 
+    // Runs the green-light animation and then starts the race.
     async greenLight(delay, callback) {
         try {
             await window.electronAPI.hardwareRunLedAnimation({
@@ -167,6 +181,7 @@ class LedManager {
         }
     }
 
+    // Runs the red countdown animation.
     async countdown(delay) {
         try {
             await window.electronAPI.hardwareRunLedAnimation({
@@ -182,6 +197,7 @@ class LedManager {
         }
     }
 
+    // Runs the KITT-style LED animation.
     async kitt(color) {
         try {
             await window.electronAPI.hardwareRunLedAnimation({
@@ -195,6 +211,7 @@ class LedManager {
         }
     }
 
+    // Runs the Tamiya-color connection animation.
     async tamiyaSlide() {
         try {
             await window.electronAPI.hardwareRunLedAnimation({

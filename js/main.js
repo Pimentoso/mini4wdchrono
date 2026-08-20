@@ -22,7 +22,7 @@ const client = require('./js/client');
 const ui = require('./js/ui');
 const utils = require('./js/utils');
 
-// Handles loading configuration and storage via IPC
+// Loads cached renderer state before initializing the application.
 (async () => {
     try {
         try {
@@ -59,9 +59,7 @@ const utils = require('./js/utils');
     initializeApplication();
 })();
 
-/**
- * Main application initialization (called after async setup)
- */
+// Initializes renderer UI, hardware listeners, and reconnection handling.
 async function initializeApplication() {
     // Hardware state variables
     let connected = false;
@@ -83,7 +81,7 @@ async function initializeApplication() {
     // init client
     client.init({ led_manager: ledManager });
 
-    // Start race handler - validates hardware state before starting
+    // Validates hardware state before starting a race.
     const startRace = () => {
         log.info(`Starting race at ${new Date()}`);
         if (!debugMode) {
@@ -127,7 +125,7 @@ async function initializeApplication() {
         client.startRace(debugMode);
     };
 
-    // Hardware button press handler
+    // Toggles the race from the physical start button.
     const buttonPressed = () => {
         client.isStarted() ? client.stopRace() : startRace();
     };
@@ -157,7 +155,7 @@ async function initializeApplication() {
         buttonPressed();
     });
 
-    // Sets up hardware components after board is ready
+    // Configures sensors, LEDs, and buzzer after the board is ready.
     const setupHardwareComponents = async () => {
         try {
             tag1 = $('#sensor-reading-1');
@@ -201,7 +199,7 @@ async function initializeApplication() {
         }
     };
 
-    // Try to reconnect after a failure (USB disconnected)
+    // Schedules one hardware reconnection attempt after a disconnect.
     const scheduleHardwareReconnect = () => {
         if (connected || reconnectInProgress || reconnectTimer) {
             return;

@@ -9,9 +9,7 @@ const cachedRaceData = {};
 let cacheReady = false;
 let cachedRecentFiles = [];
 
-/**
- * Internal: Sets values in the local cache
- */
+// Stores a nested value in the local race-data cache.
 const setCached = (key, value) => {
     const keys = key.split('.');
     let current = cachedRaceData;
@@ -26,9 +24,7 @@ const setCached = (key, value) => {
     current[keys[keys.length - 1]] = value;
 };
 
-/**
- * Internal: Replaces entire local cache with provided race data
- */
+// Replaces the local race-data cache with the supplied data.
 const replaceCachedData = (data) => {
     _.each(_.keys(cachedRaceData), (key) => {
         delete cachedRaceData[key];
@@ -36,9 +32,7 @@ const replaceCachedData = (data) => {
     _.extend(cachedRaceData, data || {});
 };
 
-/**
- * Internal: Gets values from the local cache
- */
+// Retrieves a nested value from the local race-data cache.
 const getCached = (key) => {
     if (!cacheReady) {
         console.warn(`[Storage] Cache not ready for key: ${key}`);
@@ -58,11 +52,7 @@ const getCached = (key) => {
     return current;
 };
 
-/**
- * Initializes the storage system (must be called once at startup)
- * Loads configuration and race data into cache
- * @returns {Promise<void>}
- */
+// Initializes persistence and populates the local race-data cache.
 const initAsync = async () => {
     try {
         // Check if electronAPI is available
@@ -84,9 +74,7 @@ const initAsync = async () => {
     }
 };
 
-/**
- * Creates a new race (async)
- */
+// Creates, selects, and loads a new race asynchronously.
 const newRaceAsync = async (raceName) => {
     const filename = await window.electronAPI.storageNewRace(raceName);
     configuration.set('raceFile', filename);
@@ -95,9 +83,7 @@ const newRaceAsync = async (raceName) => {
     return filename;
 };
 
-/**
- * Creates a new race (sync wrapper - fire and forget)
- */
+// Creates a new race while preserving the callback-based renderer API.
 const newRace = (raceName, onComplete) => {
     newRaceAsync(raceName)
         .then((filename) => {
@@ -106,9 +92,7 @@ const newRace = (raceName, onComplete) => {
         .catch(err => console.error('[Race setup] New race creation failed:', err));
 };
 
-/**
- * Loads an existing race (async version)
- */
+// Loads the selected race and refreshes the local cache.
 const loadRaceAsync = async (filename) => {
     if (!filename) {
         filename = configuration.get('raceFile');
@@ -116,7 +100,7 @@ const loadRaceAsync = async (filename) => {
 
     if (filename) {
         // Retrocompatibility: trim filename if needed
-        filename = filename.substr(filename.length - 15);
+        filename = filename.slice(-15);
         await window.electronAPI.storageLoadRace(filename);
         configuration.set('raceFile', filename);
         replaceCachedData(await window.electronAPI.storageGetAll());
@@ -127,9 +111,7 @@ const loadRaceAsync = async (filename) => {
     }
 };
 
-/**
- * Loads an existing race (sync wrapper)
- */
+// Loads a race while preserving the callback-based renderer API.
 const loadRace = (filename, onComplete) => {
     loadRaceAsync(filename)
         .then(() => {
@@ -138,9 +120,7 @@ const loadRace = (filename, onComplete) => {
         .catch(err => console.error('[Race setup] Race open failed:', { filename: filename, error: err }));
 };
 
-/**
- * Deletes a race file (async)
- */
+// Deletes a persisted race and clears it if it is selected.
 const deleteRaceAsync = async (filename) => {
     await window.electronAPI.storageDeleteRace(filename);
     if (filename === configuration.get('raceFile')) {
@@ -148,16 +128,12 @@ const deleteRaceAsync = async (filename) => {
     }
 };
 
-/**
- * Deletes a race file (sync wrapper)
- */
+// Deletes a race without exposing asynchronous persistence to callers.
 const deleteRace = (filename) => {
     deleteRaceAsync(filename).catch(err => console.error('[Storage] Failed to delete race:', { filename: filename, error: err }));
 };
 
-/**
- * Gets recent race files (async)
- */
+// Retrieves and caches the most recent race files.
 const getRecentFilesAsync = async (num) => {
     num = num || 10;
     const recent = await window.electronAPI.storageListRaces(num);
@@ -165,34 +141,26 @@ const getRecentFilesAsync = async (num) => {
     return cachedRecentFiles;
 };
 
-/**
- * Gets recent race files (sync wrapper)
- */
+// Returns cached recent races while refreshing them in the background.
 const getRecentFiles = (num) => {
     num = num || 10;
     getRecentFilesAsync(num).catch(err => console.error('[Storage] Failed to list recent races:', { limit: num, error: err }));
     return cachedRecentFiles.slice(0, num);
 };
 
-/**
- * Sets a storage value (async)
- */
+// Persists a race-data value and updates its cache entry.
 const setAsync = async (key, value) => {
     await window.electronAPI.storageSet(key, value);
     setCached(key, value);
 };
 
-/**
- * Sets a storage value (sync wrapper using cache)
- */
+// Updates cached race data before persisting it in the background.
 const set = (key, value) => {
     setCached(key, value);
     setAsync(key, value).catch(err => console.error('[Storage] Failed to save value:', { key: key, error: err }));
 };
 
-/**
- * Gets a storage value (async)
- */
+// Retrieves a race-data value directly from persistence.
 const getAsync = async (key) => { // eslint-disable-line no-unused-vars
     try {
         return await window.electronAPI.storageGet(key);
@@ -202,16 +170,12 @@ const getAsync = async (key) => { // eslint-disable-line no-unused-vars
     }
 };
 
-/**
- * Gets a storage value (sync wrapper using cache)
- */
+// Retrieves a race-data value from the local cache.
 const get = (key) => {
     return getCached(key);
 };
 
-/**
- * Removes a storage value (async)
- */
+// Removes a persisted race-data value and its cache entry.
 const removeAsync = async (key) => {
     await window.electronAPI.storageRemove(key);
     // Remove from cache
@@ -224,9 +188,7 @@ const removeAsync = async (key) => {
     delete current[keys[keys.length - 1]];
 };
 
-/**
- * Removes a storage value (sync wrapper)
- */
+// Removes a cached race-data value before persisting the deletion.
 const remove = (key) => {
     const keys = key.split('.');
     let current = cachedRaceData;
@@ -238,9 +200,7 @@ const remove = (key) => {
     removeAsync(key).catch(err => console.error('[Storage] Failed to remove value:', { key: key, error: err }));
 };
 
-/**
- * Saves round results
- */
+// Saves the cars and results for a tournament round.
 const saveRound = (manche, round, cars) => {
     try {
         set(`race.m${manche}.r${round}`, cars);
@@ -250,15 +210,13 @@ const saveRound = (manche, round, cars) => {
     }
 };
 
-/**
- * Loads round results
- */
+// Loads cars and results for the requested or current round.
 const loadRound = (manche, round) => {
     try {
-        if (manche == null) {
+        if (manche === undefined || manche === null) {
             manche = get('currManche');
         }
-        if (round == null) {
+        if (round === undefined || round === null) {
             round = get('currRound');
         }
         return get(`race.m${manche}.r${round}`);
@@ -268,9 +226,7 @@ const loadRound = (manche, round) => {
     }
 };
 
-/**
- * Deletes round results
- */
+// Deletes the stored results for a tournament round.
 const deleteRound = (manche, round) => {
     try {
         remove(`race.m${manche}.r${round}`);
@@ -280,9 +236,7 @@ const deleteRound = (manche, round) => {
     }
 };
 
-/**
- * Gets manche list from tournament data
- */
+// Returns tournament manches, including any generated finals.
 const getManches = () => {
     try {
         const tournament = get('tournament');
@@ -299,9 +253,7 @@ const getManches = () => {
     }
 };
 
-/**
- * Gets player list from tournament data
- */
+// Returns the configured tournament players.
 const getPlayers = () => {
     try {
         const tournament = get('tournament');
@@ -313,17 +265,7 @@ const getPlayers = () => {
     }
 };
 
-/*
-	Builds a structure like the following
-	[
-		(1 entry for each player)
-		[
-			(1 entry for each manche)
-			{ time: 99999, position: 3, outOfBounds: true }
-		]
-	]
-	@return [Array]
-*/
+// Builds per-player result data for every tournament manche.
 const getPlayerData = () => {
     try {
         let cars;
@@ -358,6 +300,7 @@ const getPlayerData = () => {
     }
 };
 
+// Ranks players by the sum of their two best recorded times.
 const getSortedPlayerList = () => {
     try {
         const playerList = getPlayers();

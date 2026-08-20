@@ -31,6 +31,7 @@ Electron app for Mini4WD race timing and race management. Vanilla JS, HTML, Bulm
 - Do not change `js/chrono.js`, `index.html`, or CSS.
 - Log with stable area prefixes, e.g. `[Hardware]`, `[IPC]`, `[Storage]`, `[Race setup]`.
 - Preserve unrelated working-tree changes.
+- Always add a single line comment above functions with a concise explanation.
 
 ## Build and validation
 

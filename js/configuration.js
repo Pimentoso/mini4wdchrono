@@ -24,17 +24,20 @@ const CONFIG_KEYS = [
 const cachedConfig = {};
 let cacheReady = false;
 
+// Removes every value from the local configuration cache.
 const clearCache = () => {
     _.each(_.keys(cachedConfig), (key) => {
         delete cachedConfig[key];
     });
 };
 
+// Replaces cached configuration with the supplied values.
 const replaceCachedConfig = (values) => {
     clearCache();
     _.extend(cachedConfig, values || {});
 };
 
+// Loads all supported configuration values from the main process.
 const hydrateCache = async () => {
     const values = {};
 
@@ -45,10 +48,7 @@ const hydrateCache = async () => {
     replaceCachedConfig(values);
 };
 
-/**
- * Initializes configuration cache from main process values.
- * @returns {Promise<void>}
- */
+// Initializes the configuration cache from main-process values.
 const initAsync = async () => {
     try {
         if (!window.electronAPI) {
@@ -65,6 +65,7 @@ const initAsync = async () => {
     }
 };
 
+// Reports whether the configuration cache can serve a setting.
 const ensureCacheReady = (settingKey) => {
     if (!cacheReady) {
         console.warn(`[Configuration] Cache not ready for key: ${settingKey}`);
@@ -74,11 +75,7 @@ const ensureCacheReady = (settingKey) => {
     return true;
 };
 
-/**
- * Gets a configuration value.
- * @param {string} settingKey - Setting key name
- * @returns {Promise<any>} - Setting value
- */
+// Retrieves a configuration value directly from the main process.
 const getAsync = async (settingKey) => {
     try {
         return await window.electronAPI.configGet(settingKey);
@@ -88,11 +85,7 @@ const getAsync = async (settingKey) => {
     }
 };
 
-/**
- * Gets a configuration value from local cache.
- * @param {string} settingKey - Setting key name
- * @returns {any} - Cached setting value
- */
+// Retrieves a configuration value from the local cache.
 const get = (settingKey) => {
     if (!ensureCacheReady(settingKey)) {
         return null;
@@ -101,23 +94,13 @@ const get = (settingKey) => {
     return cachedConfig[settingKey];
 };
 
-/**
- * Sets a configuration value.
- * @param {string} settingKey - Setting key name
- * @param {any} settingValue - Value to set
- * @returns {Promise<void>}
- */
+// Persists a configuration value and updates the local cache.
 const setAsync = async (settingKey, settingValue) => {
     await window.electronAPI.configSet(settingKey, settingValue);
     cachedConfig[settingKey] = settingValue;
 };
 
-/**
- * Sets a configuration value in cache, then persists in background.
- * On failure, rehydrate cache from main process.
- * @param {string} settingKey - Setting key name
- * @param {any} settingValue - Value to set
- */
+// Updates cached configuration before persisting it in the background.
 const set = (settingKey, settingValue) => {
     cachedConfig[settingKey] = settingValue;
     setAsync(settingKey, settingValue).catch(async (error) => {
@@ -130,21 +113,13 @@ const set = (settingKey, settingValue) => {
     });
 };
 
-/**
- * Deletes a configuration value.
- * @param {string} settingKey - Setting key name
- * @returns {Promise<void>}
- */
+// Deletes a configuration value from persistence and the cache.
 const delAsync = async (settingKey) => {
     await window.electronAPI.configDel(settingKey);
     delete cachedConfig[settingKey];
 };
 
-/**
- * Deletes a configuration value from cache, then persists in background.
- * On failure, rehydrate cache from main process.
- * @param {string} settingKey - Setting key name
- */
+// Deletes a cached setting before removing it in the background.
 const del = (settingKey) => {
     delete cachedConfig[settingKey];
     delAsync(settingKey).catch(async (error) => {
@@ -157,10 +132,7 @@ const del = (settingKey) => {
     });
 };
 
-/**
- * Resets configuration to defaults with backup, then rehydrates cache.
- * @returns {Promise<string>} - Path to backup file
- */
+// Resets persisted configuration and rehydrates the cache.
 const reset = async () => {
     try {
         cacheReady = false;
