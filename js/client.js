@@ -25,10 +25,13 @@ const init = (params) => {
     pageTimerSeconds = [$('#timer-lane0'), $('#timer-lane1'), $('#timer-lane2')];
     ledManager = params.led_manager;
     mancheList = [];
+    mancheCount = 0;
     currManche = storage.get('currManche') || 0;
     currRound = storage.get('currRound') || 0;
     currTrack = null;
     currTournament = null;
+    freeRound = true;
+    raceStarting = false;
     raceRunning = false;
 
     // load track from settings (do this before tournament)
@@ -48,10 +51,13 @@ const init = (params) => {
 
 const reset = (name, onComplete) => {
     mancheList = [];
+    mancheCount = 0;
     currManche = 0;
     currRound = 0;
     currTrack = null;
     currTournament = null;
+    freeRound = true;
+    raceStarting = false;
     raceRunning = false;
 
     storage.newRace(name, (filename) => {

@@ -358,7 +358,7 @@ const showMancheList = () => {
                     playerPositionTag = '';
 
                     if (playerPosition !== null) {
-                        if (cars[pindex].originalTime !== null) {
+                        if (cars[pindex].originalTime) {
                             playerPositionTag = '<span class="tag is-danger is-large">mod</span>';
                         }
                         else if (playerOut) {
@@ -439,17 +439,13 @@ const initRace = (freeRound) => {
     updateUiState(freeRound);
     $('.js-show-on-race-running').hide();
 
-    if (tournament === null) {
+    if (!tournament || freeRound) {
         $('#name-lane0').text(' ');
         $('#name-lane1').text(' ');
         $('#name-lane2').text(' ');
-        $('#curr-manche').text('0');
-        $('#curr-round').text('0');
-    }
-    else if (freeRound) {
-        $('#name-lane0').text(' ');
-        $('#name-lane1').text(' ');
-        $('#name-lane2').text(' ');
+        $('#curr-manche').text('');
+        $('#curr-round').text('');
+        $('#next-round-names').text('-');
     }
     else {
         const playerList = tournament.players;
