@@ -13,7 +13,7 @@ const boardConnected = () => {
     $('#main').show();
 };
 
-const boardDisonnected = () => {
+const boardDisconnected = () => {
     $('#tag-board-status').removeClass('is-success');
     $('#tag-board-status').addClass('is-danger');
     $('#tag-board-status').text(i18n.__('tag-disconnected'));
@@ -869,7 +869,7 @@ const setupEventHandlers = (deps) => {
 
 module.exports = {
     boardConnected: boardConnected,
-    boardDisonnected: boardDisonnected,
+    boardDisconnected: boardDisconnected,
     translate: translate,
     gotoTab: gotoTab,
     init: init,

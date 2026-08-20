@@ -38,6 +38,24 @@ let isHardwareReady = false;
 let pixel = null;
 let hardwareInitialization = null;
 
+function markHardwareDisconnected(reason) {
+    if (!isHardwareReady) {
+        return;
+    }
+
+    isHardwareReady = false;
+    sensors = { lane0: null, lane1: null, lane2: null };
+    ledManager = null;
+    pixel = null;
+    buzzerPin = null;
+    board = null;
+
+    console.log(`[Hardware] Connection closed${reason ? `: ${reason}` : ''}`);
+    if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('hardware-board-closed', reason);
+    }
+}
+
 // Configuration defaults
 const CONFIG_DEFAULTS = {
     'ledAnimation': 0,
@@ -793,7 +811,7 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
 
                     board.on('fail', (error) => {
                         console.error('[Hardware] Board failed:', error);
-                        isHardwareReady = false;
+                        markHardwareDisconnected(error.message);
                         if (mainWindow) {
                             mainWindow.webContents.send('hardware-board-error', error.message);
                         }
@@ -802,23 +820,21 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
 
                     board.on('error', (error) => {
                         console.error('[Hardware] Board error:', error);
+                        markHardwareDisconnected(error.message);
                         if (mainWindow) {
                             mainWindow.webContents.send('hardware-board-error', error.message);
                         }
                     });
 
                     board.on('close', () => {
-                        console.log('[Hardware] Board closed');
-                        isHardwareReady = false;
-                        if (mainWindow) {
-                            mainWindow.webContents.send('hardware-board-closed');
-                        }
+                        markHardwareDisconnected('Board closed');
                     });
                 });
 
                 // Handle Firmata errors
                 firmataBoard.on('error', (error) => {
                     console.error('[Hardware] Firmata error:', error);
+                    markHardwareDisconnected(error.message);
                     reject(error);
                 });
             });
@@ -826,7 +842,13 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
             // Handle serial port errors
             serialPort.on('error', (error) => {
                 console.error('[Hardware] Serial port error:', error);
+                markHardwareDisconnected(error.message);
                 reject(error);
+            });
+
+            serialPort.on('close', (error) => {
+                const reason = error ? error.message : 'Serial port closed';
+                markHardwareDisconnected(reason);
             });
         });
 
@@ -1220,12 +1242,8 @@ ipcMain.handle('hardware-close', async () => {
     try {
         if (board) {
             board.close();
-            board = null;
         }
-        sensors = { lane0: null, lane1: null, lane2: null };
-        ledManager = null;
-        pixel = null;
-        buzzerPin = null;
+        markHardwareDisconnected('Closed by application');
         console.log('[Hardware] Closed');
     } catch (error) {
         console.error('[IPC] hardware-close error:', error);
