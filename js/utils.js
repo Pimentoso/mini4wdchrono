@@ -23,63 +23,8 @@ const safeTime = (timeStr) => {
     return Math.round(parseFloat(timeStr.replace(',', '.')) * 1000);
 };
 
-/* Chainable timeout function
- *
- * Reference:
- * https://stackoverflow.com/questions/6921275/is-it-possible-to-chain-settimeout-functions-in-javascript
- */
-const delay = (fn, t) => {
-    // private instance variables
-    let queue = [], timer;
-
-    function schedule(fn, t) {
-        timer = setTimeout(function () {
-            timer = null;
-            fn();
-            if (queue.length) {
-                const item = queue.shift();
-                schedule(item.fn, item.t);
-            }
-        }, t);
-    }
-
-    const self = {
-        delay: function (fn, t) {
-            // if already queuing things or running a timer,
-            //   then just add to the queue
-            if (queue.length || timer) {
-                queue.push({ fn: fn, t: t });
-            } else {
-                // no queue or timer yet, so schedule the timer
-                schedule(fn, t);
-            }
-            return self;
-        },
-        cancel: function () {
-            clearTimeout(timer);
-            queue = [];
-            return self;
-        }
-    };
-
-    return self.delay(fn, t);
-};
-
-const delayAsync = (fn, t) => {
-    return new Promise((resolve) => {
-        setTimeout(async () => {
-            if (fn) {
-                await fn();
-            }
-            resolve();
-        }, t);
-    });
-};
-
 module.exports = {
     initLocale: initLocale,
     prettyTime: prettyTime,
-    delay: delay,
-    delayAsync: delayAsync,
     safeTime: safeTime
 };

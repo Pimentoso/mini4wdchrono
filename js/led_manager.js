@@ -1,6 +1,5 @@
 'use strict';
 
-const utils = require('./utils');
 const storage = require('./storage');
 
 const COLOR_GREEN = '#66cc33';
@@ -73,7 +72,7 @@ class LedManager {
     roundFinish(cars) {
         const rLaps = storage.get('roundLaps');
         const finishCars = _.filter(cars, (c) => !c.outOfBounds && c.lapCount === rLaps + 1);
-        utils.delay(async () => {
+        setTimeout(async () => {
             for (const c of finishCars) {
                 let color;
                 if (c.position === 1) {
@@ -93,7 +92,7 @@ class LedManager {
     lap(lane) {
         if (this.ready) {
             this.colorLane(lane, COLOR_GREEN);
-            utils.delay(async () => {
+            setTimeout(async () => {
                 await this.clearLane(lane);
             }, 1000);
         }

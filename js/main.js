@@ -79,17 +79,6 @@ async function initializeApplication() {
     // init client
     client.init({ led_manager: ledManager });
 
-    // Close hardware connections before page unload/reload
-    // window.onbeforeunload = () => {
-    //     console.log('[Main] Page unloading, closing hardware...');
-    //     try {
-    //         // Notify main process to close hardware synchronously
-    //         window.electronAPI.invoke('hardware-close');
-    //     } catch (err) {
-    //         console.error('[Main] Error closing hardware:', err);
-    //     }
-    // };
-
     // Start race handler - validates hardware state before starting
     const startRace = () => {
         log.info(`Starting race at ${new Date()}`);
@@ -208,6 +197,7 @@ async function initializeApplication() {
         }
     };
 
+    // Try to reconnect after a failure (USB disconnected)
     const scheduleHardwareReconnect = () => {
         if (connected || reconnectInProgress || reconnectTimer) {
             return;
