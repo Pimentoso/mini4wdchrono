@@ -27,7 +27,7 @@ Electron app for Mini4WD race timing and race management. Vanilla JS, HTML, Bulm
 - Use plain JavaScript; preserve existing CommonJS style.
 - Keep async IPC in configuration/storage/hardware layers.
 - Client/UI APIs should use synchronous cache wrappers and callbacks, not expose async persistence races.
-- Preserve IPC separation; never import `johnny-five`, `serialport`, or `firmata` in renderer code.
+- Preserve IPC separation; never import `serialport` or `firmata` in renderer code.
 - Do not change `js/chrono.js`, `index.html`, or CSS.
 - Log with stable area prefixes, e.g. `[Hardware]`, `[IPC]`, `[Storage]`, `[Race setup]`.
 - Preserve unrelated working-tree changes.

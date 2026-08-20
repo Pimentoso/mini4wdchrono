@@ -35,25 +35,34 @@ let sensors = { lane0: null, lane1: null, lane2: null };
 let ledManager = null;
 let buzzerPin = null;
 let isHardwareReady = false;
-let pixel = null;
 let hardwareInitialization = null;
+let serialPort = null;
+const FirmataPixelStrip = require('./js/firmata_pixel_strip');
 
-function markHardwareDisconnected(reason) {
+function markHardwareDisconnected(reason, disconnectedPort) {
+    if (disconnectedPort && serialPort !== disconnectedPort) {
+        return false;
+    }
+
     if (!isHardwareReady) {
-        return;
+        if (disconnectedPort) {
+            serialPort = null;
+        }
+        return false;
     }
 
     isHardwareReady = false;
     sensors = { lane0: null, lane1: null, lane2: null };
     ledManager = null;
-    pixel = null;
     buzzerPin = null;
     board = null;
+    serialPort = null;
 
     console.log(`[Hardware] Connection closed${reason ? `: ${reason}` : ''}`);
     if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.webContents.send('hardware-board-closed', reason);
     }
+    return true;
 }
 
 // Configuration defaults
@@ -172,7 +181,7 @@ async function runLedAnimation(animation) {
     }
 
     if (animation.type === 'tamiyaSlide') {
-        const colors = animation.colors;
+        const colors = [...animation.colors];
         for (let i = 0; i < colors.length; i++) {
             ledManager.pixel(i).color(colors[i]);
         }
@@ -181,7 +190,10 @@ async function runLedAnimation(animation) {
         const iterations = Math.floor(animation.duration / animation.stepDelay);
         for (let i = 0; i < iterations; i++) {
             await sleep(animation.stepDelay);
-            ledManager.shift(1, pixel.FORWARD, true);
+            colors.unshift(colors.pop());
+            for (let pixelIndex = 0; pixelIndex < colors.length; pixelIndex++) {
+                ledManager.pixel(pixelIndex).color(colors[pixelIndex]);
+            }
             ledManager.show();
         }
 
@@ -723,7 +735,7 @@ ipcMain.handle('storage-delete-race', async (event, filename) => {
 });
 
 /**
- * Initializes Johnny-Five board and hardware components
+ * Initializes the Firmata board and hardware components
  * @param {object} options - Hardware configuration options
  * @returns {Promise<object>} - Success status and message
  */
@@ -742,7 +754,6 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
 
     try {
         // Lazy load dependencies
-        const five = require('johnny-five');
         const { SerialPort } = require('serialport');
         const Firmata = require('firmata').Board;
 
@@ -766,89 +777,55 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
         // Board initialization happens asynchronously
         hardwareInitialization = new Promise((resolve, reject) => {
             // Create SerialPort instance with v13 API
-            const serialPort = new SerialPort({
+            const port = new SerialPort({
                 path: arduinoPort.path,
                 baudRate: 57600
             });
+            serialPort = port;
 
             // Wait for serial port to open
-            serialPort.on('open', () => {
+            port.on('open', () => {
                 console.log('[Hardware] Serial port opened');
 
                 // Create Firmata Board instance with opened port
-                const firmataBoard = new Firmata(serialPort);
-
-                let boardCreated = false; // Prevent multiple board creation
+                const firmataBoard = new Firmata(port);
 
                 // Wait for Firmata to be ready (queries board for capabilities)
-                firmataBoard.once('ready', () => { // Use 'once' instead of 'on'
+                firmataBoard.once('ready', () => {
                     console.log('[Hardware] Firmata ready');
 
-                    if (boardCreated) return; // Guard against duplicate calls
-                    boardCreated = true;
+                    board = firmataBoard;
+                    isHardwareReady = true;
 
-                    // Now create Johnny-Five board with the initialized firmata board
-                    board = new five.Board({
-                        io: firmataBoard,
-                        repl: false
-                    });
+                    // Notify renderer that the Firmata board is ready.
+                    if (mainWindow) {
+                        mainWindow.webContents.send('hardware-board-ready');
+                    }
 
-                    board.once('ready', () => { // Use 'once' instead of 'on'
-                        try {
-                            console.log('[Hardware] Board ready');
-                            isHardwareReady = true;
-
-                            // Notify renderer that board is ready
-                            if (mainWindow) {
-                                mainWindow.webContents.send('hardware-board-ready');
-                            }
-
-                            resolve({ success: true, message: 'Hardware initialized' });
-                        } catch (err) {
-                            reject(err);
-                        }
-                    });
-
-                    board.on('fail', (error) => {
-                        console.error('[Hardware] Board failed:', error);
-                        markHardwareDisconnected(error.message);
-                        if (mainWindow) {
-                            mainWindow.webContents.send('hardware-board-error', error.message);
-                        }
-                        reject(error);
-                    });
-
-                    board.on('error', (error) => {
-                        console.error('[Hardware] Board error:', error);
-                        markHardwareDisconnected(error.message);
-                        if (mainWindow) {
-                            mainWindow.webContents.send('hardware-board-error', error.message);
-                        }
-                    });
-
-                    board.on('close', () => {
-                        markHardwareDisconnected('Board closed');
-                    });
+                    resolve({ success: true, message: 'Hardware initialized' });
                 });
 
                 // Handle Firmata errors
                 firmataBoard.on('error', (error) => {
                     console.error('[Hardware] Firmata error:', error);
-                    markHardwareDisconnected(error.message);
+                    const disconnected = markHardwareDisconnected(error.message, port);
+                    if (disconnected && mainWindow && !mainWindow.isDestroyed()) {
+                        mainWindow.webContents.send('hardware-board-error', error.message);
+                    }
                     reject(error);
                 });
             });
 
             // Handle serial port errors
-            serialPort.on('error', (error) => {
+            port.on('error', (error) => {
                 console.error('[Hardware] Serial port error:', error);
-                markHardwareDisconnected(error.message);
+                markHardwareDisconnected(error.message, port);
                 reject(error);
             });
 
-            serialPort.on('close', (error) => {
+            port.on('close', (error) => {
                 const reason = error ? error.message : 'Serial port closed';
-                markHardwareDisconnected(reason);
+                markHardwareDisconnected(reason, port);
             });
         });
 
@@ -863,7 +840,7 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
 
 /**
  * Sets up sensors after board initialization
- * Uses raw digitalRead for maximum speed (faster than Johnny-Five Sensors)
+ * Uses Firmata digitalRead for maximum speed
  * @param {object} config - Sensor pin configuration
  * @returns {Promise<object>} - Success status
  */
@@ -872,8 +849,6 @@ ipcMain.handle('hardware-setup-sensors', async (event, config) => {
         if (!board || !isHardwareReady) {
             throw new Error('Board not ready');
         }
-
-        const five = require('johnny-five');
 
         const sensorPin1 = config.sensorPin1 || 6;
         const sensorPin2 = config.sensorPin2 || 7;
@@ -884,13 +859,13 @@ ipcMain.handle('hardware-setup-sensors', async (event, config) => {
         sensors.lane1 = { pin: sensorPin2, lastValue: 1 };
         sensors.lane2 = { pin: sensorPin3, lastValue: 1 };
 
-        // Set fast sampling interval (1ms) for accurate lap timing
-        board.samplingInterval(1);
+        // Request the fastest sampling interval supported by Firmata.
+        board.setSamplingInterval(1);
 
         // Set pins to INPUT mode
-        board.pinMode(sensorPin1, five.Pin.INPUT);
-        board.pinMode(sensorPin2, five.Pin.INPUT);
-        board.pinMode(sensorPin3, five.Pin.INPUT);
+        board.pinMode(sensorPin1, board.MODES.INPUT);
+        board.pinMode(sensorPin2, board.MODES.INPUT);
+        board.pinMode(sensorPin3, board.MODES.INPUT);
 
         // Raw digital read with callbacks
         board.digitalRead(sensorPin1, function(value) {
@@ -953,19 +928,16 @@ ipcMain.handle('hardware-setup-button', async (event, config) => {
             return { success: true, message: 'Button disabled' };
         }
 
-        const five = require('johnny-five');
-
-        // Set up button on specified pin
-        const button = new five.Button({
-            pin: buttonPin,
-            isPullup: true
-        });
-
-        // Set up press listener that sends event to renderer
-        button.on('press', function() {
-            if (mainWindow) {
+        let previousValue = 1;
+        let lastPressAt = 0;
+        board.pinMode(buttonPin, board.MODES.PULLUP);
+        board.digitalRead(buttonPin, (value) => {
+            const now = Date.now();
+            if (value === 0 && previousValue === 1 && now - lastPressAt >= 7 && mainWindow) {
+                lastPressAt = now;
                 mainWindow.webContents.send('hardware-button-press');
             }
+            previousValue = value;
         });
 
         console.log(`[Hardware] Start button configured on pin ${buttonPin}`);
@@ -987,31 +959,16 @@ ipcMain.handle('hardware-setup-leds', async (event, config) => {
             throw new Error('Board not ready');
         }
 
-        pixel = require('node-pixel');
-
         // Initialize the LED strip
-        return new Promise((resolve, reject) => {
-            try {
-                ledManager = new pixel.Strip({
-                    board: board,
-                    controller: 'FIRMATA',
-                    strips: [{ pin: config.ledPin1 || 3, length: 9 }],
-                    gamma: 2.8
-                });
-
-                ledManager.on('ready', function() {
-                    console.log('[Hardware] LED strip ready');
-                    resolve({ success: true, ready: true });
-                });
-
-                ledManager.on('error', function(err) {
-                    console.error('[Hardware] LED strip error:', err);
-                    reject(err);
-                });
-            } catch (error) {
-                reject(error);
-            }
+        ledManager = new FirmataPixelStrip({
+            firmata: board,
+            pin: config.ledPin1 || 3,
+            length: 9,
+            gamma: 2.8
         });
+        await ledManager.initialize();
+
+        return { success: true, ready: true };
     } catch (error) {
         console.error('[IPC] hardware-setup-leds error:', error);
         throw error;
@@ -1029,12 +986,10 @@ ipcMain.handle('hardware-setup-buzzer', async (event, config) => {
             throw new Error('Board not ready');
         }
 
-        const five = require('johnny-five');
-
         buzzerPin = config.piezoPin || 2;
 
         // Set pin to OUTPUT mode for buzzer control
-        board.pinMode(buzzerPin, five.Pin.OUTPUT);
+        board.pinMode(buzzerPin, board.MODES.OUTPUT);
 
         console.log('[Hardware] Buzzer ready');
         return { success: true };
@@ -1240,10 +1195,11 @@ ipcMain.handle('hardware-is-ready', async () => {
  */
 ipcMain.handle('hardware-close', async () => {
     try {
-        if (board) {
-            board.close();
+        const port = serialPort;
+        markHardwareDisconnected('Closed by application', port);
+        if (port && port.isOpen) {
+            port.close();
         }
-        markHardwareDisconnected('Closed by application');
         console.log('[Hardware] Closed');
     } catch (error) {
         console.error('[IPC] hardware-close error:', error);
