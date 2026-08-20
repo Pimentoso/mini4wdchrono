@@ -54,6 +54,7 @@
     "node": ">=20"
   },
   "overrides": {
-    "serialport": "^13.0.0"
+    "serialport": "^13.0.0",
+    "node-gyp": "^10.3.1"
   }
 }
