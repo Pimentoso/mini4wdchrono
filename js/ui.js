@@ -107,34 +107,26 @@ const completedRoundCount = (mancheList) => {
     }, 0);
 };
 
-// Finds the fastest recorded lap, including the cars currently shown on screen.
-const findBestLap = (mancheList, currentCars) => {
+// Finds the best valid round time using the same data as the ranking table.
+const findBestLap = () => {
     const tournament = storage.get('tournament');
     if (!tournament) return null;
 
     let bestLap = null;
-    const considerCars = (cars) => {
-        _.each(cars, (car) => {
-            _.each(car.splitTimes, (lapTime) => {
-                if (lapTime > 0 && (!bestLap || lapTime < bestLap.time)) {
-                    bestLap = { time: lapTime, playerId: car.playerId };
-                }
-            });
-        });
-    };
-
-    _.each(mancheList, (manche, mindex) => {
-        _.each(manche, (_round, rindex) => {
-            considerCars(storage.loadRound(mindex, rindex) || []);
+    const times = storage.getSortedPlayerList();
+    _.each(times, (info) => {
+        _.each(info.times, (time) => {
+            if (time > 0 && time < 99999 && (!bestLap || time < bestLap.time)) {
+                bestLap = { time: time, playerId: info.id };
+            }
         });
     });
-    considerCars(currentCars || []);
 
     return bestLap;
 };
 
 // Updates the persistent tournament progress and best-lap badges.
-const updateRaceStatus = (currentCars) => {
+const updateRaceStatus = () => {
     const tournament = storage.get('tournament');
     if (!tournament) {
         $('#race-status-badges').hide();
@@ -150,7 +142,7 @@ const updateRaceStatus = (currentCars) => {
     }
 
     const progress = totalRounds ? Math.round(completedRounds / totalRounds * 100) : 0;
-    const bestLap = findBestLap(mancheList, currentCars);
+    const bestLap = findBestLap();
 
     $('#race-status-badges').show();
     $('#tag-race-progress').text(`${completedRounds} / ${totalRounds} (${progress}%)`);
@@ -553,7 +545,7 @@ const drawRace = (cars, running) => {
 
     const track = storage.get('track');
     const laps = storage.get('roundLaps');
-    updateRaceStatus(cars);
+    updateRaceStatus();
 
     _.each(cars, (car, i) => {
     // delay + speed
