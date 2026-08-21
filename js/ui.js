@@ -11,6 +11,7 @@ const boardConnected = () => {
     $('#tag-board-status').removeClass('is-danger');
     $('#tag-board-status').addClass('is-success');
     $('#tag-board-status').text(i18n.__('tag-connected'));
+    $('#hardware-loading').hide();
     $('#main').show();
 };
 
@@ -19,7 +20,8 @@ const boardDisconnected = () => {
     $('#tag-board-status').removeClass('is-success');
     $('#tag-board-status').addClass('is-danger');
     $('#tag-board-status').text(i18n.__('tag-disconnected'));
-    $('#main').show();
+    $('#main').hide();
+    $('#hardware-loading').show();
 };
 
 // Translates all elements marked for localization.
@@ -78,6 +80,7 @@ const init = () => {
     $('#tag-tournament-status').addClass('is-danger');
     $('#tag-tournament-status').removeClass('is-success');
     $('#tag-tournament-status').text(i18n.__('tag-not-loaded'));
+    updateRaceStatus();
 
     disableRaceInput(false);
     if (storage.get('race')) {
@@ -93,6 +96,65 @@ const init = () => {
         });
         $('#js-config-usb-port').val(configuration.get('usbPort'));
     });
+};
+
+// Counts all rounds that have already recorded a result.
+const completedRoundCount = (mancheList) => {
+    return _.reduce(mancheList, (total, manche, mindex) => {
+        return total + _.reduce(manche, (roundTotal, _round, rindex) => {
+            return roundTotal + (storage.loadRound(mindex, rindex) ? 1 : 0);
+        }, 0);
+    }, 0);
+};
+
+// Finds the fastest recorded lap, including the cars currently shown on screen.
+const findBestLap = (mancheList, currentCars) => {
+    const tournament = storage.get('tournament');
+    if (!tournament) return null;
+
+    let bestLap = null;
+    const considerCars = (cars) => {
+        _.each(cars, (car) => {
+            _.each(car.splitTimes, (lapTime) => {
+                if (lapTime > 0 && (!bestLap || lapTime < bestLap.time)) {
+                    bestLap = { time: lapTime, playerId: car.playerId };
+                }
+            });
+        });
+    };
+
+    _.each(mancheList, (manche, mindex) => {
+        _.each(manche, (_round, rindex) => {
+            considerCars(storage.loadRound(mindex, rindex) || []);
+        });
+    });
+    considerCars(currentCars || []);
+
+    return bestLap;
+};
+
+// Updates the persistent tournament progress and best-lap badges.
+const updateRaceStatus = (currentCars) => {
+    const tournament = storage.get('tournament');
+    if (!tournament) {
+        $('#race-status-badges').hide();
+        return;
+    }
+
+    const mancheList = storage.getManches() || [];
+    const totalRounds = _.reduce(mancheList, (total, manche) => { return total + manche.length; }, 0);
+    const completedRounds = completedRoundCount(mancheList);
+    if (!completedRounds) {
+        $('#race-status-badges').hide();
+        return;
+    }
+
+    const progress = totalRounds ? Math.round(completedRounds / totalRounds * 100) : 0;
+    const bestLap = findBestLap(mancheList, currentCars);
+
+    $('#race-status-badges').show();
+    $('#tag-race-progress').text(`${completedRounds} / ${totalRounds} (${progress}%)`);
+    $('#tag-best-lap').text(bestLap ? `${utils.prettyTime(bestLap.time)} · ${tournament.players[bestLap.playerId] || '//'}` : '-');
 };
 
 // Prepares the contents of the requested modal.
@@ -193,6 +255,7 @@ const raceFinished = (freeRound) => {
     if (tournament) {
         disableRaceInput(true);
     }
+    updateRaceStatus();
 };
 
 // Renders the selected track's details.
@@ -305,11 +368,10 @@ const showPlayerList = () => {
 
         // draw title row
         const titleCells = _.times(tournament.manches.length, (i) => {
-            return `<td class="has-text-centered">Manche ${i + 1}</td>`;
+            return `<td class="has-text-centered">M${i + 1}</td>`;
         });
         titleCells.push(`<td class="has-text-centered">${i18n.__('label-best-2-times')}</td>`);
         titleCells.push(`<td class="has-text-centered">${i18n.__('label-best-speed')}</td>`);
-        titleCells.push(`<td class="has-text-centered">${i18n.__('label-best-speed-km')}</td>`);
         $('#tablePlayerList').append(`<tr class="is-selected"><td colspan="2"><strong>${playerList.length} RACERS</strong></td>${titleCells}</tr>`);
 
         // draw player rows
@@ -334,8 +396,7 @@ const showPlayerList = () => {
                 return `<td class="has-text-centered ${highlight}">${utils.prettyTime(playerTime)}</td>`;
             }));
             cells.push(`<td class="has-text-centered">${utils.prettyTime(info.best)}</td>`);
-            cells.push(`<td class="has-text-centered">${bestSpeed.toFixed(2)}</td>`);
-            cells.push(`<td class="has-text-centered">${(bestSpeed * 3.6).toFixed(2)}</td>`);
+            cells.push(`<td class="has-text-centered">${bestSpeed.toFixed(2)} m/s<br /><span class="has-text-grey-light">${(bestSpeed * 3.6).toFixed(2)} km/h</span></td>`);
             $('#tablePlayerList').append(`<tr>${cells}</tr>`);
         });
     }
@@ -481,6 +542,7 @@ const initRace = (freeRound) => {
         showPlayerList();
         showMancheList();
     }
+    updateRaceStatus();
 };
 
 // Renders lane positions, laps, split times, and timers.
@@ -491,6 +553,7 @@ const drawRace = (cars, running) => {
 
     const track = storage.get('track');
     const laps = storage.get('roundLaps');
+    updateRaceStatus(cars);
 
     _.each(cars, (car, i) => {
     // delay + speed
@@ -913,5 +976,6 @@ module.exports = {
     showMancheList: showMancheList,
     showNextRoundNames: showNextRoundNames,
     initRace: initRace,
-    drawRace: drawRace
+    drawRace: drawRace,
+    updateRaceStatus: updateRaceStatus
 };

@@ -14,7 +14,7 @@ function i18n() {
     if (window.electronAPI && window.electronAPI.getAppLocale) {
         window.electronAPI.getAppLocale().then(locale => {
             const tnpath = path.join(__dirname, locale.substring(0, 2) + '.json');
-            // tnpath = path.join(__dirname, 'it.json'); // uncomment this line to force italian language
+            // const tnpath = path.join(__dirname, 'it.json'); // uncomment this line to force italian language
             if (fs.existsSync(tnpath)) {
                 loadedLanguage = JSON.parse(fs.readFileSync(tnpath), 'utf8');
             }
