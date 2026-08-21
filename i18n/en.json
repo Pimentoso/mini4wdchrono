@@ -82,6 +82,7 @@
 	"label-best-time": "Best time",
 	"label-best-2-times": "2 best sum",
 	"label-best-speed": "Best speed",
+	"label-best-speed-km": "Best speed (km/h)",
 	"label-custom-title": "Your team/club name",
 	"label-starting-tab": "Starting screen",
 	"label-led-animation": "LED animation at race start (only for RGB strip)",
