@@ -120,7 +120,7 @@
 	"dialog-track-not-loaded": "Track not loaded!",
 	"dialog-tournament-not-loaded": "Tournament not loaded!",
 	"dialog-change-round": "Change round?",
-	"dialog-enter-final": "Enter finals? Make sure all the player times are correct and definitive!",
+	"dialog-enter-final": "Enter finals? Make sure all the player times are correct and definitive! Also the race mode will change to 'Final Mode'.",
 	"dialog-restart": "The program will restart to apply the changes.",
 	"dialog-disqualify": "Disqualify this time? It will be set to 99.999.",
 	"dialog-replay-round": "Play this round again? The current data will be lost.",

@@ -305,6 +305,15 @@ const nextRound = () => {
                     // generate final rounds only once
                     initFinal();
                 }
+
+                // Change race mode to final
+                storage.set('raceMode', 1);
+                ui.showRaceModeDetails();
+            }
+            else {
+                // Change race mode to time attack
+                storage.set('raceMode', 0);
+                ui.showRaceModeDetails();
             }
         }
 
