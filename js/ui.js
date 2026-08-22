@@ -747,24 +747,27 @@ const setupEventHandlers = (deps) => {
     $('#js-track-save-manual').on('click', (e) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
+        const $length = $('#js-track-length-manual');
+        const $order = $('#js-track-order-manual');
+        const $orderSelect = $order.parent('.select');
+        const hasLength = $length.val().trim();
+        const hasOrder = $order.val();
+
+        $length.removeClass('is-danger');
+        $orderSelect.removeClass('is-danger');
+        if (!hasLength || !hasOrder) {
+            if (!hasLength) $length.addClass('is-danger');
+            if (!hasOrder) $orderSelect.addClass('is-danger');
+            return;
+        }
         const result = window.electronAPI.showMessageBoxSync({
             type: 'warning',
             message: i18n.__('dialog-save-track'),
             buttons: ['Ok', 'Cancel']
         });
         if (result === 0) {
-            $('#js-track-length-manual').removeClass('is-danger');
-            $('#js-track-order-manual').removeClass('is-danger');
-            if (!$('#js-track-length-manual').val()) {
-                $('#js-track-length-manual').addClass('is-danger');
-                return;
-            }
-            if (!$('#js-track-order-manual').val()) {
-                $('#js-track-order-manual').addClass('is-danger');
-                return;
-            }
-            const length = parseFloat($('#js-track-length-manual').val().replace(',', '.'));
-            const order = _.map($('#js-track-order-manual').val().split('-'), (i) => { return parseInt(i); });
+            const length = parseFloat(hasLength.replace(',', '.'));
+            const order = _.map(hasOrder.split('-'), (i) => { return parseInt(i); });
             console.log('[Race setup] Saving manual track', { length: length, order: order });
             client.setTrackManual(length, order);
         }
