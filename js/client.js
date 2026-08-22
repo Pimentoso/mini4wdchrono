@@ -535,9 +535,9 @@ const showTournamentDetails = () => {
 
 // Renders current cars and synchronizes per-lane timers.
 const updateRace = () => {
-    let cars = (raceRunning || freeRound) ? chrono.getCars() : storage.loadRound(currManche, currRound);
+    let cars = (raceRunning || raceStarting || freeRound) ? chrono.getCars() : storage.loadRound(currManche, currRound);
     cars = cars || chrono.getCars(); // if loaded round was undefined
-    ui.drawRace(cars, raceRunning);
+    ui.drawRace(cars, raceRunning || raceStarting);
 
     // stop timers
     _.each(cars, (car, i) => {

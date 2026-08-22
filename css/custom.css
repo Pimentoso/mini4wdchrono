@@ -7,7 +7,7 @@
 }
 
 .container {
-	margin-bottom: 50px;
+	padding-bottom: 20px;
 }
 
 .table tr.is-highlighted {
@@ -209,8 +209,8 @@
 
 .race-lane-dnf {
 	align-self: flex-start;
-	border-color: hsl(0, 0%, 80%);
-	box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.06), 0 0 0 1px rgba(10, 10, 10, 0.02);
+	border-color: transparent;
+	box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.06);
 }
 
 .race-lane-dnf .race-result,
@@ -224,6 +224,22 @@
 
 .race-lane-dnf .race-gap {
 	display: none;
+}
+
+.race-lane-dnf .js-invalidate {
+	display: none !important;
+}
+
+div[data-tab="race"].container {
+	margin-bottom: 0;
+}
+
+.race-next-round {
+	margin-bottom: 0 !important;
+}
+
+.race-next-round .tag {
+	min-height: 3.25em;
 }
 
 @media print {
