@@ -542,6 +542,8 @@ const drawRace = (cars, running) => {
     $('.js-place').removeClass('is-dark is-light is-primary is-warning');
     $('.js-delay').removeClass('is-danger');
     $('.js-timer').removeClass('is-danger is-success');
+    $('.race-lane-card').removeClass('race-lane-winner race-lane-dnf');
+    $('.race-result-icon').empty();
 
     const track = storage.get('track');
     const laps = storage.get('roundLaps');
@@ -550,8 +552,7 @@ const drawRace = (cars, running) => {
     _.each(cars, (car, i) => {
     // delay + speed
         if (car.outOfBounds) {
-            $(`#delay-lane${i}`).text('+99.999');
-            // $(`#speed-lane${i}`).text('0.00 m/s');
+            $(`#delay-lane${i}`).text('—');
         }
         else {
             $(`#delay-lane${i}`).text(`+${utils.prettyTime(car.delayFromFirst)}`);
@@ -576,16 +577,19 @@ const drawRace = (cars, running) => {
 
         // split times
         $(`#laps-lane${i}`).empty();
+        const fastestLap = Math.min(...car.splitTimes);
         _.each(car.splitTimes, (t, ii) => {
             const time = utils.prettyTime(t);
             const speed = (track.length / 3) / (t / 1000);
-            $(`#laps-lane${i}`).append(`<li class="is-size-5">${i18n.__('label-car-lap')} ${ii + 1} - <strong>${time}s</strong> - ${speed.toFixed(2)}m/s</li>`);
+            const fastestClass = t === fastestLap ? 'is-fastest-lap' : '';
+            $(`#laps-lane${i}`).append(`<li class="${fastestClass}"><span>${i18n.__('label-car-lap')} ${ii + 1}</span><strong>${time}s</strong><span>${speed.toFixed(2)} m/s</span></li>`);
         });
 
         // place
         if (car.outOfBounds) {
-            $(`#place-lane${i}`).text(i18n.__('label-car-out'));
-            $(`#place-lane${i}`).addClass('is-dark');
+            $(`#place-lane${i}`).text(i18n.__('label-car-dnf'));
+            $(`#result-icon-lane${i}`).html('<i class="fa-solid fa-ban"></i>');
+            $(`.race-lane-card-${i}`).addClass('race-lane-dnf');
         }
         else if (car.lapCount === 0) {
             if (running) {
@@ -601,8 +605,13 @@ const drawRace = (cars, running) => {
             $(`#place-lane${i}`).addClass('is-light');
         }
         else {
-            $(`#place-lane${i}`).text(`${car.position} ${i18n.__('label-car-position')}`);
-            if (car.position === 1) {
+            const isWinner = !running && car.lapCount > laps && car.position === 1;
+            $(`#place-lane${i}`).text(isWinner ? i18n.__('label-car-winner') : `${car.position} ${i18n.__('label-car-position')}`);
+            if (isWinner) {
+                $(`#result-icon-lane${i}`).html('<i class="fa-solid fa-trophy"></i>');
+                $(`.race-lane-card-${i}`).addClass('race-lane-winner');
+            }
+            else if (car.position === 1) {
                 $(`#place-lane${i}`).addClass('is-warning');
             }
             else {
@@ -612,7 +621,6 @@ const drawRace = (cars, running) => {
 
         // timer
         if (car.outOfBounds) {
-            $(`#timer-lane${i}`).addClass('is-danger');
             $(`#timer-lane${i}`).text(utils.prettyTime(car.currTime));
         }
         else if (car.lapCount === 0) {

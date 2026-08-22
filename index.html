@@ -394,65 +394,75 @@
 				</div>
 			</div>
 
-			<div class="columns js-hide-on-no-track">
+			<div class="columns js-hide-on-no-track race-lanes">
 				<!-- BOX LANE 1 -->
-				<div class="box column box-lane0" style="margin: 0.5rem;">
-					<p class="has-background-primary has-text-white is-block is-size-4 has-text-centered has-text-weight-bold has-margin-vertical tn" style="margin: -0.75rem; padding: 0.75rem;" data-tn="label-lane-1">LANE 1</p>
-					<div class="has-text-centered" style="margin-top: 2rem;">
+				<div class="box column race-lane-card race-lane-card-0">
+					<p class="race-lane-heading tn" data-tn="label-lane-1">LANE 1</p>
+					<div class="race-lane-content has-text-centered">
 						<p id="name-lane0" class="title is-block has-text-grey-dark has-text-weight-bold is-uppercase"></p>
-						<div class="content">
-							<span id="place-lane0" class="tag is-size-5 is-uppercase is-light js-place">stopped</span>
-							&nbsp;
-							<span id="delay-lane0" class="tag is-size-5 is-light js-delay">+0.000 sec</span>
-							<span id="timer-lane0" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
-							<span id="lap-lane0" class="tag is-size-5 is-uppercase is-light js-lap">lap 0</span>
-							&nbsp;
-							<span id="speed-lane0" class="tag is-size-5 is-light js-speed">0.00 m/s</span>
-
-							<ul id="laps-lane0"></ul>
-
-							<a id="invalidate-0" href="#" class="button is-small is-danger js-invalidate js-hide-on-race-running js-hide-on-free-round tn" data-lane="0" data-tn="button-invalidate">invalidate</a>
+						<div class="race-result-row">
+							<span id="result-icon-lane0" class="icon race-result-icon" aria-hidden="true"></span>
+							<span id="place-lane0" class="race-result js-place">stopped</span>
+							<span class="race-gap">
+								<span class="race-metric-label tn" data-tn="label-race-gap">Gap</span>
+								<span id="delay-lane0" class="js-delay">+0.000</span>
+							</span>
 						</div>
+						<div class="race-time-block">
+							<span id="timer-lane0" class="is-block has-text-weight-bold js-timer">0.000</span>
+						</div>
+						<div class="race-metrics-row">
+							<span>
+								<span class="race-metric-label tn" data-tn="label-race-progress">Progress</span>
+								<span id="lap-lane0" class="js-lap">lap 0</span>
+							</span>
+							<span>
+								<span class="race-metric-label tn" data-tn="label-race-speed">Speed</span>
+								<span id="speed-lane0" class="js-speed">0.00 m/s</span>
+							</span>
+						</div>
+						<div class="race-laps">
+							<div class="race-laps-heading">
+								<span class="tn" data-tn="label-race-lap">Lap</span>
+								<span class="tn" data-tn="label-race-time">Time</span>
+								<span class="tn" data-tn="label-race-speed">Speed</span>
+							</div>
+							<ul id="laps-lane0" class="race-laps-list"></ul>
+						</div>
+						<button id="invalidate-0" type="button" class="button is-small is-danger is-outlined js-invalidate js-hide-on-race-running js-hide-on-free-round" data-lane="0"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-ban"></i></span><span class="tn" data-tn="button-invalidate">Disqualify result</span></button>
 					</div>
 				</div>
 				<!-- BOX LANE 2 -->
-				<div class="box column box-lane1" style="margin: 0.5rem;">
-					<p class="has-background-warning has-text-white is-block is-size-4 has-text-centered has-text-weight-bold has-margin-vertical tn" style="margin: -0.75rem; padding: 0.75rem;" data-tn="label-lane-2">LANE 2</p>
-					<div class="has-text-centered" style="margin-top: 2rem;">
+				<div class="box column race-lane-card race-lane-card-1">
+					<p class="race-lane-heading tn" data-tn="label-lane-2">LANE 2</p>
+					<div class="race-lane-content has-text-centered">
 						<p id="name-lane1" class="title is-block has-text-grey-dark has-text-weight-bold is-uppercase"></p>
-						<div class="content">
-							<span id="place-lane1" class="tag is-size-5 is-uppercase is-light js-place">stopped</span>
-							&nbsp;
-							<span id="delay-lane1" class="tag is-size-5 is-light js-delay">+0.000 sec</span>
-							<span id="timer-lane1" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
-							<span id="lap-lane1" class="tag is-size-5 is-uppercase is-light js-lap">lap 0</span>
-							&nbsp;
-							<span id="speed-lane1" class="tag is-size-5 is-light js-speed">0.00 m/s</span>
-
-							<ul id="laps-lane1"></ul>
-
-							<a id="invalidate-1" href="#" class="button is-small is-danger js-invalidate js-hide-on-free-round js-hide-on-race-running tn" data-lane="1" data-tn="button-invalidate">invalidate</a>
+						<div class="race-result-row">
+							<span id="result-icon-lane1" class="icon race-result-icon" aria-hidden="true"></span>
+							<span id="place-lane1" class="race-result js-place">stopped</span>
+							<span class="race-gap"><span class="race-metric-label tn" data-tn="label-race-gap">Gap</span><span id="delay-lane1" class="js-delay">+0.000</span></span>
 						</div>
+						<div class="race-time-block">
+							<span id="timer-lane1" class="is-block has-text-weight-bold js-timer">0.000</span>
+						</div>
+						<div class="race-metrics-row"><span><span class="race-metric-label tn" data-tn="label-race-progress">Progress</span><span id="lap-lane1" class="js-lap">lap 0</span></span><span><span class="race-metric-label tn" data-tn="label-race-speed">Speed</span><span id="speed-lane1" class="js-speed">0.00 m/s</span></span></div>
+						<div class="race-laps"><div class="race-laps-heading"><span class="tn" data-tn="label-race-lap">Lap</span><span class="tn" data-tn="label-race-time">Time</span><span class="tn" data-tn="label-race-speed">Speed</span></div><ul id="laps-lane1" class="race-laps-list"></ul></div>
+						<button id="invalidate-1" type="button" class="button is-small is-danger is-outlined js-invalidate js-hide-on-free-round js-hide-on-race-running" data-lane="1"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-ban"></i></span><span class="tn" data-tn="button-invalidate">Disqualify result</span></button>
 					</div>
 				</div>
 				<!-- BOX LANE 3 -->
-				<div class="box column box-lane2" style="margin: 0.5rem;">
-					<p class="has-background-danger has-text-white is-block is-size-4 has-text-centered has-text-weight-bold has-margin-vertical tn" style="margin: -0.75rem; padding: 0.75rem;" data-tn="label-lane-3">LANE 3</p>
-					<div class="has-text-centered" style="margin-top: 2rem;">
+				<div class="box column race-lane-card race-lane-card-2">
+					<p class="race-lane-heading tn" data-tn="label-lane-3">LANE 3</p>
+					<div class="race-lane-content has-text-centered">
 						<p id="name-lane2" class="title is-block has-text-grey-dark has-text-weight-bold is-uppercase"></p>
-						<div class="content">
-							<span id="place-lane2" class="tag is-size-5 is-uppercase is-light js-place">stopped</span>
-							&nbsp;
-							<span id="delay-lane2" class="tag is-size-5 is-light js-delay">+0.000 sec</span>
-							<span id="timer-lane2" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
-							<span id="lap-lane2" class="tag is-size-5 is-uppercase is-light js-lap">lap 0</span>
-							&nbsp;
-							<span id="speed-lane2" class="tag is-size-5 is-light js-speed">0.00 m/s</span>
-
-							<ul id="laps-lane2"></ul>
-
-							<a id="invalidate-2" href="#" class="button is-small is-danger js-invalidate js-hide-on-free-round js-hide-on-race-running tn" data-lane="2" data-tn="button-invalidate">invalidate</a>
+						<div class="race-result-row"><span id="result-icon-lane2" class="icon race-result-icon" aria-hidden="true"></span><span id="place-lane2" class="race-result js-place">stopped</span><span class="race-gap"><span class="race-metric-label tn" data-tn="label-race-gap">Gap</span><span id="delay-lane2" class="js-delay">+0.000</span></span></div>
+						<div class="race-time-block">
+							<span id="timer-lane2" class="is-block has-text-weight-bold js-timer">0.000</span>
 						</div>
+						<div class="race-metrics-row"><span><span class="race-metric-label tn" data-tn="label-race-progress">Progress</span><span id="lap-lane2" class="js-lap">lap 0</span></span><span><span class="race-metric-label tn" data-tn="label-race-speed">Speed</span><span id="speed-lane2" class="js-speed">0.00 m/s</span></span></div>
+						<div class="race-laps"><div class="race-laps-heading"><span class="tn" data-tn="label-race-lap">Lap</span><span class="tn" data-tn="label-race-time">Time</span><span class="tn" data-tn="label-race-speed">Speed</span></div><ul id="laps-lane2" class="race-laps-list"></ul></div>
+						<button id="invalidate-2" type="button" class="button is-small is-danger is-outlined js-invalidate js-hide-on-free-round js-hide-on-race-running" data-lane="2"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-ban"></i></span><span class="tn" data-tn="button-invalidate">Disqualify result</span></button>
+					</div>
 					</div>
 				</div>
 			</div>
