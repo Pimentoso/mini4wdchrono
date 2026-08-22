@@ -1,14 +1,68 @@
-BASEDIR=$(dirname $0)
-cd $BASEDIR
-cd ..
-echo "Deleting node_modules directory"
-rm -rf node_modules/
-echo "Deleting release-builds directory"
-rm -rf release-builds/
-npm install
-$(node node_modules/electron-packager/bin/electron-packager.js . Mini4wdChrono --overwrite --icon=images/ic_launcher_web.icns --prune=true --out=release-builds)
-cd release-builds
-relname=$(ls | sort -n | head -1)
-echo "Creating zip archive"
-$(ditto -c -k --sequesterRsrc --keepParent $relname/ Mini4wdChrono-mac.zip)
-echo "Done"
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
+RELEASE_DIR="$PROJECT_DIR/release-builds"
+APP_NAME="Mini4wdChrono"
+PLATFORM="darwin"
+ARCH="x64"
+PACKAGE_DIR="$RELEASE_DIR/$APP_NAME-$PLATFORM-$ARCH"
+ARTIFACT="$RELEASE_DIR/Mini4wdChrono-mac-x64.zip"
+
+assert_build_toolchain() {
+    local node_version npm_version node_major npm_major
+
+    if ! node_version="$(node --version)"; then
+        echo "ERROR: Unable to run Node.js. Install Node.js 20 LTS or newer, then reopen the terminal." >&2
+        exit 1
+    fi
+
+    if ! npm_version="$(npm --version)"; then
+        echo "ERROR: Unable to run npm. Install Node.js 20 LTS or newer, then reopen the terminal." >&2
+        exit 1
+    fi
+
+    node_major="${node_version#v}"
+    node_major="${node_major%%.*}"
+    npm_major="${npm_version%%.*}"
+    echo "Using Node.js $node_version and npm $npm_version"
+
+    if ! [[ "$node_major" =~ ^[0-9]+$ && "$npm_major" =~ ^[0-9]+$ ]] || (( node_major < 20 || npm_major < 9 )); then
+        echo "ERROR: This build requires Node.js 20+ and npm 9+ (found Node.js $node_version and npm $npm_version). Install Node.js 20 LTS or newer, then reopen the terminal." >&2
+        exit 1
+    fi
+}
+
+cd "$PROJECT_DIR"
+
+assert_build_toolchain
+
+echo "Installing locked dependencies"
+npm ci
+
+echo "Preparing release artifact paths"
+mkdir -p "$RELEASE_DIR"
+rm -rf "$PACKAGE_DIR"
+rm -f "$ARTIFACT"
+
+echo "Packaging $APP_NAME for macOS $ARCH"
+node "$PROJECT_DIR/node_modules/electron-packager/bin/electron-packager.js" \
+    "$PROJECT_DIR" "$APP_NAME" \
+    --platform="$PLATFORM" \
+    --arch="$ARCH" \
+    --overwrite \
+    --icon="$PROJECT_DIR/images/ic_launcher_web.icns" \
+    --prune=true \
+    --out="$RELEASE_DIR"
+
+if [[ ! -d "$PACKAGE_DIR" ]]; then
+    echo "ERROR: Expected packaged app directory was not created: $PACKAGE_DIR" >&2
+    exit 1
+fi
+
+echo "Creating GitHub Release artifact: $(basename "$ARTIFACT")"
+ditto -c -k --sequesterRsrc --keepParent "$PACKAGE_DIR" "$ARTIFACT"
+
+echo "Done: $ARTIFACT"

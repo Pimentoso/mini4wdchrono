@@ -31,7 +31,7 @@ const carObj = {
 
 const init = (track, playerIds, cars) => {
     if (track) {
-    // cutoff time calculation
+        // cutoff time calculation
         rTrackLength = track.length;
         rLaneOrder = _.map(track.order, (i) => { return i - 1; });
         rTimeThreshold = storage.get('timeThreshold') / 100;
@@ -42,8 +42,8 @@ const init = (track, playerIds, cars) => {
         rTimeCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold) * 1000;
     }
 
-    if (cars === null) {
-    // init car 1
+    if (cars === undefined) {
+        // init car 1
         rCar0 = clone(carObj);
         rCar0.startLane = rCar0.nextLane = 0;
 
@@ -71,11 +71,13 @@ const init = (track, playerIds, cars) => {
 };
 
 // method called when a sensor receives a signal
-const addLap = (lane) => {
-    // current time in milliseconds
-    const timestamp = new Date().getTime();
+const addLap = (lane, timestamp) => {
+    // Use provided timestamp (captured at hardware level) or fallback to current time
+    if (!timestamp) {
+        timestamp = new Date().getTime();
+    }
 
-    console.log(`======= got signal for lane ${lane} at time ${timestamp}`);
+    console.log(`${timestamp} sensor triggered for lane ${lane}`);
     // console.log(JSON.stringify(rCars, null, 2));
 
     // find all cars that may have passes under this lane sensor
@@ -91,12 +93,12 @@ const addLap = (lane) => {
     });
 
     // false sensor read
-    if (rTempCar === null) {
-        console.log(`error: no valid car for signal on lane ${lane}`);
+    if (!rTempCar) {
+        console.warn(`${timestamp} no valid car found`);
         return;
     }
     else {
-        console.log(`ok: valid car ${rTempCar.startLane}`);
+        console.log(`${timestamp} valid car found (start lane ${rTempCar.startLane})`);
     }
 
     // handle the correct car

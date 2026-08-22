@@ -1,31 +1,37 @@
 'use strict';
 
-const serialport = require('serialport');
 const strftime = require('strftime');
 const utils = require('./utils');
 const i18n = new (require('../i18n/i18n'))();
 const configuration = require('./configuration');
-configuration.init();
 const storage = require('./storage');
 
+// Updates the board status UI after a successful connection.
 const boardConnected = () => {
     $('#tag-board-status').removeClass('is-danger');
     $('#tag-board-status').addClass('is-success');
     $('#tag-board-status').text(i18n.__('tag-connected'));
+    $('#hardware-loading').hide();
+    $('#main').show();
 };
 
-const boardDisonnected = () => {
+// Updates the board status UI after a disconnection.
+const boardDisconnected = () => {
     $('#tag-board-status').removeClass('is-success');
     $('#tag-board-status').addClass('is-danger');
     $('#tag-board-status').text(i18n.__('tag-disconnected'));
+    $('#main').hide();
+    $('#hardware-loading').show();
 };
 
+// Translates all elements marked for localization.
 const translate = () => {
     $('.tn').each(function () {
         $(this).html(i18n.__($(this).data('tn')));
     });
 };
 
+// Activates the requested application tab.
 const gotoTab = (tab) => {
     $('.tabs li').removeClass('is-active');
     $(`li[data-tab=${tab}]`).addClass('is-active');
@@ -34,29 +40,28 @@ const gotoTab = (tab) => {
     $(`div[data-tab=${tab}]`).show();
 };
 
+// Initializes UI controls from cached configuration and race data.
 const init = () => {
+    translate();
+
     const title_text = _.compact([configuration.get('title'), storage.get('name')]).join(' - ');
     $('#js-title').text(title_text);
 
     $('#js-race-name').text(storage.get('name') || i18n.__('label-untitled'));
     $('#js-race-created').text(`${i18n.__('label-created')} ${strftime('%Y-%m-%d, %H:%M', new Date(storage.get('created') * 1000))}`);
-    $('#js-settings-time-threshold').val(storage.get('timeThreshold'));
-    $('#js-settings-speed-threshold').val(storage.get('speedThreshold'));
-    $('#js-settings-start-delay').val(storage.get('startDelay'));
-    $('#js-settings-round-laps').val(storage.get('roundLaps'));
+    $('#js-settings-time-threshold').val(storage.get('timeThreshold') || 40);
+    $('#js-settings-speed-threshold').val(storage.get('speedThreshold') || 5);
+    $('#js-settings-start-delay').val(storage.get('startDelay') || 3);
+    $('#js-settings-round-laps').val(storage.get('roundLaps') || 3);
     showRaceModeDetails();
 
     $('.js-led-animation').removeClass('is-primary');
     $(`#js-led-animation-${configuration.get('ledAnimation')}`).addClass('is-primary');
-    $('.js-led-type').removeClass('is-primary');
-    $(`#js-led-type-${configuration.get('ledType')}`).addClass('is-primary');
     $('#js-config-reverse').prop('checked', configuration.get('reverse') > 0);
     $('#js-config-sensor-pin-1').val(configuration.get('sensorPin1'));
     $('#js-config-sensor-pin-2').val(configuration.get('sensorPin2'));
     $('#js-config-sensor-pin-3').val(configuration.get('sensorPin3'));
     $('#js-config-led-pin-1').val(configuration.get('ledPin1'));
-    $('#js-config-led-pin-2').val(configuration.get('ledPin2'));
-    $('#js-config-led-pin-3').val(configuration.get('ledPin3'));
     $('#js-config-piezo-pin').val(configuration.get('piezoPin'));
     $('#js-config-start-button-pin').val(configuration.get('startButtonPin'));
     $('#js-config-title').val(configuration.get('title'));
@@ -75,24 +80,76 @@ const init = () => {
     $('#tag-tournament-status').addClass('is-danger');
     $('#tag-tournament-status').removeClass('is-success');
     $('#tag-tournament-status').text(i18n.__('tag-not-loaded'));
+    updateRaceStatus();
 
     disableRaceInput(false);
     if (storage.get('race')) {
         disableRaceInput(true);
     }
 
-    serialport.list().then(ports => {
+    window.electronAPI.hardwareListPorts().then(ports => {
         ports.forEach(function (port) {
             $('#js-config-usb-port').append($('<option>', {
                 value: port.path,
                 text: port.manufacturer ? `${port.path} (${port.manufacturer})` : port.path
             }));
-            console.log(port.path);
         });
         $('#js-config-usb-port').val(configuration.get('usbPort'));
     });
 };
 
+// Counts all rounds that have already recorded a result.
+const completedRoundCount = (mancheList) => {
+    return _.reduce(mancheList, (total, manche, mindex) => {
+        return total + _.reduce(manche, (roundTotal, _round, rindex) => {
+            return roundTotal + (storage.loadRound(mindex, rindex) ? 1 : 0);
+        }, 0);
+    }, 0);
+};
+
+// Finds the best valid round time using the same data as the ranking table.
+const findBestLap = () => {
+    const tournament = storage.get('tournament');
+    if (!tournament) return null;
+
+    let bestLap = null;
+    const times = storage.getSortedPlayerList();
+    _.each(times, (info) => {
+        _.each(info.times, (time) => {
+            if (time > 0 && time < 99999 && (!bestLap || time < bestLap.time)) {
+                bestLap = { time: time, playerId: info.id };
+            }
+        });
+    });
+
+    return bestLap;
+};
+
+// Updates the persistent tournament progress and best-lap badges.
+const updateRaceStatus = () => {
+    const tournament = storage.get('tournament');
+    if (!tournament) {
+        $('#race-status-badges').hide();
+        return;
+    }
+
+    const mancheList = storage.getManches() || [];
+    const totalRounds = _.reduce(mancheList, (total, manche) => { return total + manche.length; }, 0);
+    const completedRounds = completedRoundCount(mancheList);
+    if (!completedRounds) {
+        $('#race-status-badges').hide();
+        return;
+    }
+
+    const progress = totalRounds ? Math.round(completedRounds / totalRounds * 100) : 0;
+    const bestLap = findBestLap();
+
+    $('#race-status-badges').show();
+    $('#tag-race-progress').text(`${completedRounds} / ${totalRounds} (${progress}%)`);
+    $('#tag-best-lap').text(bestLap ? `${utils.prettyTime(bestLap.time)} · ${tournament.players[bestLap.playerId] || '//'}` : '-');
+};
+
+// Prepares the contents of the requested modal.
 const initModal = (modalId) => {
     if (modalId === 'modal-new') {
         $('#modal-new-name').val('');
@@ -102,8 +159,9 @@ const initModal = (modalId) => {
         $('#modal-open-files').empty();
         const data = storage.getRecentFiles(50);
         if (data.length) {
+            const currentRaceFile = configuration.get('raceFile');
             data.forEach((race) => {
-                if (race.filename === configuration.get('raceFile')) {
+                if (race.filename === currentRaceFile) {
                     $('#modal-open-files').append(`
 					<tr>
 						<td style="width:165px;">${strftime('%Y-%m-%d, %H:%M', new Date(race.created * 1000))}</td>
@@ -127,6 +185,7 @@ const initModal = (modalId) => {
     }
 };
 
+// Updates the free-round toggle and dependent UI state.
 const toggleFreeRound = (freeRound) => {
     if (freeRound) {
         $('#button-toggle-free-round').text(i18n.__('button-goto-race'));
@@ -138,6 +197,7 @@ const toggleFreeRound = (freeRound) => {
     $('#button-toggle-free-round').trigger('blur');
 };
 
+// Shows a successfully loaded track in the UI.
 const trackLoadDone = (track) => {
     $('#js-input-track-code').removeClass('is-danger');
     $('#tag-track-status').removeClass('is-danger');
@@ -145,6 +205,7 @@ const trackLoadDone = (track) => {
     $('#tag-track-status').text(track.code);
 };
 
+// Shows a failed track-load state in the UI.
 const trackLoadFail = () => {
     $('#js-input-track-code').addClass('is-danger');
     $('#tag-track-status').addClass('is-danger');
@@ -152,6 +213,7 @@ const trackLoadFail = () => {
     $('#tag-track-status').text(i18n.__('tag-not-loaded'));
 };
 
+// Shows a successfully loaded tournament in the UI.
 const tournamentLoadDone = (tournament) => {
     $('#button-toggle-free-round').show();
     $('#tag-tournament-status').removeClass('is-danger');
@@ -161,6 +223,7 @@ const tournamentLoadDone = (tournament) => {
     $('#js-input-tournament-code').val(tournament.code);
 };
 
+// Shows a failed tournament-load state in the UI.
 const tournamentLoadFail = () => {
     $('#js-input-tournament-code').addClass('is-danger');
     $('#tag-tournament-status').addClass('is-danger');
@@ -168,22 +231,29 @@ const tournamentLoadFail = () => {
     $('#tag-tournament-status').text(i18n.__('tag-not-loaded'));
 };
 
+// Updates UI controls for a race that has started.
 const raceStarted = (freeRound) => {
     updateUiState(freeRound);
     $('.js-show-on-race-running').show();
     $('.js-hide-on-race-running').hide();
 };
 
+// Updates UI controls after a race finishes.
 const raceFinished = (freeRound) => {
     updateUiState(freeRound);
     $('.js-show-on-race-running').hide();
     $('.js-hide-on-race-running').show();
+    if (freeRound) {
+        $('.js-hide-on-free-round').hide();
+    }
     const tournament = storage.get('tournament');
     if (tournament) {
         disableRaceInput(true);
     }
+    updateRaceStatus();
 };
 
+// Renders the selected track's details.
 const showTrackDetails = (track) => {
     if (track) {
         if (track.manual) {
@@ -210,6 +280,7 @@ const showTrackDetails = (track) => {
     }
 };
 
+// Renders the selected tournament's details.
 const showTournamentDetails = (tournament) => {
     if (tournament) {
         $('#js-input-tournament-code').val(tournament.url);
@@ -224,6 +295,7 @@ const showTournamentDetails = (tournament) => {
     }
 };
 
+// Calculates and renders race-time threshold estimates.
 const showThresholds = (timeThreshold, speedThreshold, roundLaps) => {
     const track = storage.get('track');
     if (track) {
@@ -258,6 +330,7 @@ const showThresholds = (timeThreshold, speedThreshold, roundLaps) => {
     }
 };
 
+// Renders the selected race mode and its description.
 const showRaceModeDetails = () => {
     const race_mode = storage.get('raceMode');
     $('.js-race-mode').removeClass('is-primary');
@@ -275,6 +348,7 @@ const showRaceModeDetails = () => {
     }
 };
 
+// Renders the tournament ranking table.
 const showPlayerList = () => {
     const track = storage.get('track');
     const tournament = storage.get('tournament');
@@ -289,11 +363,10 @@ const showPlayerList = () => {
 
         // draw title row
         const titleCells = _.times(tournament.manches.length, (i) => {
-            return `<td class="has-text-centered">Manche ${i + 1}</td>`;
+            return `<td class="has-text-centered">M${i + 1}</td>`;
         });
         titleCells.push(`<td class="has-text-centered">${i18n.__('label-best-2-times')}</td>`);
         titleCells.push(`<td class="has-text-centered">${i18n.__('label-best-speed')}</td>`);
-        titleCells.push(`<td class="has-text-centered">${i18n.__('label-best-speed-km')}</td>`);
         $('#tablePlayerList').append(`<tr class="is-selected"><td colspan="2"><strong>${playerList.length} RACERS</strong></td>${titleCells}</tr>`);
 
         // draw player rows
@@ -318,13 +391,13 @@ const showPlayerList = () => {
                 return `<td class="has-text-centered ${highlight}">${utils.prettyTime(playerTime)}</td>`;
             }));
             cells.push(`<td class="has-text-centered">${utils.prettyTime(info.best)}</td>`);
-            cells.push(`<td class="has-text-centered">${bestSpeed.toFixed(2)}</td>`);
-            cells.push(`<td class="has-text-centered">${(bestSpeed * 3.6).toFixed(2)}</td>`);
+            cells.push(`<td class="has-text-centered">${bestSpeed.toFixed(2)} m/s<br /><span class="has-text-grey-light">${(bestSpeed * 3.6).toFixed(2)} km/h</span></td>`);
             $('#tablePlayerList').append(`<tr>${cells}</tr>`);
         });
     }
 };
 
+// Renders every tournament round and its recorded results.
 const showMancheList = () => {
     const track = storage.get('track');
     const tournament = storage.get('tournament');
@@ -360,7 +433,7 @@ const showMancheList = () => {
                     playerPositionTag = '';
 
                     if (playerPosition !== null) {
-                        if (cars[pindex].originalTime !== null) {
+                        if (cars[pindex].originalTime) {
                             playerPositionTag = '<span class="tag is-danger is-large">mod</span>';
                         }
                         else if (playerOut) {
@@ -392,6 +465,7 @@ const showMancheList = () => {
     translate();
 };
 
+// Displays the players scheduled for the next round.
 const showNextRoundNames = () => {
     const currManche = storage.get('currManche');
     const currRound = storage.get('currRound');
@@ -418,6 +492,7 @@ const showNextRoundNames = () => {
     $('#next-round-names').text(`${label} ${names.join(', ').toUpperCase()}`);
 };
 
+// Returns the display name for a manche or final.
 const mancheName = (mindex) => {
     const tournament = storage.get('tournament');
     const mancheList = storage.getManches();
@@ -433,6 +508,7 @@ const mancheName = (mindex) => {
     }
 };
 
+// Initializes the race screen for the current round.
 const initRace = (freeRound) => {
     const tournament = storage.get('tournament');
     const currManche = storage.get('currManche');
@@ -441,17 +517,13 @@ const initRace = (freeRound) => {
     updateUiState(freeRound);
     $('.js-show-on-race-running').hide();
 
-    if (tournament === null) {
+    if (!tournament || freeRound) {
         $('#name-lane0').text(' ');
         $('#name-lane1').text(' ');
         $('#name-lane2').text(' ');
-        $('#curr-manche').text('0');
-        $('#curr-round').text('0');
-    }
-    else if (freeRound) {
-        $('#name-lane0').text(' ');
-        $('#name-lane1').text(' ');
-        $('#name-lane2').text(' ');
+        $('#curr-manche').text('');
+        $('#curr-round').text('');
+        $('#next-round-names').text('-');
     }
     else {
         const playerList = tournament.players;
@@ -465,21 +537,25 @@ const initRace = (freeRound) => {
         showPlayerList();
         showMancheList();
     }
+    updateRaceStatus();
 };
 
+// Renders lane positions, laps, split times, and timers.
 const drawRace = (cars, running) => {
     $('.js-place').removeClass('is-dark is-light is-primary is-warning');
     $('.js-delay').removeClass('is-danger');
     $('.js-timer').removeClass('is-danger is-success');
+    $('.race-lane-card').removeClass('race-lane-winner race-lane-dnf');
+    $('.race-result-icon').empty();
 
     const track = storage.get('track');
     const laps = storage.get('roundLaps');
+    updateRaceStatus();
 
     _.each(cars, (car, i) => {
     // delay + speed
         if (car.outOfBounds) {
-            $(`#delay-lane${i}`).text('+99.999');
-            // $(`#speed-lane${i}`).text('0.00 m/s');
+            $(`#delay-lane${i}`).text('—');
         }
         else {
             $(`#delay-lane${i}`).text(`+${utils.prettyTime(car.delayFromFirst)}`);
@@ -504,16 +580,19 @@ const drawRace = (cars, running) => {
 
         // split times
         $(`#laps-lane${i}`).empty();
+        const fastestLap = Math.min(...car.splitTimes);
         _.each(car.splitTimes, (t, ii) => {
             const time = utils.prettyTime(t);
             const speed = (track.length / 3) / (t / 1000);
-            $(`#laps-lane${i}`).append(`<li class="is-size-5">${i18n.__('label-car-lap')} ${ii + 1} - <strong>${time}s</strong> - ${speed.toFixed(2)}m/s</li>`);
+            const fastestClass = t === fastestLap ? 'is-fastest-lap' : '';
+            $(`#laps-lane${i}`).append(`<li class="${fastestClass}"><span>${i18n.__('label-car-lap')} ${ii + 1}</span><strong>${time}s</strong><span>${speed.toFixed(2)} m/s</span></li>`);
         });
 
         // place
         if (car.outOfBounds) {
-            $(`#place-lane${i}`).text(i18n.__('label-car-out'));
-            $(`#place-lane${i}`).addClass('is-dark');
+            $(`#place-lane${i}`).text(i18n.__('label-car-dnf'));
+            $(`#result-icon-lane${i}`).html('<i class="fa-solid fa-ban"></i>');
+            $(`.race-lane-card-${i}`).addClass('race-lane-dnf');
         }
         else if (car.lapCount === 0) {
             if (running) {
@@ -529,8 +608,13 @@ const drawRace = (cars, running) => {
             $(`#place-lane${i}`).addClass('is-light');
         }
         else {
-            $(`#place-lane${i}`).text(`${car.position} ${i18n.__('label-car-position')}`);
-            if (car.position === 1) {
+            const isWinner = !running && car.lapCount > laps && car.position === 1;
+            $(`#place-lane${i}`).text(isWinner ? i18n.__('label-car-winner') : `${car.position} ${i18n.__('label-car-position')}`);
+            if (isWinner) {
+                $(`#result-icon-lane${i}`).html('<i class="fa-solid fa-trophy"></i>');
+                $(`.race-lane-card-${i}`).addClass('race-lane-winner');
+            }
+            else if (car.position === 1) {
                 $(`#place-lane${i}`).addClass('is-warning');
             }
             else {
@@ -540,7 +624,6 @@ const drawRace = (cars, running) => {
 
         // timer
         if (car.outOfBounds) {
-            $(`#timer-lane${i}`).addClass('is-danger');
             $(`#timer-lane${i}`).text(utils.prettyTime(car.currTime));
         }
         else if (car.lapCount === 0) {
@@ -558,6 +641,7 @@ const drawRace = (cars, running) => {
     });
 };
 
+// Enables or disables controls that change race setup.
 const disableRaceInput = (disabled) => {
     $('#js-input-tournament-code').prop('disabled', disabled);
     $('#js-load-tournament').prop('disabled', disabled);
@@ -569,6 +653,7 @@ const disableRaceInput = (disabled) => {
     $('#js-settings-round-laps').prop('disabled', disabled);
 };
 
+// Updates visibility for the loaded track, tournament, and race mode.
 const updateUiState = (freeRound) => {
     const track = storage.get('track');
     const tournament = storage.get('tournament');
@@ -603,13 +688,285 @@ const updateUiState = (freeRound) => {
     }
 };
 
+// Registers UI event handlers using the supplied renderer dependencies.
+const setupEventHandlers = (deps) => {
+    const { client, storage, configuration, startRaceCallback } = deps;
+
+    // tabs
+    $('.tabs a').on('click', (e) => {
+        const $this = $(e.currentTarget);
+        const tab = $this.closest('li').data('tab');
+        gotoTab(tab);
+    });
+
+    // modals
+    // Opens a modal and prevents page scrolling.
+    const openModal = (modal) => {
+        $(`#${modal}`).addClass('is-active');
+        $(document.documentElement).addClass('is-clipped');
+    };
+
+    // Closes every modal and restores page scrolling.
+    const closeAllModals = () => {
+        $('.modal').removeClass('is-active');
+        $(document.documentElement).removeClass('is-clipped');
+    };
+
+    $('.open-modal').on('click', (e) => {
+        const $this = $(e.currentTarget);
+        openModal($this.data('modal'));
+        initModal($this.data('modal'));
+    });
+
+    $('.close-modal').on('click', closeAllModals);
+
+    // Load race
+    $(document).on('click', '.js-load-race', (e) => {
+        const $this = $(e.currentTarget);
+        if ($this.attr('disabled')) return;
+        const filename = $this.data('filename');
+        console.log('[Race setup] Opening race', { filename: filename });
+        client.openRace(filename, closeAllModals);
+    });
+
+    // Delete race
+    $(document).on('click', '.js-delete-race', (e) => {
+        const $this = $(e.currentTarget);
+        if ($this.attr('disabled')) return;
+        const result = window.electronAPI.showMessageBoxSync({
+            type: 'warning',
+            message: i18n.__('dialog-delete-race'),
+            buttons: ['Ok', 'Cancel']
+        });
+        if (result === 0) {
+            const filename = $this.data('filename');
+            storage.deleteRace(filename);
+            closeAllModals();
+        }
+    });
+
+    // Load track
+    $('#js-load-track').on('click', (e) => {
+        const $this = $(e.currentTarget);
+        if ($this.attr('disabled')) return;
+        const code = $('#js-input-track-code').val().slice(-6);
+        console.log('[Race setup] Loading remote track', { code: code });
+        client.loadTrack(code);
+    });
+
+    // Save manual track
+    $('#js-track-save-manual').on('click', (e) => {
+        const $this = $(e.currentTarget);
+        if ($this.attr('disabled')) return;
+        const $length = $('#js-track-length-manual');
+        const $order = $('#js-track-order-manual');
+        const $orderSelect = $order.parent('.select');
+        const hasLength = $length.val().trim();
+        const hasOrder = $order.val();
+
+        $length.removeClass('is-danger');
+        $orderSelect.removeClass('is-danger');
+        if (!hasLength || !hasOrder) {
+            if (!hasLength) $length.addClass('is-danger');
+            if (!hasOrder) $orderSelect.addClass('is-danger');
+            return;
+        }
+        const result = window.electronAPI.showMessageBoxSync({
+            type: 'warning',
+            message: i18n.__('dialog-save-track'),
+            buttons: ['Ok', 'Cancel']
+        });
+        if (result === 0) {
+            const length = parseFloat(hasLength.replace(',', '.'));
+            const order = _.map(hasOrder.split('-'), (i) => { return parseInt(i); });
+            console.log('[Race setup] Saving manual track', { length: length, order: order });
+            client.setTrackManual(length, order);
+        }
+    });
+
+    // Load tournament
+    $('#js-load-tournament').on('click', (e) => {
+        const $this = $(e.currentTarget);
+        if ($this.attr('disabled')) return;
+        const code = $('#js-input-tournament-code').val().slice(-6);
+        console.log('[Race setup] Loading remote tournament', { code: code });
+        client.loadTournament(code);
+    });
+
+    // New race
+    $('#button-new-race').on('click', () => {
+        const name = $('#modal-new-name').val().trim();
+        if (name === '') return false;
+        console.log('[Race setup] Creating new race', { name: name });
+        client.reset(name, closeAllModals);
+    });
+
+    // Start race
+    $('#button-start').on('click', startRaceCallback);
+
+    // Stop race
+    $('#button-stop').on('click', () => {
+        client.stopRace();
+    });
+
+    // Previous round
+    $('#button-prev').on('click', () => {
+        client.prevRound();
+    });
+
+    // Next round
+    $('#button-next').on('click', () => {
+        client.nextRound();
+    });
+
+    // Toggle free round
+    $('#button-toggle-free-round').on('click', () => {
+        client.toggleFreeRound();
+    });
+
+    // Print (TODO)
+    $('#button-print').on('click', () => {
+        // TODO webContents.getFocusedWebContents().print();
+    });
+
+    // Export XLS
+    $('#button-xls').on('click', () => {
+        client.saveXls();
+        $('#button-xls').attr('disabled', true);
+    });
+
+    // Open XLS folder
+    $('#button-xls-folder').on('click', async () => {
+        const xls = require('./export');
+        const dir = await xls.createDir();
+        window.electronAPI.openPath(dir);
+    });
+
+    // Open log file
+    $('#button-log-file').on('click', () => {
+        const log = require('electron-log');
+        window.electronAPI.openPath(log.transports.file.findLogPath());
+    });
+
+    // Updates threshold estimates from the settings form.
+    const updateThresholds = () => {
+        const timeThreshold = parseFloat($('#js-settings-time-threshold').val().replace(',', '.'));
+        const speedThreshold = parseFloat($('#js-settings-speed-threshold').val().replace(',', '.'));
+        const roundLaps = parseInt($('#js-settings-round-laps').val());
+        if (isNaN(timeThreshold) || isNaN(speedThreshold)) return;
+        showThresholds(timeThreshold, speedThreshold, roundLaps);
+    };
+
+    $('#js-settings-speed-threshold').on('keyup', updateThresholds);
+    $('#js-settings-time-threshold').on('keyup', updateThresholds);
+    $('#js-settings-round-laps').on('change', updateThresholds);
+
+    // Save settings
+    $('#button-save-settings').on('click', (e) => {
+        const timeThreshold = parseFloat($('#js-settings-time-threshold').val().replace(',', '.'));
+        const speedThreshold = parseFloat($('#js-settings-speed-threshold').val().replace(',', '.'));
+        const startDelay = parseFloat($('#js-settings-start-delay').val().replace(',', '.'));
+        const roundLaps = parseInt($('#js-settings-round-laps').val());
+        console.log('[Race setup] Saving race settings', {
+            timeThreshold: timeThreshold,
+            speedThreshold: speedThreshold,
+            startDelay: startDelay,
+            roundLaps: roundLaps
+        });
+        storage.set('timeThreshold', timeThreshold);
+        storage.set('speedThreshold', speedThreshold);
+        storage.set('startDelay', startDelay);
+        storage.set('roundLaps', roundLaps);
+        showThresholds();
+        e.preventDefault();
+    });
+
+    // Save configuration
+    $('#button-save-config').on('click', (e) => {
+        configuration.set('reverse', $('#js-config-reverse').is(':checked') ? 1 : 0);
+        configuration.set('sensorPin1', parseInt($('#js-config-sensor-pin-1').val()));
+        configuration.set('sensorPin2', parseInt($('#js-config-sensor-pin-2').val()));
+        configuration.set('sensorPin3', parseInt($('#js-config-sensor-pin-3').val()));
+        configuration.set('ledPin1', parseInt($('#js-config-led-pin-1').val()));
+        configuration.set('piezoPin', parseInt($('#js-config-piezo-pin').val()));
+        configuration.set('startButtonPin', parseInt($('#js-config-start-button-pin').val()));
+        configuration.set('title', $('#js-config-title').val());
+        configuration.set('tab', $('#js-config-starting-tab').val());
+        configuration.set('usbPort', $('#js-config-usb-port').val());
+        window.electronAPI.showMessageBoxSync({
+            type: 'warning',
+            message: i18n.__('dialog-restart'),
+            buttons: ['Ok']
+        });
+        location.reload();
+        e.preventDefault();
+    });
+
+    // Save manches
+    $('#button-manches-save').on('click', (e) => {
+        const $this = $(e.currentTarget);
+        if ($this.attr('disabled')) return;
+        client.overrideTimes();
+        window.electronAPI.showMessageBoxSync({
+            type: 'warning',
+            message: i18n.__('dialog-saved'),
+            buttons: ['Ok']
+        });
+    });
+
+    // Go to round
+    $(document).on('click', '.js-goto-round', (e) => {
+        const $this = $(e.currentTarget);
+        if ($this.attr('disabled')) return;
+        const mindex = $this.data('manche');
+        const rindex = $this.data('round');
+        client.gotoRound(mindex, rindex);
+    });
+
+    // LED animation selection
+    $('.js-led-animation').on('click', (e) => {
+        const $this = $(e.currentTarget);
+        if ($this.attr('disabled')) return;
+        $('.js-led-animation').removeClass('is-primary');
+        $this.addClass('is-primary');
+        const type = $this.data('led-animation');
+        configuration.set('ledAnimation', type);
+    });
+
+    // Race mode selection
+    $('.js-race-mode').on('click', (e) => {
+        const $this = $(e.currentTarget);
+        if ($this.attr('disabled')) return;
+        $('.js-race-mode').removeClass('is-primary');
+        $this.addClass('is-primary');
+        const mode = $this.data('race-mode');
+        storage.set('raceMode', mode);
+        showRaceModeDetails();
+    });
+
+    // Invalidate/disqualify
+    $('.js-invalidate').on('click', (e) => {
+        const $this = $(e.currentTarget);
+        if ($this.attr('disabled')) return;
+        const result = window.electronAPI.showMessageBoxSync({
+            type: 'warning',
+            message: i18n.__('dialog-disqualify'),
+            buttons: ['Ok', 'Cancel']
+        });
+        if (result === 0) {
+            client.disqualify(null, null, parseInt($this.data('lane')));
+        }
+    });
+};
+
 module.exports = {
     boardConnected: boardConnected,
-    boardDisonnected: boardDisonnected,
+    boardDisconnected: boardDisconnected,
     translate: translate,
     gotoTab: gotoTab,
     init: init,
     initModal: initModal,
+    setupEventHandlers: setupEventHandlers,
     toggleFreeRound: toggleFreeRound,
     trackLoadDone: trackLoadDone,
     trackLoadFail: trackLoadFail,
@@ -625,5 +982,6 @@ module.exports = {
     showMancheList: showMancheList,
     showNextRoundNames: showNextRoundNames,
     initRace: initRace,
-    drawRace: drawRace
+    drawRace: drawRace,
+    updateRaceStatus: updateRaceStatus
 };

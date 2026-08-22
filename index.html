@@ -7,10 +7,16 @@
 	<title>Mini4wd Chrono</title>
 
 	<link rel="stylesheet" href="css/bulma.css">
+	<link rel="stylesheet" href="vendor/fontawesome/css/all.min.css">
 	<link rel="stylesheet" href="css/custom.css">
 </head>
 
 <body>
+
+	<div id="hardware-loading" class="hardware-loading">
+		<span class="loader is-size-3"></span>
+		<p class="tn" data-tn="label-hardware-connecting">Connecting to lap timer...</p>
+	</div>
 
 	<div id="main" style="display: none;">
 
@@ -26,26 +32,42 @@
 			<div class="navbar-menu">
 				<div class="navbar-end">
 					<div class="navbar-item">
-						<div class="field is-grouped is-grouped-multiline">
-							<div class="control">
-								<div class="tags has-addons">
-									<span class="tag tn" data-tn="tag-board-status">Board status</span>
-									<span id="tag-board-status" class="tag is-uppercase tn" data-tn="tag-connecting">connecting...</span>
+						<div>
+							<div class="field is-grouped is-grouped-multiline">
+								<div class="control">
+									<div class="tags has-addons">
+										<span class="tag tn" data-tn="tag-board-status">Board status</span>
+										<span id="tag-board-status" class="tag is-uppercase tn" data-tn="tag-connecting">connecting...</span>
+									</div>
+								</div>
+								<div class="control">
+									<div class="tags has-addons">
+										<span class="tag tn" data-tn="tag-track">Track</span>
+										<span id="tag-track-status" class="tag is-danger is-uppercase">-</span>
+									</div>
+								</div>
+								<div class="control">
+									<div class="tags has-addons">
+										<span class="tag tn" data-tn="tag-tournament">Tournament</span>
+										<span id="tag-tournament-status" class="tag is-danger is-uppercase">-</span>
+									</div>
 								</div>
 							</div>
-							<div class="control">
-								<div class="tags has-addons">
-									<span class="tag tn" data-tn="tag-track">Track</span>
-									<span id="tag-track-status" class="tag is-danger is-uppercase">-</span>
+							<div id="race-status-badges" class="field is-grouped is-grouped-multiline race-status-badges">
+								<div class="control">
+									<div class="tags has-addons">
+										<span class="tag tn" data-tn="tag-race-progress">Progress</span>
+										<span id="tag-race-progress" class="tag is-info">-</span>
+									</div>
+								</div>
+								<div class="control">
+									<div class="tags has-addons">
+										<span class="tag tn" data-tn="tag-best-lap">Best lap</span>
+										<span id="tag-best-lap" class="tag is-danger is-uppercase">-</span>
+									</div>
 								</div>
 							</div>
-							<div class="control">
-								<div class="tags has-addons">
-									<span class="tag tn" data-tn="tag-tournament">Tournament</span>
-									<span id="tag-tournament-status" class="tag is-danger is-uppercase">-</span>
-								</div>
 							</div>
-						</div>
 					</div>
 				</div>
 			</div>
@@ -56,31 +78,37 @@
 			<ul>
 				<li class="is-active" data-tab="setup">
 					<a>
+						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-flag-checkered"></i></span>
 						<span class="tn" data-tn="tab-race-setup">Race setup</span>
 					</a>
 				</li>
 				<li data-tab="race">
 					<a>
+						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-stopwatch"></i></span>
 						<span class="tn" data-tn="tab-race-view">Race view</span>
 					</a>
 				</li>
 				<li data-tab="players">
 					<a>
+						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-users"></i></span>
 						<span class="tn" data-tn="tab-racers-list">Racers list</span>
 					</a>
 				</li>
 				<li data-tab="manches">
 					<a>
+						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-table-list"></i></span>
 						<span class="tn" data-tn="tab-manches-list">Manches list</span>
 					</a>
 				</li>
 				<li data-tab="config">
 					<a>
+						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-gear"></i></span>
 						<span class="tn" data-tn="tab-configuration">Configuration</span>
 					</a>
 				</li>
 				<li data-tab="about">
 					<a>
+						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-circle-info"></i></span>
 						<span class="tn" data-tn="tab-about">About</span>
 					</a>
 				</li>
@@ -90,11 +118,13 @@
 		<!-- SETUP TAB -->
 		<div class="container" data-tab="setup">
 			<p class="has-text-centered">
-				<a href="#" class="button is-info tn open-modal" data-tn="button-new-race" data-modal="modal-new" style="width: 200px;">
-					New race
+				<a href="#" class="button is-info open-modal" data-modal="modal-new" style="width: 200px;">
+					<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-plus"></i></span>
+					<span class="tn" data-tn="button-new-race">New race</span>
 				</a>
-				<a href="#" class="button is-warning tn open-modal" data-tn="button-open-race" data-modal="modal-open" style="width: 200px;">
-					Open race
+				<a href="#" class="button is-warning open-modal" data-modal="modal-open" style="width: 200px;">
+					<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-folder-open"></i></span>
+					<span class="tn" data-tn="button-open-race">Open race</span>
 				</a>
 			</p>
 			<p id="js-race-name" class="title is-uppercase has-text-centered" style="margin-top: 10px;"></p>
@@ -109,8 +139,9 @@
 						<input id="js-input-track-code" class="input" type="text" placeholder="example: https://mini4wd-track-editor.pimentoso.com/4QT8GM" value="">
 					</div>
 					<div class="control">
-						<button id="js-load-track" class="button is-info tn" data-tn="button-load">
-							Load
+						<button id="js-load-track" class="button is-info">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-link"></i></span>
+							<span class="tn" data-tn="button-load">Load</span>
 						</button>
 					</div>
 				</div>
@@ -123,8 +154,9 @@
 						</p>
 					</div>
 					<div class="level-right">
-						<a id="js-link-track" href="#" class="button tn" data-tn="button-open-track-editor">
-							See in Mini4WD Track Editor &gt;
+						<a id="js-link-track" href="#" class="button">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+							<span class="tn" data-tn="button-open-track-editor">See in Mini4WD Track Editor &gt;</span>
 						</a>
 					</div>
 				</div>
@@ -159,8 +191,9 @@
 				<div class="level">
 					<div class="level-left"></div>
 					<div class="level-right">
-						<button id="js-track-save-manual" href="#" class="button tn" data-tn="button-save">
-							Save
+						<button id="js-track-save-manual" href="#" class="button">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-floppy-disk"></i></span>
+							<span class="tn" data-tn="button-save">Save</span>
 						</button>
 					</div>
 				</div>
@@ -175,8 +208,9 @@
 						<input id="js-input-tournament-code" class="input" type="text" placeholder="example: https://mini4wd-tournament.pimentoso.com/49PMRU" value="">
 					</div>
 					<div class="control">
-						<button id="js-load-tournament" class="button is-info tn" data-tn="button-load">
-							Load
+						<button id="js-load-tournament" class="button is-info">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-link"></i></span>
+							<span class="tn" data-tn="button-load">Load</span>
 						</button>
 					</div>
 				</div>
@@ -189,8 +223,9 @@
 						</p>
 					</div>
 					<div class="level-right">
-						<a id="js-link-tournament" href="#" class="button tn" data-tn="button-open-tournament-editor">
-							See in Mini4WD Tournament Generator &gt;
+						<a id="js-link-tournament" href="#" class="button">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+							<span class="tn" data-tn="button-open-tournament-editor">See in Mini4WD Tournament Generator &gt;</span>
 						</a>
 					</div>
 				</div>
@@ -279,8 +314,9 @@
 				</div>
 
 				<p class="has-text-centered">
-					<a id="button-save-settings" href="#" class="button is-info tn" data-tn="button-save-settings" style="width: 200px;">
-						Save settings
+					<a id="button-save-settings" href="#" class="button is-info" style="width: 200px;">
+						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-floppy-disk"></i></span>
+						<span class="tn" data-tn="button-save-settings">Save settings</span>
 					</a>
 				</p>
 			</div>
@@ -297,16 +333,19 @@
 					</div>
 					<div class="level-item">
 						<button class="button is-info" id="button-print">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-print"></i></span>
 							<span class="tn" data-tn="button-print">Print</span>
 						</button>
 					</div>
 					<div class="level-item">
 						<button class="button is-info" id="button-xls">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-file-export"></i></span>
 							<span class="tn" data-tn="button-save-xls">Save XLS file</span>
 						</button>
 					</div>
 					<div class="level-item">
 						<button class="button" id="button-xls-folder">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-folder-open"></i></span>
 							<span class="tn" data-tn="button-open-folder">Open folder</span>
 						</button>
 					</div>
@@ -324,6 +363,7 @@
 				<div class="level-right">
 					<div class="level-item">
 						<button class="button is-info" id="button-manches-save">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-floppy-disk"></i></span>
 							<span class="tn" data-tn="button-save-changes">Save changes</span>
 						</button>
 					</div>
@@ -372,70 +412,78 @@
 				</div>
 			</div>
 
-			<div class="columns js-hide-on-no-track">
+			<div class="columns js-hide-on-no-track race-lanes">
 				<!-- BOX LANE 1 -->
-				<div class="box column box-lane0" style="margin: 0.5rem;">
-					<p class="has-background-primary has-text-white is-block is-size-4 has-text-centered has-text-weight-bold has-margin-vertical tn" style="margin: -0.75rem; padding: 0.75rem;" data-tn="label-lane-1">LANE 1</p>
-					<div class="has-text-centered" style="margin-top: 2rem;">
+				<div class="box column race-lane-card race-lane-card-0">
+					<p class="race-lane-heading tn" data-tn="label-lane-1">LANE 1</p>
+					<div class="race-lane-content has-text-centered">
 						<p id="name-lane0" class="title is-block has-text-grey-dark has-text-weight-bold is-uppercase"></p>
-						<div class="content">
-							<span id="place-lane0" class="tag is-size-5 is-uppercase is-light js-place">stopped</span>
-							&nbsp;
-							<span id="delay-lane0" class="tag is-size-5 is-light js-delay">+0.000 sec</span>
-							<span id="timer-lane0" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
-							<span id="lap-lane0" class="tag is-size-5 is-uppercase is-light js-lap">lap 0</span>
-							&nbsp;
-							<span id="speed-lane0" class="tag is-size-5 is-light js-speed">0.00 m/s</span>
-
-							<ul id="laps-lane0"></ul>
-
-							<a id="invalidate-0" href="#" class="button is-small is-danger js-invalidate js-hide-on-race-running js-hide-on-free-round tn" data-lane="0" data-tn="button-invalidate">invalidate</a>
+						<div class="race-result-row">
+							<span id="result-icon-lane0" class="icon race-result-icon" aria-hidden="true"></span>
+							<span id="place-lane0" class="race-result js-place">stopped</span>
+							<span class="race-gap">
+								<span class="race-metric-label tn" data-tn="label-race-gap">Gap</span>
+								<span id="delay-lane0" class="js-delay">+0.000</span>
+							</span>
 						</div>
+						<div class="race-time-block">
+							<span id="timer-lane0" class="is-block has-text-weight-bold js-timer">0.000</span>
+						</div>
+						<div class="race-metrics-row">
+							<span>
+								<span class="race-metric-label tn" data-tn="label-race-progress">Progress</span>
+								<span id="lap-lane0" class="js-lap">lap 0</span>
+							</span>
+							<span>
+								<span class="race-metric-label tn" data-tn="label-race-speed">Speed</span>
+								<span id="speed-lane0" class="js-speed">0.00 m/s</span>
+							</span>
+						</div>
+						<div class="race-laps">
+							<div class="race-laps-heading">
+								<span class="tn" data-tn="label-race-lap">Lap</span>
+								<span class="tn" data-tn="label-race-time">Time</span>
+								<span class="tn" data-tn="label-race-speed">Speed</span>
+							</div>
+							<ul id="laps-lane0" class="race-laps-list"></ul>
+						</div>
+						<button id="invalidate-0" type="button" class="button is-small is-danger is-outlined js-invalidate js-hide-on-race-running js-hide-on-free-round" data-lane="0"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-ban"></i></span><span class="tn" data-tn="button-invalidate">Disqualify result</span></button>
 					</div>
 				</div>
 				<!-- BOX LANE 2 -->
-				<div class="box column box-lane1" style="margin: 0.5rem;">
-					<p class="has-background-warning has-text-white is-block is-size-4 has-text-centered has-text-weight-bold has-margin-vertical tn" style="margin: -0.75rem; padding: 0.75rem;" data-tn="label-lane-2">LANE 2</p>
-					<div class="has-text-centered" style="margin-top: 2rem;">
+				<div class="box column race-lane-card race-lane-card-1">
+					<p class="race-lane-heading tn" data-tn="label-lane-2">LANE 2</p>
+					<div class="race-lane-content has-text-centered">
 						<p id="name-lane1" class="title is-block has-text-grey-dark has-text-weight-bold is-uppercase"></p>
-						<div class="content">
-							<span id="place-lane1" class="tag is-size-5 is-uppercase is-light js-place">stopped</span>
-							&nbsp;
-							<span id="delay-lane1" class="tag is-size-5 is-light js-delay">+0.000 sec</span>
-							<span id="timer-lane1" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
-							<span id="lap-lane1" class="tag is-size-5 is-uppercase is-light js-lap">lap 0</span>
-							&nbsp;
-							<span id="speed-lane1" class="tag is-size-5 is-light js-speed">0.00 m/s</span>
-
-							<ul id="laps-lane1"></ul>
-
-							<a id="invalidate-1" href="#" class="button is-small is-danger js-invalidate js-hide-on-free-round js-hide-on-race-running tn" data-lane="1" data-tn="button-invalidate">invalidate</a>
+						<div class="race-result-row">
+							<span id="result-icon-lane1" class="icon race-result-icon" aria-hidden="true"></span>
+							<span id="place-lane1" class="race-result js-place">stopped</span>
+							<span class="race-gap"><span class="race-metric-label tn" data-tn="label-race-gap">Gap</span><span id="delay-lane1" class="js-delay">+0.000</span></span>
 						</div>
+						<div class="race-time-block">
+							<span id="timer-lane1" class="is-block has-text-weight-bold js-timer">0.000</span>
+						</div>
+						<div class="race-metrics-row"><span><span class="race-metric-label tn" data-tn="label-race-progress">Progress</span><span id="lap-lane1" class="js-lap">lap 0</span></span><span><span class="race-metric-label tn" data-tn="label-race-speed">Speed</span><span id="speed-lane1" class="js-speed">0.00 m/s</span></span></div>
+						<div class="race-laps"><div class="race-laps-heading"><span class="tn" data-tn="label-race-lap">Lap</span><span class="tn" data-tn="label-race-time">Time</span><span class="tn" data-tn="label-race-speed">Speed</span></div><ul id="laps-lane1" class="race-laps-list"></ul></div>
+						<button id="invalidate-1" type="button" class="button is-small is-danger is-outlined js-invalidate js-hide-on-free-round js-hide-on-race-running" data-lane="1"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-ban"></i></span><span class="tn" data-tn="button-invalidate">Disqualify result</span></button>
 					</div>
 				</div>
 				<!-- BOX LANE 3 -->
-				<div class="box column box-lane2" style="margin: 0.5rem;">
-					<p class="has-background-danger has-text-white is-block is-size-4 has-text-centered has-text-weight-bold has-margin-vertical tn" style="margin: -0.75rem; padding: 0.75rem;" data-tn="label-lane-3">LANE 3</p>
-					<div class="has-text-centered" style="margin-top: 2rem;">
+				<div class="box column race-lane-card race-lane-card-2">
+					<p class="race-lane-heading tn" data-tn="label-lane-3">LANE 3</p>
+					<div class="race-lane-content has-text-centered">
 						<p id="name-lane2" class="title is-block has-text-grey-dark has-text-weight-bold is-uppercase"></p>
-						<div class="content">
-							<span id="place-lane2" class="tag is-size-5 is-uppercase is-light js-place">stopped</span>
-							&nbsp;
-							<span id="delay-lane2" class="tag is-size-5 is-light js-delay">+0.000 sec</span>
-							<span id="timer-lane2" class="is-block has-text-weight-bold has-margin-vertical js-timer" style="font-size: 6rem;">0.000</span>
-							<span id="lap-lane2" class="tag is-size-5 is-uppercase is-light js-lap">lap 0</span>
-							&nbsp;
-							<span id="speed-lane2" class="tag is-size-5 is-light js-speed">0.00 m/s</span>
-
-							<ul id="laps-lane2"></ul>
-
-							<a id="invalidate-2" href="#" class="button is-small is-danger js-invalidate js-hide-on-free-round js-hide-on-race-running tn" data-lane="2" data-tn="button-invalidate">invalidate</a>
+						<div class="race-result-row"><span id="result-icon-lane2" class="icon race-result-icon" aria-hidden="true"></span><span id="place-lane2" class="race-result js-place">stopped</span><span class="race-gap"><span class="race-metric-label tn" data-tn="label-race-gap">Gap</span><span id="delay-lane2" class="js-delay">+0.000</span></span></div>
+						<div class="race-time-block">
+							<span id="timer-lane2" class="is-block has-text-weight-bold js-timer">0.000</span>
 						</div>
+						<div class="race-metrics-row"><span><span class="race-metric-label tn" data-tn="label-race-progress">Progress</span><span id="lap-lane2" class="js-lap">lap 0</span></span><span><span class="race-metric-label tn" data-tn="label-race-speed">Speed</span><span id="speed-lane2" class="js-speed">0.00 m/s</span></span></div>
+						<div class="race-laps"><div class="race-laps-heading"><span class="tn" data-tn="label-race-lap">Lap</span><span class="tn" data-tn="label-race-time">Time</span><span class="tn" data-tn="label-race-speed">Speed</span></div><ul id="laps-lane2" class="race-laps-list"></ul></div>
+						<button id="invalidate-2" type="button" class="button is-small is-danger is-outlined js-invalidate js-hide-on-free-round js-hide-on-race-running" data-lane="2"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-ban"></i></span><span class="tn" data-tn="button-invalidate">Disqualify result</span></button>
+					</div>
 					</div>
 				</div>
-			</div>
-
-			<div class="js-hide-on-no-tournament js-hide-on-free-round js-hide-on-no-track level has-text-centered">
+			<div class="js-hide-on-no-tournament js-hide-on-free-round js-hide-on-no-track level has-text-centered race-next-round">
 				<span id="next-round-names" class="level-item tag is-info is-size-5 is-uppercase">-</span>
 			</div>
 
@@ -495,18 +543,6 @@
 					</div>
 
 					<div class="field">
-						<label class="label tn" data-tn="label-led-type">LED type</label>
-						<div class="field is-grouped is-grouped-multiline">
-							<div class="control">
-								<div class="buttons has-addons">
-									<span id="js-led-type-0" class="button js-led-type tn" data-tn="button-led-type-normal" data-led-type="0">3 LEDs</span>
-									<span id="js-led-type-1" class="button js-led-type tn" data-tn="button-led-type-strip" data-led-type="1">LED strip</span>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="field">
 						<label class="label tn" data-tn="label-led-animation">LED animation</label>
 						<div class="field is-grouped is-grouped-multiline">
 							<div class="control">
@@ -562,23 +598,9 @@
 					</div>
 
 					<div class="field">
-						<label class="label tn" data-tn="label-led-1">LED 1 pin</label>
+						<label class="label tn" data-tn="label-led-1">LED strip pin</label>
 						<div class="control">
 							<input id="js-config-led-pin-1" class="input" type="text" placeholder="example: 0" value="">
-						</div>
-					</div>
-
-					<div class="field">
-						<label class="label tn" data-tn="label-led-2">LED 2 pin</label>
-						<div class="control">
-							<input id="js-config-led-pin-2" class="input" type="text" placeholder="example: 1" value="">
-						</div>
-					</div>
-
-					<div class="field">
-						<label class="label tn" data-tn="label-led-3">LED 3 pin</label>
-						<div class="control">
-							<input id="js-config-led-pin-3" class="input" type="text" placeholder="example: 2" value="">
 						</div>
 					</div>
 
@@ -597,8 +619,9 @@
 					</div>
 
 					<p class="has-text-centered">
-						<a id="button-save-config" href="#" class="button is-info tn" data-tn="button-save-settings" style="width: 200px;">
-							Save settings
+					<a id="button-save-config" href="#" class="button is-info" style="width: 200px;">
+						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-floppy-disk"></i></span>
+						<span class="tn" data-tn="button-save-settings">Save settings</span>
 						</a>
 					</p>
 				</div>
@@ -612,22 +635,28 @@
 					<p class="title is-4">Mini4WD Chrono - by Pimentoso <script>document.write(new Date().getFullYear())</script></p>
 					<p id="js-about-version"></p>
 					<p>
-						<a href="https://github.com/Pimentoso/mini4wdchrono/releases" class="tn button is-link is-outlined" data-tn="label-check-updates">check for updates</a>
-						<a id="button-log-file" class="tn button is-outlined" data-tn="button-open-log">open log file</a>
+						<a href="https://github.com/Pimentoso/mini4wdchrono/releases" class="button is-link is-outlined">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-rotate"></i></span>
+							<span class="tn" data-tn="label-check-updates">check for updates</span>
+						</a>
+						<a id="button-log-file" class="button is-outlined">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-file-lines"></i></span>
+							<span class="tn" data-tn="button-open-log">open log file</span>
+						</a>
 					</p>
 				</div>
 
 				<div class="box">
 					<p class="title is-4 tn" data-tn="label-paypal">If you enjoy this program, buy me a coffee!</p>
-					<p><a href="https://paypal.me/pimentoso" class="button is-link">Paypal</a></p>
+					<p><a href="https://paypal.me/pimentoso" class="button is-link"><span class="icon is-small" aria-hidden="true"><i class="fa-brands fa-paypal"></i></span><span>Paypal</span></a></p>
 				</div>
 
 				<div class="box">
 					<p class="title is-4 tn" data-tn="label-external-tools">External tools</p>
-					<p><a href="https://mini4wd-track-editor.pimentoso.com/" class="button is-success is-outlined">Mini4WD Track Editor</a></p>
-					<p><a href="https://mini4wd-tournament.pimentoso.com/" class="button is-link is-outlined">Mini4WD Tournament Generator</a></p>
-					<p><a href="https://github.com/Pimentoso/mini4wdchrono/wiki" class="button is-outlined">Mini4wdChrono Wiki</a></p>
-					<p><a href="https://github.com/Pimentoso/mini4wdchrono" class="button is-outlined">Project page on Github</a></p>
+					<p><a href="https://mini4wd-track-editor.pimentoso.com/" class="button is-success is-outlined"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-road"></i></span><span>Mini4WD Track Editor</span></a></p>
+					<p><a href="https://mini4wd-tournament.pimentoso.com/" class="button is-link is-outlined"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-trophy"></i></span><span>Mini4WD Tournament Generator</span></a></p>
+					<p><a href="https://github.com/Pimentoso/mini4wdchrono/wiki" class="button is-outlined"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-book-open"></i></span><span>Mini4wdChrono Wiki</span></a></p>
+					<p><a href="https://github.com/Pimentoso/mini4wdchrono" class="button is-outlined"><span class="icon is-small" aria-hidden="true"><i class="fa-brands fa-github"></i></span><span>Project page on Github</span></a></p>
 				</div>
 			</div>
 		</div>
@@ -681,6 +710,13 @@
 
 </body>
 
+<script>
+// Load jQuery and Underscore before main.js loads using nodeRequire from preload
+window.$ = window.jQuery = window.nodeRequire('jquery');
+window._ = window.nodeRequire('underscore');
+// Make require available as alias to nodeRequire for the modules
+window.require = window.nodeRequire;
+</script>
 <script src="js/main.js"></script>
 
 </html>

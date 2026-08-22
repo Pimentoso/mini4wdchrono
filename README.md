@@ -73,24 +73,29 @@ electron-packager . Mini4wdChrono --overwrite --icon=images/ic_launcher_web.icns
 
 ## Build on Windows
 
-Make sure you are running a Powershell with administrator permissions, and Chocolatey is installed.
+Install the prerequisites from an elevated PowerShell. `winget` is included with current Windows 10 and Windows 11 installations.
 
-```bash
-choco install python2
-choco install arduino
-choco install nodejs --version=10.16.3
-npm install -g windows-build-tools
+```powershell
+winget install --id OpenJS.NodeJS.LTS --exact --accept-package-agreements --accept-source-agreements
+winget install --id Python.Python.3.11 --exact --accept-package-agreements --accept-source-agreements
+winget install --id Microsoft.VisualStudio.2022.BuildTools --exact --accept-package-agreements --accept-source-agreements --override "--wait --passive --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+winget install --id ArduinoSA.IDE.stable --exact --accept-package-agreements --accept-source-agreements
+```
+
+Close and reopen PowerShell after installing Node.js, then from the project directory run:
+
+```powershell
 cd mini4wdchrono
-npm install
+npm ci
 
 # make sure the arduino board is connected via USB, then
 npm start
 ```
 
-To package the project run utils/build_win64.ps1, or
+To produce the GitHub Release artifact:
 
-```bash
-electron-packager . Mini4wdChrono --overwrite --asar --icon=images/ic_launcher_web.ico --prune=true --out=release-builds
+```powershell
+.\utils\build-win64.ps1
 ```
 
 ## Build on Linux
@@ -120,6 +125,6 @@ If you get an error when running the program like
 Serialport was compiled against a different Node.js version using NODE_MODULE_VERSION 72. This version of Node.js requires NODE_MODULE_VERSION 70. Please try re-compiling or re-installing the module (for instance, using npm rebuild or npm install).
 ```
 
-it means you need to run `electron-rebuild` on the project. Please run `npm run postinstall` inside the project directory.
+it means the installed native module does not match Electron. Reinstall the locked dependencies with `npm ci` inside the project directory.
 
 Related issue: https://github.com/serialport/node-serialport/issues/1910
