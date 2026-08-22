@@ -78,31 +78,37 @@
 			<ul>
 				<li class="is-active" data-tab="setup">
 					<a>
+						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-flag-checkered"></i></span>
 						<span class="tn" data-tn="tab-race-setup">Race setup</span>
 					</a>
 				</li>
 				<li data-tab="race">
 					<a>
+						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-stopwatch"></i></span>
 						<span class="tn" data-tn="tab-race-view">Race view</span>
 					</a>
 				</li>
 				<li data-tab="players">
 					<a>
+						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-users"></i></span>
 						<span class="tn" data-tn="tab-racers-list">Racers list</span>
 					</a>
 				</li>
 				<li data-tab="manches">
 					<a>
+						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-table-list"></i></span>
 						<span class="tn" data-tn="tab-manches-list">Manches list</span>
 					</a>
 				</li>
 				<li data-tab="config">
 					<a>
+						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-gear"></i></span>
 						<span class="tn" data-tn="tab-configuration">Configuration</span>
 					</a>
 				</li>
 				<li data-tab="about">
 					<a>
+						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-circle-info"></i></span>
 						<span class="tn" data-tn="tab-about">About</span>
 					</a>
 				</li>
@@ -112,11 +118,13 @@
 		<!-- SETUP TAB -->
 		<div class="container" data-tab="setup">
 			<p class="has-text-centered">
-				<a href="#" class="button is-info tn open-modal" data-tn="button-new-race" data-modal="modal-new" style="width: 200px;">
-					New race
+				<a href="#" class="button is-info open-modal" data-modal="modal-new" style="width: 200px;">
+					<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-plus"></i></span>
+					<span class="tn" data-tn="button-new-race">New race</span>
 				</a>
-				<a href="#" class="button is-warning tn open-modal" data-tn="button-open-race" data-modal="modal-open" style="width: 200px;">
-					Open race
+				<a href="#" class="button is-warning open-modal" data-modal="modal-open" style="width: 200px;">
+					<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-folder-open"></i></span>
+					<span class="tn" data-tn="button-open-race">Open race</span>
 				</a>
 			</p>
 			<p id="js-race-name" class="title is-uppercase has-text-centered" style="margin-top: 10px;"></p>
@@ -131,8 +139,9 @@
 						<input id="js-input-track-code" class="input" type="text" placeholder="example: https://mini4wd-track-editor.pimentoso.com/4QT8GM" value="">
 					</div>
 					<div class="control">
-						<button id="js-load-track" class="button is-info tn" data-tn="button-load">
-							Load
+						<button id="js-load-track" class="button is-info">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-link"></i></span>
+							<span class="tn" data-tn="button-load">Load</span>
 						</button>
 					</div>
 				</div>
@@ -145,8 +154,9 @@
 						</p>
 					</div>
 					<div class="level-right">
-						<a id="js-link-track" href="#" class="button tn" data-tn="button-open-track-editor">
-							See in Mini4WD Track Editor &gt;
+						<a id="js-link-track" href="#" class="button">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+							<span class="tn" data-tn="button-open-track-editor">See in Mini4WD Track Editor &gt;</span>
 						</a>
 					</div>
 				</div>
@@ -181,8 +191,9 @@
 				<div class="level">
 					<div class="level-left"></div>
 					<div class="level-right">
-						<button id="js-track-save-manual" href="#" class="button tn" data-tn="button-save">
-							Save
+						<button id="js-track-save-manual" href="#" class="button">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-floppy-disk"></i></span>
+							<span class="tn" data-tn="button-save">Save</span>
 						</button>
 					</div>
 				</div>
@@ -197,8 +208,9 @@
 						<input id="js-input-tournament-code" class="input" type="text" placeholder="example: https://mini4wd-tournament.pimentoso.com/49PMRU" value="">
 					</div>
 					<div class="control">
-						<button id="js-load-tournament" class="button is-info tn" data-tn="button-load">
-							Load
+						<button id="js-load-tournament" class="button is-info">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-link"></i></span>
+							<span class="tn" data-tn="button-load">Load</span>
 						</button>
 					</div>
 				</div>
@@ -211,8 +223,9 @@
 						</p>
 					</div>
 					<div class="level-right">
-						<a id="js-link-tournament" href="#" class="button tn" data-tn="button-open-tournament-editor">
-							See in Mini4WD Tournament Generator &gt;
+						<a id="js-link-tournament" href="#" class="button">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+							<span class="tn" data-tn="button-open-tournament-editor">See in Mini4WD Tournament Generator &gt;</span>
 						</a>
 					</div>
 				</div>
@@ -301,8 +314,9 @@
 				</div>
 
 				<p class="has-text-centered">
-					<a id="button-save-settings" href="#" class="button is-info tn" data-tn="button-save-settings" style="width: 200px;">
-						Save settings
+					<a id="button-save-settings" href="#" class="button is-info" style="width: 200px;">
+						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-floppy-disk"></i></span>
+						<span class="tn" data-tn="button-save-settings">Save settings</span>
 					</a>
 				</p>
 			</div>
@@ -319,16 +333,19 @@
 					</div>
 					<div class="level-item">
 						<button class="button is-info" id="button-print">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-print"></i></span>
 							<span class="tn" data-tn="button-print">Print</span>
 						</button>
 					</div>
 					<div class="level-item">
 						<button class="button is-info" id="button-xls">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-file-export"></i></span>
 							<span class="tn" data-tn="button-save-xls">Save XLS file</span>
 						</button>
 					</div>
 					<div class="level-item">
 						<button class="button" id="button-xls-folder">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-folder-open"></i></span>
 							<span class="tn" data-tn="button-open-folder">Open folder</span>
 						</button>
 					</div>
@@ -346,6 +363,7 @@
 				<div class="level-right">
 					<div class="level-item">
 						<button class="button is-info" id="button-manches-save">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-floppy-disk"></i></span>
 							<span class="tn" data-tn="button-save-changes">Save changes</span>
 						</button>
 					</div>
@@ -465,8 +483,6 @@
 					</div>
 					</div>
 				</div>
-			</div>
-
 			<div class="js-hide-on-no-tournament js-hide-on-free-round js-hide-on-no-track level has-text-centered race-next-round">
 				<span id="next-round-names" class="level-item tag is-info is-size-5 is-uppercase">-</span>
 			</div>
@@ -603,8 +619,9 @@
 					</div>
 
 					<p class="has-text-centered">
-						<a id="button-save-config" href="#" class="button is-info tn" data-tn="button-save-settings" style="width: 200px;">
-							Save settings
+					<a id="button-save-config" href="#" class="button is-info" style="width: 200px;">
+						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-floppy-disk"></i></span>
+						<span class="tn" data-tn="button-save-settings">Save settings</span>
 						</a>
 					</p>
 				</div>
@@ -618,22 +635,28 @@
 					<p class="title is-4">Mini4WD Chrono - by Pimentoso <script>document.write(new Date().getFullYear())</script></p>
 					<p id="js-about-version"></p>
 					<p>
-						<a href="https://github.com/Pimentoso/mini4wdchrono/releases" class="tn button is-link is-outlined" data-tn="label-check-updates">check for updates</a>
-						<a id="button-log-file" class="tn button is-outlined" data-tn="button-open-log">open log file</a>
+						<a href="https://github.com/Pimentoso/mini4wdchrono/releases" class="button is-link is-outlined">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-rotate"></i></span>
+							<span class="tn" data-tn="label-check-updates">check for updates</span>
+						</a>
+						<a id="button-log-file" class="button is-outlined">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-file-lines"></i></span>
+							<span class="tn" data-tn="button-open-log">open log file</span>
+						</a>
 					</p>
 				</div>
 
 				<div class="box">
 					<p class="title is-4 tn" data-tn="label-paypal">If you enjoy this program, buy me a coffee!</p>
-					<p><a href="https://paypal.me/pimentoso" class="button is-link">Paypal</a></p>
+					<p><a href="https://paypal.me/pimentoso" class="button is-link"><span class="icon is-small" aria-hidden="true"><i class="fa-brands fa-paypal"></i></span><span>Paypal</span></a></p>
 				</div>
 
 				<div class="box">
 					<p class="title is-4 tn" data-tn="label-external-tools">External tools</p>
-					<p><a href="https://mini4wd-track-editor.pimentoso.com/" class="button is-success is-outlined">Mini4WD Track Editor</a></p>
-					<p><a href="https://mini4wd-tournament.pimentoso.com/" class="button is-link is-outlined">Mini4WD Tournament Generator</a></p>
-					<p><a href="https://github.com/Pimentoso/mini4wdchrono/wiki" class="button is-outlined">Mini4wdChrono Wiki</a></p>
-					<p><a href="https://github.com/Pimentoso/mini4wdchrono" class="button is-outlined">Project page on Github</a></p>
+					<p><a href="https://mini4wd-track-editor.pimentoso.com/" class="button is-success is-outlined"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-road"></i></span><span>Mini4WD Track Editor</span></a></p>
+					<p><a href="https://mini4wd-tournament.pimentoso.com/" class="button is-link is-outlined"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-trophy"></i></span><span>Mini4WD Tournament Generator</span></a></p>
+					<p><a href="https://github.com/Pimentoso/mini4wdchrono/wiki" class="button is-outlined"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-book-open"></i></span><span>Mini4wdChrono Wiki</span></a></p>
+					<p><a href="https://github.com/Pimentoso/mini4wdchrono" class="button is-outlined"><span class="icon is-small" aria-hidden="true"><i class="fa-brands fa-github"></i></span><span>Project page on Github</span></a></p>
 				</div>
 			</div>
 		</div>
