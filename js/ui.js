@@ -844,9 +844,9 @@ const setupEventHandlers = (deps) => {
         client.toggleFreeRound();
     });
 
-    // Print (TODO)
+    // Requests the native print dialog for the current window.
     $('#button-print').on('click', () => {
-        // TODO webContents.getFocusedWebContents().print();
+        window.electronAPI.print();
     });
 
     // Export XLS

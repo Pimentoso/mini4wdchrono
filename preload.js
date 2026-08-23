@@ -39,6 +39,9 @@ window.electronAPI = {
     getAppLocale: () => ipcRenderer.invoke('get-app-locale'),
     getAppPath: (name) => ipcRenderer.invoke('get-app-path', name),
 
+    // Requests printing for the current renderer window.
+    print: () => ipcRenderer.invoke('window-print'),
+
     // Shell
     openPath: (filePath) => ipcRenderer.invoke('open-path-in-explorer', filePath),
     openExternal: (url) => ipcRenderer.invoke('open-external', url),

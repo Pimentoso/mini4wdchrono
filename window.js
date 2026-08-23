@@ -1251,6 +1251,11 @@ ipcMain.handle('window-close', () => {
     if (mainWindow) mainWindow.close();
 });
 
+// Prints the WebContents that requested the operation.
+ipcMain.handle('window-print', (event) => {
+    event.sender.print();
+});
+
 // Shell operations
 ipcMain.handle('open-path-in-explorer', async (event, filePath) => {
     const { shell } = require('electron');
