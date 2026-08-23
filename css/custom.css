@@ -14,6 +14,183 @@
 	border: 3px solid hsl(204, 86%, 53%);
 }
 
+.leaderboard-header {
+	align-items: center;
+	margin-bottom: 1rem !important;
+}
+
+.leaderboard-title {
+	align-items: center;
+	display: flex;
+	gap: 0.65rem;
+}
+
+.leaderboard-title .title {
+	margin: 0;
+}
+
+.leaderboard-card {
+	background: #fff;
+	border-radius: 0.75rem;
+	box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.08), 0 0 0 1px rgba(10, 10, 10, 0.02);
+	overflow: hidden;
+}
+
+.leaderboard-table-container {
+	max-height: calc(100vh - 16rem);
+	overflow: auto;
+}
+
+.racers-table {
+	font-variant-numeric: tabular-nums;
+	margin-bottom: 0 !important;
+	white-space: nowrap;
+}
+
+.racers-table thead th {
+	background: hsl(171, 100%, 41%);
+	border-bottom: 1px solid hsl(0, 0%, 86%);
+	color: hsl(0, 0%, 97%);
+	font-size: 0.75em;
+	letter-spacing: 0.045em;
+	padding: 0.9rem 0.75rem;
+	position: sticky;
+	text-transform: uppercase;
+	top: 0;
+	z-index: 2;
+}
+
+.racers-table tbody td,
+.racers-table tbody th {
+	border-bottom: 1px solid hsl(0, 0%, 93%);
+	padding: 0.85rem 0.75rem;
+	vertical-align: middle;
+}
+
+.racers-table tbody tr:last-child td,
+.racers-table tbody tr:last-child th {
+	border-bottom: 0;
+}
+
+.racers-rank-column {
+	width: 5rem;
+}
+
+.racers-name-column {
+	min-width: 13rem;
+}
+
+.racers-time-column {
+	min-width: 7rem;
+}
+
+.racers-summary-column,
+.racers-speed-column {
+	min-width: 9rem;
+}
+
+.racers-name {
+	color: hsl(0, 0%, 21%);
+	font-size: 1em;
+	letter-spacing: 0.02em;
+}
+
+.racers-rank-badge {
+	align-items: center;
+	background: hsl(0, 0%, 94%);
+	border-radius: 999px;
+	color: hsl(0, 0%, 35%);
+	display: inline-flex;
+	font-weight: 700;
+	gap: 0.3rem;
+	justify-content: center;
+	min-height: 2.25rem;
+	min-width: 2.25rem;
+	padding: 0.3rem 0.65rem;
+}
+
+.racers-rank-badge.is-podium-1 {
+	background: hsl(48, 100%, 90%);
+	color: hsl(42, 85%, 35%);
+}
+
+.racers-rank-badge.is-podium-2 {
+	background: hsl(0, 0%, 91%);
+	color: hsl(0, 0%, 38%);
+}
+
+.racers-rank-badge.is-podium-3 {
+	background: hsl(28, 55%, 88%);
+	color: hsl(28, 55%, 35%);
+}
+
+.racers-time {
+	font-family: monospace;
+}
+
+.racers-time.is-race-best {
+	background: hsl(348, 100%, 96%);
+	color: hsl(348, 86%, 43%);
+	font-weight: 700;
+}
+
+.racers-time.is-player-best {
+	color: hsl(348, 86%, 43%);
+	font-weight: 700;
+}
+
+.racers-best-sum {
+	background: hsl(204, 86%, 97%);
+	color: hsl(204, 71%, 39%);
+	font-weight: 700;
+}
+
+.racers-speed strong,
+.racers-speed span {
+	display: block;
+}
+
+.racers-speed span {
+	color: hsl(0, 0%, 58%);
+	font-size: 0.78em;
+	margin-top: 0.15rem;
+}
+
+.leaderboard-legend {
+	color: hsl(0, 0%, 48%);
+	display: flex;
+	font-size: 0.85rem;
+	gap: 1.25rem;
+	justify-content: flex-end;
+	margin-top: 0.75rem;
+}
+
+.leaderboard-legend > span {
+	align-items: center;
+	display: inline-flex;
+	gap: 0.2rem;
+}
+
+@media screen and (max-width: 768px) {
+	.leaderboard-header .level-right,
+	.leaderboard-header .level-right .level-item {
+		width: 100%;
+	}
+
+	.leaderboard-header .button {
+		flex: 1;
+	}
+
+	.leaderboard-table-container {
+		max-height: none;
+	}
+
+	.leaderboard-legend {
+		flex-wrap: wrap;
+		justify-content: flex-start;
+	}
+}
+
 .content ul {
 	list-style: none;
 	margin-left: 0;
@@ -269,6 +446,26 @@ div[data-tab="race"].container {
 
 	table.is-table-print tr.is-selected td {
 		border-color: #dbdbdb;
+	}
+
+	.leaderboard-card {
+		border: 0;
+		box-shadow: none;
+		overflow: visible;
+	}
+
+	.leaderboard-table-container {
+		max-height: none;
+		overflow: visible;
+	}
+
+	.racers-table thead th {
+		position: static;
+	}
+
+	.racers-rank-badge {
+		background: none !important;
+		color: inherit !important;
 	}
 
 	.is-race-best {

@@ -361,49 +361,64 @@ const showRaceModeDetails = () => {
 const showPlayerList = () => {
     const track = storage.get('track');
     const tournament = storage.get('tournament');
-    const playerList = tournament.players;
     if (!track) return;
     if (!tournament) return;
 
-    $('#tablePlayerList').empty();
+    const playerList = tournament.players;
+    const racerLabel = playerList.length === 1 ? i18n.__('label-racer') : i18n.__('label-racers');
+    $('#js-racers-count').text(`${playerList.length} ${racerLabel}`);
+    let tableHtml = '';
     if (playerList.length > 0) {
         const times = storage.getSortedPlayerList();
-        const raceBestTime = _.min(_.flatten(_.map(times, (info) => { return _.filter(info.times, (t) => { return t > 0 && t < 99999; }); })));
+        const validRaceTimes = _.flatten(_.map(times, (info) => { return _.filter(info.times, (t) => { return t > 0 && t < 99999; }); }));
+        const raceBestTime = validRaceTimes.length > 0 ? _.min(validRaceTimes) : null;
 
         // draw title row
         const titleCells = _.times(tournament.manches.length, (i) => {
-            return `<td class="has-text-centered">M${i + 1}</td>`;
+            return `<th scope="col" class="has-text-centered racers-time-column">M${i + 1}</th>`;
         });
-        titleCells.push(`<td class="has-text-centered">${i18n.__('label-best-2-times')}</td>`);
-        titleCells.push(`<td class="has-text-centered">${i18n.__('label-best-speed')}</td>`);
-        $('#tablePlayerList').append(`<tr class="is-selected"><td colspan="2"><strong>${playerList.length} RACERS</strong></td>${titleCells}</tr>`);
+        titleCells.push(`<th scope="col" class="has-text-centered racers-summary-column"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-stopwatch"></i></span>${i18n.__('label-best-2-times')}</th>`);
+        titleCells.push(`<th scope="col" class="has-text-centered racers-speed-column"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-gauge-high"></i></span>${i18n.__('label-best-speed')}</th>`);
+        tableHtml = `<thead><tr><th scope="col" class="has-text-centered racers-rank-column"><span class="icon" aria-hidden="true"><i class="fa-solid fa-ranking-star"></i></span><span class="is-sr-only">${i18n.__('label-rank')}</span></th><th scope="col" class="racers-name-column"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-user"></i></span>${i18n.__('label-racer')}</th>${titleCells.join('')}</tr></thead><tbody>`;
 
         // draw player rows
         _.each(times, (info, pos) => {
-            const bestTime = _.min(_.filter(info.times, (t) => { return t > 0 && t < 99999; }));
-            const bestSpeed = track.length / (bestTime / 1000);
+            const validPlayerTimes = _.filter(info.times, (t) => { return t > 0 && t < 99999; });
+            const bestTime = validPlayerTimes.length > 0 ? _.min(validPlayerTimes) : null;
+            const bestSpeed = bestTime ? track.length / (bestTime / 1000) : null;
             const cells = [];
-            cells.push(`<td class="has-text-centered"><span class="tag is-large ${_.contains([0, 1, 2], pos) ? 'is-warning' : _.contains([3, 4, 5], pos) ? 'is-success' : ''}">${pos + 1}</span></td>`);
-            cells.push(`<td><p class="is-uppercase">${playerList[info.id]}</p></td>`);
+            const rankClass = pos < 3 ? ` is-podium is-podium-${pos + 1}` : '';
+            const rankIcon = pos === 0 ? 'fa-trophy' : 'fa-medal';
+            const podiumIcon = pos < 3 ? `<i class="fa-solid ${rankIcon}" aria-hidden="true"></i>` : '';
+            cells.push(`<td class="has-text-centered racers-rank"><span class="racers-rank-badge${rankClass}">${podiumIcon}<span>${pos + 1}</span></span></td>`);
+            cells.push(`<th scope="row" class="racers-name is-uppercase">${_.escape(playerList[info.id])}</th>`);
             cells.push(_.times(tournament.manches.length, (i) => {
                 const playerTime = info.times[i] || 0;
                 let highlight = '';
+                let timeContent = utils.prettyTime(playerTime);
                 if (playerTime === 0 || playerTime === 99999) {
                     highlight = 'has-text-grey-light is-out';
+                    timeContent = playerTime === 99999 ? `<span class="is-light">${timeContent}</span>` : '<span aria-hidden="true">&mdash;</span>';
                 }
                 else if (playerTime === raceBestTime) {
-                    highlight = 'has-background-danger has-text-white is-race-best';
+                    highlight = 'is-race-best';
+                    timeContent = `<span class="icon is-small" title="${i18n.__('label-race-best')}" aria-hidden="true"><i class="fa-solid fa-trophy"></i></span> ${timeContent}`;
                 }
                 else if (playerTime === bestTime) {
-                    highlight = 'has-text-danger is-player-best';
+                    highlight = 'is-player-best';
+                    timeContent = `<span class="icon is-small" title="${i18n.__('label-personal-best')}" aria-hidden="true"><i class="fa-solid fa-star"></i></span> ${timeContent}`;
                 }
-                return `<td class="has-text-centered ${highlight}">${utils.prettyTime(playerTime)}</td>`;
+                return `<td class="has-text-centered racers-time ${highlight}">${timeContent}</td>`;
             }));
-            cells.push(`<td class="has-text-centered">${utils.prettyTime(info.best)}</td>`);
-            cells.push(`<td class="has-text-centered">${bestSpeed.toFixed(2)} m/s<br /><span class="has-text-grey-light">${(bestSpeed * 3.6).toFixed(2)} km/h</span></td>`);
-            $('#tablePlayerList').append(`<tr>${cells}</tr>`);
+            const bestSum = validPlayerTimes.length >= 2 ? utils.prettyTime(info.best) : '<span aria-hidden="true">&mdash;</span>';
+            const speed = bestSpeed ? `<strong>${bestSpeed.toFixed(2)} m/s</strong><span>${(bestSpeed * 3.6).toFixed(2)} km/h</span>` : '<span aria-hidden="true">&mdash;</span>';
+            cells.push(`<td class="has-text-centered racers-time racers-best-sum">${bestSum}</td>`);
+            cells.push(`<td class="has-text-centered racers-speed">${speed}</td>`);
+            tableHtml += `<tr>${cells.join('')}</tr>`;
         });
+        tableHtml += '</tbody>';
     }
+    $('#tablePlayerList').html(tableHtml);
 };
 
 // Renders every tournament round and its recorded results.
