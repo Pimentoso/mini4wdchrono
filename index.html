@@ -372,8 +372,14 @@
 
 	<!-- MANCHES TAB -->
 	<div class="container" data-tab="manches" style="display: none;">
-		<div class="js-hide-on-no-tournament level has-text-centered">
-			<div class="level-left"></div>
+		<div class="js-hide-on-no-tournament level leaderboard-header">
+			<div class="level-left">
+				<div class="level-item leaderboard-title">
+					<span class="icon has-text-primary" aria-hidden="true"><i class="fa-solid fa-table-list"></i></span>
+					<h2 class="title is-4 tn" data-tn="label-race-schedule">Race schedule</h2>
+					<span id="js-rounds-count" class="tag is-light is-medium is-lowercase">0 rounds</span>
+				</div>
+			</div>
 			<div class="level-right">
 				<div class="level-item">
 					<button class="button is-info" id="button-manches-save">
@@ -383,7 +389,11 @@
 				</div>
 			</div>
 		</div>
-		<table id="tableMancheList" class="js-hide-on-no-tournament table table is-bordered is-striped is-hoverable is-fullwidth is-size-5"></table>
+		<div class="js-hide-on-no-tournament leaderboard-card manches-card">
+			<div class="table-container leaderboard-table-container">
+				<table id="tableMancheList" class="table is-hoverable is-fullwidth is-size-5 manches-table"></table>
+			</div>
+		</div>
 		<p class="js-show-on-no-track has-text-grey has-text-centered tn" data-tn="label-track-not-loaded">Track not loaded</p>
 		<p class="js-show-on-no-tournament has-text-grey has-text-centered tn" data-tn="label-tournament-not-loaded">Tournament not loaded</p>
 	</div>
@@ -404,16 +414,18 @@
 		<div class="level has-text-centered js-hide-on-no-track">
 			<div class="level-item">
 				<button class="button js-hide-on-no-tournament js-hide-on-free-round js-hide-on-race-running" id="button-prev">
-					<span class="tn" data-tn="button-prev-round">&lt; Prev round</span>
+					<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-circle-arrow-left"></i></span>
+					<span class="tn" data-tn="button-prev-round">Prev round</span>
 				</button>
 			</div>
 			<div class="level-item">
 				<button class="button is-link is-large has-text-weight-bold js-hide-on-race-running" id="button-start" style="min-width: 200px;">
+					<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-flag-checkered"></i></span>
 					<span class="tn" data-tn="button-start">START</span>
 				</button>
 
 				<button class="button is-link is-outlined js-hide-on-race-running js-hide-on-no-tournament" id="button-toggle-free-round" style="min-width: 150px; margin-left: 20px;">
-					<span class="tn" data-tn="button-goto-free">Free round &gt;</span>
+					<span class="tn" data-tn="button-goto-free">Free round</span>
 				</button>
 
 				<button class="button is-danger is-large js-show-on-race-running" id="button-stop" style="min-width: 200px;">
@@ -422,7 +434,8 @@
 			</div>
 			<div class="level-item">
 				<button class="button js-hide-on-no-tournament js-hide-on-free-round js-hide-on-race-running" id="button-next">
-					<span class="tn" data-tn="button-next-round">Next round &gt;</span>
+					<span class="tn" data-tn="button-next-round">Next round</span>
+					<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-circle-arrow-right"></i></span>
 				</button>
 			</div>
 		</div>

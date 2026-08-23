@@ -377,9 +377,9 @@ const showPlayerList = () => {
         const titleCells = _.times(tournament.manches.length, (i) => {
             return `<th scope="col" class="has-text-centered racers-time-column">M${i + 1}</th>`;
         });
-        titleCells.push(`<th scope="col" class="has-text-centered racers-summary-column"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-stopwatch"></i></span>${i18n.__('label-best-2-times')}</th>`);
-        titleCells.push(`<th scope="col" class="has-text-centered racers-speed-column"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-gauge-high"></i></span>${i18n.__('label-best-speed')}</th>`);
-        tableHtml = `<thead><tr><th scope="col" class="has-text-centered racers-rank-column"><span class="icon" aria-hidden="true"><i class="fa-solid fa-ranking-star"></i></span><span class="is-sr-only">${i18n.__('label-rank')}</span></th><th scope="col" class="racers-name-column"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-user"></i></span>${i18n.__('label-racer')}</th>${titleCells.join('')}</tr></thead><tbody>`;
+        titleCells.push(`<th scope="col" class="has-text-centered racers-summary-column"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-stopwatch"></i></span> ${i18n.__('label-best-2-times')}</th>`);
+        titleCells.push(`<th scope="col" class="has-text-centered racers-speed-column"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-gauge-high"></i></span> ${i18n.__('label-best-speed')}</th>`);
+        tableHtml = `<thead><tr><th scope="col" class="has-text-centered racers-rank-column"><span class="icon" aria-hidden="true"><i class="fa-solid fa-ranking-star"></i></span><span class="is-sr-only">${i18n.__('label-rank')}</span></th><th scope="col" class="racers-name-column"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-user"></i></span> ${i18n.__('label-racer')}</th>${titleCells.join('')}</tr></thead><tbody>`;
 
         // draw player rows
         _.each(times, (info, pos) => {
@@ -433,60 +433,56 @@ const showMancheList = () => {
     const playerList = tournament.players;
     const mancheList = storage.getManches();
 
-    $('#tableMancheList').empty();
-    let cars, mancheText, playerName, playerTime, playerPosition, playerOut, playerNameTag, playerPositionTag, playerHeader, playerForm, highlight, isCurrentRound, gotoButton;
+    const roundCount = _.reduce(mancheList, (count, manche) => { return count + manche.length; }, 0);
+    const roundLabel = roundCount === 1 ? i18n.__('label-round') : i18n.__('label-rounds');
+    $('#js-rounds-count').text(`${roundCount} ${roundLabel}`);
+
+    let tableHtml = `<thead><tr><th scope="col" class="has-text-centered manches-round-column"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-flag-checkered"></i></span>${i18n.__('label-round')}</th><th scope="col" class="has-text-centered"><span class="manches-lane-dot manches-lane-dot-1" aria-hidden="true"></span>${i18n.__('label-lane-1')}</th><th scope="col" class="has-text-centered"><span class="manches-lane-dot manches-lane-dot-2" aria-hidden="true"></span>${i18n.__('label-lane-2')}</th><th scope="col" class="has-text-centered"><span class="manches-lane-dot manches-lane-dot-3" aria-hidden="true"></span>${i18n.__('label-lane-3')}</th></tr></thead>`;
     _.each(mancheList, (manche, mindex) => {
-        $('#tableMancheList').append(`<tr class="is-selected"><td><strong>${mancheName(mindex)}</strong></td><td>Lane 1</td><td>Lane 2</td><td>Lane 3</td></tr>`);
+        tableHtml += `<tbody class="manches-group"><tr class="manches-section"><th colspan="4" scope="rowgroup"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-flag"></i></span> ${_.escape(mancheName(mindex))}</th></tr>`;
         _.each(manche, (group, rindex) => {
-            cars = storage.loadRound(mindex, rindex);
-            mancheText = _.map(group, (id, pindex) => {
-                playerName = playerList[id];
+            const cars = storage.loadRound(mindex, rindex);
+            const mancheText = _.map(group, (id, pindex) => {
+                const playerName = playerList[id];
                 if (playerName) {
-                    if (cars) {
-                        playerTime = cars[pindex].currTime;
-                        playerPosition = cars[pindex].position;
-                        playerOut = cars[pindex].outOfBounds;
-                    }
-                    else {
-                        playerTime = 0;
-                        playerPosition = null;
-                        playerOut = false;
-                    }
+                    const car = cars ? cars[pindex] : null;
+                    const playerTime = car ? car.currTime : 0;
+                    const playerPosition = car ? car.position : null;
+                    const playerOut = car ? car.outOfBounds : false;
+                    let playerPositionTag = '';
 
-                    playerNameTag = `<span class="tag is-large is-uppercase">${playerList[id] || ''}</span>`;
-                    playerPositionTag = '';
-
-                    if (playerPosition !== null) {
-                        if (cars[pindex].originalTime) {
-                            playerPositionTag = '<span class="tag is-danger is-large">mod</span>';
+                    if (playerPosition !== null && playerPosition !== undefined) {
+                        if (car.originalTime) {
+                            playerPositionTag = `<span class="tag is-danger is-light"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-pen"></i></span><span>${i18n.__('label-modified')}</span></span>`;
                         }
                         else if (playerOut) {
-                            playerPositionTag = '<span class="tag is-dark is-large">out</span>';
+                            playerPositionTag = `<span class="tag is-dark"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-ban"></i></span><span>${i18n.__('label-car-out')}</span></span>`;
                         }
                         else if (playerPosition === 1) {
-                            playerPositionTag = `<span class="tag is-warning is-large">${playerPosition}</span>`;
+                            playerPositionTag = `<span class="tag is-warning"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-trophy"></i></span><span>${playerPosition}</span></span>`;
                         }
                         else {
-                            playerPositionTag = `<span class="tag is-large">${playerPosition}</span>`;
+                            playerPositionTag = `<span class="tag is-light"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-medal"></i></span><span>${playerPosition}</span></span>`;
                         }
                     }
 
-                    playerHeader = `<div style="display: flex; justify-content: center; margin-bottom: 5px;"><div class="tags has-addons">${playerNameTag}${playerPositionTag}</div></div>`;
-                    playerForm = `<div class="field"><div class="control"><input class="input is-large js-time-form" type="text" data-manche="${mindex}" data-round="${rindex}" data-player="${pindex}" value="${utils.prettyTime(playerTime)}" /></div></div>`;
+                    const playerHeader = `<div class="manches-racer-header"><strong class="is-uppercase">${_.escape(playerName)}</strong>${playerPositionTag}</div>`;
+                    const playerForm = `<div class="field manches-time-field"><div class="control has-icons-left"><input class="input is-medium js-time-form" type="text" aria-label="${_.escape(playerName)}" data-manche="${mindex}" data-round="${rindex}" data-player="${pindex}" value="${utils.prettyTime(playerTime)}" /><span class="icon is-small is-left has-text-grey-light" aria-hidden="true"><i class="fa-solid fa-stopwatch"></i></span></div></div>`;
 
-                    return `<td>${playerHeader}${playerForm}</td>`;
+                    return `<td class="manches-lane-cell">${playerHeader}${playerForm}</td>`;
                 }
                 else {
-                    return '<td></td>';
+                    return '<td class="manches-lane-cell is-empty"><span aria-hidden="true">&mdash;</span></td>';
                 }
-            }).join();
-            isCurrentRound = (mindex === currManche && rindex === currRound);
-            highlight = isCurrentRound ? 'class="is-highlighted"' : '';
-            gotoButton = isCurrentRound ? '' : `<button class="button is-small is-info is-light js-goto-round tn" data-tn="button-goto-round" data-manche="${mindex}" data-round="${rindex}">&lt; play this</button>`;
-            $('#tableMancheList').append(`<tr ${highlight}><td class="has-text-centered">Round ${mindex + 1}-${rindex + 1}<br />${gotoButton}</td>${mancheText}</tr>`);
+            }).join('');
+            const isCurrentRound = (mindex === currManche && rindex === currRound);
+            const rowClass = isCurrentRound ? ' class="is-current-round"' : '';
+            const roundAction = isCurrentRound ? `<span class="tag is-info is-light"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-circle-play"></i></span><span>${i18n.__('label-current-round')}</span></span>` : `<button class="button is-small is-info is-light js-goto-round" data-manche="${mindex}" data-round="${rindex}"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-play"></i></span><span>${i18n.__('button-goto-round')}</span></button>`;
+            tableHtml += `<tr${rowClass}><th scope="row" class="has-text-centered manches-round"><strong>${i18n.__('label-round')} ${mindex + 1}-${rindex + 1}</strong>${roundAction}</th>${mancheText}</tr>`;
         });
+        tableHtml += '</tbody>';
     });
-    translate();
+    $('#tableMancheList').html(tableHtml);
 };
 
 // Displays the players scheduled for the next round.

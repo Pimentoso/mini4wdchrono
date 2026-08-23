@@ -156,6 +156,143 @@
 	margin-top: 0.15rem;
 }
 
+.manches-table {
+	font-variant-numeric: tabular-nums;
+	margin-bottom: 0 !important;
+	white-space: nowrap;
+}
+
+.manches-table thead th {
+	background: hsl(171, 100%, 41%);
+	border-bottom: 1px solid hsl(0, 0%, 86%);
+	color: hsl(0, 0%, 97%);
+	font-size: 0.75em;
+	letter-spacing: 0.045em;
+	padding: 0.9rem 0.75rem;
+	position: sticky;
+	text-transform: uppercase;
+	top: 0;
+	z-index: 3;
+}
+
+.manches-table tbody td,
+.manches-table tbody th {
+	border-bottom: 1px solid hsl(0, 0%, 93%);
+	padding: 0.85rem;
+	vertical-align: middle;
+}
+
+.manches-table .manches-section th {
+	background: hsl(171, 55%, 96%);
+	border-bottom-color: hsl(171, 35%, 85%);
+	color: hsl(171, 80%, 29%);
+	font-size: 0.8em;
+	letter-spacing: 0.06em;
+	padding: 0.65rem 1rem;
+	text-transform: uppercase;
+}
+
+.manches-group + .manches-group .manches-section th {
+	border-top: 0.5rem solid hsl(0, 0%, 96%);
+}
+
+.manches-table tr.is-current-round > td,
+.manches-table tr.is-current-round > th {
+	background: hsl(204, 86%, 97%);
+}
+
+.manches-table tr.is-current-round > th:first-child {
+	box-shadow: inset 4px 0 hsl(204, 86%, 53%);
+}
+
+.manches-round-column,
+.manches-round {
+	min-width: 10rem;
+	width: 10rem;
+}
+
+.manches-round strong,
+.manches-round .tag,
+.manches-round .button {
+	display: flex;
+	justify-content: center;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.manches-round strong {
+	color: hsl(0, 0%, 29%);
+	margin-bottom: 0.55rem;
+}
+
+.manches-lane-cell {
+	min-width: 14rem;
+	width: 30%;
+}
+
+.manches-lane-cell.is-empty {
+	color: hsl(0, 0%, 71%);
+	font-size: 1.25rem;
+	text-align: center;
+}
+
+.manches-racer-header {
+	align-items: center;
+	display: flex;
+	gap: 0.5rem;
+	justify-content: space-between;
+	margin-bottom: 0.55rem;
+}
+
+.manches-racer-header strong {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.manches-time-field {
+	margin-bottom: 0 !important;
+}
+
+.manches-time-field .input {
+	background: hsl(0, 0%, 99%);
+	border-color: hsl(0, 0%, 88%);
+	border-radius: 0.5rem;
+	font-family: monospace;
+	font-variant-numeric: tabular-nums;
+	transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.manches-time-field .input:hover {
+	border-color: hsl(0, 0%, 71%);
+}
+
+.manches-time-field .input:focus {
+	border-color: hsl(171, 100%, 41%);
+	box-shadow: 0 0 0 0.125em hsla(171, 100%, 41%, 0.2);
+}
+
+.manches-lane-dot {
+	border: 2px solid hsla(0, 0%, 100%, 0.9);
+	border-radius: 999px;
+	display: inline-block;
+	height: 0.75rem;
+	margin-right: 0.4rem;
+	vertical-align: -0.1rem;
+	width: 0.75rem;
+}
+
+.manches-lane-dot-1 {
+	background: hsl(171, 100%, 30%);
+}
+
+.manches-lane-dot-2 {
+	background: hsl(48, 100%, 67%);
+}
+
+.manches-lane-dot-3 {
+	background: hsl(348, 100%, 61%);
+}
+
 .leaderboard-legend {
 	color: hsl(0, 0%, 48%);
 	display: flex;
@@ -183,6 +320,10 @@
 
 	.leaderboard-table-container {
 		max-height: none;
+	}
+
+	.manches-lane-cell {
+		min-width: 12rem;
 	}
 
 	.leaderboard-legend {
