@@ -1,130 +1,204 @@
-[![Version](https://img.shields.io/badge/version-0.18.2-blue.svg)](https://github.com/Pimentoso/mini4wdchrono)
+# Mini4wdChrono
 
-Mini4wdChrono is a fully free and open source project to make a functional 3-lane lap timer for Mini4WD Japan Cup tracks.
+[![Version](https://img.shields.io/github/package-json/v/Pimentoso/mini4wdchrono)](https://github.com/Pimentoso/mini4wdchrono/releases)
+[![License](https://img.shields.io/github/license/Pimentoso/mini4wdchrono)](LICENSE)
 
-# The hardware
+Mini4wdChrono is a free, open-source desktop application for timing and managing
+Mini 4WD races on three-lane Japan Cup tracks. It combines Arduino-based lap
+detection with an interface designed for race organizers and large-screen displays.
 
-The hardware has been chosen to be as simple and cheap as possible, while still maintain accuracy.
+## Features
 
-* [Hardware parts needed](https://github.com/Pimentoso/mini4wdchrono/wiki/Hardware-parts-needed)
-* [Hardware diagrams](https://github.com/Pimentoso/mini4wdchrono/wiki/Hardware-diagrams)
-* [Flashing the arduino board](https://github.com/Pimentoso/mini4wdchrono/wiki/Flashing-the-arduino-board)
-* [Lap timer building](https://github.com/Pimentoso/mini4wdchrono/wiki/Lap-timer-building)
-* [Launching the software](https://github.com/Pimentoso/mini4wdchrono/wiki/Launching-the-software)
+- Live timing for up to three lanes, including position, gaps, average speed, and split times
+- Configurable lap counts, timing thresholds, start sequence, sensors, LEDs, and buzzer
+- Track import from [Mini4WD Track Editor](https://mini4wd-track-editor.pimentoso.com/)
+- Player and round import from [Mini4WD Tournament Generator](https://mini4wd-tournament.pimentoso.com/)
+- Tournament standings, editable results, and free-race support
+- Persistent race data and Excel result exports
 
-# The software
+## Hardware
 
-The software has been built to ease the work of race organizers, while still having a clean interface that can be shown on a big TV screen during the race.
+The hardware is designed to be affordable and straightforward to assemble while
+maintaining accurate timing. An Arduino running Firmata connects the sensors and
+optional start button, LED strip, and buzzer to the application.
 
-Note: the program reads data from the "Mini4WD Track Editor" and "Mini4WD Tournament Generator" websites to access track length and player names,
-so you are required to create your track and player list using those websites.
+See the project wiki for complete assembly and setup instructions:
 
-* [Software quick start guide](https://github.com/Pimentoso/mini4wdchrono/wiki/Software-quick-start-guide)
-* [Software tournament rules](https://github.com/Pimentoso/mini4wdchrono/wiki/Software-tournament-rules)
+- [Required hardware](https://github.com/Pimentoso/mini4wdchrono/wiki/Hardware-parts-needed)
+- [Wiring diagrams](https://github.com/Pimentoso/mini4wdchrono/wiki/Hardware-diagrams)
+- [Flashing the Arduino](https://github.com/Pimentoso/mini4wdchrono/wiki/Flashing-the-arduino-board)
+- [Building the lap timer](https://github.com/Pimentoso/mini4wdchrono/wiki/Lap-timer-building)
+- [Launching the software](https://github.com/Pimentoso/mini4wdchrono/wiki/Launching-the-software)
 
-## Download the software
+## Download
 
-You can download the latest releases for Windows 10 (64-bit) or Mac OS (64-bit) from [the releases page](https://github.com/Pimentoso/mini4wdchrono/releases).
+Download a packaged build for your operating system from the
+[GitHub Releases page](https://github.com/Pimentoso/mini4wdchrono/releases).
+Available platforms may vary by release.
+
+## Getting started
+
+1. Build and flash the Arduino hardware by following the
+   [hardware guides](https://github.com/Pimentoso/mini4wdchrono/wiki).
+2. Connect the Arduino to your computer over USB.
+3. Launch Mini4wdChrono and open the **Configuration** tab.
+4. Select the serial port and configure the sensor pins and any optional hardware.
+5. Create a track with
+   [Mini4WD Track Editor](https://mini4wd-track-editor.pimentoso.com/) and load its
+   link in the race setup screen.
+6. For tournament races, create a player list and rounds with
+   [Mini4WD Tournament Generator](https://mini4wd-tournament.pimentoso.com/) and
+   load its link as well.
+
+For more detail, see the
+[software quick-start guide](https://github.com/Pimentoso/mini4wdchrono/wiki/Software-quick-start-guide)
+and [tournament rules](https://github.com/Pimentoso/mini4wdchrono/wiki/Software-tournament-rules).
 
 ## Screenshots
 
-*Main lap timer view, with position, delay from first place, average speed and split times.*
+### Live race view
 
-![race view](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/screen-race.png)
+Position, gap to the leader, average speed, and split times.
 
----
+![Live race timing view](images/screen-race.png)
 
-*Player roster view, sorted, showing best time of each player in red.*
+### Player standings
 
-![players view](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/screen-players.png)
+Player rankings with each racer's best time highlighted.
 
----
+![Player standings view](images/screen-players.png)
 
-*Tournament view with all rounds. Times are editable.*
+### Tournament rounds
 
-![manches view](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/screen-manches.png)
+An overview of every round with editable results.
 
----
+![Tournament rounds view](images/screen-manches.png)
 
-*Race setup screen. You can import data from Mini4WD Track Editor.*
+### Race setup
 
-![setup view](https://raw.githubusercontent.com/Pimentoso/mini4wdchrono/master/images/screen-setup.png)
+Track, tournament, timing, and race-mode configuration.
 
-# Developing and contributing
+![Race setup view](images/screen-setup.png)
 
-## Build on OSX
-Run ```brew install nodenv``` and follow installation instructions here. https://github.com/nodenv/nodenv
+## Development
 
-```bash
-brew cask install arduino
-cd mini4wdchrono
-nodenv install
-npm install
+Mini4wdChrono requires Node.js 20 or later and npm 9 or later. Use the setup
+instructions for your operating system before installing the project.
 
-# make sure the arduino board is connected via USB, then
-npm start
-```
+### Set up macOS
 
-To package the project run utils/build_darwin.sh, or
+Install the Xcode Command Line Tools, then install
+[Homebrew](https://brew.sh/) if it is not already available:
 
 ```bash
-electron-packager . Mini4wdChrono --overwrite --icon=images/ic_launcher_web.icns --prune=true --out=release-builds
+xcode-select --install
 ```
 
-## Build on Windows
+After the Command Line Tools installation completes, use Homebrew to install
+Git, Node.js, and the Arduino IDE:
 
-Install the prerequisites from an elevated PowerShell. `winget` is included with current Windows 10 and Windows 11 installations.
+```bash
+brew install git node
+brew install --cask arduino-ide
+```
+
+### Set up Windows
+
+Run the following commands from an elevated PowerShell window. They install Git,
+Node.js, Python, the Visual C++ build tools required by native dependencies, and
+the Arduino IDE:
 
 ```powershell
+winget install --id Git.Git --exact --accept-package-agreements --accept-source-agreements
 winget install --id OpenJS.NodeJS.LTS --exact --accept-package-agreements --accept-source-agreements
 winget install --id Python.Python.3.11 --exact --accept-package-agreements --accept-source-agreements
-winget install --id Microsoft.VisualStudio.2022.BuildTools --exact --accept-package-agreements --accept-source-agreements --override "--wait --passive --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+winget install --id Microsoft.VisualStudio.2022.BuildTools --exact `
+  --accept-package-agreements --accept-source-agreements `
+  --override "--wait --passive --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
 winget install --id ArduinoSA.IDE.stable --exact --accept-package-agreements --accept-source-agreements
 ```
 
-Close and reopen PowerShell after installing Node.js, then from the project directory run:
+Close and reopen PowerShell after the installations finish so the new commands
+are available on `PATH`.
 
-```powershell
-cd mini4wdchrono
-npm ci
+### Set up Linux
 
-# make sure the arduino board is connected via USB, then
-npm start
-```
-
-To produce the GitHub Release artifact:
-
-```powershell
-.\utils\build-win64.ps1
-```
-
-## Build on Linux
-
-:warning: This instructions are from a very old note, I haven't tried them recently.
+The following commands prepare an Ubuntu or Debian system. They install the
+compiler toolchain, Git, zip, and Node.js 22, which meets the project's Node.js
+20-or-later requirement:
 
 ```bash
 sudo apt update
-sudo apt install build-essential apt-transport-https lsb-release ca-certificates curl
-curl -sL https://deb.nodesource.com/setup_10.x | bash -
-sudo apt install nodejs
-sudo apt install npm
-cd mini4wdchrono/
-npm install
-./node_modules/.bin/electron-rebuild
-sudo chmod 666 /dev/ttyACM0
+sudo apt install -y build-essential ca-certificates curl git zip
+curl -fsSL https://deb.nodesource.com/setup_22.x -o /tmp/nodesource_setup.sh
+sudo -E bash /tmp/nodesource_setup.sh
+sudo apt install -y nodejs
+sudo usermod -aG dialout "$USER"
+```
 
-# make sure the arduino board is connected via USB, then
+Sign out and back in after adding your account to the `dialout` group. This
+allows Mini4wdChrono to access the Arduino serial port without making the device
+world-writable. Install the [Arduino IDE](https://www.arduino.cc/en/software)
+from Arduino's official download if you need to flash the board.
+
+For other Linux distributions, install equivalent packages with the system's
+package manager.
+
+### Install and run Mini4wdChrono
+
+After preparing the operating system, clone the repository, install the locked
+dependencies, and start Electron:
+
+```bash
+git clone https://github.com/Pimentoso/mini4wdchrono.git
+cd mini4wdchrono
+npm ci
 npm start
 ```
 
-## Errors
-
-If you get an error when running the program like
+Connect a Firmata-compatible Arduino over USB to test hardware integration.
+Use `npm run watch` to reload the application while developing. Run the linter
+before submitting changes:
 
 ```bash
-Serialport was compiled against a different Node.js version using NODE_MODULE_VERSION 72. This version of Node.js requires NODE_MODULE_VERSION 70. Please try re-compiling or re-installing the module (for instance, using npm rebuild or npm install).
+npm run lint:fix
+npm run lint
 ```
 
-it means the installed native module does not match Electron. Reinstall the locked dependencies with `npm ci` inside the project directory.
+### Project structure
 
-Related issue: https://github.com/serialport/node-serialport/issues/1910
+- `window.js` — Electron main process, persistence, serial hardware, and IPC
+- `preload.js` — restricted renderer-facing IPC API
+- `js/` — renderer UI and race-management logic
+- `index.html` — application markup
+- `utils/` — release packaging scripts
+
+## Building release artifacts
+
+The build scripts install the locked dependencies, package the application, and
+create a zip file in `release-builds/`.
+
+| Platform | Command | Output |
+| --- | --- | --- |
+| macOS x64 | `./utils/build-darwin.sh` | `Mini4wdChrono-mac-x64.zip` |
+| Linux x64 | `./utils/build-linux-x64.sh` | `Mini4wdChrono-linux-x64.zip` |
+| Windows x64 | `.\utils\build-win64.ps1` | `Mini4wdChrono-windows-x64.zip` |
+
+Run each script on its target operating system. Cross-platform packaging is not
+supported by these scripts.
+
+## Contributing
+
+Bug reports and pull requests are welcome. Before opening a pull request:
+
+1. Create a focused branch for the change.
+2. Keep hardware access in the Electron main process and expose it to the
+   renderer through IPC.
+3. Run `npm run lint:fix` followed by `npm run lint`.
+4. Describe the change, how it was tested, and any hardware used for testing.
+
+Please use [GitHub Issues](https://github.com/Pimentoso/mini4wdchrono/issues) for bugs and feature requests.
+
+## License
+
+Mini4wdChrono is available under the [MIT License](LICENSE).
