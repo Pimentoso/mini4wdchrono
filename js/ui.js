@@ -15,9 +15,18 @@ const boardConnected = () => {
     $('#main').show();
 };
 
+// Shows the application without a hardware connection in debug mode.
+const debugModeEnabled = () => {
+    $('#tag-board-status').removeClass('is-danger is-success');
+    $('#tag-board-status').addClass('is-warning');
+    $('#tag-board-status').text(i18n.__('tag-debug-mode'));
+    $('#hardware-loading').hide();
+    $('#main').show();
+};
+
 // Updates the board status UI after a disconnection.
 const boardDisconnected = () => {
-    $('#tag-board-status').removeClass('is-success');
+    $('#tag-board-status').removeClass('is-success is-warning');
     $('#tag-board-status').addClass('is-danger');
     $('#tag-board-status').text(i18n.__('tag-disconnected'));
     $('#main').hide();
@@ -961,6 +970,7 @@ const setupEventHandlers = (deps) => {
 
 module.exports = {
     boardConnected: boardConnected,
+    debugModeEnabled: debugModeEnabled,
     boardDisconnected: boardDisconnected,
     translate: translate,
     gotoTab: gotoTab,

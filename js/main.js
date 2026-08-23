@@ -1,7 +1,7 @@
 'use strict';
 
 ////////////////////////
-const debugMode = false;
+const debugMode = true;
 ////////////////////////
 
 // With nodeIntegration:true, we can use require directly
@@ -201,6 +201,10 @@ async function initializeApplication() {
 
     // Schedules one hardware reconnection attempt after a disconnect.
     const scheduleHardwareReconnect = () => {
+        if (debugMode) {
+            return;
+        }
+
         if (connected || reconnectInProgress || reconnectTimer) {
             return;
         }
@@ -300,15 +304,35 @@ async function initializeApplication() {
         }
     });
 
-    // keydown handler for debug mode
-    document.onkeydown = (e) => {
+    // Simulates a sensor trigger with a main-process timestamp in debug mode.
+    document.onkeydown = async (e) => {
         if (!debugMode) {
             return;
         }
-        client.keydown(e.keyCode);
+
+        if (e.repeat) {
+            return;
+        }
+
+        if (![49, 50, 51, 97, 98, 99].includes(e.keyCode)) {
+            return;
+        }
+
+        try {
+            const { timestamp } = await window.electronAPI.hardwareCreateSensorTimestamp();
+            client.keydown(e.keyCode, timestamp);
+        } catch (error) {
+            log.error('[Hardware] Failed to simulate sensor trigger:', error);
+        }
     };
 
     // Initialize hardware (after all event listeners are set up)
+    if (debugMode) {
+        ui.debugModeEnabled();
+        log.info('[Hardware] Debug mode enabled; hardware initialization skipped');
+        return;
+    }
+
     try {
         await window.electronAPI.hardwareInitialize();
         log.info('Hardware initialization started');

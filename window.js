@@ -838,6 +838,13 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
     }
 });
 
+// Creates a main-process timestamp for a debug sensor trigger.
+ipcMain.handle('hardware-create-sensor-timestamp', () => {
+    const timestamp = Date.now();
+    console.log(`[Hardware] Debug sensor trigger at ${timestamp}`);
+    return { timestamp };
+});
+
 /**
  * Sets up sensors after board initialization
  * Uses Firmata digitalRead for maximum speed

@@ -2,6 +2,7 @@
 	"tag-board-status": "Lap timer",
 	"tag-connecting": "connecting...",
 	"tag-connected": "connected",
+	"tag-debug-mode": "debug mode",
 	"tag-disconnected": "disconnected",
 	"tag-track": "Track",
 	"tag-track-manual": "MANUAL",

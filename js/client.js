@@ -361,19 +361,19 @@ const toggleFreeRound = () => {
 };
 
 // Handles debug keyboard shortcuts for adding laps.
-const keydown = (keyCode) => {
+const keydown = (keyCode, timestamp) => {
     if (raceRunning) {
         if (keyCode === 49 || keyCode === 97) {
             // pressed 1
-            addLap(0);
+            addLap(0, timestamp);
         }
         else if (keyCode === 50 || keyCode === 98) {
             // pressed 2
-            addLap(1);
+            addLap(1, timestamp);
         }
         else if (keyCode === 51 || keyCode === 99) {
             // pressed 3
-            addLap(2);
+            addLap(2, timestamp);
         }
     }
 };
