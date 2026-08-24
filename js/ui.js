@@ -249,12 +249,9 @@ const raceStarted = (freeRound) => {
 
 // Updates UI controls after a race finishes.
 const raceFinished = (freeRound) => {
-    updateUiState(freeRound);
     $('.js-show-on-race-running').hide();
     $('.js-hide-on-race-running').show();
-    if (freeRound) {
-        $('.js-hide-on-free-round').hide();
-    }
+    updateUiState(freeRound);
     const tournament = storage.get('tournament');
     if (tournament) {
         disableRaceInput(true);

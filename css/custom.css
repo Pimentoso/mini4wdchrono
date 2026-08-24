@@ -93,6 +93,9 @@
 	color: hsl(0, 0%, 21%);
 	font-size: 1em;
 	letter-spacing: 0.02em;
+	max-width: 20rem;
+	overflow-wrap: anywhere;
+	white-space: normal;
 }
 
 .racers-rank-badge {
