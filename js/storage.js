@@ -6,6 +6,7 @@ const configuration = require('./configuration');
 
 // In-memory cache of current race data
 const cachedRaceData = {};
+
 let cacheReady = false;
 let cachedRecentFiles = [];
 

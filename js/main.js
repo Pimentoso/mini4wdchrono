@@ -1,13 +1,11 @@
 'use strict';
 
 ////////////////////////
-const debugMode = true;
+const debugMode = false;
 ////////////////////////
 
-// With nodeIntegration:true, we can use require directly
-// jQuery and Underscore loaded via HTML script tag
-
 const log = require('electron-log');
+
 // Use IPC to get app version
 window.electronAPI.getAppVersion().then(version => {
     log.info(`Launched Mini4wdChrono v${version} at ${new Date()}`);
@@ -16,7 +14,6 @@ log.catchErrors();
 
 const configuration = require('./js/configuration');
 const i18n = new (require('./i18n/i18n'));
-
 const storage = require('./js/storage');
 const client = require('./js/client');
 const ui = require('./js/ui');

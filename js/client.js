@@ -12,7 +12,6 @@ const clone = require('clone');
 let currTrack, currTournament, ledManager;
 let mancheList, mancheCount;
 let currManche = 0, currRound = 0, raceStarting = false, raceRunning = false, freeRound = true;
-
 let timerIntervals = [], timerSeconds = [];
 let pageTimerSeconds;
 let checkRaceTask;

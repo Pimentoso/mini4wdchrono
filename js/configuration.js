@@ -22,6 +22,7 @@ const CONFIG_KEYS = [
 ];
 
 const cachedConfig = {};
+
 let cacheReady = false;
 
 // Removes every value from the local configuration cache.
