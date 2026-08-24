@@ -1,8 +1,10 @@
-TEST VALUES
-- track:
+TEST CODES
+
+- tracks:
 8GPF9C
 YKTC5U
-- tournament:
+
+- tournaments:
 VTSNY3
 HGY9X8 (5 player, 3 manche)
 E51B5K (2020 gara marzo)
