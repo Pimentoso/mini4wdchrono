@@ -345,6 +345,63 @@
 	text-align: center;
 }
 
+.hardware-pin-settings {
+	border: 1px solid hsl(48, 90%, 78%);
+	padding: 0;
+}
+
+.hardware-pin-settings-summary {
+	align-items: center;
+	cursor: pointer;
+	display: flex;
+	justify-content: space-between;
+	list-style: none;
+	padding: 1.25rem;
+	user-select: none;
+}
+
+.hardware-pin-settings-summary::-webkit-details-marker {
+	display: none;
+}
+
+.hardware-pin-settings-summary:focus-visible {
+	border-radius: 0.75rem;
+	box-shadow: 0 0 0 0.125em hsla(204, 86%, 53%, 0.25);
+	outline: none;
+}
+
+.hardware-pin-settings-heading {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.65rem;
+}
+
+.hardware-pin-settings-heading .title {
+	margin: 0;
+}
+
+.hardware-pin-settings-chevron {
+	color: hsl(0, 0%, 48%);
+	transition: transform 160ms ease;
+}
+
+.hardware-pin-settings[open] .hardware-pin-settings-chevron {
+	transform: rotate(180deg);
+}
+
+.hardware-pin-settings-content {
+	border-top: 1px solid hsl(48, 80%, 85%);
+	padding: 1.25rem;
+}
+
+.hardware-pin-settings-warning {
+	align-items: center;
+	display: flex;
+	gap: 0.5rem;
+	margin-bottom: 1.25rem !important;
+}
+
 .hardware-loading {
 	align-items: center;
 	display: flex;

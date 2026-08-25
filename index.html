@@ -656,56 +656,69 @@
 						</label>
 					</p>
 				</div>
-
-				<div class="field">
-					<label class="label tn" data-tn="label-sensor-1">Sensor 1 pin</label>
-					<div class="control">
-						<input id="js-config-sensor-pin-1" class="input" type="text" placeholder="example: A0" value="">
-					</div>
-				</div>
-
-				<div class="field">
-					<label class="label tn" data-tn="label-sensor-2">Sensor 2 pin</label>
-					<div class="control">
-						<input id="js-config-sensor-pin-2" class="input" type="text" placeholder="example: A1" value="">
-					</div>
-				</div>
-
-				<div class="field">
-					<label class="label tn" data-tn="label-sensor-3">Sensor 3 pin</label>
-					<div class="control">
-						<input id="js-config-sensor-pin-3" class="input" type="text" placeholder="example: A2" value="">
-					</div>
-				</div>
-
-				<div class="field">
-					<label class="label tn" data-tn="label-led-1">LED strip pin</label>
-					<div class="control">
-						<input id="js-config-led-pin-1" class="input" type="text" placeholder="example: 0" value="">
-					</div>
-				</div>
-
-				<div class="field">
-					<label class="label tn" data-tn="label-speaker">Speaker pin</label>
-					<div class="control">
-						<input id="js-config-piezo-pin" class="input" type="text" placeholder="example: 4" value="">
-					</div>
-				</div>
-
-				<div class="field">
-					<label class="label tn" data-tn="label-start-button">Start button pin</label>
-					<div class="control">
-						<input id="js-config-start-button-pin" class="input" type="text" placeholder="example: 9" value="">
-					</div>
-				</div>
-
-				<p class="has-text-centered">
-					<a id="button-save-config" href="#" class="button is-info" style="width: 200px;">
-						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-floppy-disk"></i></span>
-						<span class="tn" data-tn="button-save-settings">Save settings</span>
-					</a>
-				</p>
 			</div>
+
+			<details class="box hardware-pin-settings">
+				<summary class="hardware-pin-settings-summary">
+					<span class="hardware-pin-settings-heading">
+						<span class="icon has-text-warning" aria-hidden="true"><i class="fa-solid fa-microchip"></i></span>
+						<span class="title is-5 tn" data-tn="label-hardware-pin-settings">Hardware pin assignments</span>
+						<span class="tag is-warning is-light tn" data-tn="label-advanced">Advanced</span>
+					</span>
+					<span class="icon hardware-pin-settings-chevron" aria-hidden="true"><i class="fa-solid fa-chevron-down"></i></span>
+				</summary>
+				<div class="hardware-pin-settings-content">
+					<p class="notification is-warning is-light hardware-pin-settings-warning">
+						<span class="icon" aria-hidden="true"><i class="fa-solid fa-triangle-exclamation"></i></span>
+						<span class="tn" data-tn="label-hardware-pin-settings-desc">Change these values only when updating the Arduino wiring.</span>
+					</p>
+					<div>
+						<div class="field">
+							<label class="label tn" data-tn="label-sensor-1">Sensor 1 pin</label>
+							<div class="control">
+								<input id="js-config-sensor-pin-1" class="input" type="text" placeholder="example: A0" value="">
+							</div>
+						</div>
+						<div class="field">
+							<label class="label tn" data-tn="label-sensor-2">Sensor 2 pin</label>
+							<div class="control">
+								<input id="js-config-sensor-pin-2" class="input" type="text" placeholder="example: A1" value="">
+							</div>
+						</div>
+						<div class="field">
+							<label class="label tn" data-tn="label-sensor-3">Sensor 3 pin</label>
+							<div class="control">
+								<input id="js-config-sensor-pin-3" class="input" type="text" placeholder="example: A2" value="">
+							</div>
+						</div>
+						<div class="field">
+							<label class="label tn" data-tn="label-led-1">LED strip pin</label>
+							<div class="control">
+								<input id="js-config-led-pin-1" class="input" type="text" placeholder="example: 0" value="">
+							</div>
+						</div>
+						<div class="field">
+							<label class="label tn" data-tn="label-speaker">Speaker pin</label>
+							<div class="control">
+								<input id="js-config-piezo-pin" class="input" type="text" placeholder="example: 4" value="">
+							</div>
+						</div>
+						<div class="field">
+							<label class="label tn" data-tn="label-start-button">Start button pin</label>
+							<div class="control">
+								<input id="js-config-start-button-pin" class="input" type="text" placeholder="example: 9" value="">
+							</div>
+						</div>
+					</div>
+				</div>
+			</details>
+
+			<p class="has-text-centered">
+				<a id="button-save-config" href="#" class="button is-info" style="width: 200px;">
+					<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-floppy-disk"></i></span>
+					<span class="tn" data-tn="button-save-settings">Save settings</span>
+				</a>
+			</p>
 		</div>
 	</div>
 
