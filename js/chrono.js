@@ -95,12 +95,16 @@ const getExpectedSplitTime = (car) => {
 // Selects the most likely car for a sensor crossing.
 const selectCandidate = (lane, timestamp) => {
     const candidates = state.cars
-        .filter((car) => !car.outOfBounds && car.nextLane === lane)
+        .filter((car) => {
+            return !car.outOfBounds &&
+                  car.lapCount <= state.laps &&
+                  car.nextLane === lane;
+        })
         .map((car) => {
             if (car.startTimestamp === 0) {
                 return {
                     car: car,
-                    timingError: -1
+                    timingError: Number.POSITIVE_INFINITY
                 };
             }
 
