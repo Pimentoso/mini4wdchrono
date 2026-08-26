@@ -1,235 +1,310 @@
 'use strict';
 
 const storage = require('./storage');
-const clone = require('clone');
 
-let rCar0, rCar1, rCar2, rCars;
-let rLaneOrder = [0, 1, 2];
-let rTrackLength = 0;
-let rTimeThreshold = 40; // percentage of single lap time to calculate cutoff
-let rSpeedThreshold = 5; // speed in m/s to calculate cutoff
-let rTimeCutoffMin = 0; // min lap cutoff
-let rTimeCutoffMax = 0; // max lap cutoff
-let rLaps = 3;
+const DEFAULT_LANE_ORDER = [0, 1, 2];
+const DEFAULT_TIME_THRESHOLD = 40;
+const DEFAULT_SPEED_THRESHOLD = 5;
+const DEFAULT_LAPS = 3;
+const MIN_SPLIT_TIME_MS = 1000;
+const MAX_RACE_TIME_MS = 99999;
 
-// car object template
-const carObj = {
-    playerId: 0,
-    startLane: 0,
-    nextLane: 0,
+const state = {
+    cars: [],
+    laneOrder: [...DEFAULT_LANE_ORDER],
+    trackLength: 0,
+    expectedSplitTime: 0,
+    timeThreshold: DEFAULT_TIME_THRESHOLD / 100,
+    speedThreshold: DEFAULT_SPEED_THRESHOLD,
+    timeCutoffMin: 0,
+    timeCutoffMax: 0,
+    laps: DEFAULT_LAPS
+};
+
+// Creates fresh timing state for one car.
+const createCar = (startLane, playerId = 0) => ({
+    playerId: playerId,
+    startLane: startLane,
+    nextLane: startLane,
     lapCount: 0,
-    startTimestamp: 0, // start time UNIX TIMESTAMP
-    currTimestamp: 0, // current lap time  UNIX TIMESTAMP
-    endTimestamp: 0, // finish time UNIX TIMESTAMP
-    currTime: 0, // current lap time millis
+    startTimestamp: 0,
+    currTimestamp: 0,
+    endTimestamp: 0,
+    currTime: 0,
     splitTimes: [],
     position: 0,
     delayFromFirst: 0,
     speed: 0,
     outOfBounds: false
-};
+});
 
+// Restores a saved car while supplying defaults for missing fields.
+const restoreCar = (car, lane) => ({
+    ...createCar(lane),
+    ...car,
+    splitTimes: [...(car.splitTimes || [])]
+});
+
+// Initializes the timing engine for a new or restored race.
 const init = (track, playerIds, cars) => {
-    if (track) {
-        // cutoff time calculation
-        rTrackLength = track.length;
-        rLaneOrder = _.map(track.order, (i) => { return i - 1; });
-        rTimeThreshold = storage.get('timeThreshold') / 100;
-        rSpeedThreshold = storage.get('speedThreshold');
-        rLaps = storage.get('roundLaps');
-        rTimeCutoffMin = rTrackLength / 3 / rSpeedThreshold * (1 - rTimeThreshold) * 1000;
-        if (rTimeCutoffMin < 1000) rTimeCutoffMin = 1000;
-        rTimeCutoffMax = rTrackLength / 3 / rSpeedThreshold * (1 + rTimeThreshold) * 1000;
-    }
+    state.trackLength = track ? track.length : 0;
+    state.laneOrder = track ? track.order.map((lane) => lane - 1) : [...DEFAULT_LANE_ORDER];
+
+    state.timeThreshold = (storage.get('timeThreshold') || DEFAULT_TIME_THRESHOLD) / 100;
+    state.speedThreshold = storage.get('speedThreshold') || DEFAULT_SPEED_THRESHOLD;
+    state.laps = storage.get('roundLaps') || DEFAULT_LAPS;
+
+    state.expectedSplitTime = state.trackLength / 3 / state.speedThreshold * 1000;
+
+    state.timeCutoffMin = Math.max(
+        MIN_SPLIT_TIME_MS,
+        state.expectedSplitTime * (1 - state.timeThreshold)
+    );
+
+    state.timeCutoffMax = Math.max(
+        state.timeCutoffMin,
+        state.expectedSplitTime * (1 + state.timeThreshold)
+    );
 
     if (cars === undefined) {
-        // init car 1
-        rCar0 = clone(carObj);
-        rCar0.startLane = rCar0.nextLane = 0;
-
-        // init car 2
-        rCar1 = clone(carObj);
-        rCar1.startLane = rCar1.nextLane = 1;
-
-        // init car 3
-        rCar2 = clone(carObj);
-        rCar2.startLane = rCar2.nextLane = 2;
-
-        // playerIds is null if it's a free round
-        if (playerIds) {
-            rCar0.playerId = playerIds[0];
-            rCar1.playerId = playerIds[1];
-            rCar2.playerId = playerIds[2];
-        }
-
-        // car array
-        rCars = [rCar0, rCar1, rCar2];
-    }
-    else {
-        rCars = cars;
-    }
-};
-
-// method called when a sensor receives a signal
-const addLap = (lane, timestamp) => {
-    // Use provided timestamp (captured at hardware level) or fallback to current time
-    if (!timestamp) {
-        timestamp = new Date().getTime();
-    }
-
-    console.log(`${timestamp} sensor triggered for lane ${lane}`);
-    // console.log(JSON.stringify(rCars, null, 2));
-
-    // find all cars that may have passes under this lane sensor
-    const rTempCars = _.filter(rCars, (c) => {
-        return c.outOfBounds === false && lane === c.nextLane;
-    });
-
-    // console.log(JSON.stringify(rTempCars, null, 2));
-
-    // find the correct car removing the ones not validating thresholds
-    const rTempCar = _.find(rTempCars, (c) => {
-        return c.outOfBounds === false && (c.startTimestamp === 0 || ((timestamp - c.currTimestamp < rTimeCutoffMax) && (timestamp - c.currTimestamp > rTimeCutoffMin)));
-    });
-
-    // false sensor read
-    if (!rTempCar) {
-        console.warn(`${timestamp} no valid car found`);
+        state.cars = DEFAULT_LANE_ORDER.map((lane) => {
+            // playerId will be zero on a free round
+            const playerId = playerIds ? playerIds[lane] : 0;
+            return createCar(lane, playerId);
+        });
         return;
     }
-    else {
-        console.log(`${timestamp} valid car found (start lane ${rTempCar.startLane})`);
-    }
 
-    // handle the correct car
-    calculateCar(rTempCar, timestamp);
+    state.cars = cars.map((car, lane) => restoreCar(car, lane));
+    calculateRace();
 };
 
+// Calculates the expected next split for a car.
+const getExpectedSplitTime = (car) => {
+    if (car.splitTimes.length === 0) {
+        return state.expectedSplitTime;
+    }
+
+    const totalSplitTime = car.splitTimes.reduce((total, splitTime) => {
+        return total + splitTime;
+    }, 0);
+
+    return totalSplitTime / car.splitTimes.length;
+};
+
+// Selects the most likely car for a sensor crossing.
+const selectCandidate = (lane, timestamp) => {
+    const candidates = state.cars
+        .filter((car) => !car.outOfBounds && car.nextLane === lane)
+        .map((car) => {
+            if (car.startTimestamp === 0) {
+                return {
+                    car: car,
+                    timingError: -1
+                };
+            }
+
+            const elapsed = timestamp - car.currTimestamp;
+            const expected = getExpectedSplitTime(car);
+
+            return {
+                car: car,
+                elapsed: elapsed,
+                timingError: Math.abs(elapsed - expected)
+            };
+        })
+        .filter((candidate) => {
+            if (candidate.car.startTimestamp === 0) {
+                return true;
+            }
+
+            return candidate.elapsed >= state.timeCutoffMin &&
+                  candidate.elapsed <= state.timeCutoffMax;
+        })
+        .sort((left, right) => {
+            return left.timingError - right.timingError;
+        });
+
+    return candidates.length > 0 ? candidates[0].car : undefined;
+};
+
+// Records a sensor crossing using its main-process timestamp.
+const addLap = (lane, timestamp) => {
+    console.log('[Chrono] Sensor triggered', {
+        timestamp: timestamp,
+        lane: lane
+    });
+
+    const car = selectCandidate(lane, timestamp);
+
+    if (!car) {
+        console.warn('[Chrono] No valid car found', {
+            timestamp: timestamp,
+            lane: lane
+        });
+        return false;
+    }
+
+    console.log('[Chrono] Valid car found', {
+        timestamp: timestamp,
+        lane: lane,
+        startLane: car.startLane
+    });
+
+    calculateCar(car, timestamp);
+    return true;
+};
+
+// Updates one car after an accepted sensor crossing.
 const calculateCar = (car, timestamp) => {
-    if (car.lapCount <= rLaps) {
-        if (car.lapCount === 0) {
-            // start
-            car.startTimestamp = timestamp;
+    if (car.lapCount > state.laps) {
+        return;
+    }
+
+    if (car.lapCount === 0) {
+        car.startTimestamp = timestamp;
+    } else {
+        car.splitTimes.push(timestamp - car.currTimestamp);
+    }
+
+    car.lapCount += 1;
+    car.nextLane = nextLane(car.nextLane);
+    car.currTimestamp = timestamp;
+    car.currTime = timestamp - car.startTimestamp;
+
+    const completedDistance = (state.trackLength / 3) * (car.lapCount - 1);
+    car.speed = car.currTime > 0 ? completedDistance / (car.currTime / 1000) : 0;
+
+    if (car.lapCount === state.laps + 1) {
+        car.endTimestamp = timestamp;
+    }
+
+    calculateRace();
+};
+
+// Recalculates positions and same-checkpoint delays.
+const calculateRace = () => {
+    state.cars.forEach((car) => {
+        car.position = 0;
+        car.delayFromFirst = 0;
+    });
+
+    // Rank cars by highest lap count first, then lowest time
+    const rankedCars = state.cars
+        .filter((car) => {
+            return !car.outOfBounds && car.lapCount >= 2;
+        })
+        .sort((left, right) => {
+            return right.lapCount - left.lapCount ||
+                  left.currTime - right.currTime;
+        });
+
+    rankedCars.forEach((car, index) => {
+        car.position = index + 1;
+    });
+
+    if (rankedCars.length === 0) {
+        return;
+    }
+
+    const leader = rankedCars[0];
+
+    rankedCars.forEach((car) => {
+        if (car.lapCount === leader.lapCount) {
+            car.delayFromFirst = car.currTime - leader.currTime;
         }
-        if (car.lapCount > 0) {
-            // add split times after 2nd pass
-            car.splitTimes.push(timestamp - car.currTimestamp);
-        }
-        car.lapCount += 1;
-        car.nextLane = nextLane(car.nextLane);
-        car.currTimestamp = timestamp;
-        car.currTime = timestamp - car.startTimestamp;
-        car.speed = (rTrackLength / 3) * (car.lapCount - 1) / (car.currTime / 1000);
-        if (car.lapCount === rLaps + 1) {
-            // finish
-            car.endTimestamp = timestamp;
-        }
+    });
+};
+
+// Finds the next lane in the configured track order.
+const nextLane = (lane) => {
+    const currentIndex = state.laneOrder.indexOf(lane);
+    const nextIndex = (currentIndex + 1) % state.laneOrder.length;
+
+    return state.laneOrder[nextIndex];
+};
+
+// Reports whether every car has finished or left the track.
+const isRaceFinished = () => {
+    return state.cars.every((car) => {
+        return car.outOfBounds || car.lapCount > state.laps;
+    });
+};
+
+// Forcefully stops every car that is still racing.
+const stopRace = () => {
+    const runningCars = state.cars.filter((car) => {
+        return !car.outOfBounds && car.lapCount <= state.laps;
+    });
+
+    runningCars.forEach((car) => {
+        car.currTime = MAX_RACE_TIME_MS;
+        car.outOfBounds = true;
+    });
+
+    if (runningCars.length > 0) {
         calculateRace();
     }
+
+    return runningCars.length > 0;
 };
 
-const calculateRace = () => {
-    let bestTime = 0;
-    const bestLap = _.max(rCars, (c) => { return c.lapCount; }).lapCount;
-    let pos = 0;
-    const lapsArr = _.range(2, rLaps + 2).reverse(); // should be [4,3,2] for 3 laps
-
-    // first are the cars with the highest lap count,
-    // then with same lapCount first is the one with lowest time
-    _.each(lapsArr, (lap) => {
-        const runningCars = _.filter(rCars, (c) => { return c.lapCount === lap; });
-        _.each(_.sortBy(runningCars, 'currTime'), (c, i) => {
-            if (lap === bestLap) {
-                if (i === 0) {
-                    bestTime = c.currTime;
-                    c.delayFromFirst = 0;
-                }
-                else {
-                    c.delayFromFirst = c.currTime - bestTime;
-                }
-            }
-            else {
-                // azzerare c.delayFromFirst? provare
-            }
-            pos++;
-            c.position = pos;
-        });
-    });
-};
-
-// find next lane following the right order (1-2-3 or 1-3-2)
-const nextLane = (lane) => {
-    return rLaneOrder[(rLaneOrder.indexOf(lane) + 1) % rLaneOrder.length];
-};
-
-// check if round is finished (all cars out or did 3 laps)
-const isRaceFinished = () => {
-    return _.every(rCars, (c) => { return c.outOfBounds || c.lapCount > rLaps; });
-};
-
-// forcefully stops the race. All cars still running are set to 99999.
-const stopRace = () => {
-    let dirty = false;
-    _.each(_.filter(rCars, (c) => {
-        return c.lapCount <= rLaps;
-    }), (c) => {
-        c.currTime = 99999;
-        c.outOfBounds = true;
-        dirty = true;
-    });
-
-    if (dirty) calculateRace();
-
-    return dirty;
-};
-
-// called by timer task. checks cars over max time limit and set them as out
+// Marks cars that have exceeded their timing limits.
 const checkOutCars = (timestamp) => {
-    // Use provided timestamp (captured at hardware level) or fallback to current time
-    if (!timestamp) {
-        timestamp = new Date().getTime();
+    const timedOutCars = state.cars.filter((car) => {
+        const splitTimedOut = timestamp - car.currTimestamp > state.timeCutoffMax;
+        const raceTimedOut = timestamp - car.startTimestamp > MAX_RACE_TIME_MS;
+
+        return car.startTimestamp > 0 &&
+              !car.outOfBounds &&
+              car.lapCount <= state.laps &&
+              (splitTimedOut || raceTimedOut);
+    });
+
+    timedOutCars.forEach((car) => {
+        car.currTime = MAX_RACE_TIME_MS;
+        car.outOfBounds = true;
+    });
+
+    if (timedOutCars.length > 0) {
+        calculateRace();
     }
 
-    let dirty = false;
-    _.each(_.filter(rCars, (c) => {
-        return c.startTimestamp > 0 && !c.outOfBounds && c.lapCount <= rLaps &&
-			((timestamp - c.currTimestamp) > rTimeCutoffMax || (timestamp - c.startTimestamp) > 99999);
-    }), (c) => {
-        c.currTime = 99999;
-        c.outOfBounds = true;
-        dirty = true;
-    });
-
-    if (dirty) calculateRace();
-
-    return dirty;
+    return timedOutCars.length > 0;
 };
 
-// called once after 5 seconds
+// Marks cars that did not cross their starting sensor.
 const checkNotStartedCars = () => {
-    // check cars not started and set them as out
-    let dirty = false;
-    _.each(_.filter(rCars, (c) => {
-        return c.lapCount === 0;
-    }), (c) => {
-        c.currTime = 99999;
-        c.outOfBounds = true;
-        dirty = true;
+    const notStartedCars = state.cars.filter((car) => {
+        return car.lapCount === 0 && !car.outOfBounds;
     });
 
-    if (dirty) calculateRace();
+    notStartedCars.forEach((car) => {
+        car.currTime = MAX_RACE_TIME_MS;
+        car.outOfBounds = true;
+    });
 
-    return dirty;
+    if (notStartedCars.length > 0) {
+        calculateRace();
+    }
+
+    return notStartedCars.length > 0;
 };
 
-const getCars = () => { return rCars; };
+// Returns an isolated snapshot of the current car states.
+const getCars = () => {
+    return state.cars.map((car) => ({
+        ...car,
+        splitTimes: [...car.splitTimes]
+    }));
+};
 
 module.exports = {
-    init: init,
-    addLap: addLap,
-    getCars: getCars,
-    stopRace: stopRace,
-    checkOutCars: checkOutCars,
-    checkNotStartedCars: checkNotStartedCars,
-    isRaceFinished: isRaceFinished
+    init,
+    addLap,
+    getCars,
+    stopRace,
+    checkOutCars,
+    checkNotStartedCars,
+    isRaceFinished
 };

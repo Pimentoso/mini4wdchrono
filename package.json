@@ -29,7 +29,8 @@
     "lint": "eslint --max-warnings=0 .",
     "lint:warn": "eslint .",
     "lint:fix": "eslint --fix .",
-    "lint:file": "eslint --fix"
+    "lint:file": "eslint --fix",
+    "test": "node --test"
   },
   "repository": {
     "type": "git",
