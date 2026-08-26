@@ -845,6 +845,11 @@ ipcMain.handle('hardware-create-sensor-timestamp', () => {
     return { timestamp };
 });
 
+// Returns the main-process clock time for renderer timing checks.
+ipcMain.handle('hardware-get-timestamp', () => {
+    return Date.now();
+});
+
 /**
  * Sets up sensors after board initialization
  * Uses Firmata digitalRead for maximum speed

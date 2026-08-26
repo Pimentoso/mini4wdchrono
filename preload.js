@@ -49,6 +49,7 @@ window.electronAPI = {
     // Hardware
     hardwareInitialize: () => ipcRenderer.invoke('hardware-initialize'),
     hardwareCreateSensorTimestamp: () => ipcRenderer.invoke('hardware-create-sensor-timestamp'),
+    hardwareGetTimestamp: () => ipcRenderer.invoke('hardware-get-timestamp'),
     hardwareSetupSensors: (config) => ipcRenderer.invoke('hardware-setup-sensors', config),
     hardwareSetupButton: (config) => ipcRenderer.invoke('hardware-setup-button', config),
     hardwareSetupLeds: (config) => ipcRenderer.invoke('hardware-setup-leds', config),

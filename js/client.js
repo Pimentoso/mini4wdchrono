@@ -15,6 +15,7 @@ let currManche = 0, currRound = 0, raceStarting = false, raceRunning = false, fr
 let timerIntervals = [], timerSeconds = [];
 let pageTimerSeconds;
 let checkRaceTask;
+let checkRaceInProgress = false;
 
 // Initializes renderer state from cached race data and dependencies.
 const init = (params) => {
@@ -473,14 +474,24 @@ const tournamentLoadFail = () => {
 // ==========================================================================
 // ==== race status
 
-// Checks whether cars have left the track or finished the race.
-const checkRace = () => {
-    let redraw = chrono.checkOutCars();
-    if (chrono.isRaceFinished()) {
-        raceFinished();
-        redraw = true;
+// Checks whether cars have left the track using the main-process clock.
+const checkRace = async () => {
+    if (checkRaceInProgress) return;
+
+    checkRaceInProgress = true;
+    try {
+        const timestamp = await window.electronAPI.hardwareGetTimestamp();
+        let redraw = chrono.checkOutCars(timestamp);
+        if (chrono.isRaceFinished()) {
+            raceFinished();
+            redraw = true;
+        }
+        if (redraw) updateRace();
+    } catch (error) {
+        console.error('[IPC] Failed to retrieve timestamp for race check:', error);
+    } finally {
+        checkRaceInProgress = false;
     }
-    if (redraw) updateRace();
 };
 
 // Marks cars that did not start within the allowed time.

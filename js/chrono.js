@@ -183,10 +183,13 @@ const stopRace = () => {
     return dirty;
 };
 
-// called by timer task
-const checkOutCars = () => {
-    // check cars over max time limit and set them as out
-    const timestamp = new Date().getTime();
+// called by timer task. checks cars over max time limit and set them as out
+const checkOutCars = (timestamp) => {
+    // Use provided timestamp (captured at hardware level) or fallback to current time
+    if (!timestamp) {
+        timestamp = new Date().getTime();
+    }
+
     let dirty = false;
     _.each(_.filter(rCars, (c) => {
         return c.startTimestamp > 0 && !c.outOfBounds && c.lapCount <= rLaps &&
