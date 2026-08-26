@@ -78,7 +78,7 @@ class LedManager {
     // Displays finishing positions after a completed round.
     roundFinish(cars) {
         const rLaps = storage.get('roundLaps');
-        const finishCars = _.filter(cars, (c) => !c.outOfBounds && c.lapCount === rLaps + 1);
+        const finishCars = cars.filter((c) => !c.outOfBounds && c.lapCount === rLaps + 1);
         setTimeout(async () => {
             for (const c of finishCars) {
                 let color;

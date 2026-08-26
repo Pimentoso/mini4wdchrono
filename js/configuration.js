@@ -27,7 +27,7 @@ let cacheReady = false;
 
 // Removes every value from the local configuration cache.
 const clearCache = () => {
-    _.each(_.keys(cachedConfig), (key) => {
+    Object.keys(cachedConfig).forEach((key) => {
         delete cachedConfig[key];
     });
 };
@@ -35,7 +35,7 @@ const clearCache = () => {
 // Replaces cached configuration with the supplied values.
 const replaceCachedConfig = (values) => {
     clearCache();
-    _.extend(cachedConfig, values || {});
+    Object.assign(cachedConfig, values || {});
 };
 
 // Loads all supported configuration values from the main process.

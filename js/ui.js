@@ -53,7 +53,9 @@ const gotoTab = (tab) => {
 const init = () => {
     translate();
 
-    const title_text = _.compact([configuration.get('title'), storage.get('name')]).join(' - ');
+    const title_text = [configuration.get('title'), storage.get('name')]
+        .filter((value) => value !== null && value !== undefined && value !== '')
+        .join(' - ');
     $('#js-title').text(title_text);
 
     $('#js-race-name').text(storage.get('name') || i18n.__('label-untitled'));
@@ -109,8 +111,8 @@ const init = () => {
 
 // Counts all rounds that have already recorded a result.
 const completedRoundCount = (mancheList) => {
-    return _.reduce(mancheList, (total, manche, mindex) => {
-        return total + _.reduce(manche, (roundTotal, _round, rindex) => {
+    return mancheList.reduce((total, manche, mindex) => {
+        return total + manche.reduce((roundTotal, _round, rindex) => {
             return roundTotal + (storage.loadRound(mindex, rindex) ? 1 : 0);
         }, 0);
     }, 0);
@@ -123,8 +125,8 @@ const findBestLap = () => {
 
     let bestLap = null;
     const times = storage.getSortedPlayerList();
-    _.each(times, (info) => {
-        _.each(info.times, (time) => {
+    times.forEach((info) => {
+        info.times.forEach((time) => {
             if (time > 0 && time < 99999 && (!bestLap || time < bestLap.time)) {
                 bestLap = { time: time, playerId: info.id };
             }
@@ -143,7 +145,7 @@ const updateRaceStatus = () => {
     }
 
     const mancheList = storage.getManches() || [];
-    const totalRounds = _.reduce(mancheList, (total, manche) => { return total + manche.length; }, 0);
+    const totalRounds = mancheList.reduce((total, manche) => { return total + manche.length; }, 0);
     const completedRounds = completedRoundCount(mancheList);
     if (!completedRounds) {
         $('#race-status-badges').hide();
@@ -367,11 +369,11 @@ const showPlayerList = () => {
     let tableHtml = '';
     if (playerList.length > 0) {
         const times = storage.getSortedPlayerList();
-        const validRaceTimes = _.flatten(_.map(times, (info) => { return _.filter(info.times, (t) => { return t > 0 && t < 99999; }); }));
-        const raceBestTime = validRaceTimes.length > 0 ? _.min(validRaceTimes) : null;
+        const validRaceTimes = times.flatMap((info) => { return info.times.filter((t) => { return t > 0 && t < 99999; }); });
+        const raceBestTime = validRaceTimes.length > 0 ? Math.min(...validRaceTimes) : null;
 
         // draw title row
-        const titleCells = _.times(tournament.manches.length, (i) => {
+        const titleCells = Array.from({ length: tournament.manches.length }, (_value, i) => {
             return `<th scope="col" class="has-text-centered racers-time-column">M${i + 1}</th>`;
         });
         titleCells.push(`<th scope="col" class="has-text-centered racers-summary-column"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-stopwatch"></i></span> ${i18n.__('label-best-2-times')}</th>`);
@@ -379,17 +381,17 @@ const showPlayerList = () => {
         tableHtml = `<thead><tr><th scope="col" class="has-text-centered racers-rank-column"><span class="icon" aria-hidden="true"><i class="fa-solid fa-ranking-star"></i></span><span class="is-sr-only">${i18n.__('label-rank')}</span></th><th scope="col" class="racers-name-column"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-user"></i></span> ${i18n.__('label-racer')}</th>${titleCells.join('')}</tr></thead><tbody>`;
 
         // draw player rows
-        _.each(times, (info, pos) => {
-            const validPlayerTimes = _.filter(info.times, (t) => { return t > 0 && t < 99999; });
-            const bestTime = validPlayerTimes.length > 0 ? _.min(validPlayerTimes) : null;
+        times.forEach((info, pos) => {
+            const validPlayerTimes = info.times.filter((t) => { return t > 0 && t < 99999; });
+            const bestTime = validPlayerTimes.length > 0 ? Math.min(...validPlayerTimes) : null;
             const bestSpeed = bestTime ? track.length / (bestTime / 1000) : null;
             const cells = [];
             const rankClass = pos < 3 ? ` is-podium is-podium-${pos + 1}` : '';
             const rankIcon = pos === 0 ? 'fa-trophy' : 'fa-medal';
             const podiumIcon = pos < 3 ? `<i class="fa-solid ${rankIcon}" aria-hidden="true"></i>` : '';
             cells.push(`<td class="has-text-centered racers-rank"><span class="racers-rank-badge${rankClass}">${podiumIcon}<span>${pos + 1}</span></span></td>`);
-            cells.push(`<th scope="row" class="racers-name is-uppercase">${_.escape(playerList[info.id])}</th>`);
-            cells.push(_.times(tournament.manches.length, (i) => {
+            cells.push(`<th scope="row" class="racers-name is-uppercase">${utils.escapeHtml(playerList[info.id])}</th>`);
+            cells.push(Array.from({ length: tournament.manches.length }, (_value, i) => {
                 const playerTime = info.times[i] || 0;
                 let highlight = '';
                 let timeContent = utils.prettyTime(playerTime);
@@ -430,16 +432,16 @@ const showMancheList = () => {
     const playerList = tournament.players;
     const mancheList = storage.getManches();
 
-    const roundCount = _.reduce(mancheList, (count, manche) => { return count + manche.length; }, 0);
+    const roundCount = mancheList.reduce((count, manche) => { return count + manche.length; }, 0);
     const roundLabel = roundCount === 1 ? i18n.__('label-round') : i18n.__('label-rounds');
     $('#js-rounds-count').text(`${roundCount} ${roundLabel}`);
 
     let tableHtml = `<thead><tr><th scope="col" class="has-text-centered manches-round-column"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-flag-checkered"></i></span>${i18n.__('label-round')}</th><th scope="col" class="has-text-centered"><span class="manches-lane-dot manches-lane-dot-1" aria-hidden="true"></span>${i18n.__('label-lane-1')}</th><th scope="col" class="has-text-centered"><span class="manches-lane-dot manches-lane-dot-2" aria-hidden="true"></span>${i18n.__('label-lane-2')}</th><th scope="col" class="has-text-centered"><span class="manches-lane-dot manches-lane-dot-3" aria-hidden="true"></span>${i18n.__('label-lane-3')}</th></tr></thead>`;
-    _.each(mancheList, (manche, mindex) => {
-        tableHtml += `<tbody class="manches-group"><tr class="manches-section"><th colspan="4" scope="rowgroup"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-flag"></i></span> ${_.escape(mancheName(mindex))}</th></tr>`;
-        _.each(manche, (group, rindex) => {
+    mancheList.forEach((manche, mindex) => {
+        tableHtml += `<tbody class="manches-group"><tr class="manches-section"><th colspan="4" scope="rowgroup"><span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-flag"></i></span> ${utils.escapeHtml(mancheName(mindex))}</th></tr>`;
+        manche.forEach((group, rindex) => {
             const cars = storage.loadRound(mindex, rindex);
-            const mancheText = _.map(group, (id, pindex) => {
+            const mancheText = group.map((id, pindex) => {
                 const playerName = playerList[id];
                 if (playerName) {
                     const car = cars ? cars[pindex] : null;
@@ -463,8 +465,8 @@ const showMancheList = () => {
                         }
                     }
 
-                    const playerHeader = `<div class="manches-racer-header"><strong class="is-uppercase">${_.escape(playerName)}</strong>${playerPositionTag}</div>`;
-                    const playerForm = `<div class="field manches-time-field"><div class="control has-icons-left"><input class="input is-medium js-time-form" type="text" aria-label="${_.escape(playerName)}" data-manche="${mindex}" data-round="${rindex}" data-player="${pindex}" value="${utils.prettyTime(playerTime)}" /><span class="icon is-small is-left has-text-grey-light" aria-hidden="true"><i class="fa-solid fa-stopwatch"></i></span></div></div>`;
+                    const playerHeader = `<div class="manches-racer-header"><strong class="is-uppercase">${utils.escapeHtml(playerName)}</strong>${playerPositionTag}</div>`;
+                    const playerForm = `<div class="field manches-time-field"><div class="control has-icons-left"><input class="input is-medium js-time-form" type="text" aria-label="${utils.escapeHtml(playerName)}" data-manche="${mindex}" data-round="${rindex}" data-player="${pindex}" value="${utils.prettyTime(playerTime)}" /><span class="icon is-small is-left has-text-grey-light" aria-hidden="true"><i class="fa-solid fa-stopwatch"></i></span></div></div>`;
 
                     return `<td class="manches-lane-cell">${playerHeader}${playerForm}</td>`;
                 }
@@ -503,7 +505,7 @@ const showNextRoundNames = () => {
         names = ['-'];
     }
     else {
-        names = _.filter([playerList[mancheList[m][r][0]], playerList[mancheList[m][r][1]], playerList[mancheList[m][r][2]]], (n) => { return n; });
+        names = [playerList[mancheList[m][r][0]], playerList[mancheList[m][r][1]], playerList[mancheList[m][r][2]]].filter((n) => { return n; });
     }
 
     $('#next-round-names').text(`${label} ${names.join(', ').toUpperCase()}`);
@@ -569,7 +571,7 @@ const drawRace = (cars, running) => {
     const laps = storage.get('roundLaps');
     updateRaceStatus();
 
-    _.each(cars, (car, i) => {
+    cars.forEach((car, i) => {
     // delay + speed
         if (car.outOfBounds) {
             $(`#delay-lane${i}`).text('—');
@@ -598,7 +600,7 @@ const drawRace = (cars, running) => {
         // split times
         $(`#laps-lane${i}`).empty();
         const fastestLap = Math.min(...car.splitTimes);
-        _.each(car.splitTimes, (t, ii) => {
+        car.splitTimes.forEach((t, ii) => {
             const time = utils.prettyTime(t);
             const speed = (track.length / 3) / (t / 1000);
             const fastestClass = t === fastestLap ? 'is-fastest-lap' : '';
@@ -795,7 +797,7 @@ const setupEventHandlers = (deps) => {
         });
         if (result === 0) {
             const length = parseFloat(hasLength.replace(',', '.'));
-            const order = _.map(hasOrder.split('-'), (i) => { return parseInt(i); });
+            const order = hasOrder.split('-').map((i) => { return parseInt(i); });
             console.log('[Race setup] Saving manual track', { length: length, order: order });
             client.setTrackManual(length, order);
         }

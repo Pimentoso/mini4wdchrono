@@ -18,8 +18,22 @@ const safeTime = (timeStr) => {
     return Math.round(parseFloat(timeStr.replace(',', '.')) * 1000);
 };
 
+// Escapes text for safe insertion into generated HTML markup.
+const escapeHtml = (value) => {
+    const htmlEscapes = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        '\'': '&#x27;',
+        '`': '&#x60;'
+    };
+    return (value === null || value === undefined ? '' : String(value)).replace(/[&<>"'`]/g, (character) => htmlEscapes[character]);
+};
+
 module.exports = {
     setLocale: setLocale,
     prettyTime: prettyTime,
-    safeTime: safeTime
+    safeTime: safeTime,
+    escapeHtml: escapeHtml
 };

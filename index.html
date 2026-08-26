@@ -825,9 +825,8 @@
 </body>
 
 <script>
-	// Load jQuery and Underscore before main.js loads using nodeRequire from preload
+	// Load jQuery before main.js loads using nodeRequire from preload
 	window.$ = window.jQuery = window.nodeRequire('jquery');
-	window._ = window.nodeRequire('underscore');
 	// Make require available as alias to nodeRequire for the modules
 	window.require = window.nodeRequire;
 </script>
