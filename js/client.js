@@ -114,11 +114,11 @@ const disqualify = (mindex, rindex, pindex) => {
 // Reads edited round times from the UI and persists them.
 const overrideTimes = () => {
     let time, newTime, oldTime, cars;
-    _.each(mancheList, (manche, mindex) => {
-        _.each(manche, (round, rindex) => {
+    mancheList.forEach((manche, mindex) => {
+        manche.forEach((round, rindex) => {
             cars = storage.loadRound(mindex, rindex);
             if (cars) {
-                _.each(round, (_playerId, pindex) => {
+                round.forEach((_playerId, pindex) => {
                     time = $(`input[data-manche='${mindex}'][data-round='${rindex}'][data-player='${pindex}']`).val();
                     if (time) {
                         newTime = utils.safeTime(time);
@@ -142,7 +142,7 @@ const overrideTimes = () => {
 
 // Generates tournament final rounds from the current rankings.
 const initFinal = () => {
-    const ids = _.map(storage.getSortedPlayerList(), (t) => { return t.id; });
+    const ids = storage.getSortedPlayerList().map((t) => { return t.id; });
 
     // remove any previously generated finals
     mancheList = mancheList.slice(0, mancheCount);
@@ -569,7 +569,7 @@ const updateRace = () => {
     ui.drawRace(cars, raceRunning || raceStarting);
 
     // stop timers
-    _.each(cars, (car, i) => {
+    cars.forEach((car, i) => {
         if (car.outOfBounds || car.lapCount > storage.get('roundLaps')) {
             stopTimer(i);
         }

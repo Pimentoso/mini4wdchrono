@@ -66,7 +66,6 @@ describe('chrono', () => {
 
     after(() => {
         storage.get = originalStorageGet;
-        delete global._;
     });
 
     test('initializes one fresh car for each lane', () => {

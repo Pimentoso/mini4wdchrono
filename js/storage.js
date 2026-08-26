@@ -27,10 +27,10 @@ const setCached = (key, value) => {
 
 // Replaces the local race-data cache with the supplied data.
 const replaceCachedData = (data) => {
-    _.each(_.keys(cachedRaceData), (key) => {
+    Object.keys(cachedRaceData).forEach((key) => {
         delete cachedRaceData[key];
     });
-    _.extend(cachedRaceData, data || {});
+    Object.assign(cachedRaceData, data || {});
 };
 
 // Retrieves a nested value from the local race-data cache.
@@ -138,7 +138,7 @@ const deleteRace = (filename) => {
 const getRecentFilesAsync = async (num) => {
     num = num || 10;
     const recent = await window.electronAPI.storageListRaces(num);
-    cachedRecentFiles = _.sortBy(recent, 'created').reverse().slice(0, num);
+    cachedRecentFiles = recent.slice().sort((a, b) => a.created - b.created).reverse().slice(0, num);
     return cachedRecentFiles;
 };
 
@@ -243,7 +243,7 @@ const getManches = () => {
         const tournament = get('tournament');
         if (!tournament) return null;
 
-        let mancheList = _.clone(tournament.manches || []);
+        let mancheList = (tournament.manches || []).slice();
         if (tournament.finals && tournament.finals.length) {
             mancheList = mancheList.concat(tournament.finals);
         }
@@ -273,10 +273,10 @@ const getPlayerData = () => {
         const playerTimes = [];
         const mancheList = getManches();
 
-        _.each(mancheList, (manche, mindex) => {
-            _.each(manche, (round, rindex) => {
+        mancheList.forEach((manche, mindex) => {
+            manche.forEach((round, rindex) => {
                 cars = loadRound(mindex, rindex);
-                _.each(round, (playerId, pindex) => {
+                round.forEach((playerId, pindex) => {
                     playerTimes[playerId] = playerTimes[playerId] || [];
                     if (cars) {
                         playerTimes[playerId][mindex] = {
@@ -310,22 +310,22 @@ const getSortedPlayerList = () => {
         // calculate best time sums
         const sums = [];
         let pData, bestTimes, bestSum;
-        _.each(playerList, (_player, pindex) => {
+        playerList.forEach((_player, pindex) => {
             pData = playerData[pindex] || [];
-            bestTimes = _.sortBy(_.filter(pData, (i) => { return i && i.time > 0; }), 'time').slice(0, 2);
+            bestTimes = pData.filter((i) => { return i && i.time > 0; }).sort((a, b) => a.time - b.time).slice(0, 2);
             bestSum = (bestTimes[0] ? bestTimes[0].time : 99999) + (bestTimes[1] ? bestTimes[1].time : 99999);
             sums[pindex] = bestSum;
         });
 
         // sort list by sum desc
-        const playerTimes = _.map(playerData, (data, index) => {
+        const playerTimes = Array.from(playerData, (data, index) => {
             return {
                 id: index,
-                times: _.map(data, (i) => { return i ? i.time : null; }),
+                times: Array.from(data, (i) => { return i ? i.time : null; }),
                 best: sums[index]
             };
         });
-        return _.sortBy(playerTimes, 'best');
+        return playerTimes.sort((a, b) => a.best - b.best);
     } catch (error) {
         console.error('[Storage] Failed to get sorted player list:', error);
         throw error;
