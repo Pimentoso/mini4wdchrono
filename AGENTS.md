@@ -22,6 +22,19 @@ Electron app for Mini4WD race timing and race management. Vanilla JS, HTML, Bulm
 - `preload.js`: renderer IPC surface.
 - `utils/build-*`: GitHub Release artifacts.
 
+## Basic functionality
+
+- Timing supports three lanes and requires a serial-connected hardware lap timer, except when `debugMode` is enabled.
+  - Users configure sensor and optional hardware pins.
+  - A hardware disconnect blocks racing until the connection is restored.
+  - Hardware and application-wide settings are stored in the user-data `settings.json`.
+- Track data is required before a race can start. Load it from the track API or enter the track length and lane order manually.
+- Race-specific data includes the race name, track, tournament, current round, race mode, lap count, timing thresholds, and results. Persist each race under the user-data `races/` directory as `<Unix timestamp>.json`.
+- Tournament data is optional and can be loaded from the tournament API.
+  - Without a tournament, only free rounds are available; free-round results are not persisted.
+  - With a tournament, preserve bracket player/lane order, round navigation, replay, time editing/disqualification, generated finals, standings, race-progress tables, and Excel export.
+  - Free rounds remain available during a tournament and must not overwrite tournament-round results.
+
 ## Rules
 
 - Use plain JavaScript; preserve existing CommonJS style.
