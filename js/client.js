@@ -15,6 +15,7 @@ let currManche = 0, currRound = 0, raceStarting = false, raceRunning = false, fr
 let timerIntervals = [], timerSeconds = [];
 let pageTimerSeconds;
 let checkRaceTask;
+let checkStartTask;
 let checkRaceInProgress = false;
 
 // Initializes renderer state from cached race data and dependencies.
@@ -226,8 +227,10 @@ const startRound = () => {
     timerSeconds = [];
 
     // run tasks periodically
+    clearInterval(checkRaceTask);
+    clearTimeout(checkStartTask);
     checkRaceTask = setInterval(checkRace, 500);
-    setTimeout(checkStart, storage.get('startDelay') * 1000);
+    checkStartTask = setTimeout(checkStart, storage.get('startDelay') * 1000);
 
     raceStarting = false;
     raceRunning = true;
@@ -242,12 +245,18 @@ const startRound = () => {
 
 // Stops an active race when the stop control is pressed.
 const stopRace = () => {
-    if (raceStarting) {
+    if (raceStarting || !raceRunning) {
         return false;
     }
 
-    chrono.stopRace();
-    checkRace();
+    const changed = chrono.stopRace();
+
+    if (chrono.isRaceFinished()) {
+        raceFinished();
+        updateRace();
+    }
+
+    return changed;
 };
 
 // Navigates to the previous tournament round after confirmation.
@@ -476,11 +485,14 @@ const tournamentLoadFail = () => {
 
 // Checks whether cars have left the track using the main-process clock.
 const checkRace = async () => {
-    if (checkRaceInProgress) return;
+    if (checkRaceInProgress || !raceRunning) return;
 
     checkRaceInProgress = true;
     try {
         const timestamp = await window.electronAPI.hardwareGetTimestamp();
+
+        if (!raceRunning) return;
+
         let redraw = chrono.checkOutCars(timestamp);
         if (chrono.isRaceFinished()) {
             raceFinished();
@@ -506,8 +518,15 @@ const checkStart = () => {
 
 // Finalizes the current round, persists results, and updates the UI.
 const raceFinished = () => {
-    // kill race check task
+    if (!raceRunning && !raceStarting) {
+        return;
+    }
+
+    // kill race check tasks
     clearInterval(checkRaceTask);
+    clearTimeout(checkStartTask);
+    checkRaceTask = null;
+    checkStartTask = null;
 
     const cars = chrono.getCars();
     ledManager.roundFinish(cars);
