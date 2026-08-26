@@ -471,6 +471,7 @@ const tournamentLoadDone = (obj) => {
     ui.showMancheList();
 
     freeRound = false;
+    chronoInit();
     ui.tournamentLoadDone(currTournament);
 };
 
