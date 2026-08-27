@@ -478,6 +478,30 @@
 	color: hsl(0, 0%, 21%);
 }
 
+.race-lane-empty {
+	filter: grayscale(45%);
+	opacity: 0.55;
+}
+
+.race-lane-empty .race-lane-content {
+	align-items: center;
+	display: flex;
+	height: calc(100% - 3.75rem);
+	justify-content: center;
+	min-height: 18rem;
+}
+
+.race-lane-empty .race-lane-content .title {
+	color: hsl(0, 0%, 35%) !important;
+	font-size: 2rem;
+	letter-spacing: 0.08em;
+	margin-bottom: 0;
+}
+
+.race-lane-empty .race-lane-content > :not(.title) {
+	display: none !important;
+}
+
 .race-lane-content {
 	padding: 2rem 1.5rem 1.5rem;
 }

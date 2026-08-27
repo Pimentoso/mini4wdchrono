@@ -547,9 +547,11 @@ const initRace = (freeRound) => {
     else {
         const playerList = tournament.players;
         const mancheList = storage.getManches();
-        $('#name-lane0').text(playerList[mancheList[currManche][currRound][0]] || '//');
-        $('#name-lane1').text(playerList[mancheList[currManche][currRound][1]] || '//');
-        $('#name-lane2').text(playerList[mancheList[currManche][currRound][2]] || '//');
+        const round = mancheList[currManche][currRound];
+        round.forEach((playerId, lane) => {
+            const playerName = playerId === -1 ? i18n.__('label-car-empty') : playerList[playerId] || '//';
+            $(`#name-lane${lane}`).text(playerName);
+        });
         $('#curr-manche').text(mancheName(currManche));
         $('#curr-round').text(`ROUND ${currRound + 1}`);
         showNextRoundNames();
@@ -572,7 +574,15 @@ const drawRace = (cars, running) => {
     updateRaceStatus();
 
     cars.forEach((car, i) => {
-    // delay + speed
+        const isEmpty = car.playerId === -1;
+        $(`.race-lane-card-${i}`).toggleClass('race-lane-empty', isEmpty);
+
+        if (isEmpty) {
+            $(`#name-lane${i}`).text(i18n.__('label-car-empty'));
+            return;
+        }
+
+        // delay + speed
         if (car.outOfBounds) {
             $(`#delay-lane${i}`).text('—');
         }
