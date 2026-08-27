@@ -655,6 +655,14 @@ div[data-tab="race"].container {
 	min-height: 3.25em;
 }
 
+.race-next-round-player {
+	color: #fff;
+	font-weight: 700;
+	font-size: 1.25rem !important;
+	text-transform: uppercase;
+	margin: 0px 6px;
+}
+
 @media print {
 	.is-hidden-print {
 		display: none !important;

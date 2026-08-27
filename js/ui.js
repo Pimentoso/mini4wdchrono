@@ -508,7 +508,10 @@ const showNextRoundNames = () => {
         names = [playerList[mancheList[m][r][0]], playerList[mancheList[m][r][1]], playerList[mancheList[m][r][2]]].filter((n) => { return n; });
     }
 
-    $('#next-round-names').text(`${label} ${names.join(', ').toUpperCase()}`);
+    const namesHtml = names.map((name) => {
+        return `<strong class="race-next-round-player">${utils.escapeHtml(name)}</strong>`;
+    }).join(' - ');
+    $('#next-round-names').html(`${label} ${namesHtml}`);
 };
 
 // Returns the display name for a manche or final.
