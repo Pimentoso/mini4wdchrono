@@ -64,6 +64,7 @@ const init = () => {
     $('#js-settings-speed-threshold').val(storage.get('speedThreshold') || 5);
     $('#js-settings-start-delay').val(storage.get('startDelay') || 3);
     $('#js-settings-round-laps').val(storage.get('roundLaps') || 3);
+    $('#js-racer-search').attr({'placeholder': i18n.__('button-search-racers')});
     showRaceModeDetails();
 
     $('.js-led-animation').removeClass('is-primary');
@@ -356,6 +357,15 @@ const showRaceModeDetails = () => {
     }
 };
 
+// Filters the ranking table rows by the current racer search text.
+const filterPlayerList = () => {
+    const query = $('#js-racer-search').val().trim().toLocaleLowerCase();
+    $('#tablePlayerList tbody tr').each((_index, row) => {
+        const racerName = $(row).find('.racers-name').text().toLocaleLowerCase();
+        $(row).toggle(racerName.includes(query));
+    });
+};
+
 // Renders the tournament ranking table.
 const showPlayerList = () => {
     const track = storage.get('track');
@@ -418,6 +428,7 @@ const showPlayerList = () => {
         tableHtml += '</tbody>';
     }
     $('#tablePlayerList').html(tableHtml);
+    filterPlayerList();
 };
 
 // Renders every tournament round and its recorded results.
@@ -730,6 +741,8 @@ const setupEventHandlers = (deps) => {
         const tab = $this.closest('li').data('tab');
         gotoTab(tab);
     });
+
+    $('#js-racer-search').on('input', filterPlayerList);
 
     // modals
     // Opens a modal and prevents page scrolling.
