@@ -16,11 +16,6 @@
 <div id="hardware-loading" class="hardware-loading box">
 	<span class="loader is-size-3"></span>
 	<p class="tn" data-tn="label-hardware-connecting">Connecting to lap timer...</p>
-	<div id="hardware-port-selection" class="box hardware-port-selection" style="display: none;">
-		<p class="mb-4 tn" data-tn="dialog-connection-error">Connection error</p>
-		<p id="hardware-port-selection-error" class="has-text-grey mb-4" style="display: none;"></p>
-		<p id="button-save-boot-usb-port-container" class="has-text-centered"><button id="button-save-boot-usb-port" class="button is-primary tn" data-tn="button-save-restart">Save and restart</button></p>
-	</div>
 </div>
 
 <div id="main" style="display: none;">
@@ -795,6 +790,22 @@
 </div>
 
 <!-- MODALS -->
+<div id="modal-hardware-connection-error" class="modal">
+	<div class="modal-background"></div>
+	<div class="modal-card">
+		<header class="modal-card-head">
+			<p class="modal-card-title tn" data-tn="dialog-connection-error">Connection error</p>
+		</header>
+		<section class="modal-card-body">
+			<p id="hardware-port-selection-error" class="has-text-grey mb-4" style="display: none;"></p>
+			<div id="hardware-port-selection-content"></div>
+		</section>
+		<footer class="modal-card-foot" style="justify-content: flex-end;">
+			<button id="button-save-boot-usb-port" class="button is-primary tn" data-tn="button-save-restart">Save and restart</button>
+		</footer>
+	</div>
+</div>
+
 <div id="modal-new" class="modal">
 	<div class="modal-background"></div>
 	<div class="modal-card">

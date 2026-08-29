@@ -6,12 +6,25 @@ const i18n = new (require('../i18n/i18n'))();
 const configuration = require('./configuration');
 const storage = require('./storage');
 
+// Opens a modal and prevents page scrolling.
+const openModal = (modal) => {
+    $(`#${modal}`).addClass('is-active');
+    $(document.documentElement).addClass('is-clipped');
+};
+
+// Closes every modal and restores page scrolling.
+const closeAllModals = () => {
+    $('.modal').removeClass('is-active');
+    $(document.documentElement).removeClass('is-clipped');
+};
+
 // Updates the board status UI after a successful connection.
 const boardConnected = () => {
     $('#tag-board-status').removeClass('is-danger');
     $('#tag-board-status').addClass('is-success');
     $('#tag-board-status').text(i18n.__('tag-connected'));
     $('#hardware-loading').hide();
+    closeAllModals();
     $('#main').show();
 };
 
@@ -48,8 +61,8 @@ const showBootConnectionError = (errorMessage) => {
 const showBootPortSelection = (errorMessage) => {
     $('#hardware-loading > .loader, #hardware-loading > p').hide();
     showBootConnectionError(errorMessage);
-    $('#js-config-usb-port-field').insertBefore('#button-save-boot-usb-port-container');
-    $('#hardware-port-selection').show();
+    $('#js-config-usb-port-field').appendTo('#hardware-port-selection-content');
+    openModal('modal-hardware-connection-error');
 };
 
 // Translates all elements marked for localization.
@@ -763,19 +776,7 @@ const setupEventHandlers = (deps) => {
 
     $('#js-racer-search').on('input', filterPlayerList);
 
-    // modals
-    // Opens a modal and prevents page scrolling.
-    const openModal = (modal) => {
-        $(`#${modal}`).addClass('is-active');
-        $(document.documentElement).addClass('is-clipped');
-    };
-
-    // Closes every modal and restores page scrolling.
-    const closeAllModals = () => {
-        $('.modal').removeClass('is-active');
-        $(document.documentElement).removeClass('is-clipped');
-    };
-
+    // Modals
     $('.open-modal').on('click', (e) => {
         const $this = $(e.currentTarget);
         openModal($this.data('modal'));
