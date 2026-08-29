@@ -37,6 +37,7 @@ let buzzerPin = null;
 let isHardwareReady = false;
 let hardwareInitialization = null;
 let serialPort = null;
+const HARDWARE_CONNECTION_TIMEOUT = 10000;
 const FirmataPixelStrip = require('./js/firmata_pixel_strip');
 
 function markHardwareDisconnected(reason, disconnectedPort) {
@@ -759,28 +760,70 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
 
         // Auto-detect Arduino port
         const ports = await SerialPort.list();
-        const arduinoPort = ports.find(port =>
-            port.manufacturer && (
-                port.manufacturer.includes('Arduino') ||
-                port.manufacturer.includes('Silicon Labs') ||
-                port.manufacturer.includes('FTDI') ||
-                port.manufacturer.includes('QinHeng')
-            )
-        );
+        const configuredUsbPort = globalConf ? globalConf.get('usbPort') : null;
+        const arduinoPort = configuredUsbPort
+            ? ports.find(port => port.path === configuredUsbPort)
+            : ports.find(port =>
+                port.manufacturer && (
+                    port.manufacturer.includes('Arduino') ||
+                    port.manufacturer.includes('Silicon Labs') ||
+                    port.manufacturer.includes('FTDI') ||
+                    port.manufacturer.includes('QinHeng')
+                )
+            );
 
         if (!arduinoPort) {
-            throw new Error('No Arduino found. Please connect your Arduino with Firmata firmware.');
+            throw new Error(configuredUsbPort
+                ? `Configured USB port ${configuredUsbPort} is not available.`
+                : 'No Arduino found. Please connect your Arduino with Firmata firmware.');
         }
 
         console.log(`[Hardware] Found Arduino at ${arduinoPort.path}`);
 
         // Board initialization happens asynchronously
         hardwareInitialization = new Promise((resolve, reject) => {
+            let port;
+            let settled = false;
+
+            // Completes hardware initialization once and closes failed connections.
+            const settle = (error, result) => {
+                if (settled) {
+                    return;
+                }
+
+                settled = true;
+                clearTimeout(connectionTimeout);
+
+                if (error) {
+                    if (serialPort === port) {
+                        serialPort = null;
+                    }
+                    if (port && port.isOpen) {
+                        port.close(() => {});
+                    }
+                    reject(error);
+                    return;
+                }
+
+                resolve(result);
+            };
+
+            const connectionTimeout = setTimeout(() => {
+                const error = new Error(`Hardware connection timed out after ${HARDWARE_CONNECTION_TIMEOUT / 1000} seconds.`);
+                console.error(`[Hardware] ${error.message}`);
+                settle(error);
+            }, HARDWARE_CONNECTION_TIMEOUT);
+
             // Create SerialPort instance with v13 API
-            const port = new SerialPort({
-                path: arduinoPort.path,
-                baudRate: 57600
-            });
+            try {
+                port = new SerialPort({
+                    path: arduinoPort.path,
+                    baudRate: 57600
+                });
+            } catch (error) {
+                settle(error);
+                return;
+            }
             serialPort = port;
 
             // Wait for serial port to open
@@ -792,6 +835,9 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
 
                 // Wait for Firmata to be ready (queries board for capabilities)
                 firmataBoard.once('ready', () => {
+                    if (settled) {
+                        return;
+                    }
                     console.log('[Hardware] Firmata ready');
 
                     board = firmataBoard;
@@ -802,7 +848,7 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
                         mainWindow.webContents.send('hardware-board-ready');
                     }
 
-                    resolve({ success: true, message: 'Hardware initialized' });
+                    settle(null, { success: true, message: 'Hardware initialized' });
                 });
 
                 // Handle Firmata errors
@@ -812,7 +858,7 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
                     if (disconnected && mainWindow && !mainWindow.isDestroyed()) {
                         mainWindow.webContents.send('hardware-board-error', error.message);
                     }
-                    reject(error);
+                    settle(error);
                 });
             });
 
@@ -820,7 +866,7 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
             port.on('error', (error) => {
                 console.error('[Hardware] Serial port error:', error);
                 markHardwareDisconnected(error.message, port);
-                reject(error);
+                settle(error);
             });
 
             port.on('close', (error) => {

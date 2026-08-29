@@ -65,7 +65,7 @@ async function initializeApplication() {
     let val1 = 0, val2 = 0, val3 = 0;
     let reconnectTimer = null;
     let reconnectInProgress = false;
-    let disconnectNotified = false;
+    let initialHardwareConnection = true;
 
     // Initialize LED manager
     const LedManager = require('./js/led_manager');
@@ -225,7 +225,7 @@ async function initializeApplication() {
     // Listen for board ready event from main process
     window.electronAPI.onBoardReady(async () => {
         connected = true;
-        disconnectNotified = false;
+        initialHardwareConnection = false;
         if (reconnectTimer) {
             clearTimeout(reconnectTimer);
             reconnectTimer = null;
@@ -236,39 +236,28 @@ async function initializeApplication() {
 
     // Listen for board errors from main process
     window.electronAPI.onBoardError((event, errorMessage) => {
+        void event;
         connected = false;
         ledManager.disconnected();
         ui.boardDisconnected();
 
         log.error(`Board ERROR at ${new Date()} - ${errorMessage}`);
-        if (!debugMode && !disconnectNotified) {
-            disconnectNotified = true;
-            window.electronAPI.showMessageBoxSync({
-                type: 'error',
-                title: 'Error',
-                message: i18n.__('dialog-connection-error'),
-                detail: errorMessage,
-                buttons: ['Ok']
-            });
+        if (initialHardwareConnection) {
+            ui.showBootPortSelection(errorMessage);
         }
     });
 
     // Listen for board closed event from main process
     window.electronAPI.onBoardClosed((event, errorMessage) => {
+        void event;
         connected = false;
         ledManager.disconnected();
         ui.boardDisconnected();
 
-        log.error(`Board closed at ${new Date()}`);
-        if (!debugMode && !disconnectNotified) {
-            disconnectNotified = true;
-            window.electronAPI.showMessageBoxSync({
-                type: 'error',
-                title: 'Error',
-                message: i18n.__('dialog-disconnected'),
-                detail: errorMessage || i18n.__('dialog-connection-error'),
-                buttons: ['Ok']
-            });
+        log.error(`Board closed at ${new Date()} - ${errorMessage || 'Unknown reason'}`);
+        if (initialHardwareConnection) {
+            ui.showBootPortSelection(errorMessage);
+            return;
         }
         scheduleHardwareReconnect();
     });
@@ -335,15 +324,6 @@ async function initializeApplication() {
         log.info('Hardware initialization started');
     } catch (error) {
         log.error('Failed to initialize hardware:', error);
-        if (!debugMode) {
-            window.electronAPI.showMessageBoxSync({
-                type: 'error',
-                title: 'Error',
-                message: i18n.__('dialog-connection-error'),
-                detail: error.message,
-                buttons: ['Ok']
-            });
-        }
-        scheduleHardwareReconnect();
+        ui.showBootPortSelection(error.message);
     }
 }

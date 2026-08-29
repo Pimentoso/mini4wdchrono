@@ -647,7 +647,7 @@
 					</div>
 				</div>
 
-				<div class="field">
+				<div id="js-config-usb-port-field" class="field">
 					<label class="label tn" data-tn="label-usb-port">USB Port</label>
 					<p class="control">
 					<div class="select is-fullwidth">
@@ -727,7 +727,7 @@
 			<p class="has-text-centered">
 				<a id="button-save-config" href="#" class="button is-info" style="width: 200px;">
 					<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-floppy-disk"></i></span>
-					<span class="tn" data-tn="button-save-settings">Save settings</span>
+					<span class="tn" data-tn="button-save-restart">Save</span>
 				</a>
 			</p>
 		</div>
@@ -790,6 +790,22 @@
 </div>
 
 <!-- MODALS -->
+<div id="modal-hardware-connection-error" class="modal">
+	<div class="modal-background"></div>
+	<div class="modal-card">
+		<header class="modal-card-head">
+			<p class="modal-card-title tn" data-tn="dialog-connection-error">Connection error</p>
+		</header>
+		<section class="modal-card-body">
+			<p id="hardware-port-selection-error" class="has-text-grey mb-4" style="display: none;"></p>
+			<div id="hardware-port-selection-content"></div>
+		</section>
+		<footer class="modal-card-foot" style="justify-content: flex-end;">
+			<button id="button-save-boot-usb-port" class="button is-primary tn" data-tn="button-save-restart">Save and restart</button>
+		</footer>
+	</div>
+</div>
+
 <div id="modal-new" class="modal">
 	<div class="modal-background"></div>
 	<div class="modal-card">

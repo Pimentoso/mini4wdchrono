@@ -102,16 +102,21 @@ const setAsync = async (settingKey, settingValue) => {
 };
 
 // Updates cached configuration before persisting it in the background.
-const set = (settingKey, settingValue) => {
+const set = (settingKey, settingValue, callback) => {
     cachedConfig[settingKey] = settingValue;
-    setAsync(settingKey, settingValue).catch(async (error) => {
-        console.error('[Configuration] Failed to save value:', { settingKey: settingKey, error: error });
-        try {
-            await hydrateCache();
-        } catch (rehydrateError) {
-            console.error('[Configuration] Failed to rehydrate cache:', rehydrateError);
-        }
-    });
+    setAsync(settingKey, settingValue)
+        .then(() => {
+            if (callback) callback();
+        })
+        .catch(async (error) => {
+            console.error('[Configuration] Failed to save value:', { settingKey: settingKey, error: error });
+            try {
+                await hydrateCache();
+            } catch (rehydrateError) {
+                console.error('[Configuration] Failed to rehydrate cache:', rehydrateError);
+            }
+            if (callback) callback(error);
+        });
 };
 
 // Deletes a configuration value from persistence and the cache.
