@@ -424,6 +424,10 @@
 	width: 3rem;
 }
 
+.hardware-port-selection {
+	min-width: 20rem;
+}
+
 .race-status-badges {
 	display: none;
 	margin-bottom: 0;

@@ -33,6 +33,25 @@ const boardDisconnected = () => {
     $('#hardware-loading').show();
 };
 
+// Shows a hardware initialization error without Electron's IPC wrapper.
+const showBootConnectionError = (errorMessage) => {
+    if (!errorMessage) {
+        $('#hardware-port-selection-error').hide();
+        return;
+    }
+
+    const message = errorMessage.replace(/^Error invoking remote method 'hardware-initialize': /, '');
+    $('#hardware-port-selection-error').text(message).show();
+};
+
+// Shows the USB port selector when the first hardware connection cannot be made.
+const showBootPortSelection = (errorMessage) => {
+    $('#hardware-loading > .loader, #hardware-loading > p').hide();
+    showBootConnectionError(errorMessage);
+    $('#js-config-usb-port-field').insertBefore('#button-save-boot-usb-port-container');
+    $('#hardware-port-selection').show();
+};
+
 // Translates all elements marked for localization.
 const translate = () => {
     $('.tn').each(function () {
@@ -928,6 +947,7 @@ const setupEventHandlers = (deps) => {
 
     // Save configuration
     $('#button-save-config').on('click', (e) => {
+        e.preventDefault();
         configuration.set('reverse', $('#js-config-reverse').is(':checked') ? 1 : 0);
         configuration.set('sensorPin1', parseInt($('#js-config-sensor-pin-1').val()));
         configuration.set('sensorPin2', parseInt($('#js-config-sensor-pin-2').val()));
@@ -937,13 +957,35 @@ const setupEventHandlers = (deps) => {
         configuration.set('startButtonPin', parseInt($('#js-config-start-button-pin').val()));
         configuration.set('title', $('#js-config-title').val());
         configuration.set('tab', $('#js-config-starting-tab').val());
-        configuration.set('usbPort', $('#js-config-usb-port').val());
-        window.electronAPI.showMessageBoxSync({
-            type: 'warning',
-            message: i18n.__('dialog-restart'),
-            buttons: ['Ok']
+        configuration.set('usbPort', $('#js-config-usb-port').val(), (error) => {
+            if (error) {
+                return;
+            }
+            window.electronAPI.showMessageBoxSync({
+                type: 'warning',
+                message: i18n.__('dialog-save-restart'),
+                buttons: ['Ok']
+            });
+            location.reload();
         });
-        location.reload();
+    });
+
+    // Saves the boot-time USB port selection before reloading the application.
+    $('#button-save-boot-usb-port').on('click', (e) => {
+        const $button = $(e.currentTarget);
+        $button.prop('disabled', true);
+        configuration.set('usbPort', $('#js-config-usb-port').val(), (error) => {
+            if (error) {
+                $button.prop('disabled', false);
+                return;
+            }
+            window.electronAPI.showMessageBoxSync({
+                type: 'warning',
+                message: i18n.__('dialog-save-restart'),
+                buttons: ['Ok']
+            });
+            location.reload();
+        });
         e.preventDefault();
     });
 
@@ -1008,6 +1050,7 @@ module.exports = {
     boardConnected: boardConnected,
     debugModeEnabled: debugModeEnabled,
     boardDisconnected: boardDisconnected,
+    showBootPortSelection: showBootPortSelection,
     translate: translate,
     gotoTab: gotoTab,
     init: init,
