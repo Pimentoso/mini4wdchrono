@@ -509,7 +509,7 @@ const showMancheList = () => {
                     }
 
                     const playerHeader = `<div class="manches-racer-header"><strong class="is-uppercase">${utils.escapeHtml(playerName)}</strong>${playerPositionTag}</div>`;
-                    const playerForm = `<div class="field manches-time-field"><div class="control has-icons-left"><input class="input is-medium js-time-form" type="text" aria-label="${utils.escapeHtml(playerName)}" data-manche="${mindex}" data-round="${rindex}" data-player="${pindex}" value="${utils.prettyTime(playerTime)}" /><span class="icon is-small is-left has-text-grey-light" aria-hidden="true"><i class="fa-solid fa-stopwatch"></i></span></div></div>`;
+                    const playerForm = `<div class="field mb-0 manches-time-field"><div class="control has-icons-left"><input class="input is-medium has-text-centered js-time-form" type="text" aria-label="${utils.escapeHtml(playerName)}" data-manche="${mindex}" data-round="${rindex}" data-player="${pindex}" value="${utils.prettyTime(playerTime)}" /><span class="icon is-small is-left has-text-grey-light" aria-hidden="true"><i class="fa-solid fa-stopwatch"></i></span></div></div>`;
 
                     return `<td class="manches-lane-cell">${playerHeader}${playerForm}</td>`;
                 }

@@ -53,7 +53,7 @@
 								</div>
 							</div>
 						</div>
-						<div id="race-status-badges" class="field is-grouped is-grouped-multiline race-status-badges">
+						<div id="race-status-badges" class="field is-grouped is-grouped-multiline mb-0 race-status-badges">
 							<div class="control">
 								<div class="tags has-addons">
 									<span class="tag tn" data-tn="tag-race-progress">Progress</span>
@@ -127,7 +127,7 @@
 				<span class="tn" data-tn="button-open-race">Open race</span>
 			</a>
 		</p>
-		<p id="js-race-name" class="title is-uppercase has-text-centered" style="margin-top: 10px;"></p>
+		<p id="js-race-name" class="title is-uppercase has-text-centered mt-2"></p>
 		<p id="js-race-created" class="subtitle has-text-centered"></p>
 
 		<div class="box">
@@ -324,13 +324,13 @@
 
 	<!-- PLAYERS TAB -->
 	<div class="container" data-tab="players" style="display: none;">
-		<div class="js-hide-on-no-tournament level leaderboard-header is-hidden-print">
+		<div class="js-hide-on-no-tournament level mb-4 leaderboard-header is-hidden-print">
 			<div class="level-left">
 				<div class="level-item leaderboard-title">
 					<span class="icon has-text-warning" aria-hidden="true"><i class="fa-solid fa-trophy"></i></span>
-					<h2 class="title is-4 tn" data-tn="label-leaderboard">Leaderboard</h2>
+					<h2 class="title is-4 mb-0 tn" data-tn="label-leaderboard">Leaderboard</h2>
 					<span id="js-racers-count" class="tag is-light is-medium">0 racers</span>
-					<div class="field has-addons racer-search-field">
+					<div class="field has-addons mb-0">
 						<p class="control">
 							<span class="button is-static is-small">
 								<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-magnifying-glass"></i></span>
@@ -369,7 +369,7 @@
 		</div>
 		<div class="js-hide-on-no-tournament leaderboard-card">
 			<div class="table-container leaderboard-table-container">
-				<table id="tablePlayerList" class="table is-hoverable is-fullwidth is-size-5 is-table-print racers-table"></table>
+				<table id="tablePlayerList" class="table is-hoverable is-fullwidth is-size-5 mb-0 is-table-print racers-table"></table>
 			</div>
 		</div>
 		<div class="js-hide-on-no-tournament leaderboard-legend is-hidden-print">
@@ -383,11 +383,11 @@
 
 	<!-- MANCHES TAB -->
 	<div class="container" data-tab="manches" style="display: none;">
-		<div class="js-hide-on-no-tournament level leaderboard-header">
+		<div class="js-hide-on-no-tournament level mb-4 leaderboard-header">
 			<div class="level-left">
 				<div class="level-item leaderboard-title">
 					<span class="icon has-text-primary" aria-hidden="true"><i class="fa-solid fa-table-list"></i></span>
-					<h2 class="title is-4 tn" data-tn="label-race-schedule">Race schedule</h2>
+					<h2 class="title is-4 mb-0 tn" data-tn="label-race-schedule">Race schedule</h2>
 					<span id="js-rounds-count" class="tag is-light is-medium is-lowercase">0 rounds</span>
 				</div>
 			</div>
@@ -402,7 +402,7 @@
 		</div>
 		<div class="js-hide-on-no-tournament leaderboard-card manches-card">
 			<div class="table-container leaderboard-table-container">
-				<table id="tableMancheList" class="table is-hoverable is-fullwidth is-size-5 manches-table"></table>
+				<table id="tableMancheList" class="table is-hoverable is-fullwidth is-size-5 mb-0 manches-table"></table>
 			</div>
 		</div>
 		<p class="js-show-on-no-track has-text-grey has-text-centered tn" data-tn="label-track-not-loaded">Track not loaded</p>
@@ -575,7 +575,7 @@
 			</div>
 		</div>
 		<div
-			class="js-hide-on-no-tournament js-hide-on-free-round js-hide-on-no-track level has-text-centered race-next-round">
+			class="js-hide-on-no-tournament js-hide-on-free-round js-hide-on-no-track level has-text-centered mb-0 race-next-round">
 			<span id="next-round-names" class="level-item tag is-info is-size-5">-</span>
 		</div>
 
@@ -679,7 +679,7 @@
 					<span class="icon hardware-pin-settings-chevron" aria-hidden="true"><i class="fa-solid fa-chevron-down"></i></span>
 				</summary>
 				<div class="hardware-pin-settings-content">
-					<p class="notification is-warning is-light hardware-pin-settings-warning">
+					<p class="notification is-warning is-light is-flex is-align-items-center is-gap-2 mb-5">
 						<span class="icon" aria-hidden="true"><i class="fa-solid fa-triangle-exclamation"></i></span>
 						<span class="tn" data-tn="label-hardware-pin-settings-desc">Change these values only when updating the Arduino wiring.</span>
 					</p>
