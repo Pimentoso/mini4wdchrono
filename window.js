@@ -210,8 +210,8 @@ function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
         webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
+            nodeIntegration: false,
+            contextIsolation: true,
             enableRemoteModule: false,
             preload: path.join(__dirname, 'preload.js')
         }

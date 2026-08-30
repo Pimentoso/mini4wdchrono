@@ -1,14 +1,18 @@
-// Preload script - with contextIsolation: false, we can directly modify window
+// Preload script - contextIsolation is enabled, expose a safe API via contextBridge
 'use strict';
 
-const { ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer } = require('electron');
 
-// With contextIsolation: false, we can directly set window properties
-// No need for contextBridge - just set window properties directly
-window.nodeRequire = require;
+// Only allow jQuery to be loaded through this whitelisted require, avoiding exposure of raw Node.js require to the renderer
+contextBridge.exposeInMainWorld('nodeRequire', (moduleName) => {
+    if (moduleName === 'jquery') {
+        return require('jquery');
+    }
+    throw new Error(`Module "${moduleName}" is not allowed to be required from the renderer`);
+});
 
 // Safe API exposed to renderer process
-window.electronAPI = {
+contextBridge.exposeInMainWorld('electronAPI', {
     // Dialogs
     showMessageBoxSync: (options) => ipcRenderer.sendSync('show-message-box-sync', options),
     // showOpenDialogSync: (options) => ipcRenderer.sendSync('show-open-dialog-sync', options),
@@ -67,4 +71,4 @@ window.electronAPI = {
     onBoardClosed: (callback) => ipcRenderer.on('hardware-board-closed', callback),
     onSensorChange: (callback) => ipcRenderer.on('hardware-sensor-change', callback),
     onButtonPress: (callback) => ipcRenderer.on('hardware-button-press', callback)
-};
+});
