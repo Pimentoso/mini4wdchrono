@@ -48,7 +48,7 @@ rm -rf "$PACKAGE_DIR"
 rm -f "$ARTIFACT"
 
 echo "Packaging $APP_NAME for Linux $ARCH"
-node "$PROJECT_DIR/node_modules/electron-packager/bin/electron-packager.js" \
+node "$PROJECT_DIR/node_modules/@electron/packager/bin/electron-packager.js" \
     "$PROJECT_DIR" "$APP_NAME" \
     --platform="$PLATFORM" \
     --arch="$ARCH" \

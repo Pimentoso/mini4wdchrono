@@ -131,18 +131,18 @@ try {
 
     Write-Host "Packaging $AppName for Windows $Arch"
     
-    # electron-packager writes normal progress messages to stderr. Route stderr
+    # @electron/packager writes normal progress messages to stderr. Route stderr
     # through cmd before PowerShell sees it, so strict error handling only reacts
     # to the process exit code rather than to progress output.
     $NodePath = (Get-Command node -CommandType Application).Source
-    $PackagerCli = Join-Path $ProjectDir 'node_modules\electron-packager\bin\electron-packager.js'
+    $PackagerCli = Join-Path $ProjectDir 'node_modules\@electron\packager\bin\electron-packager.js'
     $PackagerIcon = Join-Path $ProjectDir 'images/ic_launcher_web.ico'
     $PackagerCommand = '"{0}" "{1}" "{2}" "{3}" "--platform={4}" "--arch={5}" --overwrite "--icon={6}" --prune=true --asar "--out={7}" 2>&1' -f `
         $NodePath, $PackagerCli, $ProjectDir, $AppName, $Platform, $Arch, $PackagerIcon, $ReleaseDir
     cmd.exe /d /s /c $PackagerCommand
     $PackagerExitCode = $LASTEXITCODE
     if ($PackagerExitCode -ne 0) {
-        throw "electron-packager failed with exit code $PackagerExitCode"
+        throw "@electron/packager failed with exit code $PackagerExitCode"
     }
 
     if (-not (Test-Path $PackageDir -PathType Container)) {
