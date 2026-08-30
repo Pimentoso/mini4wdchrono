@@ -12,25 +12,28 @@ PACKAGE_DIR="$RELEASE_DIR/$APP_NAME-$PLATFORM-$ARCH"
 ARTIFACT="$RELEASE_DIR/Mini4wdChrono-linux-x64.zip"
 
 assert_build_toolchain() {
-    local node_version npm_version node_major npm_major
+    local node_version npm_version node_major node_minor npm_major
 
     if ! node_version="$(node --version)"; then
-        echo "ERROR: Unable to run Node.js. Install Node.js 20 LTS or newer, then reopen the terminal." >&2
+        echo "ERROR: Unable to run Node.js. Install Node.js 22.13.0 or newer, then reopen the terminal." >&2
         exit 1
     fi
 
     if ! npm_version="$(npm --version)"; then
-        echo "ERROR: Unable to run npm. Install Node.js 20 LTS or newer, then reopen the terminal." >&2
+        echo "ERROR: Unable to run npm. Install Node.js 22.13.0 or newer, then reopen the terminal." >&2
         exit 1
     fi
 
     node_major="${node_version#v}"
     node_major="${node_major%%.*}"
+    node_minor="${node_version#v}"
+    node_minor="${node_minor#*.}"
+    node_minor="${node_minor%%.*}"
     npm_major="${npm_version%%.*}"
     echo "Using Node.js $node_version and npm $npm_version"
 
-    if ! [[ "$node_major" =~ ^[0-9]+$ && "$npm_major" =~ ^[0-9]+$ ]] || (( node_major < 20 || npm_major < 9 )); then
-        echo "ERROR: This build requires Node.js 20+ and npm 9+ (found Node.js $node_version and npm $npm_version). Install Node.js 20 LTS or newer, then reopen the terminal." >&2
+    if ! [[ "$node_major" =~ ^[0-9]+$ && "$node_minor" =~ ^[0-9]+$ && "$npm_major" =~ ^[0-9]+$ ]] || (( node_major < 22 || (node_major == 22 && node_minor < 13) || npm_major < 9 )); then
+        echo "ERROR: This build requires Node.js 22.13.0+ and npm 9+ (found Node.js $node_version and npm $npm_version). Install Node.js 22.13.0 or newer, then reopen the terminal." >&2
         exit 1
     fi
 }
@@ -48,7 +51,7 @@ rm -rf "$PACKAGE_DIR"
 rm -f "$ARTIFACT"
 
 echo "Packaging $APP_NAME for Linux $ARCH"
-node "$PROJECT_DIR/node_modules/@electron/packager/bin/electron-packager.js" \
+node "$PROJECT_DIR/node_modules/@electron/packager/bin/electron-packager.mjs" \
     "$PROJECT_DIR" "$APP_NAME" \
     --platform="$PLATFORM" \
     --arch="$ARCH" \
