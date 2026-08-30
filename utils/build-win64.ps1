@@ -13,20 +13,21 @@ $NodeModulesDir = Join-Path $ProjectDir 'node_modules'
 function Assert-BuildToolchain {
     $NodeVersion = (& node --version).Trim()
     if ($LASTEXITCODE -ne 0) {
-        throw 'Unable to run Node.js. Install Node.js 20 LTS or newer, then reopen PowerShell.'
+        throw 'Unable to run Node.js. Install Node.js 22.13.0 or newer, then reopen PowerShell.'
     }
 
     $NpmVersion = (& npm --version).Trim()
     if ($LASTEXITCODE -ne 0) {
-        throw 'Unable to run npm. Install Node.js 20 LTS or newer, then reopen PowerShell.'
+        throw 'Unable to run npm. Install Node.js 22.13.0 or newer, then reopen PowerShell.'
     }
 
     $NodeMajor = [int](($NodeVersion -replace '^v', '').Split('.')[0])
+    $NodeMinor = [int](($NodeVersion -replace '^v', '').Split('.')[1])
     $NpmMajor = [int]($NpmVersion.Split('.')[0])
     Write-Host "Using Node.js $NodeVersion and npm $NpmVersion"
 
-    if ($NodeMajor -lt 20 -or $NpmMajor -lt 9) {
-        throw "This build requires Node.js 20+ and npm 9+ (found Node.js $NodeVersion and npm $NpmVersion). Install Node.js 20 LTS or newer, then reopen PowerShell."
+    if ($NodeMajor -lt 22 -or ($NodeMajor -eq 22 -and $NodeMinor -lt 13) -or $NpmMajor -lt 9) {
+        throw "This build requires Node.js 22.13.0+ and npm 9+ (found Node.js $NodeVersion and npm $NpmVersion). Install Node.js 22.13.0 or newer, then reopen PowerShell."
     }
 
     $PythonCommand = Get-Command python -ErrorAction SilentlyContinue
@@ -41,6 +42,15 @@ function Assert-BuildToolchain {
 
     $PythonVersion = "$([math]::Floor([int]$PythonVersionCode / 100)).$([int]$PythonVersionCode % 100)"
     Write-Host "Using Python $PythonVersion for native modules: $($PythonCommand.Source)"
+}
+
+# Verifies release builds do not package debug mode.
+function Assert-ReleaseDebugModeDisabled {
+    $MainJsPath = Join-Path $ProjectDir 'js/main.js'
+    $DebugModeDisabled = Select-String -LiteralPath $MainJsPath -Pattern '^\s*const\s+debugMode\s*=\s*false\s*;\s*$' -Quiet
+    if (-not $DebugModeDisabled) {
+        throw "DebugMode is enabled! Change it in main.js."
+    }
 }
 
 function Install-LockedDependencies {
@@ -117,6 +127,7 @@ function Install-LockedDependencies {
 Push-Location $ProjectDir
 try {
     Assert-BuildToolchain
+    Assert-ReleaseDebugModeDisabled
 
     Install-LockedDependencies
 
@@ -131,18 +142,18 @@ try {
 
     Write-Host "Packaging $AppName for Windows $Arch"
     
-    # electron-packager writes normal progress messages to stderr. Route stderr
+    # @electron/packager writes normal progress messages to stderr. Route stderr
     # through cmd before PowerShell sees it, so strict error handling only reacts
     # to the process exit code rather than to progress output.
     $NodePath = (Get-Command node -CommandType Application).Source
-    $PackagerCli = Join-Path $ProjectDir 'node_modules\electron-packager\bin\electron-packager.js'
+    $PackagerCli = Join-Path $ProjectDir 'node_modules\@electron\packager\bin\electron-packager.mjs'
     $PackagerIcon = Join-Path $ProjectDir 'images/ic_launcher_web.ico'
     $PackagerCommand = '"{0}" "{1}" "{2}" "{3}" "--platform={4}" "--arch={5}" --overwrite "--icon={6}" --prune=true --asar "--out={7}" 2>&1' -f `
         $NodePath, $PackagerCli, $ProjectDir, $AppName, $Platform, $Arch, $PackagerIcon, $ReleaseDir
     cmd.exe /d /s /c $PackagerCommand
     $PackagerExitCode = $LASTEXITCODE
     if ($PackagerExitCode -ne 0) {
-        throw "electron-packager failed with exit code $PackagerExitCode"
+        throw "@electron/packager failed with exit code $PackagerExitCode"
     }
 
     if (-not (Test-Path $PackageDir -PathType Container)) {

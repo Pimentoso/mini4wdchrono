@@ -2,7 +2,7 @@
 
 // Excel generation stays in renderer since it's DOM-related
 
-const xls = require('exceljs');
+const XlsxPopulate = require('xlsx-populate');
 const utils = require('./utils');
 const storage = require('./storage');
 const strftime = require('strftime');
@@ -38,12 +38,11 @@ const generateXls = async () => {
         const playerList = tournament.players;
         const times = await storage.getSortedPlayerList();
 
-        const workbook = new xls.Workbook();
-        workbook.creator = 'Mini4wd Chrono';
-        workbook.created = new Date();
-        workbook.modified = new Date();
+        const workbook = await XlsxPopulate.fromBlankAsync();
+        workbook.properties().set('creator', 'Mini4wd Chrono');
 
-        const worksheet = workbook.addWorksheet('Racers data');
+        const worksheet = workbook.sheet(0);
+        worksheet.name('Racers data');
 
         const headerRow = [
             '',
@@ -55,7 +54,7 @@ const generateXls = async () => {
             i18n.__('label-best-speed'),
             i18n.__('label-best-speed-km')
         ];
-        worksheet.addRow(headerRow.flat());
+        const rows = [headerRow.flat()];
 
         times.forEach((info, pos) => {
             const bestTime = Math.min(...info.times.filter((t) => { return t > 0 && t < 99999; }));
@@ -72,14 +71,15 @@ const generateXls = async () => {
             row.push(utils.prettyTime(info.best));
             row.push(bestSpeed.toFixed(2));
             row.push((bestSpeed * 3.6).toFixed(2));
-            worksheet.addRow(row);
+            rows.push(row);
         });
 
         const dir = await createDir();
         const filename = dir + `/mini4wd_race_${strftime('%Y-%m-%d_%H-%M-%S', new Date())}.xlsx`;
 
         // Write Excel file
-        await workbook.xlsx.writeFile(filename);
+        worksheet.cell('A1').value(rows);
+        await workbook.toFileAsync(filename);
 
         // Update UI
         $('#button-xls').removeAttr('disabled');
