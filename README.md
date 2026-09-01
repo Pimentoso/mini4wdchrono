@@ -82,8 +82,17 @@ Track, tournament, timing, and race-mode configuration.
 
 ## Development
 
-Mini4wdChrono requires Node.js 20 or later and npm 9 or later. Use the setup
-instructions for your operating system before installing the project.
+Mini4wdChrono requires Node.js 22.13.0 and npm 9 or later. Node.js is managed
+with [asdf](https://asdf-vm.com/); install asdf and its Node.js plugin, then
+run the following from the repository root to install the pinned version:
+
+```bash
+asdf plugin add nodejs
+asdf install
+```
+
+Use the setup instructions for your operating system before installing the
+project.
 
 ### Set up macOS
 
@@ -95,22 +104,21 @@ xcode-select --install
 ```
 
 After the Command Line Tools installation completes, use Homebrew to install
-Git, Node.js, and the Arduino IDE:
+Git and the Arduino IDE:
 
 ```bash
-brew install git node
+brew install git
 brew install --cask arduino-ide
 ```
 
 ### Set up Windows
 
 Run the following commands from an elevated PowerShell window. They install Git,
-Node.js, Python, the Visual C++ build tools required by native dependencies, and
-the Arduino IDE:
+Python, the Visual C++ build tools required by native dependencies, and the
+Arduino IDE:
 
 ```powershell
 winget install --id Git.Git --exact --accept-package-agreements --accept-source-agreements
-winget install --id OpenJS.NodeJS.LTS --exact --accept-package-agreements --accept-source-agreements
 winget install --id Python.Python.3.11 --exact --accept-package-agreements --accept-source-agreements
 winget install --id Microsoft.VisualStudio.2022.BuildTools --exact `
   --accept-package-agreements --accept-source-agreements `
@@ -124,15 +132,11 @@ are available on `PATH`.
 ### Set up Linux
 
 The following commands prepare an Ubuntu or Debian system. They install the
-compiler toolchain, Git, zip, and Node.js 22, which meets the project's Node.js
-20-or-later requirement:
+compiler toolchain, Git, and zip:
 
 ```bash
 sudo apt update
 sudo apt install -y build-essential ca-certificates curl git zip
-curl -fsSL https://deb.nodesource.com/setup_22.x -o /tmp/nodesource_setup.sh
-sudo -E bash /tmp/nodesource_setup.sh
-sudo apt install -y nodejs
 sudo usermod -aG dialout "$USER"
 ```
 
