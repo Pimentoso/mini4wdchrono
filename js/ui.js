@@ -894,10 +894,21 @@ const setupEventHandlers = (deps) => {
         window.electronAPI.print();
     });
 
-    // Export XLS
-    $('#button-xls').on('click', () => {
-        client.saveXls();
-        $('#button-xls').attr('disabled', true);
+    // Exports the tournament and offers to open the export folder.
+    $('#button-xls').on('click', async () => {
+        const $button = $('#button-xls');
+        $button.attr('disabled', true);
+
+        try {
+            const filename = await client.saveXls();
+            if (filename) {
+                openModal('modal-xls-exported');
+            }
+        } catch (error) {
+            console.error('[Export] Unable to save Excel file:', error);
+        } finally {
+            $button.removeAttr('disabled');
+        }
     });
 
     // Open XLS folder
@@ -905,6 +916,14 @@ const setupEventHandlers = (deps) => {
         const xls = require('./export');
         const dir = await xls.createDir();
         window.electronAPI.openPath(dir);
+    });
+
+    // Opens the folder containing the newly exported Excel file.
+    $('#button-open-xls-export-folder').on('click', async () => {
+        const xls = require('./export');
+        const dir = await xls.createDir();
+        await window.electronAPI.openPath(dir);
+        closeAllModals();
     });
 
     // Open log file

@@ -345,9 +345,6 @@
 			</div>
 			<div class="level-right">
 				<div class="level-item">
-					<span id="status-xls" class="has-text-grey"></span>
-				</div>
-				<div class="level-item">
 					<button class="button is-info" id="button-print">
 						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-print"></i></span>
 						<span class="tn" data-tn="button-print">Print</span>
@@ -801,8 +798,10 @@
 			<p id="hardware-port-selection-error" class="has-text-grey mb-4" style="display: none;"></p>
 			<div id="hardware-port-selection-content"></div>
 		</section>
-		<footer class="modal-card-foot" style="justify-content: flex-end;">
-			<button id="button-save-boot-usb-port" class="button is-primary tn" data-tn="button-save-restart">Save and restart</button>
+		<footer class="modal-card-foot">
+			<div class="buttons">
+				<button id="button-save-boot-usb-port" class="button is-primary tn" data-tn="button-save-restart">Save and restart</button>
+			</div>
 		</footer>
 	</div>
 </div>
@@ -824,9 +823,11 @@
 				</div>
 			</div>
 		</section>
-		<footer class="modal-card-foot" style="justify-content: flex-end;">
-			<button class="button close-modal tn" data-tn="button-cancel">Cancel</button>
-			<button id="button-new-race" class="button is-success tn" data-tn="button-create-race">Create race</button>
+		<footer class="modal-card-foot">
+			<div class="buttons">
+				<button class="button close-modal tn" data-tn="button-cancel">Cancel</button>
+				<button id="button-new-race" class="button is-success tn" data-tn="button-create-race">Create race</button>
+			</div>
 		</footer>
 	</div>
 </div>
@@ -844,8 +845,32 @@
 				</tbody>
 			</table>
 		</section>
-		<footer class="modal-card-foot" style="justify-content: flex-end;">
-			<button class="button close-modal tn" data-tn="button-cancel">Cancel</button>
+		<footer class="modal-card-foot">
+			<div class="buttons">
+				<button class="button close-modal tn" data-tn="button-cancel">Cancel</button>
+			</div>	
+		</footer>
+	</div>
+</div>
+
+<div id="modal-xls-exported" class="modal">
+	<div class="modal-background"></div>
+	<div class="modal-card">
+		<header class="modal-card-head">
+			<p class="modal-card-title tn" data-tn="dialog-xls-exported">Excel export</p>
+			<button class="delete close-modal" aria-label="close"></button>
+		</header>
+		<section class="modal-card-body">
+			<p class="tn" data-tn="dialog-xls-exported-detail">The Excel file was saved successfully.</p>
+		</section>
+		<footer class="modal-card-foot">
+			<div class="buttons">
+				<button class="button close-modal tn" data-tn="button-cancel">Cancel</button>
+				<button id="button-open-xls-export-folder" class="button is-primary">
+					<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-folder-open"></i></span>
+					<span class="tn" data-tn="button-open-folder">Open folder</span>
+				</button>
+			</div>
 		</footer>
 	</div>
 </div>

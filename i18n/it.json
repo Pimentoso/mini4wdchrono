@@ -153,6 +153,8 @@
 	"dialog-disqualify": "Squalificare questo risultato? Verrà registrato come RIT.",
 	"dialog-replay-round": "Ripetere questo round? I dati attuali del round andranno persi.",
 	"dialog-saved": "Modifiche salvate correttamente.",
+	"dialog-xls-exported": "File Excel salvato",
+	"dialog-xls-exported-detail": "Il file Excel è stato salvato. Vuoi aprire la cartella che lo contiene?",
 	"label-check-updates": "Controlla aggiornamenti",
 	"option-lane-order": "Seleziona ordine corsie"
 }

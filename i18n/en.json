@@ -152,6 +152,8 @@
 	"dialog-disqualify": "Disqualify this result? It will be recorded as DNF.",
 	"dialog-replay-round": "Run this round again? Its current data will be lost.",
 	"dialog-saved": "Changes saved successfully.",
+	"dialog-xls-exported": "Excel file saved",
+	"dialog-xls-exported-detail": "The Excel file was saved. Would you like to open its folder?",
 	"label-check-updates": "Check for updates",
 	"option-lane-order": "Select lane order"
 }
