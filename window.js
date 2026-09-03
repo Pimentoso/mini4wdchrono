@@ -37,7 +37,7 @@ let buzzerPin = null;
 let isHardwareReady = false;
 let hardwareInitialization = null;
 let serialPort = null;
-const HARDWARE_CONNECTION_TIMEOUT = 10000;
+const HARDWARE_CONNECTION_TIMEOUT = 15000;
 const FirmataPixelStrip = require('./js/firmata_pixel_strip');
 
 function markHardwareDisconnected(reason, disconnectedPort) {
