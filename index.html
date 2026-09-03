@@ -316,7 +316,7 @@
 			<p class="has-text-centered">
 				<a id="button-save-settings" href="#" class="button is-info" style="width: 200px;">
 					<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-floppy-disk"></i></span>
-					<span class="tn" data-tn="button-save-settings">Save settings</span>
+					<span class="tn" data-tn="button-save-changes">Save settings</span>
 				</a>
 			</p>
 		</div>
@@ -411,11 +411,10 @@
 
 	<!-- RACE TAB -->
 	<div class="container" data-tab="race" style="display: none;">
-		<div
-			class="js-hide-on-no-tournament js-hide-on-free-round js-hide-on-no-track level has-text-centered has-text-weight-bold">
-			<span id="curr-manche" class="level-item tag is-primary is-size-4"></span>
+		<div class="js-hide-on-no-tournament js-hide-on-free-round js-hide-on-no-track level has-text-centered has-text-weight-bold">
+			<span id="curr-manche" class="level-item tag is-primary is-size-4 has-text-white"></span>
 			&nbsp;
-			<span id="curr-round" class="level-item tag is-primary is-size-4"></span>
+			<span id="curr-round" class="level-item tag is-primary is-size-4 has-text-white"></span>
 		</div>
 
 		<div class="js-hide-on-no-tournament js-show-on-free-round js-hide-on-no-track level has-text-centered has-text-weight-bold">
@@ -576,7 +575,7 @@
 		</div>
 		<div
 			class="js-hide-on-no-tournament js-hide-on-free-round js-hide-on-no-track level has-text-centered mb-0 race-next-round">
-			<span id="next-round-names" class="level-item tag is-info is-size-5">-</span>
+			<span id="next-round-names" class="level-item tag is-info is-size-5 has-text-white">-</span>
 		</div>
 
 		<p class="js-show-on-no-track has-text-grey has-text-centered tn" data-tn="label-track-not-loaded">Track not loaded</p>
@@ -742,13 +741,13 @@
 				</p>
 				<p id="js-about-version"></p>
 				<p>
-					<a href="https://github.com/Pimentoso/mini4wdchrono/releases" class="button is-link is-outlined">
+					<a href="https://github.com/Pimentoso/mini4wdchrono/releases" class="button is-primary">
 						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-rotate"></i></span>
 						<span class="tn" data-tn="label-check-updates">check for updates</span>
 					</a>
 				</p>
 				<p>
-					<a id="button-log-file" class="button is-outlined">
+					<a id="button-log-file" class="button">
 						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-file-lines"></i></span>
 						<span class="tn" data-tn="button-open-log">open log file</span>
 					</a>
@@ -758,7 +757,7 @@
 			<div class="box">
 				<p class="title is-4 tn" data-tn="label-paypal">If you enjoy this program, buy me a coffee!</p>
 				<p>
-					<a href="https://paypal.me/pimentoso" class="button is-link">
+					<a href="https://paypal.me/pimentoso" class="button is-info is-light">
 						<span class="icon is-small" aria-hidden="true"><i class="fa-brands fa-paypal"></i></span>
 						<span>Paypal</span></a>
 				</p>
@@ -767,22 +766,22 @@
 			<div class="box">
 				<p class="title is-4 tn" data-tn="label-external-tools">External tools</p>
 				<p>
-					<a href="https://mini4wd-track-editor.pimentoso.com/" class="button is-success is-outlined">
+					<a href="https://mini4wd-track-editor.pimentoso.com/" class="button is-info">
 						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-road"></i></span><span>Mini4WD Track Editor</span>
 					</a>
 				</p>
 				<p>
-					<a href="https://mini4wd-tournament.pimentoso.com/" class="button is-link is-outlined">
+					<a href="https://mini4wd-tournament.pimentoso.com/" class="button is-warning">
 						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-trophy"></i></span><span>Mini4WD Tournament Generator</span>
 					</a>
 				</p>
 				<p>
-					<a href="https://github.com/Pimentoso/mini4wdchrono/wiki" class="button is-outlined">
+					<a href="https://github.com/Pimentoso/mini4wdchrono/wiki" class="button">
 						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-book-open"></i></span><span>Mini4wdChrono Wiki</span>
 					</a>
 				</p>
 				<p>
-					<a href="https://github.com/Pimentoso/mini4wdchrono" class="button is-outlined">
+					<a href="https://github.com/Pimentoso/mini4wdchrono" class="button">
 						<span class="icon is-small" aria-hidden="true"><i class="fa-brands fa-github"></i></span><span>Project page on Github</span>
 					</a>
 				</p>
