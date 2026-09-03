@@ -5,7 +5,10 @@
 const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
 const url = require('url');
-const log = require('electron-log');
+const log = require('electron-log/main');
+
+log.transports.file.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{processType}] [{level}]{scope} {text}';
+log.initialize();
 
 if (process.argv[2] === '--watch') {
     require('electron-reload')(__dirname, {
@@ -1279,6 +1282,11 @@ ipcMain.handle('hardware-close', async () => {
         log.error('[IPC] hardware-close error:', error);
         throw error;
     }
+});
+
+// Returns the shared main-process log file path for renderer UI actions.
+ipcMain.handle('get-log-file-path', () => {
+    return log.transports.file.getFile().path;
 });
 
 ipcMain.handle('get-app-version', (_event) => {

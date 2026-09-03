@@ -4,7 +4,7 @@
 const debugMode = false;
 ////////////////////////
 
-const log = require('electron-log');
+const log = require('electron-log/renderer');
 
 // Use IPC to get app version
 window.electronAPI.getAppVersion().then(version => {

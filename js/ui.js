@@ -908,9 +908,9 @@ const setupEventHandlers = (deps) => {
     });
 
     // Open log file
-    $('#button-log-file').on('click', () => {
-        const log = require('electron-log');
-        window.electronAPI.openPath(log.transports.file.findLogPath());
+    $('#button-log-file').on('click', async () => {
+        const logFilePath = await window.electronAPI.getLogFilePath();
+        await window.electronAPI.openPath(logFilePath);
     });
 
     // Updates threshold estimates from the settings form.
