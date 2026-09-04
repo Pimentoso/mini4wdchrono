@@ -1,5 +1,7 @@
 'use strict';
 
+const log = require('electron-log/main');
+
 const START_SYSEX = 0xF0;
 const END_SYSEX = 0xF7;
 const PIXEL_COMMAND = 0x51;
@@ -35,7 +37,7 @@ class FirmataPixelStrip {
                     return;
                 }
 
-                console.log('[Hardware] LED strip ready');
+                log.info('[Hardware] LED strip ready');
                 resolve();
             });
         });

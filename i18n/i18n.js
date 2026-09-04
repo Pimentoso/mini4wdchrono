@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const log = require('../js/logger');
 let loadedLanguage;
 
 module.exports = i18n;
@@ -19,7 +20,7 @@ function i18n() {
                 loadedLanguage = JSON.parse(fs.readFileSync(tnpath), 'utf8');
             }
         }).catch(err => {
-            console.warn('Could not load locale, using English:', err);
+            log.warn('[Locale] Could not load locale; using English:', err);
         });
     }
 }

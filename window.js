@@ -8,6 +8,7 @@ const url = require('url');
 const log = require('electron-log/main');
 
 log.transports.file.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{processType}] [{level}]{scope} {text}';
+log.transports.file.maxSize = 2 * 1024 ** 2;
 log.initialize();
 
 if (process.argv[2] === '--watch') {
