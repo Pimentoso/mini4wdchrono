@@ -3,6 +3,7 @@
 // This module provides both async and sync-like (cached) access patterns
 // for backward compatibility with existing code during transition
 const configuration = require('./configuration');
+const log = require('./logger');
 
 // In-memory cache of current race data
 const cachedRaceData = {};
@@ -36,7 +37,7 @@ const replaceCachedData = (data) => {
 // Retrieves a nested value from the local race-data cache.
 const getCached = (key) => {
     if (!cacheReady) {
-        console.warn(`[Storage] Cache not ready for key: ${key}`);
+        log.warn(`[Storage] Cache not ready for key: ${key}`);
         return null;
     }
 
@@ -70,7 +71,7 @@ const initAsync = async () => {
 
         cacheReady = true;
     } catch (error) {
-        console.error('[Storage] Initialization error:', error);
+        log.error('[Storage] Initialization error:', error);
         throw error;
     }
 };
@@ -90,7 +91,7 @@ const newRace = (raceName, onComplete) => {
         .then((filename) => {
             if (onComplete) onComplete(filename);
         })
-        .catch(err => console.error('[Race setup] New race creation failed:', err));
+        .catch(err => log.error('[Race setup] New race creation failed:', err));
 };
 
 // Loads the selected race and refreshes the local cache.
@@ -118,7 +119,7 @@ const loadRace = (filename, onComplete) => {
         .then(() => {
             if (onComplete) onComplete();
         })
-        .catch(err => console.error('[Race setup] Race open failed:', { filename: filename, error: err }));
+        .catch(err => log.error('[Race setup] Race open failed:', { filename: filename, error: err }));
 };
 
 // Deletes a persisted race and clears it if it is selected.
@@ -131,7 +132,7 @@ const deleteRaceAsync = async (filename) => {
 
 // Deletes a race without exposing asynchronous persistence to callers.
 const deleteRace = (filename) => {
-    deleteRaceAsync(filename).catch(err => console.error('[Storage] Failed to delete race:', { filename: filename, error: err }));
+    deleteRaceAsync(filename).catch(err => log.error('[Storage] Failed to delete race:', { filename: filename, error: err }));
 };
 
 // Retrieves and caches the most recent race files.
@@ -145,7 +146,7 @@ const getRecentFilesAsync = async (num) => {
 // Returns cached recent races while refreshing them in the background.
 const getRecentFiles = (num) => {
     num = num || 10;
-    getRecentFilesAsync(num).catch(err => console.error('[Storage] Failed to list recent races:', { limit: num, error: err }));
+    getRecentFilesAsync(num).catch(err => log.error('[Storage] Failed to list recent races:', { limit: num, error: err }));
     return cachedRecentFiles.slice(0, num);
 };
 
@@ -158,7 +159,7 @@ const setAsync = async (key, value) => {
 // Updates cached race data before persisting it in the background.
 const set = (key, value) => {
     setCached(key, value);
-    setAsync(key, value).catch(err => console.error('[Storage] Failed to save value:', { key: key, error: err }));
+    setAsync(key, value).catch(err => log.error('[Storage] Failed to save value:', { key: key, error: err }));
 };
 
 // Retrieves a race-data value directly from persistence.
@@ -166,7 +167,7 @@ const getAsync = async (key) => { // eslint-disable-line no-unused-vars
     try {
         return await window.electronAPI.storageGet(key);
     } catch (error) {
-        console.error('[Storage] Failed to get value:', { key: key, error: error });
+        log.error('[Storage] Failed to get value:', { key: key, error: error });
         throw error;
     }
 };
@@ -198,7 +199,7 @@ const remove = (key) => {
         if (!current) return;
     }
     delete current[keys[keys.length - 1]];
-    removeAsync(key).catch(err => console.error('[Storage] Failed to remove value:', { key: key, error: err }));
+    removeAsync(key).catch(err => log.error('[Storage] Failed to remove value:', { key: key, error: err }));
 };
 
 // Saves the cars and results for a tournament round.
@@ -206,7 +207,7 @@ const saveRound = (manche, round, cars) => {
     try {
         set(`race.m${manche}.r${round}`, cars);
     } catch (error) {
-        console.error('[Storage] Failed to save round:', { manche: manche, round: round, error: error });
+        log.error('[Storage] Failed to save round:', { manche: manche, round: round, error: error });
         throw error;
     }
 };
@@ -222,7 +223,7 @@ const loadRound = (manche, round) => {
         }
         return get(`race.m${manche}.r${round}`);
     } catch (error) {
-        console.error('[Storage] Failed to load round:', { manche: manche, round: round, error: error });
+        log.error('[Storage] Failed to load round:', { manche: manche, round: round, error: error });
         throw error;
     }
 };
@@ -232,7 +233,7 @@ const deleteRound = (manche, round) => {
     try {
         remove(`race.m${manche}.r${round}`);
     } catch (error) {
-        console.error('[Storage] Failed to delete round:', { manche: manche, round: round, error: error });
+        log.error('[Storage] Failed to delete round:', { manche: manche, round: round, error: error });
         throw error;
     }
 };
@@ -249,7 +250,7 @@ const getManches = () => {
         }
         return mancheList;
     } catch (error) {
-        console.error('[Storage] Failed to get manches:', error);
+        log.error('[Storage] Failed to get manches:', error);
         throw error;
     }
 };
@@ -261,7 +262,7 @@ const getPlayers = () => {
         if (!tournament) return null;
         return tournament.players;
     } catch (error) {
-        console.error('[Storage] Failed to get players:', error);
+        log.error('[Storage] Failed to get players:', error);
         throw error;
     }
 };
@@ -296,7 +297,7 @@ const getPlayerData = () => {
         });
         return playerTimes;
     } catch (error) {
-        console.error('[Storage] Failed to get player data:', error);
+        log.error('[Storage] Failed to get player data:', error);
         throw error;
     }
 };
@@ -327,7 +328,7 @@ const getSortedPlayerList = () => {
         });
         return playerTimes.sort((a, b) => a.best - b.best);
     } catch (error) {
-        console.error('[Storage] Failed to get sorted player list:', error);
+        log.error('[Storage] Failed to get sorted player list:', error);
         throw error;
     }
 };

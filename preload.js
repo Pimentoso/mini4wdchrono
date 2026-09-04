@@ -38,6 +38,7 @@ window.electronAPI = {
     getAppVersion: () => ipcRenderer.invoke('get-app-version'),
     getAppLocale: () => ipcRenderer.invoke('get-app-locale'),
     getAppPath: (name) => ipcRenderer.invoke('get-app-path', name),
+    getLogFilePath: () => ipcRenderer.invoke('get-log-file-path'),
 
     // Requests printing for the current renderer window.
     print: () => ipcRenderer.invoke('window-print'),
