@@ -8,6 +8,7 @@ const log = require('electron-log/renderer');
 
 // Use IPC to get app version
 window.electronAPI.getAppVersion().then(version => {
+    log.info(' ');
     log.info(`Launched Mini4wdChrono v${version} at ${new Date()}`);
 });
 log.catchErrors();
