@@ -29,11 +29,12 @@ let configInitialization = null;
 const { ipcMain, dialog } = require('electron');
 const fs = require('fs');
 const fsp = fs.promises;
-const { createSettingsStore } = require('./js/settings');
+const { createJsonStore, createSettingsStore } = require('./js/settings');
 
 // Global electron-settings instance for race data
 let raceStorage = null;
 let currentRaceFile = null;
+let raceStore = null;
 
 // Global hardware state
 let board = null;
@@ -489,8 +490,10 @@ ipcMain.handle('storage-load-race', async (event, filename) => {
         const raceFilePath = path.join(raceDir, filename);
 
         // Load race data (will throw if file doesn't exist)
-        const content = await fsp.readFile(raceFilePath, 'utf8');
-        const raceData = JSON.parse(content);
+        const loadedRaceStore = createJsonStore({ filePath: raceFilePath });
+        await loadedRaceStore.initialize();
+        const raceData = loadedRaceStore.getData();
+        raceStore = loadedRaceStore;
         currentRaceFile = raceFilePath;
 
         // Store in memory for fast access
@@ -536,7 +539,8 @@ ipcMain.handle('storage-new-race', async (event, raceName) => {
         };
 
         // Write race file
-        await fsp.writeFile(filePath, JSON.stringify(raceData, null, 2), 'utf8');
+        raceStore = createJsonStore({ filePath: filePath, initialData: raceData });
+        await raceStore.save();
 
         // Load into storage
         raceStorage = raceData;
@@ -561,27 +565,37 @@ ipcMain.handle('storage-new-race', async (event, raceName) => {
  */
 ipcMain.handle('storage-set', async (event, key, value) => {
     try {
-        if (!raceStorage) {
-            raceStorage = {};
-        }
+        if (!raceStore) {
+            raceStorage = raceStorage || {};
+            const keys = key.split('.');
+            let current = raceStorage;
 
-        // Handle nested keys like 'race.m0.r0'
-        const keys = key.split('.');
-        let current = raceStorage;
-
-        for (let i = 0; i < keys.length - 1; i++) {
-            if (!current[keys[i]]) {
-                current[keys[i]] = {};
+            for (let i = 0; i < keys.length - 1; i++) {
+                if (!current[keys[i]]) {
+                    current[keys[i]] = {};
+                }
+                current = current[keys[i]];
             }
-            current = current[keys[i]];
+
+            current[keys[keys.length - 1]] = value;
+            return;
         }
 
-        current[keys[keys.length - 1]] = value;
+        await raceStore.update((raceData) => {
+            // Handle nested keys like 'race.m0.r0'
+            const keys = key.split('.');
+            let current = raceData;
 
-        // Persist to disk
-        if (currentRaceFile) {
-            await fsp.writeFile(currentRaceFile, JSON.stringify(raceStorage, null, 2), 'utf8');
-        }
+            for (let i = 0; i < keys.length - 1; i++) {
+                if (!current[keys[i]]) {
+                    current[keys[i]] = {};
+                }
+                current = current[keys[i]];
+            }
+
+            current[keys[keys.length - 1]] = value;
+        });
+        raceStorage = raceStore.getData();
     } catch (error) {
         log.error('[IPC] storage-set error:', error);
         throw error;
@@ -637,24 +651,22 @@ ipcMain.handle('storage-get-all', async () => {
  */
 ipcMain.handle('storage-remove', async (event, key) => {
     try {
-        if (!raceStorage) {
+        if (!raceStore) {
             return;
         }
 
-        const keys = key.split('.');
-        let current = raceStorage;
+        await raceStore.update((raceData) => {
+            const keys = key.split('.');
+            let current = raceData;
 
-        for (let i = 0; i < keys.length - 1; i++) {
-            current = current[keys[i]];
-            if (!current) return;
-        }
+            for (let i = 0; i < keys.length - 1; i++) {
+                current = current[keys[i]];
+                if (!current) return;
+            }
 
-        delete current[keys[keys.length - 1]];
-
-        // Persist to disk
-        if (currentRaceFile) {
-            await fsp.writeFile(currentRaceFile, JSON.stringify(raceStorage, null, 2), 'utf8');
-        }
+            delete current[keys[keys.length - 1]];
+        });
+        raceStorage = raceStore.getData();
     } catch (error) {
         log.error('[IPC] storage-remove error:', error);
         throw error;
@@ -723,6 +735,7 @@ ipcMain.handle('storage-delete-race', async (event, filename) => {
         if (currentRaceFile === filePath) {
             raceStorage = null;
             currentRaceFile = null;
+            raceStore = null;
             await initializeConfig();
             await settingsStore.del('raceFile');
         }

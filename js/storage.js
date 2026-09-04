@@ -101,8 +101,6 @@ const loadRaceAsync = async (filename) => {
     }
 
     if (filename) {
-        // Retrocompatibility: trim filename if needed
-        filename = filename.slice(-15);
         await window.electronAPI.storageLoadRace(filename);
         configuration.set('raceFile', filename);
         replaceCachedData(await window.electronAPI.storageGetAll());

@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { createSettingsStore } = require('../js/settings');
+const { createJsonStore, createSettingsStore } = require('../js/settings');
 
 const temporaryDirectories = [];
 
@@ -61,6 +61,24 @@ describe('settings store', () => {
         assert.equal(Object.keys(savedSettings).length, 100);
         assert.equal(savedSettings.setting0, 0);
         assert.equal(savedSettings.setting99, 99);
+    });
+
+    test('persists race-style nested updates without losing concurrent results', async () => {
+        const filePath = await createTemporarySettingsPath();
+        const race = createJsonStore({
+            filePath: filePath,
+            initialData: { name: 'Race Night', race: {} }
+        });
+        await race.save();
+
+        await Promise.all(Array.from({ length: 20 }, (_value, index) => race.update((data) => {
+            data.race[`round${index}`] = { position: index + 1 };
+        })));
+
+        const savedRace = JSON.parse(await fs.promises.readFile(filePath, 'utf8'));
+        assert.equal(savedRace.name, 'Race Night');
+        assert.equal(Object.keys(savedRace.race).length, 20);
+        assert.deepEqual(savedRace.race.round19, { position: 20 });
     });
 
     test('removes settings while keeping defaults out of the persisted document', async () => {
