@@ -1,8 +1,6 @@
 'use strict';
 
-////////////////////////
-const debugMode = false;
-////////////////////////
+const debugMode = window.electronAPI.isDebugMode;
 
 const log = require('electron-log/renderer');
 
