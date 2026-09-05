@@ -38,18 +38,9 @@ assert_build_toolchain() {
     fi
 }
 
-# Verifies release builds do not package debug mode.
-assert_release_debug_mode_disabled() {
-    if ! rg -q '^[[:space:]]*const[[:space:]]+debugMode[[:space:]]*=[[:space:]]*false[[:space:]]*;[[:space:]]*$' "$PROJECT_DIR/js/main.js"; then
-        echo "ERROR: debugMode is enabled! Change it in main.js." >&2
-        exit 1
-    fi
-}
-
 cd "$PROJECT_DIR"
 
 assert_build_toolchain
-assert_release_debug_mode_disabled
 
 echo "Installing locked dependencies"
 npm ci

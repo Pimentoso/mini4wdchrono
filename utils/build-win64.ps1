@@ -44,15 +44,6 @@ function Assert-BuildToolchain {
     Write-Host "Using Python $PythonVersion for native modules: $($PythonCommand.Source)"
 }
 
-# Verifies release builds do not package debug mode.
-function Assert-ReleaseDebugModeDisabled {
-    $MainJsPath = Join-Path $ProjectDir 'js/main.js'
-    $DebugModeDisabled = Select-String -LiteralPath $MainJsPath -Pattern '^\s*const\s+debugMode\s*=\s*false\s*;\s*$' -Quiet
-    if (-not $DebugModeDisabled) {
-        throw "DebugMode is enabled! Change it in main.js."
-    }
-}
-
 function Install-LockedDependencies {
     function Invoke-NpmCi {
         # npm writes warnings and lifecycle-script output to stderr. Keep it visible,
@@ -127,7 +118,6 @@ function Install-LockedDependencies {
 Push-Location $ProjectDir
 try {
     Assert-BuildToolchain
-    Assert-ReleaseDebugModeDisabled
 
     Install-LockedDependencies
 

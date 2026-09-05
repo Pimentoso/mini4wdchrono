@@ -5,6 +5,13 @@
 const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
 const url = require('url');
+const log = require('electron-log/main');
+
+log.transports.file.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{processType}] [{level}]{scope} {text}';
+log.transports.file.maxSize = 2 * 1024 ** 2;
+log.initialize();
+
+const debugMode = process.argv.includes('--mini4wdchrono-debug');
 
 if (process.argv[2] === '--watch') {
     require('electron-reload')(__dirname, {
@@ -40,6 +47,11 @@ let serialPort = null;
 const HARDWARE_CONNECTION_TIMEOUT = 15000;
 const FirmataPixelStrip = require('./js/firmata_pixel_strip');
 
+// Logs the elapsed time for a stage of the hardware connection handshake.
+function logHardwareConnectionStage(stage, connectionStartedAt) {
+    log.info(`[Hardware] ${stage} after ${Date.now() - connectionStartedAt} ms`);
+}
+
 function markHardwareDisconnected(reason, disconnectedPort) {
     if (disconnectedPort && serialPort !== disconnectedPort) {
         return false;
@@ -59,7 +71,7 @@ function markHardwareDisconnected(reason, disconnectedPort) {
     board = null;
     serialPort = null;
 
-    console.log(`[Hardware] Connection closed${reason ? `: ${reason}` : ''}`);
+    log.info(`[Hardware] Connection closed${reason ? `: ${reason}` : ''}`);
     if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.webContents.send('hardware-board-closed', reason);
     }
@@ -95,7 +107,7 @@ function ensureLedManagerReady() {
 
 function buzz(duration) {
     if (!buzzerPin || !board || !isHardwareReady) {
-        console.warn('[Hardware] Buzzer not initialized');
+        log.info('[Hardware] Buzzer not initialized');
         return;
     }
 
@@ -213,7 +225,8 @@ function createWindow() {
             nodeIntegration: true,
             contextIsolation: false,
             enableRemoteModule: false,
-            preload: path.join(__dirname, 'preload.js')
+            preload: path.join(__dirname, 'preload.js'),
+            additionalArguments: [`--mini4wdchrono-debug-mode=${debugMode}`]
         }
     });
 
@@ -277,7 +290,7 @@ ipcMain.handle('fs-ensure-dir', async (event, dirPath) => {
         await fsp.mkdir(dirPath, { recursive: true });
         return dirPath;
     } catch (error) {
-        console.error('[IPC] fs-ensure-dir error:', error);
+        log.error('[IPC] fs-ensure-dir error:', error);
         throw error;
     }
 });
@@ -296,7 +309,7 @@ ipcMain.handle('fs-write-file', async (event, filePath, data) => {
         // Write file with formatted JSON
         await fsp.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8');
     } catch (error) {
-        console.error('[IPC] fs-write-file error:', error);
+        log.error('[IPC] fs-write-file error:', error);
         throw error;
     }
 });
@@ -311,7 +324,7 @@ ipcMain.handle('fs-read-file', async (event, filePath) => {
         const content = await fsp.readFile(filePath, 'utf8');
         return JSON.parse(content);
     } catch (error) {
-        console.error('[IPC] fs-read-file error:', error);
+        log.error('[IPC] fs-read-file error:', error);
         throw error;
     }
 });
@@ -325,7 +338,7 @@ ipcMain.handle('fs-delete-file', async (event, filePath) => {
     try {
         await fsp.unlink(filePath);
     } catch (error) {
-        console.error('[IPC] fs-delete-file error:', error);
+        log.error('[IPC] fs-delete-file error:', error);
         throw error;
     }
 });
@@ -344,7 +357,7 @@ ipcMain.handle('fs-list-files', async (event, dirPath, extension) => {
         }
         return files;
     } catch (error) {
-        console.error('[IPC] fs-list-files error:', error);
+        log.error('[IPC] fs-list-files error:', error);
         throw error;
     }
 });
@@ -374,9 +387,9 @@ ipcMain.handle('config-init', async (_event) => {
         await fsp.mkdir(configDir, { recursive: true });
         globalConf = nconf.file('global', { file: configPath });
         globalConf.defaults(CONFIG_DEFAULTS);
-        console.log('[IPC] config-init initialized');
+        log.info('[IPC] config-init initialized');
     } catch (error) {
-        console.error('[IPC] config-init error:', error);
+        log.error('[IPC] config-init error:', error);
         throw error;
     }
 });
@@ -394,7 +407,7 @@ ipcMain.handle('config-get', async (_event, key) => {
         globalConf.load();
         return globalConf.get(key);
     } catch (error) {
-        console.error('[IPC] config-get error:', error);
+        log.error('[IPC] config-get error:', error);
         throw error;
     }
 });
@@ -413,7 +426,7 @@ ipcMain.handle('config-set', async (event, key, value) => {
         globalConf.set(key, value);
         globalConf.save();
     } catch (error) {
-        console.error('[IPC] config-set error:', error);
+        log.error('[IPC] config-set error:', error);
         throw error;
     }
 });
@@ -431,7 +444,7 @@ ipcMain.handle('config-del', async (event, key) => {
         globalConf.clear(key);
         globalConf.save();
     } catch (error) {
-        console.error('[IPC] config-del error:', error);
+        log.error('[IPC] config-del error:', error);
         throw error;
     }
 });
@@ -465,7 +478,7 @@ ipcMain.handle('config-reset', async (_event) => {
 
         return backupPath;
     } catch (error) {
-        console.error('[IPC] config-reset error:', error);
+        log.error('[IPC] config-reset error:', error);
         throw error;
     }
 });
@@ -499,7 +512,7 @@ ipcMain.handle('storage-load-race', async (event, filename) => {
             globalConf.save();
         }
     } catch (error) {
-        console.error('[IPC] storage-load-race error:', error);
+        log.error('[IPC] storage-load-race error:', error);
         throw error;
     }
 });
@@ -549,7 +562,7 @@ ipcMain.handle('storage-new-race', async (event, raceName) => {
 
         return filename;
     } catch (error) {
-        console.error('[IPC] storage-new-race error:', error);
+        log.error('[IPC] storage-new-race error:', error);
         throw error;
     }
 });
@@ -584,7 +597,7 @@ ipcMain.handle('storage-set', async (event, key, value) => {
             await fsp.writeFile(currentRaceFile, JSON.stringify(raceStorage, null, 2), 'utf8');
         }
     } catch (error) {
-        console.error('[IPC] storage-set error:', error);
+        log.error('[IPC] storage-set error:', error);
         throw error;
     }
 });
@@ -613,7 +626,7 @@ ipcMain.handle('storage-get', async (event, key) => {
 
         return current;
     } catch (error) {
-        console.error('[IPC] storage-get error:', error);
+        log.error('[IPC] storage-get error:', error);
         throw error;
     }
 });
@@ -626,7 +639,7 @@ ipcMain.handle('storage-get-all', async () => {
     try {
         return raceStorage || {};
     } catch (error) {
-        console.error('[IPC] storage-get-all error:', error);
+        log.error('[IPC] storage-get-all error:', error);
         throw error;
     }
 });
@@ -657,7 +670,7 @@ ipcMain.handle('storage-remove', async (event, key) => {
             await fsp.writeFile(currentRaceFile, JSON.stringify(raceStorage, null, 2), 'utf8');
         }
     } catch (error) {
-        console.error('[IPC] storage-remove error:', error);
+        log.error('[IPC] storage-remove error:', error);
         throw error;
     }
 });
@@ -694,7 +707,7 @@ ipcMain.handle('storage-list-races', async (event, num) => {
                     });
                 }
             } catch (err) {
-                console.warn(`[IPC] Could not read race file ${filename}:`, err);
+                log.warn(`[IPC] Could not read race file ${filename}:`, err);
             }
         }
 
@@ -703,7 +716,7 @@ ipcMain.handle('storage-list-races', async (event, num) => {
 
         return recent.slice(0, num);
     } catch (error) {
-        console.error('[IPC] storage-list-races error:', error);
+        log.error('[IPC] storage-list-races error:', error);
         throw error;
     }
 });
@@ -730,7 +743,7 @@ ipcMain.handle('storage-delete-race', async (event, filename) => {
             }
         }
     } catch (error) {
-        console.error('[IPC] storage-delete-race error:', error);
+        log.error('[IPC] storage-delete-race error:', error);
         throw error;
     }
 });
@@ -741,8 +754,10 @@ ipcMain.handle('storage-delete-race', async (event, filename) => {
  * @returns {Promise<object>} - Success status and message
  */
 ipcMain.handle('hardware-initialize', async (event, options) => {
+    const connectionStartedAt = Date.now();
+
     if (board && isHardwareReady) {
-        console.log('[Hardware] Board already initialized');
+        log.info('[Hardware] Board already initialized');
         if (mainWindow) {
             mainWindow.webContents.send('hardware-board-ready');
         }
@@ -754,12 +769,15 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
     }
 
     try {
+        logHardwareConnectionStage('Connection attempt started', connectionStartedAt);
+
         // Lazy load dependencies
         const { SerialPort } = require('serialport');
         const Firmata = require('firmata').Board;
 
         // Auto-detect Arduino port
         const ports = await SerialPort.list();
+        logHardwareConnectionStage(`Found ${ports.length} serial port(s)`, connectionStartedAt);
         const configuredUsbPort = globalConf ? globalConf.get('usbPort') : null;
         const arduinoPort = configuredUsbPort
             ? ports.find(port => port.path === configuredUsbPort)
@@ -778,7 +796,8 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
                 : 'No Arduino found. Please connect your Arduino with Firmata firmware.');
         }
 
-        console.log(`[Hardware] Found Arduino at ${arduinoPort.path}`);
+        log.info(`[Hardware] Found Arduino at ${arduinoPort.path}`);
+        logHardwareConnectionStage('Selected Arduino port', connectionStartedAt);
 
         // Board initialization happens asynchronously
         hardwareInitialization = new Promise((resolve, reject) => {
@@ -810,7 +829,8 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
 
             const connectionTimeout = setTimeout(() => {
                 const error = new Error(`Hardware connection timed out after ${HARDWARE_CONNECTION_TIMEOUT / 1000} seconds.`);
-                console.error(`[Hardware] ${error.message}`);
+                log.error(`[Hardware] ${error.message}`);
+                logHardwareConnectionStage('Connection timed out', connectionStartedAt);
                 settle(error);
             }, HARDWARE_CONNECTION_TIMEOUT);
 
@@ -828,17 +848,20 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
 
             // Wait for serial port to open
             port.on('open', () => {
-                console.log('[Hardware] Serial port opened');
+                logHardwareConnectionStage('Serial port opened', connectionStartedAt);
 
                 // Create Firmata Board instance with opened port
-                const firmataBoard = new Firmata(port);
+                logHardwareConnectionStage('Firmata handshake started', connectionStartedAt);
+                const firmataBoard = new Firmata(port, {
+                    reportVersionTimeout: 2500
+                });
 
                 // Wait for Firmata to be ready (queries board for capabilities)
                 firmataBoard.once('ready', () => {
                     if (settled) {
                         return;
                     }
-                    console.log('[Hardware] Firmata ready');
+                    logHardwareConnectionStage('Firmata handshake completed', connectionStartedAt);
 
                     board = firmataBoard;
                     isHardwareReady = true;
@@ -853,7 +876,7 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
 
                 // Handle Firmata errors
                 firmataBoard.on('error', (error) => {
-                    console.error('[Hardware] Firmata error:', error);
+                    logHardwareConnectionStage(`Firmata handshake failed: ${error.message}`, connectionStartedAt);
                     const disconnected = markHardwareDisconnected(error.message, port);
                     if (disconnected && mainWindow && !mainWindow.isDestroyed()) {
                         mainWindow.webContents.send('hardware-board-error', error.message);
@@ -864,7 +887,7 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
 
             // Handle serial port errors
             port.on('error', (error) => {
-                console.error('[Hardware] Serial port error:', error);
+                logHardwareConnectionStage(`Serial port failed: ${error.message}`, connectionStartedAt);
                 markHardwareDisconnected(error.message, port);
                 settle(error);
             });
@@ -877,7 +900,7 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
 
         return await hardwareInitialization;
     } catch (error) {
-        console.error('[IPC] hardware-initialize error:', error);
+        logHardwareConnectionStage(`Connection failed: ${error.message}`, connectionStartedAt);
         throw error;
     } finally {
         hardwareInitialization = null;
@@ -887,7 +910,7 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
 // Creates a main-process timestamp for a debug sensor trigger.
 ipcMain.handle('hardware-create-sensor-timestamp', () => {
     const timestamp = Date.now();
-    console.log(`[Hardware] Debug sensor trigger at ${timestamp}`);
+    log.debug(`[Hardware] Debug sensor trigger at ${timestamp}`);
     return { timestamp };
 });
 
@@ -959,10 +982,10 @@ ipcMain.handle('hardware-setup-sensors', async (event, config) => {
             }
         });
 
-        console.log('[Hardware] Sensors ready');
+        log.info('[Hardware] Sensors ready');
         return { success: true };
     } catch (error) {
-        console.error('[IPC] hardware-setup-sensors error:', error);
+        log.error('[IPC] hardware-setup-sensors error:', error);
         throw error;
     }
 });
@@ -982,7 +1005,7 @@ ipcMain.handle('hardware-setup-button', async (event, config) => {
 
         // If pin is 0, button is disabled
         if (buttonPin === 0) {
-            console.log('[Hardware] Start button disabled');
+            log.info('[Hardware] Start button disabled');
             return { success: true, message: 'Button disabled' };
         }
 
@@ -998,10 +1021,10 @@ ipcMain.handle('hardware-setup-button', async (event, config) => {
             previousValue = value;
         });
 
-        console.log(`[Hardware] Start button configured on pin ${buttonPin}`);
+        log.info(`[Hardware] Start button configured on pin ${buttonPin}`);
         return { success: true };
     } catch (error) {
-        console.error('[IPC] hardware-setup-button error:', error);
+        log.error('[IPC] hardware-setup-button error:', error);
         throw error;
     }
 });
@@ -1028,7 +1051,7 @@ ipcMain.handle('hardware-setup-leds', async (event, config) => {
 
         return { success: true, ready: true };
     } catch (error) {
-        console.error('[IPC] hardware-setup-leds error:', error);
+        log.error('[IPC] hardware-setup-leds error:', error);
         throw error;
     }
 });
@@ -1049,10 +1072,10 @@ ipcMain.handle('hardware-setup-buzzer', async (event, config) => {
         // Set pin to OUTPUT mode for buzzer control
         board.pinMode(buzzerPin, board.MODES.OUTPUT);
 
-        console.log('[Hardware] Buzzer ready');
+        log.info('[Hardware] Buzzer ready');
         return { success: true };
     } catch (error) {
-        console.error('[IPC] hardware-setup-buzzer error:', error);
+        log.error('[IPC] hardware-setup-buzzer error:', error);
         throw error;
     }
 });
@@ -1073,7 +1096,7 @@ ipcMain.handle('hardware-read-sensors', async () => {
             lane2: sensors.lane2.lastValue || 0
         };
     } catch (error) {
-        console.error('[IPC] hardware-read-sensors error:', error);
+        log.error('[IPC] hardware-read-sensors error:', error);
         throw error;
     }
 });
@@ -1086,7 +1109,7 @@ ipcMain.handle('hardware-read-sensors', async () => {
 ipcMain.handle('hardware-write-leds', async (event, laneData) => {
     try {
         if (!ledManager) {
-            console.warn('[Hardware] LED manager not initialized');
+            log.warn('[Hardware] LED manager not initialized');
             return;
         }
 
@@ -1110,7 +1133,7 @@ ipcMain.handle('hardware-write-leds', async (event, laneData) => {
             ledManager.show();
         }
     } catch (error) {
-        console.error('[IPC] hardware-write-leds error:', error);
+        log.error('[IPC] hardware-write-leds error:', error);
         throw error;
     }
 });
@@ -1124,7 +1147,7 @@ ipcMain.handle('hardware-run-led-animation', async (_event, animation) => {
     try {
         await runLedAnimation(animation);
     } catch (error) {
-        console.error('[IPC] hardware-run-led-animation error:', error);
+        log.error('[IPC] hardware-run-led-animation error:', error);
         throw error;
     }
 });
@@ -1139,7 +1162,7 @@ ipcMain.handle('hardware-led-show', async () => {
             ledManager.show();
         }
     } catch (error) {
-        console.error('[IPC] hardware-led-show error:', error);
+        log.error('[IPC] hardware-led-show error:', error);
         throw error;
     }
 });
@@ -1152,7 +1175,7 @@ ipcMain.handle('hardware-led-show', async () => {
 ipcMain.handle('hardware-led-off', async (event, data = {}) => {
     try {
         if (!ledManager) {
-            console.warn('[Hardware] LED manager not initialized');
+            log.warn('[Hardware] LED manager not initialized');
             return;
         }
 
@@ -1174,7 +1197,7 @@ ipcMain.handle('hardware-led-off', async (event, data = {}) => {
             ledManager.show();
         }
     } catch (error) {
-        console.error('[IPC] hardware-led-off error:', error);
+        log.error('[IPC] hardware-led-off error:', error);
         throw error;
     }
 });
@@ -1188,7 +1211,7 @@ ipcMain.handle('hardware-buzz', async (event, duration) => {
     try {
         buzz(duration);
     } catch (error) {
-        console.error('[IPC] hardware-buzz error:', error);
+        log.error('[IPC] hardware-buzz error:', error);
         throw error;
     }
 });
@@ -1211,7 +1234,7 @@ ipcMain.handle('hardware-led-method', async (event, method, ...args) => {
 
         return await ledManager[method](...args);
     } catch (error) {
-        console.error('[IPC] hardware-led-method error:', error);
+        log.error('[IPC] hardware-led-method error:', error);
         throw error;
     }
 });
@@ -1234,7 +1257,7 @@ ipcMain.handle('hardware-list-ports', async () => {
         // Fallback for older serialport versions or different exports
         throw new Error('SerialPort.list() is not available');
     } catch (error) {
-        console.error('[IPC] hardware-list-ports error:', error);
+        log.error('[IPC] hardware-list-ports error:', error);
         throw error;
     }
 });
@@ -1258,11 +1281,16 @@ ipcMain.handle('hardware-close', async () => {
         if (port && port.isOpen) {
             port.close();
         }
-        console.log('[Hardware] Closed');
+        log.info('[Hardware] Closed');
     } catch (error) {
-        console.error('[IPC] hardware-close error:', error);
+        log.error('[IPC] hardware-close error:', error);
         throw error;
     }
+});
+
+// Returns the shared main-process log file path for renderer UI actions.
+ipcMain.handle('get-log-file-path', () => {
+    return log.transports.file.getFile().path;
 });
 
 ipcMain.handle('get-app-version', (_event) => {

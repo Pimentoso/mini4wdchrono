@@ -5,7 +5,7 @@
   "main": "window.js",
   "dependencies": {
     "clone": "^2.1.2",
-    "electron-log": "^4.4.8",
+    "electron-log": "^5.4.4",
     "electron-settings": "^4.0.2",
     "firmata": "^0.19.1",
     "jquery": "^3.6.0",
@@ -26,6 +26,7 @@
   },
   "scripts": {
     "start": "electron .",
+    "start:debug": "electron . --mini4wdchrono-debug",
     "watch": "electron . --watch",
     "lint": "eslint --max-warnings=0 .",
     "lint:warn": "eslint .",

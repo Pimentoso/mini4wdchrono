@@ -1,6 +1,7 @@
 'use strict';
 
 const storage = require('./storage');
+const log = require('./logger');
 
 const COLOR_GREEN = '#66cc33';
 const COLOR_BLUE = '#188bc8';
@@ -112,7 +113,7 @@ class LedManager {
             try {
                 await window.electronAPI.hardwareBuzz(millis);
             } catch (error) {
-                console.warn('[LED] Failed to beep:', error);
+                log.warn('[LED] Failed to beep:', error);
             }
         }
     }
@@ -149,7 +150,7 @@ class LedManager {
                 color: color
             });
         } catch (error) {
-            console.warn('[LED] Failed to color lane:', error);
+            log.warn('[LED] Failed to color lane:', error);
         }
     }
 
@@ -161,7 +162,7 @@ class LedManager {
                 lane: lane
             });
         } catch (error) {
-            console.warn('[LED] Failed to clear lane:', error);
+            log.warn('[LED] Failed to clear lane:', error);
         }
     }
 
@@ -177,7 +178,7 @@ class LedManager {
             });
             callback();
         } catch (error) {
-            console.warn('[LED] Green-light animation failed:', error);
+            log.warn('[LED] Green-light animation failed:', error);
         }
     }
 
@@ -193,7 +194,7 @@ class LedManager {
                 stepDelay: 400
             });
         } catch (error) {
-            console.warn('[LED] Countdown animation failed:', error);
+            log.warn('[LED] Countdown animation failed:', error);
         }
     }
 
@@ -207,7 +208,7 @@ class LedManager {
                 duration: 1650
             });
         } catch (error) {
-            console.warn('[LED] KITT animation failed:', error);
+            log.warn('[LED] KITT animation failed:', error);
         }
     }
 
@@ -231,7 +232,7 @@ class LedManager {
                 ]
             });
         } catch (error) {
-            console.warn('[LED] Tamiya slide animation failed:', error);
+            log.warn('[LED] Tamiya slide animation failed:', error);
         }
     }
 }

@@ -9,6 +9,9 @@ window.nodeRequire = require;
 
 // Safe API exposed to renderer process
 window.electronAPI = {
+    // Launch settings
+    isDebugMode: process.argv.includes('--mini4wdchrono-debug-mode=true'),
+
     // Dialogs
     showMessageBoxSync: (options) => ipcRenderer.sendSync('show-message-box-sync', options),
     // showOpenDialogSync: (options) => ipcRenderer.sendSync('show-open-dialog-sync', options),
@@ -38,6 +41,7 @@ window.electronAPI = {
     getAppVersion: () => ipcRenderer.invoke('get-app-version'),
     getAppLocale: () => ipcRenderer.invoke('get-app-locale'),
     getAppPath: (name) => ipcRenderer.invoke('get-app-path', name),
+    getLogFilePath: () => ipcRenderer.invoke('get-log-file-path'),
 
     // Requests printing for the current renderer window.
     print: () => ipcRenderer.invoke('window-print'),

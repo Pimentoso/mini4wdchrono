@@ -1,13 +1,12 @@
 'use strict';
 
-////////////////////////
-const debugMode = false;
-////////////////////////
+const debugMode = window.electronAPI.isDebugMode;
 
-const log = require('electron-log');
+const log = require('electron-log/renderer');
 
 // Use IPC to get app version
 window.electronAPI.getAppVersion().then(version => {
+    log.info(' ');
     log.info(`Launched Mini4wdChrono v${version} at ${new Date()}`);
 });
 log.catchErrors();
@@ -25,7 +24,7 @@ const utils = require('./js/utils');
         try {
             utils.setLocale(await window.electronAPI.getAppLocale());
         } catch (err) {
-            console.warn('[Locale] Could not get app locale; using default:', err);
+            log.warn('[Locale] Could not get app locale; using default:', err);
             utils.setLocale('en-US');
         }
 
@@ -172,7 +171,6 @@ async function initializeApplication() {
             await window.electronAPI.hardwareSetupButton({
                 startButtonPin: configuration.get('startButtonPin')
             });
-            log.info('Start button configured');
 
             // Set up LEDs in main process
             await window.electronAPI.hardwareSetupLeds({
@@ -187,7 +185,7 @@ async function initializeApplication() {
                 piezoPin: configuration.get('piezoPin')
             });
 
-            log.info('Hardware components configured');
+            log.info('[Hardware] All components configured');
 
             ledManager.connected();
             ui.boardConnected();

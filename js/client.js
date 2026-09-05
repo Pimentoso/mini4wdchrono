@@ -8,6 +8,7 @@ const chrono = require('./chrono');
 const xls = require('./export');
 const i18n = new (require('../i18n/i18n'));
 const clone = require('clone');
+const log = require('./logger');
 
 let currTrack, currTournament, ledManager;
 let mancheList, mancheCount;
@@ -64,7 +65,7 @@ const reset = (name, onComplete) => {
     raceRunning = false;
 
     storage.newRace(name, (filename) => {
-        console.log('[Race setup] New race created', { name: name, filename: filename });
+        log.info('[Race setup] New race created', { name: name, filename: filename });
         ui.init();
 
         showTrackDetails();
@@ -394,11 +395,11 @@ const keydown = (keyCode, timestamp) => {
 const loadTrack = (code) => {
     $.getJSON(`https://mini4wd-track-editor.pimentoso.com/api/track/${code}`)
         .done((obj) => {
-            console.log('[Race setup] Remote track loaded', { code: obj.code, length: obj.length, order: obj.order });
+            log.info('[Race setup] Remote track loaded', { code: obj.code, length: obj.length, order: obj.order });
             trackLoadDone(obj);
         })
         .fail(() => {
-            console.error('[Race setup] Remote track load failed', { code: code });
+            log.error('[Race setup] Remote track load failed', { code: code });
             trackLoadFail();
         })
         .always(() => {
@@ -417,11 +418,11 @@ const setTrackManual = (length, order) => {
 const loadTournament = (code) => {
     $.getJSON(`https://mini4wd-tournament.pimentoso.com/api/tournament/${code}`)
         .done((obj) => {
-            console.log('[Race setup] Remote tournament loaded', { code: obj.code, manches: obj.manches ? obj.manches.length : 0 });
+            log.info('[Race setup] Remote tournament loaded', { code: obj.code, manches: obj.manches ? obj.manches.length : 0 });
             tournamentLoadDone(obj);
         })
         .fail(() => {
-            console.error('[Race setup] Remote tournament load failed', { code: code });
+            log.error('[Race setup] Remote tournament load failed', { code: code });
             tournamentLoadFail();
         })
         .always(() => {
@@ -441,7 +442,7 @@ const trackLoadDone = (obj) => {
 // Opens a persisted race and rebuilds client state.
 const openRace = (filename, onComplete) => {
     storage.loadRace(filename, () => {
-        console.log('[Race setup] Race opened', { filename: filename });
+        log.info('[Race setup] Race opened', { filename: filename });
         init({ led_manager: ledManager });
         if (onComplete) onComplete();
     });
@@ -501,7 +502,7 @@ const checkRace = async () => {
         }
         if (redraw) updateRace();
     } catch (error) {
-        console.error('[IPC] Failed to retrieve timestamp for race check:', error);
+        log.error('[IPC] Failed to retrieve timestamp for race check:', error);
     } finally {
         checkRaceInProgress = false;
     }

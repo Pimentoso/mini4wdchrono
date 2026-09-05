@@ -5,6 +5,7 @@ const utils = require('./utils');
 const i18n = new (require('../i18n/i18n'))();
 const configuration = require('./configuration');
 const storage = require('./storage');
+const log = require('./logger');
 
 // Opens a modal and prevents page scrolling.
 const openModal = (modal) => {
@@ -790,7 +791,7 @@ const setupEventHandlers = (deps) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
         const filename = $this.data('filename');
-        console.log('[Race setup] Opening race', { filename: filename });
+        log.info('[Race setup] Opening race', { filename: filename });
         client.openRace(filename, closeAllModals);
     });
 
@@ -815,7 +816,7 @@ const setupEventHandlers = (deps) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
         const code = $('#js-input-track-code').val().slice(-6);
-        console.log('[Race setup] Loading remote track', { code: code });
+        log.info('[Race setup] Loading remote track', { code: code });
         client.loadTrack(code);
     });
 
@@ -844,7 +845,7 @@ const setupEventHandlers = (deps) => {
         if (result === 0) {
             const length = parseFloat(hasLength.replace(',', '.'));
             const order = hasOrder.split('-').map((i) => { return parseInt(i); });
-            console.log('[Race setup] Saving manual track', { length: length, order: order });
+            log.info('[Race setup] Saving manual track', { length: length, order: order });
             client.setTrackManual(length, order);
         }
     });
@@ -854,7 +855,7 @@ const setupEventHandlers = (deps) => {
         const $this = $(e.currentTarget);
         if ($this.attr('disabled')) return;
         const code = $('#js-input-tournament-code').val().slice(-6);
-        console.log('[Race setup] Loading remote tournament', { code: code });
+        log.info('[Race setup] Loading remote tournament', { code: code });
         client.loadTournament(code);
     });
 
@@ -862,7 +863,7 @@ const setupEventHandlers = (deps) => {
     $('#button-new-race').on('click', () => {
         const name = $('#modal-new-name').val().trim();
         if (name === '') return false;
-        console.log('[Race setup] Creating new race', { name: name });
+        log.info('[Race setup] Creating new race', { name: name });
         client.reset(name, closeAllModals);
     });
 
@@ -927,9 +928,9 @@ const setupEventHandlers = (deps) => {
     });
 
     // Open log file
-    $('#button-log-file').on('click', () => {
-        const log = require('electron-log');
-        window.electronAPI.openPath(log.transports.file.findLogPath());
+    $('#button-log-file').on('click', async () => {
+        const logFilePath = await window.electronAPI.getLogFilePath();
+        await window.electronAPI.openPath(logFilePath);
     });
 
     // Updates threshold estimates from the settings form.
@@ -951,7 +952,7 @@ const setupEventHandlers = (deps) => {
         const speedThreshold = parseFloat($('#js-settings-speed-threshold').val().replace(',', '.'));
         const startDelay = parseFloat($('#js-settings-start-delay').val().replace(',', '.'));
         const roundLaps = parseInt($('#js-settings-round-laps').val());
-        console.log('[Race setup] Saving race settings', {
+        log.info('[Race setup] Saving race settings', {
             timeThreshold: timeThreshold,
             speedThreshold: speedThreshold,
             startDelay: startDelay,

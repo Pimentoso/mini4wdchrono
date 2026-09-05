@@ -1,5 +1,7 @@
 'use strict';
 
+const log = require('./logger');
+
 // This renderer-side module provides both async and sync-like access to config
 // by keeping a local cache hydrated from the main process.
 
@@ -61,7 +63,7 @@ const initAsync = async () => {
         await hydrateCache();
         cacheReady = true;
     } catch (error) {
-        console.error('[Configuration] Failed to initialize cache:', error);
+        log.error('[Configuration] Failed to initialize cache:', error);
         throw error;
     }
 };
@@ -69,7 +71,7 @@ const initAsync = async () => {
 // Reports whether the configuration cache can serve a setting.
 const ensureCacheReady = (settingKey) => {
     if (!cacheReady) {
-        console.warn(`[Configuration] Cache not ready for key: ${settingKey}`);
+        log.warn(`[Configuration] Cache not ready for key: ${settingKey}`);
         return false;
     }
 
@@ -81,7 +83,7 @@ const getAsync = async (settingKey) => {
     try {
         return await window.electronAPI.configGet(settingKey);
     } catch (error) {
-        console.error('[Configuration] Failed to get value:', { settingKey: settingKey, error: error });
+        log.error('[Configuration] Failed to get value:', { settingKey: settingKey, error: error });
         throw error;
     }
 };
@@ -109,11 +111,11 @@ const set = (settingKey, settingValue, callback) => {
             if (callback) callback();
         })
         .catch(async (error) => {
-            console.error('[Configuration] Failed to save value:', { settingKey: settingKey, error: error });
+            log.error('[Configuration] Failed to save value:', { settingKey: settingKey, error: error });
             try {
                 await hydrateCache();
             } catch (rehydrateError) {
-                console.error('[Configuration] Failed to rehydrate cache:', rehydrateError);
+                log.error('[Configuration] Failed to rehydrate cache:', rehydrateError);
             }
             if (callback) callback(error);
         });
@@ -129,11 +131,11 @@ const delAsync = async (settingKey) => {
 const del = (settingKey) => {
     delete cachedConfig[settingKey];
     delAsync(settingKey).catch(async (error) => {
-        console.error('[Configuration] Failed to delete value:', { settingKey: settingKey, error: error });
+        log.error('[Configuration] Failed to delete value:', { settingKey: settingKey, error: error });
         try {
             await hydrateCache();
         } catch (rehydrateError) {
-            console.error('[Configuration] Failed to rehydrate cache:', rehydrateError);
+            log.error('[Configuration] Failed to rehydrate cache:', rehydrateError);
         }
     });
 };
@@ -147,7 +149,7 @@ const reset = async () => {
         cacheReady = true;
         return backupPath;
     } catch (error) {
-        console.error('[Configuration] Failed to reset:', error);
+        log.error('[Configuration] Failed to reset:', error);
         throw error;
     }
 };

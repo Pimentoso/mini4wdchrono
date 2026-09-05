@@ -6,13 +6,14 @@ const XlsxPopulate = require('xlsx-populate');
 const utils = require('./utils');
 const storage = require('./storage');
 const strftime = require('strftime');
+const log = require('./logger');
 
 // Retrieves the base directory used for race exports.
 const getXlsFilePath = async () => {
     try {
         return await window.electronAPI.getAppPath('home');
     } catch (error) {
-        console.error('[Export] Failed to get export path:', error);
+        log.error('[Export] Failed to get export path:', error);
         throw error;
     }
 };
@@ -25,7 +26,7 @@ const createDir = async () => {
         await window.electronAPI.ensureDir(exportDir);
         return exportDir;
     } catch (error) {
-        console.error('[Export] Failed to create export directory:', error);
+        log.error('[Export] Failed to create export directory:', error);
         throw error;
     }
 };
@@ -83,7 +84,9 @@ const generateXls = async () => {
 
         return filename;
     } catch (error) {
-        console.error('[Export] Failed to generate Excel file:', error);
+        log.error('[Export] Failed to generate Excel file:', error);
+        $('#button-xls').removeAttr('disabled');
+        $('#status-xls').text(`Error: ${error.message}`);
         throw error;
     }
 };
