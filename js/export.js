@@ -82,10 +82,6 @@ const generateXls = async () => {
         worksheet.cell('A1').value(rows);
         await workbook.toFileAsync(filename);
 
-        // Update UI
-        $('#button-xls').removeAttr('disabled');
-        $('#status-xls').text(`saved ${filename}`);
-
         return filename;
     } catch (error) {
         log.error('[Export] Failed to generate Excel file:', error);

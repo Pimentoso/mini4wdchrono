@@ -510,7 +510,7 @@ const showMancheList = () => {
                     }
 
                     const playerHeader = `<div class="manches-racer-header"><strong class="is-uppercase">${utils.escapeHtml(playerName)}</strong>${playerPositionTag}</div>`;
-                    const playerForm = `<div class="field manches-time-field"><div class="control has-icons-left"><input class="input is-medium js-time-form" type="text" aria-label="${utils.escapeHtml(playerName)}" data-manche="${mindex}" data-round="${rindex}" data-player="${pindex}" value="${utils.prettyTime(playerTime)}" /><span class="icon is-small is-left has-text-grey-light" aria-hidden="true"><i class="fa-solid fa-stopwatch"></i></span></div></div>`;
+                    const playerForm = `<div class="field mb-0 manches-time-field"><div class="control has-icons-left"><input class="input is-medium has-text-centered js-time-form" type="text" aria-label="${utils.escapeHtml(playerName)}" data-manche="${mindex}" data-round="${rindex}" data-player="${pindex}" value="${utils.prettyTime(playerTime)}" /><span class="icon is-small is-left has-text-grey-light" aria-hidden="true"><i class="fa-solid fa-stopwatch"></i></span></div></div>`;
 
                     return `<td class="manches-lane-cell">${playerHeader}${playerForm}</td>`;
                 }
@@ -895,10 +895,21 @@ const setupEventHandlers = (deps) => {
         window.electronAPI.print();
     });
 
-    // Export XLS
-    $('#button-xls').on('click', () => {
-        client.saveXls();
-        $('#button-xls').attr('disabled', true);
+    // Exports the tournament and offers to open the export folder.
+    $('#button-xls').on('click', async () => {
+        const $button = $('#button-xls');
+        $button.attr('disabled', true);
+
+        try {
+            const filename = await client.saveXls();
+            if (filename) {
+                openModal('modal-xls-exported');
+            }
+        } catch (error) {
+            console.error('[Export] Unable to save Excel file:', error);
+        } finally {
+            $button.removeAttr('disabled');
+        }
     });
 
     // Open XLS folder
@@ -906,6 +917,14 @@ const setupEventHandlers = (deps) => {
         const xls = require('./export');
         const dir = await xls.createDir();
         window.electronAPI.openPath(dir);
+    });
+
+    // Opens the folder containing the newly exported Excel file.
+    $('#button-open-xls-export-folder').on('click', async () => {
+        const xls = require('./export');
+        const dir = await xls.createDir();
+        await window.electronAPI.openPath(dir);
+        closeAllModals();
     });
 
     // Open log file

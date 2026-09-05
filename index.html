@@ -53,7 +53,7 @@
 								</div>
 							</div>
 						</div>
-						<div id="race-status-badges" class="field is-grouped is-grouped-multiline race-status-badges">
+						<div id="race-status-badges" class="field is-grouped is-grouped-multiline mb-0 race-status-badges">
 							<div class="control">
 								<div class="tags has-addons">
 									<span class="tag tn" data-tn="tag-race-progress">Progress</span>
@@ -127,7 +127,7 @@
 				<span class="tn" data-tn="button-open-race">Open race</span>
 			</a>
 		</p>
-		<p id="js-race-name" class="title is-uppercase has-text-centered" style="margin-top: 10px;"></p>
+		<p id="js-race-name" class="title is-uppercase has-text-centered mt-2"></p>
 		<p id="js-race-created" class="subtitle has-text-centered"></p>
 
 		<div class="box">
@@ -316,7 +316,7 @@
 			<p class="has-text-centered">
 				<a id="button-save-settings" href="#" class="button is-info" style="width: 200px;">
 					<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-floppy-disk"></i></span>
-					<span class="tn" data-tn="button-save-settings">Save settings</span>
+					<span class="tn" data-tn="button-save-changes">Save settings</span>
 				</a>
 			</p>
 		</div>
@@ -324,13 +324,13 @@
 
 	<!-- PLAYERS TAB -->
 	<div class="container" data-tab="players" style="display: none;">
-		<div class="js-hide-on-no-tournament level leaderboard-header is-hidden-print">
+		<div class="js-hide-on-no-tournament level mb-4 leaderboard-header is-hidden-print">
 			<div class="level-left">
 				<div class="level-item leaderboard-title">
 					<span class="icon has-text-warning" aria-hidden="true"><i class="fa-solid fa-trophy"></i></span>
-					<h2 class="title is-4 tn" data-tn="label-leaderboard">Leaderboard</h2>
+					<h2 class="title is-4 mb-0 tn" data-tn="label-leaderboard">Leaderboard</h2>
 					<span id="js-racers-count" class="tag is-light is-medium">0 racers</span>
-					<div class="field has-addons racer-search-field">
+					<div class="field has-addons mb-0">
 						<p class="control">
 							<span class="button is-static is-small">
 								<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-magnifying-glass"></i></span>
@@ -344,9 +344,6 @@
 				</div>
 			</div>
 			<div class="level-right">
-				<div class="level-item">
-					<span id="status-xls" class="has-text-grey"></span>
-				</div>
 				<div class="level-item">
 					<button class="button is-info" id="button-print">
 						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-print"></i></span>
@@ -369,7 +366,7 @@
 		</div>
 		<div class="js-hide-on-no-tournament leaderboard-card">
 			<div class="table-container leaderboard-table-container">
-				<table id="tablePlayerList" class="table is-hoverable is-fullwidth is-size-5 is-table-print racers-table"></table>
+				<table id="tablePlayerList" class="table is-hoverable is-fullwidth is-size-5 mb-0 is-table-print racers-table"></table>
 			</div>
 		</div>
 		<div class="js-hide-on-no-tournament leaderboard-legend is-hidden-print">
@@ -377,17 +374,16 @@
 			<span><span class="icon has-text-danger" aria-hidden="true"><i class="fa-solid fa-star"></i></span><span class="tn" data-tn="label-personal-best">Personal best</span></span>
 			<span><strong aria-hidden="true">&mdash;</strong> <span class="tn" data-tn="label-no-result">No result</span></span>
 		</div>
-		<p class="js-show-on-no-track has-text-grey has-text-centered tn" data-tn="label-track-not-loaded">Track not loaded</p>
-		<p class="js-show-on-no-tournament has-text-grey has-text-centered tn" data-tn="label-tournament-not-loaded">Tournament not loaded</p>
+		<p class="js-show-on-no-tournament has-text-grey has-text-centered"><span class="icon is-small has-text-grey-light" aria-hidden="true"><i class="fa-solid fa-circle-exclamation"></i></span> <span class="tn" data-tn="label-tournament-not-loaded">Tournament not loaded</span></p>
 	</div>
 
 	<!-- MANCHES TAB -->
 	<div class="container" data-tab="manches" style="display: none;">
-		<div class="js-hide-on-no-tournament level leaderboard-header">
+		<div class="js-hide-on-no-tournament level mb-4 leaderboard-header">
 			<div class="level-left">
 				<div class="level-item leaderboard-title">
 					<span class="icon has-text-primary" aria-hidden="true"><i class="fa-solid fa-table-list"></i></span>
-					<h2 class="title is-4 tn" data-tn="label-race-schedule">Race schedule</h2>
+					<h2 class="title is-4 mb-0 tn" data-tn="label-race-schedule">Race schedule</h2>
 					<span id="js-rounds-count" class="tag is-light is-medium is-lowercase">0 rounds</span>
 				</div>
 			</div>
@@ -402,20 +398,18 @@
 		</div>
 		<div class="js-hide-on-no-tournament leaderboard-card manches-card">
 			<div class="table-container leaderboard-table-container">
-				<table id="tableMancheList" class="table is-hoverable is-fullwidth is-size-5 manches-table"></table>
+				<table id="tableMancheList" class="table is-hoverable is-fullwidth is-size-5 mb-0 manches-table"></table>
 			</div>
 		</div>
-		<p class="js-show-on-no-track has-text-grey has-text-centered tn" data-tn="label-track-not-loaded">Track not loaded</p>
-		<p class="js-show-on-no-tournament has-text-grey has-text-centered tn" data-tn="label-tournament-not-loaded">Tournament not loaded</p>
+		<p class="js-show-on-no-tournament has-text-grey has-text-centered"><span class="icon is-small has-text-grey-light" aria-hidden="true"><i class="fa-solid fa-circle-exclamation"></i></span> <span class="tn" data-tn="label-tournament-not-loaded">Tournament not loaded</span></p>
 	</div>
 
 	<!-- RACE TAB -->
 	<div class="container" data-tab="race" style="display: none;">
-		<div
-			class="js-hide-on-no-tournament js-hide-on-free-round js-hide-on-no-track level has-text-centered has-text-weight-bold">
-			<span id="curr-manche" class="level-item tag is-primary is-size-4"></span>
+		<div class="js-hide-on-no-tournament js-hide-on-free-round js-hide-on-no-track level has-text-centered has-text-weight-bold">
+			<span id="curr-manche" class="level-item tag is-primary is-size-4 has-text-white"></span>
 			&nbsp;
-			<span id="curr-round" class="level-item tag is-primary is-size-4"></span>
+			<span id="curr-round" class="level-item tag is-primary is-size-4 has-text-white"></span>
 		</div>
 
 		<div class="js-hide-on-no-tournament js-show-on-free-round js-hide-on-no-track level has-text-centered has-text-weight-bold">
@@ -575,11 +569,11 @@
 			</div>
 		</div>
 		<div
-			class="js-hide-on-no-tournament js-hide-on-free-round js-hide-on-no-track level has-text-centered race-next-round">
-			<span id="next-round-names" class="level-item tag is-info is-size-5">-</span>
+			class="js-hide-on-no-tournament js-hide-on-free-round js-hide-on-no-track level has-text-centered mb-0 race-next-round">
+			<span id="next-round-names" class="level-item tag is-info is-size-5 has-text-white">-</span>
 		</div>
 
-		<p class="js-show-on-no-track has-text-grey has-text-centered tn" data-tn="label-track-not-loaded">Track not loaded</p>
+		<p class="js-show-on-no-track has-text-grey has-text-centered"><span class="icon is-small has-text-grey-light" aria-hidden="true"><i class="fa-solid fa-circle-exclamation"></i></span> <span class="tn" data-tn="label-track-not-loaded">Track not loaded</span></p>
 	</div>
 
 	<!-- CONFIG TAB -->
@@ -679,7 +673,7 @@
 					<span class="icon hardware-pin-settings-chevron" aria-hidden="true"><i class="fa-solid fa-chevron-down"></i></span>
 				</summary>
 				<div class="hardware-pin-settings-content">
-					<p class="notification is-warning is-light hardware-pin-settings-warning">
+					<p class="notification is-warning is-light is-flex is-align-items-center is-gap-2 mb-5">
 						<span class="icon" aria-hidden="true"><i class="fa-solid fa-triangle-exclamation"></i></span>
 						<span class="tn" data-tn="label-hardware-pin-settings-desc">Change these values only when updating the Arduino wiring.</span>
 					</p>
@@ -742,13 +736,13 @@
 				</p>
 				<p id="js-about-version"></p>
 				<p>
-					<a href="https://github.com/Pimentoso/mini4wdchrono/releases" class="button is-link is-outlined">
+					<a href="https://github.com/Pimentoso/mini4wdchrono/releases" class="button is-primary">
 						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-rotate"></i></span>
 						<span class="tn" data-tn="label-check-updates">check for updates</span>
 					</a>
 				</p>
 				<p>
-					<a id="button-log-file" class="button is-outlined">
+					<a id="button-log-file" class="button">
 						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-file-lines"></i></span>
 						<span class="tn" data-tn="button-open-log">open log file</span>
 					</a>
@@ -758,7 +752,7 @@
 			<div class="box">
 				<p class="title is-4 tn" data-tn="label-paypal">If you enjoy this program, buy me a coffee!</p>
 				<p>
-					<a href="https://paypal.me/pimentoso" class="button is-link">
+					<a href="https://paypal.me/pimentoso" class="button is-info is-light">
 						<span class="icon is-small" aria-hidden="true"><i class="fa-brands fa-paypal"></i></span>
 						<span>Paypal</span></a>
 				</p>
@@ -767,22 +761,22 @@
 			<div class="box">
 				<p class="title is-4 tn" data-tn="label-external-tools">External tools</p>
 				<p>
-					<a href="https://mini4wd-track-editor.pimentoso.com/" class="button is-success is-outlined">
+					<a href="https://mini4wd-track-editor.pimentoso.com/" class="button is-info">
 						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-road"></i></span><span>Mini4WD Track Editor</span>
 					</a>
 				</p>
 				<p>
-					<a href="https://mini4wd-tournament.pimentoso.com/" class="button is-link is-outlined">
+					<a href="https://mini4wd-tournament.pimentoso.com/" class="button is-warning">
 						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-trophy"></i></span><span>Mini4WD Tournament Generator</span>
 					</a>
 				</p>
 				<p>
-					<a href="https://github.com/Pimentoso/mini4wdchrono/wiki" class="button is-outlined">
+					<a href="https://github.com/Pimentoso/mini4wdchrono/wiki" class="button">
 						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-book-open"></i></span><span>Mini4wdChrono Wiki</span>
 					</a>
 				</p>
 				<p>
-					<a href="https://github.com/Pimentoso/mini4wdchrono" class="button is-outlined">
+					<a href="https://github.com/Pimentoso/mini4wdchrono" class="button">
 						<span class="icon is-small" aria-hidden="true"><i class="fa-brands fa-github"></i></span><span>Project page on Github</span>
 					</a>
 				</p>
@@ -802,8 +796,10 @@
 			<p id="hardware-port-selection-error" class="has-text-grey mb-4" style="display: none;"></p>
 			<div id="hardware-port-selection-content"></div>
 		</section>
-		<footer class="modal-card-foot" style="justify-content: flex-end;">
-			<button id="button-save-boot-usb-port" class="button is-primary tn" data-tn="button-save-restart">Save and restart</button>
+		<footer class="modal-card-foot">
+			<div class="buttons">
+				<button id="button-save-boot-usb-port" class="button is-primary tn" data-tn="button-save-restart">Save and restart</button>
+			</div>
 		</footer>
 	</div>
 </div>
@@ -825,9 +821,11 @@
 				</div>
 			</div>
 		</section>
-		<footer class="modal-card-foot" style="justify-content: flex-end;">
-			<button class="button close-modal tn" data-tn="button-cancel">Cancel</button>
-			<button id="button-new-race" class="button is-success tn" data-tn="button-create-race">Create race</button>
+		<footer class="modal-card-foot">
+			<div class="buttons">
+				<button class="button close-modal tn" data-tn="button-cancel">Cancel</button>
+				<button id="button-new-race" class="button is-success tn" data-tn="button-create-race">Create race</button>
+			</div>
 		</footer>
 	</div>
 </div>
@@ -845,8 +843,32 @@
 				</tbody>
 			</table>
 		</section>
-		<footer class="modal-card-foot" style="justify-content: flex-end;">
-			<button class="button close-modal tn" data-tn="button-cancel">Cancel</button>
+		<footer class="modal-card-foot">
+			<div class="buttons">
+				<button class="button close-modal tn" data-tn="button-cancel">Cancel</button>
+			</div>	
+		</footer>
+	</div>
+</div>
+
+<div id="modal-xls-exported" class="modal">
+	<div class="modal-background"></div>
+	<div class="modal-card">
+		<header class="modal-card-head">
+			<p class="modal-card-title tn" data-tn="dialog-xls-exported">Excel export</p>
+			<button class="delete close-modal" aria-label="close"></button>
+		</header>
+		<section class="modal-card-body">
+			<p class="tn" data-tn="dialog-xls-exported-detail">The Excel file was saved successfully.</p>
+		</section>
+		<footer class="modal-card-foot">
+			<div class="buttons">
+				<button class="button close-modal tn" data-tn="button-cancel">Cancel</button>
+				<button id="button-open-xls-export-folder" class="button is-primary">
+					<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-folder-open"></i></span>
+					<span class="tn" data-tn="button-open-folder">Open folder</span>
+				</button>
+			</div>
 		</footer>
 	</div>
 </div>

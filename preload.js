@@ -9,6 +9,9 @@ window.nodeRequire = require;
 
 // Safe API exposed to renderer process
 window.electronAPI = {
+    // Launch settings
+    isDebugMode: process.argv.includes('--mini4wdchrono-debug-mode=true'),
+
     // Dialogs
     showMessageBoxSync: (options) => ipcRenderer.sendSync('show-message-box-sync', options),
     // showOpenDialogSync: (options) => ipcRenderer.sendSync('show-open-dialog-sync', options),

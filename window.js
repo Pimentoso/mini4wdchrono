@@ -11,6 +11,8 @@ log.transports.file.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{processType}] [{l
 log.transports.file.maxSize = 2 * 1024 ** 2;
 log.initialize();
 
+const debugMode = process.argv.includes('--mini4wdchrono-debug');
+
 if (process.argv[2] === '--watch') {
     require('electron-reload')(__dirname, {
         electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
@@ -225,7 +227,8 @@ function createWindow() {
             nodeIntegration: true,
             contextIsolation: false,
             enableRemoteModule: false,
-            preload: path.join(__dirname, 'preload.js')
+            preload: path.join(__dirname, 'preload.js'),
+            additionalArguments: [`--mini4wdchrono-debug-mode=${debugMode}`]
         }
     });
 

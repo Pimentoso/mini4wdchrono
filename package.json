@@ -25,6 +25,7 @@
   },
   "scripts": {
     "start": "electron .",
+    "start:debug": "electron . --mini4wdchrono-debug",
     "watch": "electron . --watch",
     "lint": "eslint --max-warnings=0 .",
     "lint:warn": "eslint .",
