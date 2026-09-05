@@ -2,10 +2,6 @@
 	max-height: unset;
 }
 
-.has-margin-vertical {
-	margin: 10px 0px;
-}
-
 .container {
 	padding-bottom: 20px;
 }
@@ -14,23 +10,10 @@
 	border: 3px solid hsl(204, 86%, 53%);
 }
 
-.leaderboard-header {
-	align-items: center;
-	margin-bottom: 1rem !important;
-}
-
 .leaderboard-title {
 	align-items: center;
 	display: flex;
 	gap: 0.65rem;
-}
-
-.leaderboard-title .title {
-	margin: 0;
-}
-
-.racer-search-field {
-	margin-bottom: 0 !important;
 }
 
 .racer-search-input {
@@ -51,7 +34,6 @@
 
 .racers-table {
 	font-variant-numeric: tabular-nums;
-	margin-bottom: 0 !important;
 	white-space: nowrap;
 }
 
@@ -169,7 +151,6 @@
 
 .manches-table {
 	font-variant-numeric: tabular-nums;
-	margin-bottom: 0 !important;
 	white-space: nowrap;
 }
 
@@ -260,10 +241,6 @@
 	text-overflow: ellipsis;
 }
 
-.manches-time-field {
-	margin-bottom: 0 !important;
-}
-
 .manches-time-field .input {
 	background: hsl(0, 0%, 99%);
 	border-color: hsl(0, 0%, 88%);
@@ -349,10 +326,6 @@
 	margin-top: 3em;
 }
 
-.js-time-form {
-	text-align: center;
-}
-
 .hardware-pin-settings {
 	border: 1px solid hsl(48, 90%, 78%);
 	padding: 0;
@@ -403,13 +376,6 @@
 	padding: 1.25rem;
 }
 
-.hardware-pin-settings-warning {
-	align-items: center;
-	display: flex;
-	gap: 0.5rem;
-	margin-bottom: 1.25rem !important;
-}
-
 .hardware-loading {
 	align-items: center;
 	display: flex;
@@ -426,7 +392,6 @@
 
 .race-status-badges {
 	display: none;
-	margin-bottom: 0;
 }
 
 .race-status-badges .tag {
@@ -653,10 +618,6 @@
 
 div[data-tab="race"].container {
 	margin-bottom: 0;
-}
-
-.race-next-round {
-	margin-bottom: 0 !important;
 }
 
 .race-next-round .tag {
