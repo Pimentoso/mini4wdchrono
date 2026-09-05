@@ -605,7 +605,7 @@ const timer = (lane) => {
 // Exports the current tournament when one is loaded.
 const saveXls = () => {
     if (currTournament) {
-        xls.generateXls();
+        return xls.generateXls();
     }
 };
 

@@ -64,8 +64,8 @@
 	"button-open-folder": "Apri cartella >",
 	"button-search-racers": "Cerca racer",
 	"button-open-log": "Visualizza file di log",
-	"label-tournament-not-loaded": "Torneo non caricato",
-	"label-track-not-loaded": "Pista non caricata",
+	"label-tournament-not-loaded": "Carica i dati del torneo per visualizzare l'elenco dei racer e il programma di gara.",
+	"label-track-not-loaded": "Carica o inserisci i dati della pista per abilitare la modalità gara.",
 	"button-cancel": "Annulla",
 	"button-save-changes": "Salva modifiche",
 	"button-prev-round": "Round prec",
@@ -153,6 +153,8 @@
 	"dialog-disqualify": "Squalificare questo risultato? Verrà registrato come RIT.",
 	"dialog-replay-round": "Ripetere questo round? I dati attuali del round andranno persi.",
 	"dialog-saved": "Modifiche salvate correttamente.",
+	"dialog-xls-exported": "File Excel salvato",
+	"dialog-xls-exported-detail": "Il file Excel è stato salvato. Vuoi aprire la cartella che lo contiene?",
 	"label-check-updates": "Controlla aggiornamenti",
 	"option-lane-order": "Seleziona ordine corsie"
 }

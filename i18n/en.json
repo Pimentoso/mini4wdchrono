@@ -64,8 +64,8 @@
 	"button-open-folder": "Open folder >",
 	"button-search-racers": "Search racers",
 	"button-open-log": "Show log file",
-	"label-tournament-not-loaded": "Tournament not loaded",
-	"label-track-not-loaded": "Track not loaded",
+	"label-tournament-not-loaded": "Load tournament data to view the racer list and race schedule.",
+	"label-track-not-loaded": "Load or enter track data to enable race mode.",
 	"button-cancel": "Cancel",
 	"button-save-changes": "Save changes",
 	"button-prev-round": "Prev round",
@@ -152,6 +152,8 @@
 	"dialog-disqualify": "Disqualify this result? It will be recorded as DNF.",
 	"dialog-replay-round": "Run this round again? Its current data will be lost.",
 	"dialog-saved": "Changes saved successfully.",
+	"dialog-xls-exported": "Excel file saved",
+	"dialog-xls-exported-detail": "The Excel file was saved. Would you like to open its folder?",
 	"label-check-updates": "Check for updates",
 	"option-lane-order": "Select lane order"
 }
