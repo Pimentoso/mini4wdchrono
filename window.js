@@ -23,18 +23,20 @@ if (process.argv[2] === '--watch') {
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-// Global nconf instance for settings
-let globalConf = null;
+// JSON settings store initialized from the user-data settings file.
+let settingsStore = null;
+let configInitialization = null;
 
 // IPC handlers for system operations
 const { ipcMain, dialog } = require('electron');
 const fs = require('fs');
 const fsp = fs.promises;
-const nconf = require('nconf');
+const { createJsonStore, createSettingsStore } = require('./js/settings');
 
 // Global electron-settings instance for race data
 let raceStorage = null;
 let currentRaceFile = null;
+let raceStore = null;
 
 // Global hardware state
 let board = null;
@@ -376,18 +378,34 @@ ipcMain.handle('fs-file-exists', async (event, filePath) => {
     }
 });
 
+// Initializes the JSON settings store once for all configuration IPC handlers.
+const initializeConfig = async () => {
+    if (settingsStore) {
+        return;
+    }
+
+    if (!configInitialization) {
+        configInitialization = (async () => {
+            const configDir = app.getPath('userData');
+            const configPath = path.join(configDir, 'settings.json');
+            settingsStore = createSettingsStore({ filePath: configPath, defaults: CONFIG_DEFAULTS });
+            await settingsStore.initialize();
+            log.info('[IPC] config-init initialized');
+        })().finally(() => {
+            configInitialization = null;
+        });
+    }
+
+    await configInitialization;
+};
+
 /**
- * Initializes nconf with settings file
+ * Initializes settings from the user-data JSON file
  * @returns {Promise<void>}
  */
 ipcMain.handle('config-init', async (_event) => {
     try {
-        const configDir = app.getPath('userData');
-        const configPath = path.join(configDir, 'settings.json');
-        await fsp.mkdir(configDir, { recursive: true });
-        globalConf = nconf.file('global', { file: configPath });
-        globalConf.defaults(CONFIG_DEFAULTS);
-        log.info('[IPC] config-init initialized');
+        await initializeConfig();
     } catch (error) {
         log.error('[IPC] config-init error:', error);
         throw error;
@@ -401,11 +419,8 @@ ipcMain.handle('config-init', async (_event) => {
  */
 ipcMain.handle('config-get', async (_event, key) => {
     try {
-        if (!globalConf) {
-            await ipcMain.emit('config-init');
-        }
-        globalConf.load();
-        return globalConf.get(key);
+        await initializeConfig();
+        return settingsStore.get(key);
     } catch (error) {
         log.error('[IPC] config-get error:', error);
         throw error;
@@ -420,11 +435,8 @@ ipcMain.handle('config-get', async (_event, key) => {
  */
 ipcMain.handle('config-set', async (event, key, value) => {
     try {
-        if (!globalConf) {
-            await ipcMain.emit('config-init');
-        }
-        globalConf.set(key, value);
-        globalConf.save();
+        await initializeConfig();
+        await settingsStore.set(key, value);
     } catch (error) {
         log.error('[IPC] config-set error:', error);
         throw error;
@@ -438,11 +450,8 @@ ipcMain.handle('config-set', async (event, key, value) => {
  */
 ipcMain.handle('config-del', async (event, key) => {
     try {
-        if (!globalConf) {
-            await ipcMain.emit('config-init');
-        }
-        globalConf.clear(key);
-        globalConf.save();
+        await initializeConfig();
+        await settingsStore.del(key);
     } catch (error) {
         log.error('[IPC] config-del error:', error);
         throw error;
@@ -456,25 +465,10 @@ ipcMain.handle('config-del', async (event, key) => {
 ipcMain.handle('config-reset', async (_event) => {
     try {
         const configDir = app.getPath('userData');
-        const configPath = path.join(configDir, 'settings.json');
         const backupPath = path.join(configDir, 'settings.json.bak');
 
-        // Backup current settings if file exists
-        try {
-            await fsp.copyFile(configPath, backupPath);
-        } catch (_error) {
-            // File may not exist, that's ok
-        }
-
-        // Delete current and reinit
-        try {
-            await fsp.unlink(configPath);
-        } catch (_error) {
-            // File may not exist, that's ok
-        }
-
-        globalConf = null; // Reset global instance
-        await ipcMain.emit('config-init');
+        await initializeConfig();
+        await settingsStore.reset(backupPath);
 
         return backupPath;
     } catch (error) {
@@ -499,18 +493,18 @@ ipcMain.handle('storage-load-race', async (event, filename) => {
         const raceFilePath = path.join(raceDir, filename);
 
         // Load race data (will throw if file doesn't exist)
-        const content = await fsp.readFile(raceFilePath, 'utf8');
-        const raceData = JSON.parse(content);
+        const loadedRaceStore = createJsonStore({ filePath: raceFilePath });
+        await loadedRaceStore.initialize();
+        const raceData = loadedRaceStore.getData();
+        raceStore = loadedRaceStore;
         currentRaceFile = raceFilePath;
 
         // Store in memory for fast access
         raceStorage = raceData;
 
         // Save current race file to config so it can be loaded on next startup
-        if (globalConf) {
-            globalConf.set('raceFile', filename);
-            globalConf.save();
-        }
+        await initializeConfig();
+        await settingsStore.set('raceFile', filename);
     } catch (error) {
         log.error('[IPC] storage-load-race error:', error);
         throw error;
@@ -548,17 +542,16 @@ ipcMain.handle('storage-new-race', async (event, raceName) => {
         };
 
         // Write race file
-        await fsp.writeFile(filePath, JSON.stringify(raceData, null, 2), 'utf8');
+        raceStore = createJsonStore({ filePath: filePath, initialData: raceData });
+        await raceStore.save();
 
         // Load into storage
         raceStorage = raceData;
         currentRaceFile = filePath;
 
         // Save current race file to config
-        if (globalConf) {
-            globalConf.set('raceFile', filename);
-            globalConf.save();
-        }
+        await initializeConfig();
+        await settingsStore.set('raceFile', filename);
 
         return filename;
     } catch (error) {
@@ -575,27 +568,37 @@ ipcMain.handle('storage-new-race', async (event, raceName) => {
  */
 ipcMain.handle('storage-set', async (event, key, value) => {
     try {
-        if (!raceStorage) {
-            raceStorage = {};
-        }
+        if (!raceStore) {
+            raceStorage = raceStorage || {};
+            const keys = key.split('.');
+            let current = raceStorage;
 
-        // Handle nested keys like 'race.m0.r0'
-        const keys = key.split('.');
-        let current = raceStorage;
-
-        for (let i = 0; i < keys.length - 1; i++) {
-            if (!current[keys[i]]) {
-                current[keys[i]] = {};
+            for (let i = 0; i < keys.length - 1; i++) {
+                if (!current[keys[i]]) {
+                    current[keys[i]] = {};
+                }
+                current = current[keys[i]];
             }
-            current = current[keys[i]];
+
+            current[keys[keys.length - 1]] = value;
+            return;
         }
 
-        current[keys[keys.length - 1]] = value;
+        await raceStore.update((raceData) => {
+            // Handle nested keys like 'race.m0.r0'
+            const keys = key.split('.');
+            let current = raceData;
 
-        // Persist to disk
-        if (currentRaceFile) {
-            await fsp.writeFile(currentRaceFile, JSON.stringify(raceStorage, null, 2), 'utf8');
-        }
+            for (let i = 0; i < keys.length - 1; i++) {
+                if (!current[keys[i]]) {
+                    current[keys[i]] = {};
+                }
+                current = current[keys[i]];
+            }
+
+            current[keys[keys.length - 1]] = value;
+        });
+        raceStorage = raceStore.getData();
     } catch (error) {
         log.error('[IPC] storage-set error:', error);
         throw error;
@@ -651,24 +654,22 @@ ipcMain.handle('storage-get-all', async () => {
  */
 ipcMain.handle('storage-remove', async (event, key) => {
     try {
-        if (!raceStorage) {
+        if (!raceStore) {
             return;
         }
 
-        const keys = key.split('.');
-        let current = raceStorage;
+        await raceStore.update((raceData) => {
+            const keys = key.split('.');
+            let current = raceData;
 
-        for (let i = 0; i < keys.length - 1; i++) {
-            current = current[keys[i]];
-            if (!current) return;
-        }
+            for (let i = 0; i < keys.length - 1; i++) {
+                current = current[keys[i]];
+                if (!current) return;
+            }
 
-        delete current[keys[keys.length - 1]];
-
-        // Persist to disk
-        if (currentRaceFile) {
-            await fsp.writeFile(currentRaceFile, JSON.stringify(raceStorage, null, 2), 'utf8');
-        }
+            delete current[keys[keys.length - 1]];
+        });
+        raceStorage = raceStore.getData();
     } catch (error) {
         log.error('[IPC] storage-remove error:', error);
         throw error;
@@ -737,10 +738,9 @@ ipcMain.handle('storage-delete-race', async (event, filename) => {
         if (currentRaceFile === filePath) {
             raceStorage = null;
             currentRaceFile = null;
-            if (globalConf) {
-                globalConf.del('raceFile');
-                globalConf.save();
-            }
+            raceStore = null;
+            await initializeConfig();
+            await settingsStore.del('raceFile');
         }
     } catch (error) {
         log.error('[IPC] storage-delete-race error:', error);
@@ -778,7 +778,7 @@ ipcMain.handle('hardware-initialize', async (event, options) => {
         // Auto-detect Arduino port
         const ports = await SerialPort.list();
         logHardwareConnectionStage(`Found ${ports.length} serial port(s)`, connectionStartedAt);
-        const configuredUsbPort = globalConf ? globalConf.get('usbPort') : null;
+        const configuredUsbPort = settingsStore ? settingsStore.get('usbPort') : null;
         const arduinoPort = configuredUsbPort
             ? ports.find(port => port.path === configuredUsbPort)
             : ports.find(port =>
