@@ -12,7 +12,7 @@ Electron app for Mini4WD race timing and race management. Vanilla JS, HTML, Bulm
 
 ## Key files
 
-- `js/main.js`: renderer bootstrap, IPC event handlers.
+- `js/renderer.js`: renderer bootstrap, IPC event handlers.
 - `js/client.js`: race orchestration.
 - `js/chrono.js`: timing engine.
 - `js/ui.js`: DOM rendering and user flows.
