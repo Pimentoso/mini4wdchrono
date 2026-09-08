@@ -23,6 +23,7 @@ const closeAllModals = () => {
 const boardConnected = () => {
     $('#tag-board-status').removeClass('is-danger');
     $('#tag-board-status').addClass('is-success');
+    $('#tag-board-status').data('tn', 'tag-connected');
     $('#tag-board-status').text(i18n.__('tag-connected'));
     $('#hardware-loading').hide();
     closeAllModals();
@@ -33,6 +34,7 @@ const boardConnected = () => {
 const debugModeEnabled = () => {
     $('#tag-board-status').removeClass('is-danger is-success');
     $('#tag-board-status').addClass('is-warning');
+    $('#tag-board-status').data('tn', 'tag-debug-mode');
     $('#tag-board-status').text(i18n.__('tag-debug-mode'));
     $('#hardware-loading').hide();
     $('#main').show();
@@ -42,6 +44,7 @@ const debugModeEnabled = () => {
 const boardDisconnected = () => {
     $('#tag-board-status').removeClass('is-success is-warning');
     $('#tag-board-status').addClass('is-danger');
+    $('#tag-board-status').data('tn', 'tag-disconnected');
     $('#tag-board-status').text(i18n.__('tag-disconnected'));
     $('#main').hide();
     $('#hardware-loading').show();
