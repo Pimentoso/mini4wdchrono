@@ -251,6 +251,25 @@ describe('chrono', () => {
         assert.deepEqual(car.splitTimes, [2000, 2000]);
     });
 
+    test('uses only lane 2 for a track without lane changers', () => {
+        chrono.init({ length: 30, order: [] });
+
+        const cars = chrono.getCars();
+        assert.deepEqual(cars.map((car) => car.playerId), [-1, 0, -1]);
+        assert.ok(cars[0].outOfBounds);
+        assert.ok(cars[2].outOfBounds);
+
+        chrono.addLap(0, 10000);
+        chrono.addLap(1, 10000);
+        chrono.addLap(1, 12000);
+        chrono.addLap(1, 14000);
+        chrono.addLap(1, 16000);
+
+        assert.equal(chrono.getCars()[1].lapCount, 4);
+        assert.equal(chrono.getCars()[1].nextLane, 1);
+        assert.equal(chrono.isRaceFinished(), true);
+    });
+
     test('keeps the maximum cutoff at least as large as the clamped minimum', () => {
         chrono.init({ length: 3, order: [1, 2, 3] }, [10, 20, 30]);
         chrono.addLap(0, 10000);

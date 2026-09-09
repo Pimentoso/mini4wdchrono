@@ -312,7 +312,8 @@ const showTrackDetails = (track) => {
         else {
             $('#js-input-track-code').val(track.url);
             $('#js-track-length').text(`${i18n.__('label-track-length')}: ${track.length} m`);
-            $('#js-track-order').text(`${i18n.__('label-track-lane-order')}: ${track.order},1`);
+            const laneOrder = track.order.length === 0 ? '2-2-2-2' : `${track.order},1`;
+            $('#js-track-order').text(`${i18n.__('label-track-lane-order')}: ${laneOrder}`);
             $('#js-link-track').attr('href', track.view_url);
             $('#js-track-length-manual').val('');
             $('#js-track-order-manual').val('');
@@ -323,6 +324,7 @@ const showTrackDetails = (track) => {
         $('#js-track-order').text('-');
         $('#js-link-track').attr('href', 'https://mini4wd-track-editor.pimentoso.com/');
     }
+    showRaceModeDetails();
 };
 
 // Renders the selected tournament's details.
@@ -378,6 +380,11 @@ const showThresholds = (timeThreshold, speedThreshold, roundLaps) => {
 // Renders the selected race mode and its description.
 const showRaceModeDetails = () => {
     const race_mode = storage.get('raceMode');
+    const track = storage.get('track');
+    const singleLaneMode = track && Array.isArray(track.order) && track.order.length === 0;
+
+    $('#js-race-mode-0, #js-race-mode-1').prop('disabled', singleLaneMode);
+    $('#js-race-mode-2').prop('disabled', true);
     $('.js-race-mode').removeClass('is-primary');
     $(`#js-race-mode-${race_mode}`).addClass('is-primary');
     switch (race_mode) {
@@ -388,7 +395,7 @@ const showRaceModeDetails = () => {
             $('#js-race-mode-description').text(i18n.__('button-race-mode-final-description'));
             break;
         case 2:
-            $('#js-race-mode-description').text(i18n.__('button-race-mode-endurance-description'));
+            $('#js-race-mode-description').text(i18n.__('button-race-mode-single-lane-description'));
             break;
     }
 };
@@ -735,7 +742,10 @@ const disableRaceInput = (disabled) => {
 // Updates visibility for the loaded track, tournament, and race mode.
 const updateUiState = (freeRound) => {
     const track = storage.get('track');
-    const tournament = storage.get('tournament');
+    const singleLaneMode = track && Array.isArray(track.order) && track.order.length === 0;
+    const tournament = singleLaneMode ? null : storage.get('tournament');
+
+    $('#js-input-tournament-code, #js-load-tournament').prop('disabled', singleLaneMode);
 
     if (track === null) {
         $('.js-show-on-no-track').show();
@@ -1051,6 +1061,7 @@ const setupEventHandlers = (deps) => {
         $('.js-race-mode').removeClass('is-primary');
         $this.addClass('is-primary');
         const mode = $this.data('race-mode');
+        if (mode === 2) return;
         storage.set('raceMode', mode);
         showRaceModeDetails();
     });

@@ -19,6 +19,19 @@ let checkRaceTask;
 let checkStartTask;
 let checkRaceInProgress = false;
 
+// Reports whether a track has no lane changer and requires one-car rounds.
+const isSingleLaneTrack = (track) => track && Array.isArray(track.order) && track.order.length === 0;
+
+// Applies the automatic race mode required by the selected track.
+const syncRaceModeWithTrack = (track) => {
+    if (isSingleLaneTrack(track)) {
+        storage.set('raceMode', 2);
+    }
+    else if (storage.get('raceMode') === 2) {
+        storage.set('raceMode', 0);
+    }
+};
+
 // Initializes renderer state from cached race data and dependencies.
 const init = (params) => {
     ui.init();
@@ -46,7 +59,7 @@ const init = (params) => {
 
     // load tournament from settings
     const savedTournament = storage.get('tournament');
-    if (savedTournament) {
+    if (savedTournament && !isSingleLaneTrack(currTrack)) {
         tournamentLoadDone(savedTournament);
     }
     showTournamentDetails();
@@ -363,6 +376,8 @@ const isStarted = () => raceStarting || raceRunning;
 
 // Switches between free-round and tournament-round modes.
 const toggleFreeRound = () => {
+    if (isSingleLaneTrack(currTrack)) return;
+
     freeRound = !freeRound;
     chronoInit();
     ui.toggleFreeRound(freeRound);
@@ -410,14 +425,24 @@ const loadTrack = (code) => {
 // Stores a manually entered track definition.
 const setTrackManual = (length, order) => {
     const obj = { 'code': i18n.__('tag-track-manual'), 'length': length, 'order': order, 'manual': true };
-    storage.set('track', obj);
     trackLoadDone(obj);
 };
 
 // Loads a tournament definition from the remote tournament service.
 const loadTournament = (code) => {
+    if (isSingleLaneTrack(currTrack)) {
+        log.warn('[Race setup] Tournament blocked for single-lane track', { code: code });
+        window.electronAPI.showMessageBoxSync({ type: 'error', title: 'Error', message: i18n.__('dialog-single-lane-tournament-not-supported'), buttons: ['Ok'] });
+        return;
+    }
+
     $.getJSON(`https://mini4wd-tournament.pimentoso.com/api/tournament/${code}`)
         .done((obj) => {
+            if (isSingleLaneTrack(currTrack)) {
+                log.warn('[Race setup] Tournament response blocked for single-lane track', { code: obj.code });
+                ui.tournamentLoadFail();
+                return;
+            }
             log.info('[Race setup] Remote tournament loaded', { code: obj.code, manches: obj.manches ? obj.manches.length : 0 });
             tournamentLoadDone(obj);
         })
@@ -430,13 +455,21 @@ const loadTournament = (code) => {
         });
 };
 
-// Applies a successfully loaded track to the client state.
+// Validates and applies a successfully loaded track to the client state.
 const trackLoadDone = (obj) => {
+    if (isSingleLaneTrack(obj) && (currTournament || storage.get('tournament'))) {
+        log.warn('[Race setup] Single-lane track blocked for loaded tournament', { code: obj.code });
+        window.electronAPI.showMessageBoxSync({ type: 'error', title: 'Error', message: i18n.__('dialog-single-lane-track-not-supported'), buttons: ['Ok'] });
+        return false;
+    }
+
     currTrack = obj;
     storage.set('track', currTrack);
+    syncRaceModeWithTrack(currTrack);
 
     ui.trackLoadDone(currTrack);
     showTrackDetails();
+    return true;
 };
 
 // Opens a persisted race and rebuilds client state.
