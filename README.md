@@ -124,6 +124,7 @@ winget install --id Microsoft.VisualStudio.2022.BuildTools --exact `
   --accept-package-agreements --accept-source-agreements `
   --override "--wait --passive --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
 winget install --id ArduinoSA.IDE.stable --exact --accept-package-agreements --accept-source-agreements
+winget install --id OpenJS.NodeJS.22 --exact --accept-package-agreements --accept-source-agreements
 ```
 
 Close and reopen PowerShell after the installations finish so the new commands
