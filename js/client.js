@@ -11,6 +11,9 @@ const i18n = new (require('../i18n/i18n'));
 const clone = require('clone');
 const log = require('./logger');
 
+// Sentinel time stored for a car that did not finish.
+const DNF_TIME = 99999;
+
 let currTrack, currTournament, ledManager;
 let mancheList, mancheCount;
 let currManche = 0, currRound = 0, raceStarting = false, raceRunning = false, freeRound = true;
@@ -106,7 +109,9 @@ const disqualify = (mindex, rindex, pindex) => {
     rindex = rindex === undefined || rindex === null ? currRound : rindex;
     const cars = storage.loadRound(mindex, rindex);
     cars[pindex].originalTime = cars[pindex].currTime;
-    cars[pindex].currTime = 99999;
+    cars[pindex].currTime = DNF_TIME;
+    // The race view renders DNF from outOfBounds, not from the time value.
+    cars[pindex].outOfBounds = true;
     storage.saveRound(mindex, rindex, cars);
     companionApi.submitRoundResult(mindex, rindex);
 
@@ -130,6 +135,9 @@ const overrideTimes = () => {
                             cars[pindex].originalTime = oldTime;
                             cars[pindex].currTime = newTime;
                         }
+                        // Keep the DNF flag in step with the time an operator typed,
+                        // so editing a DNF back to a real time clears it and vice versa.
+                        cars[pindex].outOfBounds = (cars[pindex].currTime === DNF_TIME);
                     }
                 });
             }
