@@ -3,6 +3,8 @@
 const storage = require('./storage');
 
 const DEFAULT_LANE_ORDER = [0, 1, 2];
+const SINGLE_LANE = 1;
+const SINGLE_LANE_ORDER = [1, 1, 1];
 const DEFAULT_TIME_THRESHOLD = 40;
 const DEFAULT_SPEED_THRESHOLD = 5;
 const DEFAULT_LAPS = 3;
@@ -45,10 +47,27 @@ const restoreCar = (car, lane) => ({
     splitTimes: [...(car.splitTimes || [])]
 });
 
+// Creates an inactive placeholder for an unused lane.
+const createEmptyCar = (lane) => ({
+    ...createCar(lane, -1),
+    outOfBounds: true
+});
+
+// Reports whether the track keeps every lap on the same lane.
+const isSingleLaneTrack = (track) => track && Array.isArray(track.order) && track.order.length === 0;
+
 // Initializes the timing engine for a new or restored race.
 const init = (track, playerIds, cars) => {
     state.trackLength = track ? track.length : 0;
-    state.laneOrder = track ? track.order.map((lane) => lane - 1) : [...DEFAULT_LANE_ORDER];
+    if (isSingleLaneTrack(track)) {
+        state.laneOrder = [...SINGLE_LANE_ORDER];
+    }
+    else if (track) {
+        state.laneOrder = track.order.map((lane) => lane - 1);
+    }
+    else {
+        state.laneOrder = [...DEFAULT_LANE_ORDER];
+    }
 
     state.timeThreshold = (storage.get('timeThreshold') || DEFAULT_TIME_THRESHOLD) / 100;
     state.speedThreshold = storage.get('speedThreshold') || DEFAULT_SPEED_THRESHOLD;
@@ -67,6 +86,13 @@ const init = (track, playerIds, cars) => {
     );
 
     if (cars === undefined) {
+        if (isSingleLaneTrack(track)) {
+            state.cars = DEFAULT_LANE_ORDER.map((lane) => {
+                return lane === SINGLE_LANE ? createCar(lane) : createEmptyCar(lane);
+            });
+            return;
+        }
+
         state.cars = DEFAULT_LANE_ORDER.map((lane) => {
             // playerId will be zero on a free round
             const playerId = playerIds ? playerIds[lane] : 0;
