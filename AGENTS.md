@@ -18,6 +18,7 @@ Electron app for Mini4WD race timing and race management. Vanilla JS, HTML, Bulm
 - `js/ui.js`: DOM rendering and user flows.
 - `js/configuration.js`, `js/storage.js`: cached renderer APIs backed by async IPC.
 - `js/led_manager.js`: renderer LED abstraction.
+- `js/companion_auth.js`, `js/companion_api.js`: Mini4WD Companion login and REST client.
 - `window.js`: Electron main process, IPC, hardware.
 - `preload.js`: renderer IPC surface.
 - `utils/build-*`: GitHub Release artifacts.
@@ -34,6 +35,9 @@ Electron app for Mini4WD race timing and race management. Vanilla JS, HTML, Bulm
   - Without a tournament, only free rounds are available; free-round results are not persisted.
   - With a tournament, preserve bracket player/lane order, round navigation, replay, time editing/disqualification, generated finals, standings, race-progress tables, and Excel export.
   - Free rounds remain available during a tournament and must not overwrite tournament-round results.
+- Mini4WD Companion integration is optional and inactive until an organizer logs in.
+  - Login is browser-based and returns through the `mini4wdchrono://` custom protocol; macOS builds must declare that scheme in the app bundle.
+  - Tournaments loaded from Companion publish their round results back as they are timed. Tournaments loaded any other way never do.
 
 ## Rules
 
