@@ -147,7 +147,7 @@
 	"dialog-track-not-loaded": "Track not loaded!",
 	"dialog-tournament-not-loaded": "Tournament not loaded!",
 	"dialog-single-lane-tournament-not-supported": "Tournaments are not supported on single-lane tracks. Use free rounds instead.",
-	"dialog-single-lane-track-not-supported": "A single-lane track cannot be loaded while a tournament is loaded.",
+	"dialog-single-lane-track-not-supported": "The selected track is a single-lane track (it has no lane changers). It cannot be loaded while a tournament is loaded.",
 	"dialog-change-round": "Change round?",
 	"dialog-enter-final": "Start the finals? Make sure all racers' times are correct and final. The race mode will switch to Final mode.",
 	"dialog-save-restart": "Settings saved. The app will reload to apply the changes.",
