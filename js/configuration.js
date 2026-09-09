@@ -20,7 +20,9 @@ const CONFIG_KEYS = [
     'title',
     'tab',
     'usbPort',
-    'raceFile'
+    'raceFile',
+    'companionToken',
+    'companionUser'
 ];
 
 const cachedConfig = {};

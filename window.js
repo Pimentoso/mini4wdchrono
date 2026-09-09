@@ -22,6 +22,14 @@ if (process.argv[2] === '--watch') {
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+let rendererLoaded = false;
+
+// Custom protocol used by Mini4WD Companion to hand the auth token back to the app.
+const COMPANION_PROTOCOL = 'mini4wdchrono';
+const COMPANION_PROTOCOL_PREFIX = `${COMPANION_PROTOCOL}://`;
+
+// Auth callback received before the renderer was ready, replayed once it loads.
+let pendingAuthUrl = null;
 
 // JSON settings store initialized from the user-data settings file.
 let settingsStore = null;
@@ -246,12 +254,23 @@ function createWindow() {
     // Open the DevTools.
     // mainWindow.webContents.openDevTools();
 
+    // Deliver any auth callback that arrived while the renderer was still loading.
+    mainWindow.webContents.on('did-finish-load', () => {
+        rendererLoaded = true;
+        if (pendingAuthUrl) {
+            const authUrl = pendingAuthUrl;
+            pendingAuthUrl = null;
+            handleAuthCallback(authUrl);
+        }
+    });
+
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
         mainWindow = null;
+        rendererLoaded = false;
     });
 
     const selectionMenu = Menu.buildFromTemplate([
@@ -1357,15 +1376,51 @@ ipcMain.handle('clipboard-read', () => {
     return clipboard.readText();
 });
 
+app.setAsDefaultProtocolClient(COMPANION_PROTOCOL);
+
+// Extracts the token from a mini4wdchrono:// URL and forwards it to the renderer.
+function handleAuthCallback(authUrl) {
+    if (!mainWindow || !rendererLoaded) {
+        // The renderer cannot receive the token yet; replay it after it loads.
+        pendingAuthUrl = authUrl;
+        return;
+    }
+
+    const match = /[?&]token=([^&]+)/.exec(authUrl);
+    if (!match) {
+        log.warn('[Companion] Auth callback without token');
+        return;
+    }
+
+    log.info('[Companion] Auth callback received');
+    mainWindow.webContents.send('companion-auth-callback', decodeURIComponent(match[1]));
+}
+
+// Returns the auth callback URL contained in a command line, if any.
+function findAuthUrl(argv) {
+    return (argv || []).find((arg) => arg.startsWith(COMPANION_PROTOCOL_PREFIX));
+}
+
 // Prevent multiple instances of this app to run.
 const gotTheLock = app.requestSingleInstanceLock();
 
-app.on('second-instance', () => {
+app.on('second-instance', (event, argv) => {
     // Someone tried to run a second instance, we should focus our window.
     if (mainWindow) {
         if (mainWindow.isMinimized()) mainWindow.restore();
         mainWindow.focus();
     }
+    // On Windows and Linux the protocol URL arrives as a command line argument.
+    const authUrl = findAuthUrl(argv);
+    if (authUrl) {
+        handleAuthCallback(authUrl);
+    }
+});
+
+// On macOS the protocol URL is delivered as an application event.
+app.on('open-url', (event, openedUrl) => {
+    event.preventDefault();
+    handleAuthCallback(openedUrl);
 });
 
 if (!gotTheLock) {
@@ -1375,7 +1430,11 @@ if (!gotTheLock) {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.on('ready', () => {
+    // On Windows and Linux a cold start through the protocol passes the URL in argv.
+    pendingAuthUrl = pendingAuthUrl || findAuthUrl(process.argv) || null;
+    createWindow();
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {

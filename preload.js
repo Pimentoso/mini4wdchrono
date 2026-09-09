@@ -65,6 +65,9 @@ window.electronAPI = {
     hardwareBuzz: (duration) => ipcRenderer.invoke('hardware-buzz', duration),
     hardwareListPorts: () => ipcRenderer.invoke('hardware-list-ports'),
 
+    // Mini4WD Companion authentication callback (mini4wdchrono:// custom protocol)
+    onCompanionAuthCallback: (callback) => ipcRenderer.on('companion-auth-callback', callback),
+
     // Hardware status listeners (events)
     onBoardReady: (callback) => ipcRenderer.on('hardware-board-ready', callback),
     onBoardError: (callback) => ipcRenderer.on('hardware-board-error', callback),
