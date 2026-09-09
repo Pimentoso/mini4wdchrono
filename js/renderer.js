@@ -17,6 +17,7 @@ const storage = require('./js/storage');
 const client = require('./js/client');
 const ui = require('./js/ui');
 const utils = require('./js/utils');
+const companionApi = require('./js/companion_api');
 
 // Loads cached renderer state before initializing the application.
 (async () => {
@@ -31,6 +32,7 @@ const utils = require('./js/utils');
         // Initialize configuration and storage caches via IPC
         await configuration.initAsync();
         await storage.initAsync();
+        await companionApi.initAsync();
         log.info('Configuration and storage initialized successfully');
     } catch (e) {
         // Configuration/storage error
@@ -134,6 +136,9 @@ async function initializeApplication() {
         ledManager,
         startRaceCallback: startRace
     });
+
+    // Restore the Mini4WD Companion session, if any
+    ui.initCompanion();
 
     // Show version in about tab (async)
     window.electronAPI.getAppVersion().then(version => {
