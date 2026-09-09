@@ -156,5 +156,19 @@
 	"dialog-xls-exported": "File Excel salvato",
 	"dialog-xls-exported-detail": "Il file Excel è stato salvato. Vuoi aprire la cartella che lo contiene?",
 	"label-check-updates": "Controlla aggiornamenti",
-	"option-lane-order": "Seleziona ordine corsie"
+	"option-lane-order": "Seleziona ordine corsie",
+	"tag-companion": "Companion",
+	"tag-not-connected": "non connesso",
+	"label-companion-load": "Oppure carica da Mini4WD Companion",
+	"label-select-race": "Seleziona gara",
+	"label-select-category": "Seleziona categoria",
+	"label-no-races": "Nessuna gara disponibile per oggi",
+	"label-no-tournament-code": "torneo non importato",
+	"label-version-update": "Aggiornamento disponibile",
+	"label-version-blocked": "Aggiornamento necessario",
+	"button-download": "Scarica",
+	"dialog-login-error": "Accesso a Mini4WD Companion fallito.",
+	"dialog-login-unauthorized": "Questo account Mini4WD Companion non è abilitato all'uso del chrono.",
+	"version-update-detail": "La versione {{version}} è disponibile.",
+	"version-blocked-detail": "Aggiorna alla versione {{version}} o successiva."
 }

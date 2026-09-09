@@ -6,6 +6,11 @@ const i18n = new (require('../i18n/i18n'))();
 const configuration = require('./configuration');
 const storage = require('./storage');
 const log = require('./logger');
+const companionAuth = require('./companion_auth');
+const companionApi = require('./companion_api');
+
+// Races returned by the last Companion "today" lookup, indexed by race id.
+let companionRaces = [];
 
 // Opens a modal and prevents page scrolling.
 const openModal = (modal) => {
@@ -767,9 +772,171 @@ const updateUiState = (freeRound) => {
     }
 };
 
+// ==========================================================================
+// ==== Mini4WD Companion
+
+// Fills the category dropdown for the selected Companion race.
+const populateCategorySelect = (categories) => {
+    const $select = $('#js-companion-category-select');
+    $select.empty();
+    $select.append($('<option>', { value: '', text: `- ${i18n.__('label-select-category')} -` }));
+
+    (categories || []).forEach((cat) => {
+        const name = cat.category ? cat.category.name : '-';
+        // A category without a tournament code cannot be imported into the chrono.
+        const suffix = cat.external_tournament_code ? '' : ` (${i18n.__('label-no-tournament-code')})`;
+        $select.append($('<option>', {
+            value: cat.external_tournament_code || '',
+            text: `${name}${suffix}`,
+            disabled: !cat.external_tournament_code
+        }));
+    });
+};
+
+// Fills the race dropdown with the organizer races scheduled for today.
+const populateRaceSelect = (races) => {
+    companionRaces = races || [];
+
+    const $select = $('#js-companion-race-select');
+    $select.empty();
+    $select.append($('<option>', { value: '', text: `- ${i18n.__('label-select-race')} -` }));
+
+    if (companionRaces.length === 0) {
+        $select.append($('<option>', { value: '', text: i18n.__('label-no-races'), disabled: true }));
+    }
+    else {
+        companionRaces.forEach((race) => {
+            $select.append($('<option>', {
+                value: race.id,
+                text: `${race.name} (${race.participant_count} ${i18n.__('label-tournament-players').toLowerCase()})`
+            }));
+        });
+    }
+
+    populateCategorySelect([]);
+};
+
+// Shows the Companion badge and race picker for an authenticated organizer.
+const companionLoggedIn = (user) => {
+    const displayName = user.display_name || user.first_name || user.name || user.email || '-';
+    $('#tag-companion-status').removeClass('is-danger').addClass('is-success').text(displayName);
+    $('#js-companion-race-section').show();
+};
+
+// Resets the Companion badge and hides the race picker.
+const companionLoggedOut = () => {
+    companionRaces = [];
+    $('#tag-companion-status').removeClass('is-success').addClass('is-danger')
+        .text(i18n.__('tag-not-connected'));
+    $('#js-companion-race-section').hide();
+    $('#js-companion-race-select').empty();
+    $('#js-companion-category-select').empty();
+    hideVersionBanners();
+};
+
+// Hides both chrono version banners.
+const hideVersionBanners = () => {
+    $('#js-version-update-banner').hide();
+    $('#js-version-blocked-banner').hide();
+};
+
+// Renders the outcome of a chrono version check as a banner.
+const showVersionCheck = (data) => {
+    hideVersionBanners();
+    if (!data) return;
+
+    const blocked = data.status === 'blocked';
+    if (!blocked && data.status !== 'update_available') return;
+
+    const prefix = blocked ? '#js-version-blocked' : '#js-version-update';
+    const version = blocked ? data.min_version : data.recommended_version;
+    const detail = blocked ? 'version-blocked-detail' : 'version-update-detail';
+
+    $(`${prefix}-message`).text(` ${i18n.__(detail).replace('{{version}}', version)}`);
+    if (data.download_url) {
+        $(`${prefix}-link`).attr('href', data.download_url).show();
+    }
+    else {
+        $(`${prefix}-link`).hide();
+    }
+    $(`${prefix}-banner`).show();
+};
+
+// Loads the organizer races for today and runs the version check.
+const refreshCompanionData = () => {
+    companionApi.fetchTodayRaces((races) => {
+        populateRaceSelect(races);
+    }, () => {
+        populateRaceSelect([]);
+    });
+    companionApi.checkVersion(showVersionCheck);
+};
+
+// Restores a stored Companion session and revalidates it in the background.
+const initCompanion = () => {
+    companionAuth.init();
+
+    if (!companionAuth.isLoggedIn()) {
+        companionLoggedOut();
+        return;
+    }
+
+    companionLoggedIn(companionAuth.getUser());
+    refreshCompanionData();
+
+    companionAuth.validate((user) => {
+        companionLoggedIn(user);
+    }, () => {
+        log.info('[Companion] Stored session is no longer valid');
+        companionLoggedOut();
+    });
+};
+
 // Registers UI event handlers using the supplied renderer dependencies.
 const setupEventHandlers = (deps) => {
     const { client, storage, configuration, startRaceCallback } = deps;
+
+    // Companion badge: log in through the browser, or log out.
+    $('#js-companion-tag').on('click', () => {
+        if (companionAuth.isLoggedIn()) {
+            companionAuth.logout();
+            companionLoggedOut();
+            return;
+        }
+
+        companionAuth.loginWithBrowser((user) => {
+            companionLoggedIn(user);
+            refreshCompanionData();
+        }, (error) => {
+            const message = error === 'unauthorized' ? 'dialog-login-unauthorized' : 'dialog-login-error';
+            window.electronAPI.showMessageBoxSync({
+                type: 'error',
+                title: 'Error',
+                message: i18n.__(message),
+                buttons: ['Ok']
+            });
+        });
+    });
+
+    // Dismiss the optional-update banner.
+    $('#js-version-update-close').on('click', () => {
+        $('#js-version-update-banner').hide();
+    });
+
+    // Companion race selected: show its categories.
+    $('#js-companion-race-select').on('change', (e) => {
+        const raceId = $(e.currentTarget).val();
+        const race = companionRaces.find((r) => { return String(r.id) === String(raceId); });
+        populateCategorySelect(race ? race.categories : []);
+    });
+
+    // Load the tournament behind the selected Companion category.
+    $('#js-companion-load-tournament').on('click', () => {
+        const code = $('#js-companion-category-select').val();
+        if (!code) return;
+        log.info('[Race setup] Loading tournament from Companion', { code: code });
+        client.loadTournament(code);
+    });
 
     // tabs
     $('.tabs a').on('click', (e) => {
@@ -1080,6 +1247,7 @@ module.exports = {
     init: init,
     initModal: initModal,
     setupEventHandlers: setupEventHandlers,
+    initCompanion: initCompanion,
     toggleFreeRound: toggleFreeRound,
     trackLoadDone: trackLoadDone,
     trackLoadFail: trackLoadFail,

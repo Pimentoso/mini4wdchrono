@@ -54,7 +54,7 @@ const createElectronApi = (initialSettings = {}) => {
 
 describe('configuration cache', () => {
     test('hydrates supported settings through IPC and serves synchronous reads', async () => {
-        const mock = createElectronApi({ title: 'Race Night', sensorPin1: 9 });
+        const mock = createElectronApi({ title: 'Race Night', sensorPin1: 9, companionToken: 'abc123' });
         const configuration = loadConfiguration(mock.api);
 
         await configuration.initAsync();
@@ -62,7 +62,8 @@ describe('configuration cache', () => {
         assert.equal(mock.calls.init, 1);
         assert.equal(configuration.get('title'), 'Race Night');
         assert.equal(configuration.get('sensorPin1'), 9);
-        assert.equal(mock.calls.get.length, 15);
+        assert.equal(configuration.get('companionToken'), 'abc123');
+        assert.equal(mock.calls.get.length, 17);
     });
 
     test('updates the cache and persists a setting before invoking its callback', async () => {

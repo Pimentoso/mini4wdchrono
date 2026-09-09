@@ -4,3 +4,19 @@ If you enable the Google Spreadsheet function, a "mini4wdchrono" folder will
 be created in your Google Sheets account, and spreadsheet files will be
 created inside that folder, containing race data. The spreadsheets will not
 be shared or stored in other places, just your account.
+
+If you connect the app to Mini4WD Companion (https://mini4wd-companion.com),
+the following applies for as long as you stay connected:
+
+- Signing in opens the Mini4WD Companion login page in your browser. The app
+  never sees your password: it only receives an access token.
+- The access token and your Mini4WD Companion profile (name, email and role,
+  as returned by that service) are stored on this computer, in the app
+  settings file. Choosing "Logout" deletes both.
+- The app sends race results to Mini4WD Companion as they are timed: the
+  racer names, lap times and retirements of the tournament you loaded from
+  that service. Nothing is sent for races that were not loaded from it.
+- The app tells Mini4WD Companion which chrono version you are running, so it
+  can warn you about updates.
+
+Mini4WD Companion is a separate service, with its own privacy policy.

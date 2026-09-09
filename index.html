@@ -52,6 +52,12 @@
 									<span id="tag-tournament-status" class="tag is-danger is-uppercase">-</span>
 								</div>
 							</div>
+							<div class="control">
+								<div id="js-companion-tag" class="tags has-addons is-clickable">
+									<span class="tag tn" data-tn="tag-companion">Companion</span>
+									<span id="tag-companion-status" class="tag is-danger is-uppercase tn" data-tn="tag-not-connected">not connected</span>
+								</div>
+							</div>
 						</div>
 						<div id="race-status-badges" class="field is-grouped is-grouped-multiline mb-0 race-status-badges">
 							<div class="control">
@@ -72,6 +78,19 @@
 			</div>
 		</div>
 	</nav>
+
+	<!-- MINI4WD COMPANION VERSION BANNERS -->
+	<div id="js-version-blocked-banner" class="notification is-danger mx-4" style="display: none;">
+		<strong class="tn" data-tn="label-version-blocked">Update required</strong>
+		<span id="js-version-blocked-message"></span>
+		<a id="js-version-blocked-link" href="#" target="_blank" class="button is-small is-danger is-inverted ml-2 tn" data-tn="button-download">Download</a>
+	</div>
+	<div id="js-version-update-banner" class="notification is-warning mx-4" style="display: none;">
+		<button id="js-version-update-close" class="delete" type="button"></button>
+		<strong class="tn" data-tn="label-version-update">Update available</strong>
+		<span id="js-version-update-message"></span>
+		<a id="js-version-update-link" href="#" target="_blank" class="button is-small is-warning is-inverted ml-2 tn" data-tn="button-download">Download</a>
+	</div>
 
 	<!-- TABS -->
 	<div class="tabs is-centered is-boxed is-hidden-print">
@@ -212,6 +231,31 @@
 						<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-link"></i></span>
 						<span class="tn" data-tn="button-load">Load</span>
 					</button>
+				</div>
+			</div>
+
+			<!-- Mini4WD Companion race picker, shown when an organizer is logged in -->
+			<div id="js-companion-race-section" style="display: none;">
+				<label class="label tn" data-tn="label-companion-load">Or load from Mini4WD Companion</label>
+				<div class="field">
+					<div class="control">
+						<div class="select is-fullwidth">
+							<select id="js-companion-race-select"></select>
+						</div>
+					</div>
+				</div>
+				<div class="field has-addons">
+					<div class="control is-expanded">
+						<div class="select is-fullwidth">
+							<select id="js-companion-category-select"></select>
+						</div>
+					</div>
+					<div class="control">
+						<button id="js-companion-load-tournament" class="button is-info">
+							<span class="icon is-small" aria-hidden="true"><i class="fa-solid fa-link"></i></span>
+							<span class="tn" data-tn="button-load">Load</span>
+						</button>
+					</div>
 				</div>
 			</div>
 

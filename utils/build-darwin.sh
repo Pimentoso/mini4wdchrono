@@ -59,6 +59,8 @@ node "$PROJECT_DIR/node_modules/@electron/packager/bin/electron-packager.mjs" \
     --icon="$PROJECT_DIR/images/ic_launcher_web.icns" \
     --prune=true \
     --asar \
+    --protocol="mini4wdchrono" \
+    --protocol-name="Mini4WD Chrono" \
     --out="$RELEASE_DIR"
 
 if [[ ! -d "$PACKAGE_DIR" ]]; then
