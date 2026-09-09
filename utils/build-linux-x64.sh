@@ -58,6 +58,7 @@ node "$PROJECT_DIR/node_modules/@electron/packager/bin/electron-packager.mjs" \
     --overwrite \
     --icon="$PROJECT_DIR/images/ic_launcher_web.icns" \
     --prune=true \
+    --asar \
     --out="$RELEASE_DIR"
 
 if [[ ! -d "$PACKAGE_DIR" ]]; then
