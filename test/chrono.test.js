@@ -9,6 +9,7 @@ const {
 const assert = require('node:assert/strict');
 
 const storage = require('../js/storage');
+const { MAX_RACE_TIME_MS } = require('../js/constants');
 
 const settings = {
     timeThreshold: 40,
@@ -165,7 +166,7 @@ describe('chrono', () => {
 
         assert.equal(changed, true);
         assert.equal(car.outOfBounds, true);
-        assert.equal(car.currTime, 99999);
+        assert.equal(car.currTime, MAX_RACE_TIME_MS);
     });
 
     test('does not time out a car exactly at the maximum cutoff', () => {
@@ -204,7 +205,7 @@ describe('chrono', () => {
 
         assert.equal(changed, true);
         assert.ok(cars.every((car) => car.outOfBounds));
-        assert.ok(cars.every((car) => car.currTime === 99999));
+        assert.ok(cars.every((car) => car.currTime === MAX_RACE_TIME_MS));
         assert.equal(chrono.isRaceFinished(), true);
     });
 

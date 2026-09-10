@@ -9,6 +9,7 @@ const xls = require('./export');
 const i18n = new (require('../i18n/i18n'));
 const clone = require('clone');
 const log = require('./logger');
+const { MAX_RACE_TIME_MS } = require('./constants');
 
 let currTrack, currTournament, ledManager;
 let mancheList, mancheCount;
@@ -105,7 +106,8 @@ const disqualify = (mindex, rindex, pindex) => {
     rindex = rindex === undefined || rindex === null ? currRound : rindex;
     const cars = storage.loadRound(mindex, rindex);
     cars[pindex].originalTime = cars[pindex].currTime;
-    cars[pindex].currTime = 99999;
+    cars[pindex].currTime = MAX_RACE_TIME_MS;
+    cars[pindex].outOfBounds = true;
     storage.saveRound(mindex, rindex, cars);
 
     ui.initRace(freeRound);
@@ -128,6 +130,7 @@ const overrideTimes = () => {
                             cars[pindex].originalTime = oldTime;
                             cars[pindex].currTime = newTime;
                         }
+                        cars[pindex].outOfBounds = (cars[pindex].currTime === MAX_RACE_TIME_MS);
                     }
                 });
             }
