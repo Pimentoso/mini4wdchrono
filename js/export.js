@@ -7,6 +7,7 @@ const utils = require('./utils');
 const storage = require('./storage');
 const strftime = require('strftime');
 const log = require('./logger');
+const { MAX_RACE_TIME_MS } = require('./constants');
 
 // Retrieves the base directory used for race exports.
 const getXlsFilePath = async () => {
@@ -58,7 +59,7 @@ const generateXls = async () => {
         const rows = [headerRow.flat()];
 
         times.forEach((info, pos) => {
-            const bestTime = Math.min(...info.times.filter((t) => { return t > 0 && t < 99999; }));
+            const bestTime = Math.min(...info.times.filter((t) => { return t > 0 && t < MAX_RACE_TIME_MS; }));
             const bestSpeed = track.length / (bestTime / 1000);
 
             const row = [];

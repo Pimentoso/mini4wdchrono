@@ -1,15 +1,16 @@
 'use strict';
 
 const storage = require('./storage');
-
-const DEFAULT_LANE_ORDER = [0, 1, 2];
-const SINGLE_LANE = 1;
-const SINGLE_LANE_ORDER = [1, 1, 1];
-const DEFAULT_TIME_THRESHOLD = 40;
-const DEFAULT_SPEED_THRESHOLD = 5;
-const DEFAULT_LAPS = 3;
-const MIN_SPLIT_TIME_MS = 1000;
-const MAX_RACE_TIME_MS = 99999;
+const {
+    DEFAULT_LANE_ORDER,
+    SINGLE_LANE,
+    SINGLE_LANE_ORDER,
+    DEFAULT_TIME_THRESHOLD,
+    DEFAULT_SPEED_THRESHOLD,
+    DEFAULT_LAPS,
+    MAX_RACE_TIME_MS,
+    MIN_SPLIT_TIME_MS
+} = require('./constants');
 
 const state = {
     cars: [],

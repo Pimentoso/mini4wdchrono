@@ -6,6 +6,7 @@ const i18n = new (require('../i18n/i18n'))();
 const configuration = require('./configuration');
 const storage = require('./storage');
 const log = require('./logger');
+const { MAX_RACE_TIME_MS } = require('./constants');
 
 // Opens a modal and prevents page scrolling.
 const openModal = (modal) => {
@@ -164,7 +165,7 @@ const findBestLap = () => {
     const times = storage.getSortedPlayerList();
     times.forEach((info) => {
         info.times.forEach((time) => {
-            if (time > 0 && time < 99999 && (!bestLap || time < bestLap.time)) {
+            if (time > 0 && time < MAX_RACE_TIME_MS && (!bestLap || time < bestLap.time)) {
                 bestLap = { time: time, playerId: info.id };
             }
         });
@@ -422,7 +423,7 @@ const showPlayerList = () => {
     let tableHtml = '';
     if (playerList.length > 0) {
         const times = storage.getSortedPlayerList();
-        const validRaceTimes = times.flatMap((info) => { return info.times.filter((t) => { return t > 0 && t < 99999; }); });
+        const validRaceTimes = times.flatMap((info) => { return info.times.filter((t) => { return t > 0 && t < MAX_RACE_TIME_MS; }); });
         const raceBestTime = validRaceTimes.length > 0 ? Math.min(...validRaceTimes) : null;
 
         // draw title row
@@ -435,7 +436,7 @@ const showPlayerList = () => {
 
         // draw player rows
         times.forEach((info, pos) => {
-            const validPlayerTimes = info.times.filter((t) => { return t > 0 && t < 99999; });
+            const validPlayerTimes = info.times.filter((t) => { return t > 0 && t < MAX_RACE_TIME_MS; });
             const bestTime = validPlayerTimes.length > 0 ? Math.min(...validPlayerTimes) : null;
             const bestSpeed = bestTime ? track.length / (bestTime / 1000) : null;
             const cells = [];
@@ -448,9 +449,9 @@ const showPlayerList = () => {
                 const playerTime = info.times[i] || 0;
                 let highlight = '';
                 let timeContent = utils.prettyTime(playerTime);
-                if (playerTime === 0 || playerTime === 99999) {
+                if (playerTime === 0 || playerTime === MAX_RACE_TIME_MS) {
                     highlight = 'has-text-grey-light is-out';
-                    timeContent = playerTime === 99999 ? `<span class="is-light">${timeContent}</span>` : '<span aria-hidden="true">&mdash;</span>';
+                    timeContent = playerTime === MAX_RACE_TIME_MS ? `<span class="is-light">${timeContent}</span>` : '<span aria-hidden="true">&mdash;</span>';
                 }
                 else if (playerTime === raceBestTime) {
                     highlight = 'is-race-best';

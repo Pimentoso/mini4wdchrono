@@ -4,6 +4,7 @@
 // for backward compatibility with existing code during transition
 const configuration = require('./configuration');
 const log = require('./logger');
+const { MAX_RACE_TIME_MS } = require('./constants');
 
 // In-memory cache of current race data
 const cachedRaceData = {};
@@ -312,7 +313,7 @@ const getSortedPlayerList = () => {
         playerList.forEach((_player, pindex) => {
             pData = playerData[pindex] || [];
             bestTimes = pData.filter((i) => { return i && i.time > 0; }).sort((a, b) => a.time - b.time).slice(0, 2);
-            bestSum = (bestTimes[0] ? bestTimes[0].time : 99999) + (bestTimes[1] ? bestTimes[1].time : 99999);
+            bestSum = (bestTimes[0] ? bestTimes[0].time : MAX_RACE_TIME_MS) + (bestTimes[1] ? bestTimes[1].time : MAX_RACE_TIME_MS);
             sums[pindex] = bestSum;
         });
 
