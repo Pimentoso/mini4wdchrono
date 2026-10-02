@@ -246,7 +246,7 @@ async function initializeApplication() {
 
         log.error(`Board ERROR at ${new Date()} - ${errorMessage}`);
         if (initialHardwareConnection) {
-            ui.showBootPortSelection(errorMessage);
+            ui.showBootConnectionError(errorMessage);
         }
     });
 
@@ -259,7 +259,7 @@ async function initializeApplication() {
 
         log.error(`Board closed at ${new Date()} - ${errorMessage || 'Unknown reason'}`);
         if (initialHardwareConnection) {
-            ui.showBootPortSelection(errorMessage);
+            ui.showBootConnectionError(errorMessage);
             return;
         }
         scheduleHardwareReconnect();
@@ -327,6 +327,6 @@ async function initializeApplication() {
         log.info('Hardware initialization started');
     } catch (error) {
         log.error('Failed to initialize hardware:', error);
-        ui.showBootPortSelection(error.message);
+        ui.showBootConnectionError(error.message);
     }
 }
