@@ -794,11 +794,21 @@
 		</header>
 		<section class="modal-card-body">
 			<p id="hardware-port-selection-error" class="has-text-grey mb-4" style="display: none;"></p>
-			<div id="hardware-port-selection-content"></div>
+			<div class="field">
+				<label class="label tn" data-tn="label-usb-port">USB Port</label>
+				<div class="control">
+					<div class="select is-fullwidth">
+						<select id="js-boot-usb-port">
+							<option value="" selected>Auto</option>
+						</select>
+					</div>
+				</div>
+			</div>
 		</section>
 		<footer class="modal-card-foot">
 			<div class="buttons">
 				<button id="button-save-boot-usb-port" class="button is-primary tn" data-tn="button-save-restart">Save and restart</button>
+				<button id="button-continue-without-connecting" class="button tn" data-tn="button-continue-without-connecting">Continue without connecting</button>
 			</div>
 		</footer>
 	</div>
