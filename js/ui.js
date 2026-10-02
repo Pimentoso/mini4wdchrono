@@ -51,23 +51,42 @@ const boardDisconnected = () => {
     $('#hardware-loading').show();
 };
 
-// Shows a hardware initialization error without Electron's IPC wrapper.
+// Shows the boot connection error modal and loads its available USB ports.
 const showBootConnectionError = (errorMessage) => {
+    $('#hardware-loading > .loader, #hardware-loading > p').hide();
     if (!errorMessage) {
         $('#hardware-port-selection-error').hide();
-        return;
+    } else {
+        const message = errorMessage.replace(/^Error invoking remote method 'hardware-initialize': /, '');
+        $('#hardware-port-selection-error').text(message).show();
     }
 
-    const message = errorMessage.replace(/^Error invoking remote method 'hardware-initialize': /, '');
-    $('#hardware-port-selection-error').text(message).show();
+    const $selector = $('#js-boot-usb-port');
+    $selector.empty().append($('<option>', {value: '', text: 'Auto'}));
+    openModal('modal-hardware-connection-error');
+
+    window.electronAPI.hardwareListPorts().then(ports => {
+        ports.forEach(function (port) {
+            $selector.append($('<option>', {
+                value: port.path,
+                text: port.manufacturer ? `${port.path} (${port.manufacturer})` : port.path
+            }));
+        });
+        $selector.val(configuration.get('usbPort'));
+    }).catch(error => {
+        log.error('[Hardware] Could not list USB ports:', error);
+    });
 };
 
-// Shows the USB port selector when the first hardware connection cannot be made.
-const showBootPortSelection = (errorMessage) => {
-    $('#hardware-loading > .loader, #hardware-loading > p').hide();
-    showBootConnectionError(errorMessage);
-    $('#js-config-usb-port-field').appendTo('#hardware-port-selection-content');
-    openModal('modal-hardware-connection-error');
+// Opens the application while leaving race timing disabled until hardware connects.
+const continueWithoutHardware = () => {
+    $('#tag-board-status').removeClass('is-success is-warning');
+    $('#tag-board-status').addClass('is-danger');
+    $('#tag-board-status').data('tn', 'tag-disconnected');
+    $('#tag-board-status').text(i18n.__('tag-disconnected'));
+    $('#hardware-loading').hide();
+    closeAllModals();
+    $('#main').show();
 };
 
 // Translates all elements marked for localization.
@@ -1009,7 +1028,7 @@ const setupEventHandlers = (deps) => {
     $('#button-save-boot-usb-port').on('click', (e) => {
         const $button = $(e.currentTarget);
         $button.prop('disabled', true);
-        configuration.set('usbPort', $('#js-config-usb-port').val(), (error) => {
+        configuration.set('usbPort', $('#js-boot-usb-port').val(), (error) => {
             if (error) {
                 $button.prop('disabled', false);
                 return;
@@ -1080,13 +1099,19 @@ const setupEventHandlers = (deps) => {
             client.disqualify(null, null, parseInt($this.data('lane')));
         }
     });
+
+    // Dismisses the boot-time connection error so saved races can be explored offline.
+    $('#button-continue-without-connecting').on('click', (e) => {
+        e.preventDefault();
+        continueWithoutHardware();
+    });
 };
 
 module.exports = {
     boardConnected: boardConnected,
     debugModeEnabled: debugModeEnabled,
     boardDisconnected: boardDisconnected,
-    showBootPortSelection: showBootPortSelection,
+    showBootConnectionError: showBootConnectionError,
     translate: translate,
     gotoTab: gotoTab,
     init: init,

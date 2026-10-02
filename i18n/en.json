@@ -34,6 +34,7 @@
 	"label-manual-input": "Or manual input",
 	"button-save": "Save",
 	"button-save-restart": "Save and restart",
+	"button-continue-without-connecting": "Continue without connecting",
 	"label-tournament-info": "2) Load tournament (optional)",
 	"label-load-tournament": "Load tournament from Tournament Generator link",
 	"button-open-tournament-editor": "Open Mini4WD Tournament Generator >",
