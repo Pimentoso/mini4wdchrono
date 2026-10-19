@@ -922,6 +922,19 @@ const companionLoggedOut = () => {
     hideVersionBanners();
 };
 
+// Version downloaded by the auto-updater and waiting to be installed.
+let appUpdateVersion = null;
+
+// Shows the banner offering to restart into a downloaded update.
+const showAppUpdateReady = (version) => {
+    if (!version) return;
+
+    appUpdateVersion = version;
+    $('#js-version-update-banner').hide();
+    $('#js-app-update-message').text(` ${i18n.__('app-update-detail').replace('{{version}}', version)}`);
+    $('#js-app-update-banner').show();
+};
+
 // Hides both chrono version banners.
 const hideVersionBanners = () => {
     $('#js-version-update-banner').hide();
@@ -935,6 +948,8 @@ const showVersionCheck = (data) => {
 
     const blocked = data.status === 'blocked';
     if (!blocked && data.status !== 'update_available') return;
+    // A downloaded update replaces the manual download link.
+    if (!blocked && appUpdateVersion) return;
 
     const prefix = blocked ? '#js-version-blocked' : '#js-version-update';
     const version = blocked ? data.min_version : data.recommended_version;
@@ -1022,6 +1037,21 @@ const setupEventHandlers = (deps) => {
     // Dismiss the optional-update banner.
     $('#js-version-update-close').on('click', () => {
         $('#js-version-update-banner').hide();
+    });
+
+    // Restart into a downloaded update, but never in the middle of a race.
+    $('#js-app-update-install').on('click', () => {
+        if (client.isStarted()) {
+            window.electronAPI.showMessageBoxSync({ type: 'warning', message: i18n.__('dialog-app-update-race-running'), buttons: ['Ok'] });
+            return;
+        }
+        window.electronAPI.installUpdate();
+    });
+
+    // Offer a downloaded update, including one downloaded before this page loaded.
+    window.electronAPI.onUpdateDownloaded((_event, version) => showAppUpdateReady(version));
+    window.electronAPI.getDownloadedUpdate().then(showAppUpdateReady).catch((error) => {
+        log.warn('[Updater] Could not read the downloaded update:', error);
     });
 
     // Companion race selected: show its categories.

@@ -65,6 +65,11 @@ window.electronAPI = {
     hardwareBuzz: (duration) => ipcRenderer.invoke('hardware-buzz', duration),
     hardwareListPorts: () => ipcRenderer.invoke('hardware-list-ports'),
 
+    // Automatic updates (packaged Windows build only)
+    onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', callback),
+    getDownloadedUpdate: () => ipcRenderer.invoke('update-get-downloaded'),
+    installUpdate: () => ipcRenderer.invoke('update-install'),
+
     // Mini4WD Companion authentication callback (mini4wdchrono:// custom protocol)
     onCompanionAuthCallback: (callback) => ipcRenderer.on('companion-auth-callback', callback),
 

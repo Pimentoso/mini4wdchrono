@@ -7,6 +7,7 @@
     "clone": "^2.1.2",
     "electron-log": "^5.4.4",
     "electron-settings": "^4.0.2",
+    "electron-updater": "^6.8.9",
     "firmata": "^0.19.1",
     "jquery": "^3.6.0",
     "serialport": "^13.0.0",
@@ -17,6 +18,7 @@
     "@electron/packager": "^20.3.0",
     "@eslint/js": "^10.0.1",
     "electron": "^44.0.0",
+    "electron-builder": "^26.15.3",
     "electron-reload": "^1.5.0",
     "eslint": "^10.9.1",
     "eslint-plugin-import-x": "^4.17.1",
@@ -31,7 +33,8 @@
     "lint:warn": "eslint .",
     "lint:fix": "eslint --fix .",
     "lint:file": "eslint --fix",
-    "test": "node --test"
+    "test": "node --test",
+    "dist:win": "electron-builder --win nsis --x64 --publish never"
   },
   "repository": {
     "type": "git",
@@ -58,5 +61,56 @@
     "@serialport/bindings-cpp": false,
     "unrs-resolver": false,
     "fsevents": false
+  },
+  "build": {
+    "appId": "com.flapenna.mini4wdchrono",
+    "productName": "Mini4wdChrono",
+    "directories": {
+      "output": "release-builds/installer"
+    },
+    "files": [
+      "**/*",
+      "!.github/**",
+      "!.idea/**",
+      "!dev/**",
+      "!test/**",
+      "!utils/**",
+      "!release-builds/**",
+      "!logs/**",
+      "!*.md"
+    ],
+    "asar": true,
+    "npmRebuild": false,
+    "protocols": [
+      {
+        "name": "Mini4WD Chrono",
+        "schemes": [
+          "mini4wdchrono"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "images/ic_launcher_web.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "artifactName": "Mini4wdChrono-Setup-${version}.exe"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "flapenna",
+        "repo": "mini4wdchrono"
+      }
+    ]
   }
 }

@@ -1,7 +1,8 @@
 name: Release
 
-# Builds the macOS, Linux and Windows packages with the scripts in utils/ and
-# publishes them as a draft GitHub Release.
+# Builds the macOS, Linux and Windows packages with the scripts in utils/, plus
+# the Windows installer, and publishes them as a draft GitHub Release. Installed
+# chronos only see the update once the draft is published.
 #
 # Two ways to release:
 # - From the Actions tab, run this workflow on master with a version
@@ -124,6 +125,19 @@ jobs:
           name: ${{ matrix.artifact }}
           path: release-builds/${{ matrix.artifact }}
           if-no-files-found: error
+      # The installer and latest.yml are what installed chronos update from.
+      - name: Build the Windows installer
+        if: runner.os == 'Windows'
+        run: npm run dist:win
+      - uses: actions/upload-artifact@v4
+        if: runner.os == 'Windows'
+        with:
+          name: Mini4wdChrono-windows-installer
+          path: |
+            release-builds/installer/*.exe
+            release-builds/installer/*.exe.blockmap
+            release-builds/installer/latest.yml
+          if-no-files-found: error
 
   release:
     needs: [tag, build]
@@ -141,7 +155,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ needs.tag.outputs.tag || github.ref_name }}
         run: |
-          gh release create "$TAG" dist/*.zip \
+          gh release create "$TAG" dist/* \
             --repo "$GITHUB_REPOSITORY" \
             --title "$TAG" \
             --generate-notes \

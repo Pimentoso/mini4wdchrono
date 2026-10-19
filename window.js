@@ -40,6 +40,20 @@ const { ipcMain, dialog } = require('electron');
 const fs = require('fs');
 const fsp = fs.promises;
 const { createJsonStore, createSettingsStore } = require('./js/settings');
+const { createAutoUpdater } = require('./js/auto_updater');
+
+// Installs newer releases from GitHub on the packaged Windows build.
+const appUpdater = createAutoUpdater({
+    app: app,
+    platform: process.platform,
+    log: log,
+    loadAutoUpdater: () => require('electron-updater').autoUpdater,
+    notify: (version) => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.send('update-downloaded', version);
+        }
+    }
+});
 
 // Global electron-settings instance for race data
 let raceStorage = null;
@@ -1386,6 +1400,10 @@ ipcMain.handle('clipboard-read', () => {
     return clipboard.readText();
 });
 
+ipcMain.handle('update-get-downloaded', () => appUpdater.getDownloadedVersion());
+
+ipcMain.handle('update-install', () => appUpdater.install());
+
 app.setAsDefaultProtocolClient(COMPANION_PROTOCOL);
 
 // Extracts the token from a mini4wdchrono:// URL and forwards it to the renderer.
@@ -1444,6 +1462,7 @@ app.on('ready', () => {
     // On Windows and Linux a cold start through the protocol passes the URL in argv.
     pendingAuthUrl = pendingAuthUrl || findAuthUrl(process.argv) || null;
     createWindow();
+    appUpdater.start();
 });
 
 // Quit when all windows are closed.
