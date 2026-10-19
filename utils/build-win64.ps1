@@ -30,7 +30,8 @@ function Assert-BuildToolchain {
         throw "This build requires Node.js 22.13.0+ and npm 9+ (found Node.js $NodeVersion and npm $NpmVersion). Install Node.js 22.13.0 or newer, then reopen PowerShell."
     }
 
-    $PythonCommand = Get-Command python -ErrorAction SilentlyContinue
+    # Get-Command returns every match on PATH, so keep only the one that actually runs.
+    $PythonCommand = Get-Command python -ErrorAction SilentlyContinue | Select-Object -First 1
     if ($null -eq $PythonCommand) {
         throw 'This build rebuilds native modules and requires Python 3.8+ on PATH. Install Python 3.8+ and ensure it takes priority on PATH, then reopen PowerShell.'
     }
@@ -131,16 +132,37 @@ try {
     }
 
     Write-Host "Packaging $AppName for Windows $Arch"
-    
-    # @electron/packager writes normal progress messages to stderr. Route stderr
-    # through cmd before PowerShell sees it, so strict error handling only reacts
-    # to the process exit code rather than to progress output.
-    $NodePath = (Get-Command node -CommandType Application).Source
+
     $PackagerCli = Join-Path $ProjectDir 'node_modules\@electron\packager\bin\electron-packager.mjs'
-    $PackagerIcon = Join-Path $ProjectDir 'images/ic_launcher_web.ico'
-    $PackagerCommand = '"{0}" "{1}" "{2}" "{3}" "--platform={4}" "--arch={5}" --overwrite "--icon={6}" --prune=true --asar "--out={7}" 2>&1' -f `
-        $NodePath, $PackagerCli, $ProjectDir, $AppName, $Platform, $Arch, $PackagerIcon, $ReleaseDir
-    cmd.exe /d /s /c $PackagerCommand
+    if (-not (Test-Path $PackagerCli -PathType Leaf)) {
+        throw "@electron/packager CLI not found: $PackagerCli"
+    }
+
+    $PackagerIcon = Join-Path $ProjectDir 'images\ic_launcher_web.ico'
+    $PackagerArgs = @(
+        $PackagerCli
+        $ProjectDir
+        $AppName
+        "--platform=$Platform"
+        "--arch=$Arch"
+        '--overwrite'
+        "--icon=$PackagerIcon"
+        '--prune=true'
+        '--asar'
+        "--out=$ReleaseDir"
+    )
+
+    # @electron/packager writes normal progress messages to stderr. Keep it visible as
+    # plain output, but do not let StrictMode turn progress text into a terminating
+    # PowerShell error. Passing an argument array avoids any manual quoting.
+    $PreviousErrorActionPreference = $ErrorActionPreference
+    try {
+        $ErrorActionPreference = 'Continue'
+        & node @PackagerArgs 2>&1 | ForEach-Object { Write-Host "$_" }
+    } finally {
+        $ErrorActionPreference = $PreviousErrorActionPreference
+    }
+
     $PackagerExitCode = $LASTEXITCODE
     if ($PackagerExitCode -ne 0) {
         throw "@electron/packager failed with exit code $PackagerExitCode"

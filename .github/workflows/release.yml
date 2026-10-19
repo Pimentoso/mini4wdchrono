@@ -1,0 +1,89 @@
+name: Release
+
+# Builds the macOS, Linux and Windows packages with the scripts in utils/ and
+# publishes them as a GitHub Release. Push a tag matching package.json
+# (e.g. `git tag v2.1.0 && git push origin v2.1.0`) to release; run it by hand
+# from the Actions tab to only build the zips without publishing.
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - name: Tag matches package.json version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          version="v$(node -p "require('./package.json').version")"
+          if [ "$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version $version"
+            exit 1
+          fi
+
+  build:
+    needs: check
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            script: bash utils/build-darwin.sh
+            artifact: Mini4wdChrono-mac-x64.zip
+          - os: ubuntu-latest
+            script: bash utils/build-linux-x64.sh
+            artifact: Mini4wdChrono-linux-x64.zip
+          - os: windows-latest
+            script: pwsh -File utils/build-win64.ps1
+            artifact: Mini4wdChrono-windows-x64.zip
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      # The Windows script rebuilds native modules and requires Python on PATH.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: ${{ matrix.script }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: release-builds/${{ matrix.artifact }}
+          if-no-files-found: error
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/*.zip \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes \
+            --draft
