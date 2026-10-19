@@ -503,7 +503,6 @@ const checkRace = async () => {
     checkRaceInProgress = true;
     try {
         const timestamp = await window.electronAPI.hardwareGetTimestamp();
-
         if (!raceRunning) return;
 
         let redraw = chrono.checkOutCars(timestamp);

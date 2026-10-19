@@ -775,10 +775,9 @@ ipcMain.handle('storage-delete-race', async (event, filename) => {
 
 /**
  * Initializes the Firmata board and hardware components
- * @param {object} options - Hardware configuration options
  * @returns {Promise<object>} - Success status and message
  */
-ipcMain.handle('hardware-initialize', async (event, options) => {
+ipcMain.handle('hardware-initialize', async () => {
     const connectionStartedAt = Date.now();
 
     if (board && isHardwareReady) {

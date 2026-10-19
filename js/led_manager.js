@@ -54,7 +54,7 @@ class LedManager {
         this.ready = false;
         try {
             await window.electronAPI.hardwareLedOff({});
-        } catch (error) {
+        } catch (_error) {
             // Safely ignore errors when disconnecting hardware
         }
     }
