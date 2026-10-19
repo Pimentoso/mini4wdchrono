@@ -1,14 +1,24 @@
 name: Release
 
 # Builds the macOS, Linux and Windows packages with the scripts in utils/ and
-# publishes them as a GitHub Release. Push a tag matching package.json
-# (e.g. `git tag v2.1.0 && git push origin v2.1.0`) to release; run it by hand
-# from the Actions tab to only build the zips without publishing.
+# publishes them as a draft GitHub Release.
+#
+# Two ways to release:
+# - From the Actions tab, run this workflow on master with a version
+#   (e.g. 2.1.0): it updates package.json, commits, pushes the v2.1.0 tag and
+#   releases it in the same run.
+# - Locally: `npm version 2.1.0 && git push --follow-tags`.
+# Running it by hand without a version only builds the zips, without releasing.
 on:
   push:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release, e.g. 2.1.0. Leave empty to only build the zips.'
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -34,8 +44,54 @@ jobs:
             exit 1
           fi
 
-  build:
+  # Sets the version requested from the Actions tab, then commits and tags it.
+  # A tag pushed with the workflow token does not start a new run, so this run
+  # goes on to build and release the tag itself.
+  tag:
     needs: check
+    if: github.event_name == 'workflow_dispatch' && inputs.version != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      tag: ${{ steps.bump.outputs.tag }}
+    steps:
+      - name: Only release from master
+        if: github.ref != 'refs/heads/master'
+        run: |
+          echo "::error::Releases are cut from master, not $GITHUB_REF_NAME"
+          exit 1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Bump version, commit and tag
+        id: bump
+        env:
+          VERSION: ${{ inputs.version }}
+          ACTOR: ${{ github.actor }}
+          ACTOR_ID: ${{ github.actor_id }}
+        run: |
+          VERSION="${VERSION#v}"
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Version must look like 2.1.0 (got '$VERSION')"
+            exit 1
+          fi
+          if git ls-remote --exit-code --tags origin "refs/tags/v$VERSION" > /dev/null; then
+            echo "::error::Tag v$VERSION already exists"
+            exit 1
+          fi
+          git config user.name "$ACTOR"
+          git config user.email "$ACTOR_ID+$ACTOR@users.noreply.github.com"
+          # Updates package.json and package-lock.json, commits and tags v$VERSION.
+          npm version "$VERSION" -m "chore: release v%s"
+          git push origin HEAD:master "v$VERSION"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: [check, tag]
+    # Runs after a version bump, or directly when the tag job is skipped.
+    if: always() && needs.check.result == 'success' && needs.tag.result != 'failure' && needs.tag.result != 'cancelled'
     strategy:
       fail-fast: false
       matrix:
@@ -52,6 +108,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.tag.outputs.tag || github.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -68,8 +126,8 @@ jobs:
           if-no-files-found: error
 
   release:
-    needs: build
-    if: startsWith(github.ref, 'refs/tags/')
+    needs: [tag, build]
+    if: always() && needs.build.result == 'success' && (startsWith(github.ref, 'refs/tags/') || needs.tag.result == 'success')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -81,9 +139,10 @@ jobs:
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.tag.outputs.tag || github.ref_name }}
         run: |
-          gh release create "$GITHUB_REF_NAME" dist/*.zip \
+          gh release create "$TAG" dist/*.zip \
             --repo "$GITHUB_REPOSITORY" \
-            --title "$GITHUB_REF_NAME" \
+            --title "$TAG" \
             --generate-notes \
             --draft
