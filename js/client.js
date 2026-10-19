@@ -223,8 +223,22 @@ const startRace = (debugMode) => {
         raceStarting = true;
         ui.raceStarted(freeRound);
         initRound();
-        ledManager.roundStart(configuration.get('ledAnimation'), startRound);
+        ledManager.roundStart(configuration.get('ledAnimation'), startRound, startFailed);
     }
+};
+
+// Cancels a start whose sequence could not complete, so the round can be
+// started again instead of leaving the race stuck in the starting state.
+const startFailed = (error) => {
+    if (!raceStarting) {
+        return;
+    }
+
+    log.error('[Race] Start sequence failed, start cancelled:', error);
+    raceStarting = false;
+    ui.raceFinished(freeRound);
+    updateRace();
+    window.electronAPI.showMessageBoxSync({ type: 'error', title: 'Error', message: i18n.__('dialog-start-failed'), buttons: ['Ok'] });
 };
 
 // Prepares the timing engine before the starting sequence.
@@ -540,20 +554,26 @@ const raceFinished = () => {
     checkRaceTask = null;
     checkStartTask = null;
 
-    const cars = chrono.getCars();
-    ledManager.roundFinish(cars);
+    // Always leave the running state, even if saving or redrawing fails, so the
+    // START button comes back instead of requiring an app restart.
+    try {
+        const cars = chrono.getCars();
+        ledManager.roundFinish(cars);
 
-    if (currTournament && !freeRound) {
-        storage.saveRound(currManche, currRound, cars);
-        companionApi.submitRoundResult(currManche, currRound);
+        if (currTournament && !freeRound) {
+            storage.saveRound(currManche, currRound, cars);
+            companionApi.submitRoundResult(currManche, currRound);
 
-        ui.showPlayerList();
-        ui.showMancheList();
+            ui.showPlayerList();
+            ui.showMancheList();
+        }
+    } catch (error) {
+        log.error('[Race] Failed to finalize the round:', error);
+    } finally {
+        raceStarting = false;
+        raceRunning = false;
+        ui.raceFinished(freeRound);
     }
-
-    raceStarting = false;
-    raceRunning = false;
-    ui.raceFinished(freeRound);
 };
 
 // ==========================================================================

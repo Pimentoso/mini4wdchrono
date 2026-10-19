@@ -153,6 +153,7 @@
 	"dialog-enter-final": "Start the finals? Make sure all racers' times are correct and final. The race mode will switch to Final mode.",
 	"dialog-save-restart": "Settings saved. The app will reload to apply the changes.",
 	"dialog-disqualify": "Disqualify this result? It will be recorded as DNF.",
+	"dialog-start-failed": "The start sequence could not complete: the lap timer may have disconnected. Check the USB cable and press START again.",
 	"dialog-replay-round": "Run this round again? Its current data will be lost.",
 	"dialog-saved": "Changes saved successfully.",
 	"dialog-xls-exported": "Excel file saved",
