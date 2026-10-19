@@ -63,7 +63,7 @@ describe('configuration cache', () => {
         assert.equal(configuration.get('title'), 'Race Night');
         assert.equal(configuration.get('sensorPin1'), 9);
         assert.equal(configuration.get('companionToken'), 'abc123');
-        assert.equal(mock.calls.get.length, 17);
+        assert.equal(mock.calls.get.length, 18);
     });
 
     test('updates the cache and persists a setting before invoking its callback', async () => {

@@ -54,25 +54,26 @@ class LedManager {
         this.ready = false;
         try {
             await window.electronAPI.hardwareLedOff({});
-        } catch (error) {
+        } catch (_error) {
             // Safely ignore errors when disconnecting hardware
         }
     }
 
-    // Runs the configured start sequence before invoking the race callback.
-    roundStart(animationType, startTimerCallback) {
+    // Runs the configured start sequence before invoking the race callback, or
+    // the failure callback when the green light cannot be shown.
+    roundStart(animationType, startTimerCallback, startFailedCallback) {
         if (animationType === 0) {
             this.beep(1500);
             this.kitt(COLOR_BLUE);
             this.countdown(2500);
-            this.greenLight(2500 + 3200 + this.greenDelay(), startTimerCallback);
+            this.greenLight(2500 + 3200 + this.greenDelay(), startTimerCallback, startFailedCallback);
         }
         else if (animationType === 1) {
             this.countdown(0);
-            this.greenLight(3200 + this.greenDelay(), startTimerCallback);
+            this.greenLight(3200 + this.greenDelay(), startTimerCallback, startFailedCallback);
         }
         else {
-            this.greenLight(0, startTimerCallback);
+            this.greenLight(0, startTimerCallback, startFailedCallback);
         }
     }
 
@@ -166,8 +167,10 @@ class LedManager {
         }
     }
 
-    // Runs the green-light animation and then starts the race.
-    async greenLight(delay, callback) {
+    // Runs the green-light animation and then starts the race. When the
+    // animation fails (e.g. the board disconnected during the countdown) the
+    // racers never saw the start signal, so the start is reported as failed.
+    async greenLight(delay, callback, failedCallback) {
         try {
             await window.electronAPI.hardwareRunLedAnimation({
                 type: 'greenLight',
@@ -176,10 +179,14 @@ class LedManager {
                 color: COLOR_GREEN,
                 buzzDuration: 1000
             });
-            callback();
         } catch (error) {
             log.warn('[LED] Green-light animation failed:', error);
+            if (failedCallback) {
+                failedCallback(error);
+            }
+            return;
         }
+        callback();
     }
 
     // Runs the red countdown animation.

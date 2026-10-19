@@ -40,7 +40,7 @@ export default [
             quotes: ['error', 'single'],
             semi: ['error', 'always'],
             'no-console': 'off',
-            'no-unused-vars': ['warn'],
+            'no-unused-vars': ['warn', { argsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
             'no-var': 'warn',
             'prefer-const': 'warn',
             eqeqeq: ['warn', 'always'],
@@ -56,6 +56,14 @@ export default [
             'no-trailing-spaces': 'error',
             'padded-blocks': ['error', 'never'],
             'eol-last': ['error', 'always']
+        }
+    },
+    {
+        // Loaded by index.html, so its requires resolve from the project root
+        // rather than from js/.
+        files: ['js/renderer.js'],
+        rules: {
+            'n/no-missing-require': 'off'
         }
     }
 ];

@@ -113,7 +113,10 @@ const buildResults = (cars, players) => {
         };
         // Split times are only trustworthy for cars timed by the sensors: a time
         // edited by hand (originalTime set) no longer matches the recorded splits.
-        if (!isDnf && car.originalTime === undefined && Array.isArray(car.splitTimes) && car.splitTimes.length > 0) {
+        // A car that did not finish still reports the laps it completed before
+        // going out; there is no total for them to disagree with.
+        const splitsTrusted = isDnf || car.originalTime === undefined;
+        if (splitsTrusted && Array.isArray(car.splitTimes) && car.splitTimes.length > 0) {
             result.split_times = car.splitTimes.map((t) => Math.round(t) / 1000);
             // Cars are stored in starting-lane order, so the index is the fallback.
             const startLane = car.startLane === undefined ? index : car.startLane;

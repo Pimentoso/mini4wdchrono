@@ -206,9 +206,9 @@ describe('companion round submission', () => {
         });
     });
 
-    test('omits the split times of cars without splits or that did not finish', async () => {
+    test('omits the split times of cars without splits', async () => {
         const race = clone(tournamentRace);
-        race.race.m0.r0[1].splitTimes = [2401];
+        race.race.m0.r0[1].splitTimes = [];
         race.race.m0.r0[2].splitTimes = [];
         const { api, ajax } = await bootWithRace(race);
 
@@ -216,6 +216,28 @@ describe('companion round submission', () => {
 
         assert.equal('split_times' in ajax.bodyOf(0).results[1], false);
         assert.equal('split_times' in ajax.bodyOf(0).results[2], false);
+    });
+
+    test('reports the laps a car completed before it went out', async () => {
+        const race = clone(tournamentRace);
+        race.race.m0.r0[1].splitTimes = [2401, 2399];
+        const { api, ajax } = await bootWithRace(race);
+
+        api.submitRoundResult(0, 0);
+
+        assert.deepEqual(ajax.bodyOf(0).results[1], {
+            car_name: 'Bruno', lap_time: null, is_dnf: true, split_times: [2.401, 2.399]
+        });
+    });
+
+    test('keeps the split times of a car disqualified after the race', async () => {
+        const race = clone(tournamentRace);
+        race.race.m0.r0[0] = { playerId: 0, currTime: 99999, originalTime: 7250, outOfBounds: true, splitTimes: [2401, 2399, 2450] };
+        const { api, ajax } = await bootWithRace(race);
+
+        api.submitRoundResult(0, 0);
+
+        assert.deepEqual(ajax.bodyOf(0).results[0].split_times, [2.401, 2.399, 2.45]);
     });
 
     test('omits the split times of cars whose time was edited by hand', async () => {
